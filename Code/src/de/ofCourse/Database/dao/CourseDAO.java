@@ -41,415 +41,413 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseDAO {
 
-	/**
-	 * Adds a new course to the list of courses in the database.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param course
-	 *            the course to be added
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void createCourse(Transaction trans, Course course)
-			throws InvalidDBTransferException {
-	}
+    /**
+     * Adds a new course to the list of courses in the database.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param course
+     *            the course to be added
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void createCourse(Transaction trans, Course course)
+	    throws InvalidDBTransferException {
+    }
 
-	/**
-	 * Returns a list of courses which take place on the current date.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param pagination
-	 *            the Pagination object which contains the amount of elements
-	 *            which are to be retrieved
-	 * @return the list of courses, or null if no courses were retrieved
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static List<Course> getCourses(Transaction trans,
-			PaginationData pagination) throws InvalidDBTransferException {
-		return null;
-	}
+    /**
+     * Returns a list of courses which take place on the current date.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param pagination
+     *            the Pagination object which contains the amount of elements
+     *            which are to be retrieved
+     * @return the list of courses, or null if no courses were retrieved
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static List<Course> getCourses(Transaction trans,
+	    PaginationData pagination) throws InvalidDBTransferException {
+	return null;
+    }
 
-	/**
-	 * Returns a list of courses which titles contain the search term the user
-	 * has entered.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param pagination
-	 *            the Pagination object which contains the amount of elements
-	 *            which are to be retrieved
-	 * @param searchString
-	 *            the user's search term
-	 * @return the list of courses, or null if no courses were retrieved
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static List<Course> getCourses(Transaction trans,
-			PaginationData pagination, String searchParam, String searchString)
-			throws InvalidDBTransferException {
-		return null;
-	}
+    /**
+     * Returns a list of courses which titles contain the search term the user
+     * has entered.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param pagination
+     *            the Pagination object which contains the amount of elements
+     *            which are to be retrieved
+     * @param searchString
+     *            the user's search term
+     * @return the list of courses, or null if no courses were retrieved
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static List<Course> getCourses(Transaction trans,
+	    PaginationData pagination, String searchParam, String searchString)
+	    throws InvalidDBTransferException {
+	return null;
+    }
 
-	/**
-	 * Returns a list of courses which titles contain the search term the user
-	 * has entered. The list is ordered by the passed parameter.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param pagination
-	 *            the Pagination object which contains the amount of elements
-	 *            which are to be retrieved
-	 * @param searchString
-	 *            the user's search term
-	 * @param orderParam
-	 *            the parameter the list is to be ordered by
-	 * @return the list of courses ordered by the passed parameter, or null if
-	 *         no courses were retrieved
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static List<Course> getCoursesOrdered(Transaction trans,
-			PaginationData pagination, String searchString, String searchParam,
-			String orderParam) throws InvalidDBTransferException {
-		return null;
-	}
+    /**
+     * Returns a list of courses which titles contain the search term the user
+     * has entered. The list is ordered by the passed parameter.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param pagination
+     *            the Pagination object which contains the amount of elements
+     *            which are to be retrieved
+     * @param searchString
+     *            the user's search term
+     * @param orderParam
+     *            the parameter the list is to be ordered by
+     * @return the list of courses ordered by the passed parameter, or null if
+     *         no courses were retrieved
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static List<Course> getCoursesOrdered(Transaction trans,
+	    PaginationData pagination, String searchString, String searchParam,
+	    String orderParam) throws InvalidDBTransferException {
+	return null;
+    }
 
-	/**
-	 * Returns a list of users which are leaders of the course with the passed
-	 * course ID.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param courseID
-	 *            the course's ID
-	 * @return the list of users containing the course's leaders, or null if the
-	 *         course has no course leaders
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static List<User> getLeaders(Transaction trans, int courseID)
-			throws InvalidDBTransferException {
-		return null;
-	}
+    /**
+     * Returns a list of users which are leaders of the course with the passed
+     * course ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the course's ID
+     * @return the list of users containing the course's leaders, or null if the
+     *         course has no course leaders
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static List<User> getLeaders(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+	return null;
+    }
 
-	/**
-	 * Returns a course assigned to the specified ID.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param courseID
-	 *            the course's ID
-	 * @return the course assigned to the course ID, or null if no such course
-	 *         was found
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static Course getCourse(Transaction trans, int courseID)
-			throws InvalidDBTransferException {
-		return null;
-	}
+    /**
+     * Returns a course assigned to the specified ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the course's ID
+     * @return the course assigned to the course ID, or null if no such course
+     *         was found
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static Course getCourse(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+	return null;
+    }
 
-	/**
-	 * Returns a list of courses which the user with the passed ID participates
-	 * in.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the user's ID
-	 * @return the list of courses which the user participates in, or null if
-	 *         the user doesn't participate in any course
-	 * 
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static List<Course> getCoursesOf(Transaction trans,
-			PaginationData pagination, int userID)
-			throws InvalidDBTransferException {
-	    System.out.println("Übergebene UserId :" + userID);
-		ArrayList<Course> coursesOf = new ArrayList<Course>();
-		String getCourseQuery = "SELECT id, titel FROM \"courses\" "
-				+ "WHERE courses.id IN (SELECT course_id FROM \"course_participants\" "
-				+ "WHERE participant_id = ?) ORDER BY ? "
-				+ getSortDirectionAsString(pagination.isSortAsc())
-				+ " LIMIT ? OFFSET ?";
-		String getCourseLeadersQuery = "SELECT name FROM \"users\" "
-				+ "WHERE users.id IN " + "(SELECT course_instructor_id "
-				+ "FROM \"course_instructors\" WHERE course_id = ?)";
-		String getNextCourseUnitQuery = "SELECT start_time, location "
-				+ "FROM \"course_units\" WHERE course_units.course_id = ? "
-				+ "AND course_units.start_time >= CURRENT_DATE "
-				+ "ORDER BY course_units.start_time ASC LIMIT 1";
+    /**
+     * Returns a list of courses which the user with the passed ID participates
+     * in.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @return the list of courses which the user participates in, or null if
+     *         the user doesn't participate in any course
+     * 
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static List<Course> getCoursesOf(Transaction trans,
+	    PaginationData pagination, int userID)
+	    throws InvalidDBTransferException {
 
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
+	ArrayList<Course> coursesOf = new ArrayList<Course>();
+	String getCourseQuery = "SELECT id, titel FROM \"courses\" "
+		+ "WHERE courses.id IN (SELECT course_id FROM"
+		+ " \"course_participants\" "
+		+ "WHERE participant_id = ?) ORDER BY ? "
+		+ getSortDirectionAsString(pagination.isSortAsc())
+		+ " LIMIT ? OFFSET ?";
+	String getCourseLeadersQuery = "SELECT nickname FROM \"users\" "
+		+ "WHERE users.id IN " + "(SELECT course_instructor_id "
+		+ "FROM \"course_instructors\" WHERE course_id = ?)";
+	String getNextCourseUnitQuery = "SELECT start_time, location "
+		+ "FROM \"course_units\" WHERE course_units.course_id = ? "
+		+ "AND course_units.start_time >= CURRENT_DATE "
+		+ "ORDER BY course_units.start_time ASC LIMIT 1";
 
-		// ////////////////////////////////////////////////////////////////
-		// Überprüfen mit ifs ob weitergemacht werden soll oder nicht
-		// ///////////////////////////////////////////////////////////////
-		int calculateOffset = pagination.getElementsPerPage()
-				* pagination.getCurrentPageNumber();
-		PreparedStatement stmt = null;
-		try {
-			stmt = conn.prepareStatement(getCourseQuery);
-			stmt.setInt(1, userID);
-			stmt.setString(2, "'titel'");
-			stmt.setInt(3, pagination.getElementsPerPage());
-			stmt.setInt(4, 0);
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-			ResultSet fetchedCourses = stmt.executeQuery();
-                        System.out.println("Punkt1");
-			// Fills the list coursesOf with courses from the database.
-			// At this time only id an title is set
-			while (fetchedCourses.next()) {
-				Course fetchedCourse = new Course();
-				fetchedCourse.setCourseAdmins((List)new ArrayList<Course>());
-				fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
-				System.out.println("Die ID: "+  fetchedCourse.getCourseID());
-				if (fetchedCourses.getString("titel") != null) {
-				    System.out.println("not null");
-					fetchedCourse.setTitle(fetchedCourses.getString("titel"));
-				} else {
-				    System.out.println("Is null");
-					fetchedCourse.setTitle("No Title");
-					System.out.println(fetchedCourse.getTitle());
-				}
-				
-				coursesOf.add(fetchedCourse);
-			}
+	// ////////////////////////////////////////////////////////////////
+	// Überprüfen mit ifs ob weitergemacht werden soll oder nicht
+	// Whrscheinlich currenPageNum -1
+	// ///////////////////////////////////////////////////////////////
 
-			for(int i = 0; i< coursesOf.size();++i){
-			    System.out.println("Datensatz " + i +" :" +coursesOf.get(i).getCourseID() +"       " + coursesOf.get(i).getTitle());
-			    
-			}
-			
-			// __________________________________________________________________
-			// Step one complete
-			// __________________________________________________________________
+	System.out.println(pagination.getElementsPerPage());
+	System.out.println(pagination.getCurrentPageNumber());
+	int calculateOffset = pagination.getElementsPerPage()
+		* pagination.getCurrentPageNumber();
+	System.out.println();
+	PreparedStatement stmt = null;
+	try {
+	    stmt = conn.prepareStatement(getCourseQuery);
+	    stmt.setInt(1, userID);
+	    stmt.setString(2, "'titel'");
+	    stmt.setInt(3, pagination.getElementsPerPage());
+	    stmt.setInt(4, 0);
+	    ResultSet fetchedCourses = stmt.executeQuery();
 
-			// Fetches the leaders of a course
-			ResultSet fetchedLeaders;
-			for (int i = 0; i < coursesOf.size(); ++i) {
+	    // Fills the list coursesOf with courses from the database.
+	    // At this time only id an title is set
+	    while (fetchedCourses.next()) {
+		Course fetchedCourse = new Course();
+		fetchedCourse.setCourseAdmins((List) new ArrayList<Course>());
+		fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
 
-				stmt = conn.prepareStatement(getCourseLeadersQuery);
-				stmt.setInt(1, coursesOf.get(i).getCourseID());
-
-				fetchedLeaders = stmt.executeQuery();
-				while (fetchedLeaders.next()) {
-					User courseAdmin = new User();
-					courseAdmin.setLastname(fetchedLeaders.getString("name"));
-					coursesOf.get(i).getCourseAdmins().add(courseAdmin);
-				}
-			}
-
-			// _____________________________________________________________________
-			// Step two complete
-			// _____________________________________________________________________
-
-			// Fetches the leaders of a course
-			ResultSet fetchedNextUnit;
-			Timestamp stamp;
-			Date date;
-			CourseUnit courseUnit;
-			
-			for (int i = 0; i < coursesOf.size(); ++i) {
-
-				stmt = conn.prepareStatement(getNextCourseUnitQuery);
-				stmt.setInt(1, coursesOf.get(i).getCourseID());
-
-				fetchedNextUnit = stmt.executeQuery();
-				while (fetchedNextUnit.next()) {
-					courseUnit = new CourseUnit();
-					stamp = fetchedNextUnit.getTimestamp("start_time");
-					date = new Date(stamp.getYear()-1900, stamp.getMonth()-1, stamp.getDay(), stamp.getHours(), stamp.getMinutes());
-					courseUnit.setStarttime(date);
-					courseUnit.setLocation(fetchedNextUnit.getString("location"));
-				}
-			}
-
-		} catch (SQLException e) {
-			LogHandler.getInstance().error(
-					"SQL Exception occoured during executing getCoursesOf()");
-			System.out.println("Fehler");
-			e.printStackTrace();
-			throw new InvalidDBTransferException();
-		}
-
-		return coursesOf;
-	}
-
-	private static String getSortDirectionAsString(boolean isSortAsc) {
-		if (isSortAsc) {
-			return "ASC";
+		if (fetchedCourses.getString("titel") != null) {
+		    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
 		} else {
-			return "DESC";
+		    fetchedCourse.setTitle("Nicht angegeben");
 		}
-	}
+		coursesOf.add(fetchedCourse);
+	    }
 
-	/**
-	 * Returns the number of courses which the user with the passed ID
-	 * participates in.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the user's ID
-	 * @return the number of courses the user participates in
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static int getNumberOfMyCourses(Transaction trans, int userID)
-			throws InvalidDBTransferException {
-		int numberOfCourses = 0;
-		String countQuery = "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN "
-				+ "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
-
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-
-		PreparedStatement stmt = null;
-		try {
-			stmt = conn.prepareStatement(countQuery);
-			stmt.setInt(1, userID);
-
-			ResultSet resultSet = stmt.executeQuery();
-			resultSet.next();
-			numberOfCourses = resultSet.getInt(1);
-		} catch (SQLException e) {
-			LogHandler
-					.getInstance()
-					.error("SQL Exception occoured during executing getNumberOfMyCourse()");
-			System.out.println("Fehler12");
-			e.printStackTrace();
-			throw new InvalidDBTransferException();
+	    if (coursesOf.size() > 0) {
+		// Fetches the leaders of a course
+		ResultSet fetchedLeaders;
+		for (int i = 0; i < coursesOf.size(); ++i) {
+		    stmt = conn.prepareStatement(getCourseLeadersQuery);
+		    stmt.setInt(1, coursesOf.get(i).getCourseID());
+		    fetchedLeaders = stmt.executeQuery();
+		    while (fetchedLeaders.next()) {
+			User courseAdmin = new User();
+			courseAdmin.setUsername(fetchedLeaders
+				.getString("nickname"));
+			coursesOf.get(i).getCourseAdmins().add(courseAdmin);
+		    }
 		}
-		System.out.println("Counting: " + numberOfCourses);
-		return numberOfCourses;
-	}
 
-	/**
-	 * Updates a course stored in the database. The course's attributes are
-	 * replaced by the ones of the passed course.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param course
-	 *            the course to be updated
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void updateCourse(Transaction trans, Course course)
-			throws InvalidDBTransferException {
-	}
+		// Fetches the leaders of a course
+		ResultSet fetchedNextUnit;
+		Timestamp stamp;
+		Date date;
+		CourseUnit courseUnit;
 
-	/**
-	 * Deletes a course which is assigned to the passed ID.
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param courseID
-	 *            the ID of the course to be deleted
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void deleteCourse(Transaction trans, int courseID)
-			throws InvalidDBTransferException {
+		for (int i = 0; i < coursesOf.size(); ++i) {
+		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
+		    stmt.setInt(1, coursesOf.get(i).getCourseID());
+		    fetchedNextUnit = stmt.executeQuery();
+		    while (fetchedNextUnit.next()) {
+			courseUnit = new CourseUnit();
+			stamp = fetchedNextUnit.getTimestamp("start_time");
+			date = new Date(stamp.getYear(), stamp.getMonth(),
+				stamp.getDate(), stamp.getHours(),
+				stamp.getMinutes());
+			courseUnit.setStarttime(date);
+			if (fetchedNextUnit.getString("location") != null) {
+			    courseUnit.setLocation(fetchedNextUnit
+				    .getString("location"));
+			} else {
+			    courseUnit.setLocation("Nicht angegeben");
+			}
+			coursesOf.get(i).setNextCourseUnit(courseUnit);
+		    }
+		}
+	    }
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occoured during fetching"
+			    + " the next set of courses of a user.");
+	    e.printStackTrace();
+	    throw new InvalidDBTransferException();
 	}
+	return coursesOf;
+    }
 
-	/**
-	 * Adds a user to a course's list of participants.
-	 * <p>
-	 * A tuple of the user's ID and the course's ID is added to the table
-	 * containing course participants in the database.
-	 * </p>
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the user's ID
-	 * @param courseID
-	 *            the course's ID
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void addUserToCourse(Transaction trans, int userID,
-			int courseID) throws InvalidDBTransferException {
+    /**
+     * Returns the sort direction as String so it can easiley be added to the
+     * SQL statement.
+     * 
+     * @param isSortAsc
+     *            whether the sort direction is ascending order
+     * @return the sort direction as String
+     */
+    private static String getSortDirectionAsString(boolean isSortAsc) {
+	if (isSortAsc) {
+	    return "ASC";
+	} else {
+	    return "DESC";
 	}
+    }
 
-	/**
-	 * Removes a user from a course's list of participants.
-	 * <p>
-	 * The tuple of the user's ID and the course's ID is removed from the table
-	 * of course participants in the database.
-	 * </p>
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the user's ID
-	 * @param courseID
-	 *            the course's ID
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void removeUserFromCourse(Transaction trans, int userID,
-			int courseID) throws InvalidDBTransferException {
-	}
+    /**
+     * Returns the number of courses which the user with the passed ID
+     * participates in.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @return the number of courses the user participates in
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static int getNumberOfMyCourses(Transaction trans, int userID)
+	    throws InvalidDBTransferException {
+	int numberOfCourses = 0;
+	String countQuery = "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN "
+		+ "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
 
-	/**
-	 * Adds a user to a course's list of course leaders.
-	 * <p>
-	 * A tuple of the user's ID and the course's ID is added to the table
-	 * containing course leaders in the database.
-	 * </p>
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the user's ID
-	 * @param courseID
-	 *            the course's ID
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void addLeaderToCourse(Transaction trans, int userID,
-			int courseID) throws InvalidDBTransferException {
-	}
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-	/**
-	 * Removes a course leader from a course's list of course leaders.
-	 * <p>
-	 * The tuple of the course leader's ID and the course's ID is removed from
-	 * the table of course leaders in the database.
-	 * </p>
-	 * 
-	 * @param trans
-	 *            the Transaction object which contains the connection to the
-	 *            database
-	 * @param userID
-	 *            the course leader's ID
-	 * @param courseID
-	 *            the course's ID
-	 * @throws InvalidDBTransferException
-	 *             if any error occurred during the execution of the method
-	 */
-	public static void removeLeaderFromCourse(Transaction trans, int userID,
-			int course) throws InvalidDBTransferException {
+	PreparedStatement stmt = null;
+	try {
+	    stmt = conn.prepareStatement(countQuery);
+	    stmt.setInt(1, userID);
+	    ResultSet resultSet = stmt.executeQuery();
+	    resultSet.next();
+	    numberOfCourses = resultSet.getInt(1);
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("Error occoured during fetching the number of courses of a certain user.");
+	    e.printStackTrace();
+	    throw new InvalidDBTransferException();
 	}
+	return numberOfCourses;
+    }
+
+    /**
+     * Updates a course stored in the database. The course's attributes are
+     * replaced by the ones of the passed course.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param course
+     *            the course to be updated
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void updateCourse(Transaction trans, Course course)
+	    throws InvalidDBTransferException {
+    }
+
+    /**
+     * Deletes a course which is assigned to the passed ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the ID of the course to be deleted
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void deleteCourse(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+    }
+
+    /**
+     * Adds a user to a course's list of participants.
+     * <p>
+     * A tuple of the user's ID and the course's ID is added to the table
+     * containing course participants in the database.
+     * </p>
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void addUserToCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+    }
+
+    /**
+     * Removes a user from a course's list of participants.
+     * <p>
+     * The tuple of the user's ID and the course's ID is removed from the table
+     * of course participants in the database.
+     * </p>
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void removeUserFromCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+    }
+
+    /**
+     * Adds a user to a course's list of course leaders.
+     * <p>
+     * A tuple of the user's ID and the course's ID is added to the table
+     * containing course leaders in the database.
+     * </p>
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void addLeaderToCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+    }
+
+    /**
+     * Removes a course leader from a course's list of course leaders.
+     * <p>
+     * The tuple of the course leader's ID and the course's ID is removed from
+     * the table of course leaders in the database.
+     * </p>
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the course leader's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void removeLeaderFromCourse(Transaction trans, int userID,
+	    int course) throws InvalidDBTransferException {
+    }
 }
