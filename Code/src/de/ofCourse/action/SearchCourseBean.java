@@ -5,8 +5,10 @@ package de.ofCourse.action;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 
 import de.ofCourse.model.Course;
@@ -30,7 +32,7 @@ import de.ofCourse.system.Transaction;
  *
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class SearchCourseBean implements Pagination {
     
     /**
@@ -65,6 +67,8 @@ public class SearchCourseBean implements Pagination {
      * Stores the search term that was entered by the user
      */
     private String searchTerm;
+    
+    private boolean renderTable;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -121,7 +125,10 @@ public class SearchCourseBean implements Pagination {
      * search term. The search result is stored locally so it can be displayed
      * in the facelet.
      */
-    public void search() {
+    public String search() {
+    	
+    	setRenderTable(true);
+    	return "search.xhtml";
     }
 
     /**
@@ -193,7 +200,19 @@ public class SearchCourseBean implements Pagination {
     public void setSearchTerm(String searchTerm) {
     }
 
-    /**
+    public boolean isRenderTable() {
+		return renderTable;
+	}
+
+
+
+	public void setRenderTable(boolean renderTable) {
+		this.renderTable = renderTable;
+	}
+
+
+
+	/**
      * Redirects the user to the <code>courseDetail</code> page of a certain
      * course .
      * 

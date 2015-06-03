@@ -3,120 +3,175 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html">
-	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Kursangebot</ui:define>
-		<ui:define name="content">
-			<body>
-				<h1>Kursangebot</h1>
-				<div class="row">
-					<div class="col-lg-12">
-						<p style="font-size:16px;">Sie können auf dieser Seite das Kursangebot von <strong>OfCourse</strong> durchsuchen. Hier werden alle verfügbaren Kurse angezeigt.</p>
-					</div>
-				</div>
-				<div class="row" style="padding-top:20px;">
-					<div class="col-lg-12">
-						<div class="panel panel-default">
-							<div class="panel-heading"><strong>Kurse filtern</strong></div>
-							<div class="panel-body">
-								<h:form class="form-horizontal" id="formFilterCourses">
-									<div class="row">
-										<div class="col-lg-4">
-											<div class="input-group">
-												<span class="input-group-addon" style="width:80px; text-align:right;">Zeitraum:</span>
-												<h:selectOneMenu class="form-control" value="Gesamtes Angebot" id="filterDate">
-												   	<f:selectItem itemValue="day" itemLabel="Tagesangebot" />
-												   	<f:selectItem itemValue="week" itemLabel="Wochenangebot" />
-												   	<f:selectItem itemValue="total" itemLabel="Gesamtes Angebot" />
-												</h:selectOneMenu>
-											</div>
-										</div>
-										<div class="col-lg-3">
-											<div class="input-group">
-												<span class="input-group-addon" style="width:100px; text-align:right;">Filtereigenschaft:</span>
-												<h:selectOneMenu class="form-control" value="Titel" id="filterProperty">
-												   	<f:selectItem itemValue="day" itemLabel="Titel" />
-												   	<f:selectItem itemValue="id" itemLabel="Kurs-ID" />
-												   	<f:selectItem itemValue="location" itemLabel="Ort" />
-												   	<f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-												   	<f:selectItem itemValue="time" itemLabel="Zeit" />
-												   	<f:selectItem itemValue="date" itemLabel="Datum" />
-												</h:selectOneMenu>
-											</div>
-										</div>
-										<div class="col-lg-3">
-											<div class="input-group">
-												<h:inputText class="form-control" id="filterInput" style="width:230px;"></h:inputText>
-											</div>
-										</div>
-										<div class="col-lg-2">
-											<h:commandButton id="searchCourses" class="btn btn-default" value="Suchen" />
-										</div>
-									</div>																	
-								</h:form>
-							</div>
-						</div>
-						<div class="panel panel-info">
-							<div class="panel-heading"><strong>Verfügbare Kurse</strong> <span class="badge">37</span></div>
-							<div class="panel-body">
-								<div class="row" style="font-weight:bold;">
-									<div class="col-lg-1"><a href="#">Kurs-ID</a></div>
-									<div class="col-lg-2"><a href="#">Titel</a></div>
-									<div class="col-lg-2"><a href="#">Ort</a></div>
-									<div class="col-lg-1"><a href="#">Beginn</a></div>
-									<div class="col-lg-2"><a href="#">Nächster Termin</a></div>
-									<div class="col-lg-1"><a href="#">Kursleiter</a></div>
-									<div class="col-lg-1"><a href="#">Preis</a></div>
-									<div class="col-lg-1"></div>
-								</div>
-								<div class="row" style="padding-top:15px;">
-									<div class="col-lg-1" style="padding-top:6px;">7342</div>
-									<div class="col-lg-2" style="padding-top:6px;">Yoga für Einsteiger</div>
-									<div class="col-lg-2" style="padding-top:6px;">Jumpers Passau</div>
-									<div class="col-lg-1" style="padding-top:6px;">18:30 Uhr</div>
-									<div class="col-lg-2" style="padding-top:6px;">23.04.2015</div>
-									<div class="col-lg-1" style="padding-top:6px;">Andreas</div>
-									<div class="col-lg-1" style="padding-top:6px;"><span class="badge">5,00€</span></div>
-									<div class="col-lg-1"><h:commandButton id="Details1" class="btn btn-info" value="Details" /></div>
-								</div>
-								<div class="row" style="padding-top:15px;">
-									<div class="col-lg-1" style="padding-top:6px;">4553</div>
-									<div class="col-lg-2" style="padding-top:6px;">Hanteltraining</div>
-									<div class="col-lg-2" style="padding-top:6px;">Jumpers Passau</div>
-									<div class="col-lg-1" style="padding-top:6px;">14:30 Uhr</div>
-									<div class="col-lg-2" style="padding-top:6px;">24.04.2015</div>
-									<div class="col-lg-1" style="padding-top:6px;">Björn</div>
-									<div class="col-lg-1" style="padding-top:6px;"><span class="badge">0,00€</span></div>
-									<div class="col-lg-1"><h:commandButton id="Details2" class="btn btn-info" value="Details" /></div>
-								</div>
-								<div class="row" style="padding-top:15px;">
-									<div class="col-lg-1" style="padding-top:6px;">2334</div>
-									<div class="col-lg-2" style="padding-top:6px;">Pilates</div>
-									<div class="col-lg-2" style="padding-top:6px;">EasyFit Passau</div>
-									<div class="col-lg-1" style="padding-top:6px;">17:30 Uhr</div>
-									<div class="col-lg-2" style="padding-top:6px;">27.04.2015</div>
-									<div class="col-lg-1" style="padding-top:6px;">Anna</div>
-									<div class="col-lg-1" style="padding-top:6px;"><span class="badge">2,00€</span></div>
-									<div class="col-lg-1"><h:commandButton id="Details3" class="btn btn-info" value="Details" /></div>
-								</div>
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <ui:composition template="/WEB-INF/template.xhtml">
+        <ui:define name="title">Kursangebot</ui:define>
+        <ui:define name="content">
+            <body>
+                <h1>Kursangebot</h1>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p style="font-size:16px;">Sie können auf dieser Seite das Kursangebot von <strong>OfCourse</strong> durchsuchen. Hier werden alle verfügbaren Kurse angezeigt.</p>
+                    </div>
+                </div>
+                <div class="row" style="padding-top:20px;">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><strong>Kurse filtern</strong></div>
+                            <div class="panel-body">
+                                <h:form class="form-horizontal" id="formFilterCourses">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" style="width:80px; text-align:right;">Zeitraum:</span>
+                                                <h:selectOneMenu class="form-control" value="Gesamtes Angebot" id="filterDate">
+                                                    <f:selectItem itemValue="day" itemLabel="Tagesangebot" />
+                                                    <f:selectItem itemValue="week" itemLabel="Wochenangebot" />
+                                                    <f:selectItem itemValue="total" itemLabel="Gesamtes Angebot" />
+                                                </h:selectOneMenu>
+                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Suchen" />
+                                            </div>
+                                            <br/>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" style="width:100px; text-align:right;">Filtereigenschaft:</span>
+                                                <h:selectOneMenu class="form-control" value="Titel" id="filterProperty">
+                                                    <f:selectItem itemValue="day" itemLabel="Titel" />
+                                                    <f:selectItem itemValue="id" itemLabel="Kurs-ID" />
+                                                    <f:selectItem itemValue="location" itemLabel="Ort" />
+                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
+                                                    <f:selectItem itemValue="time" itemLabel="Zeit" />
+                                                    <f:selectItem itemValue="date" itemLabel="Datum" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="input-group">
+                                                <h:inputText class="form-control" id="filterInput" style="width:230px;"></h:inputText>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <h:commandButton id="searchCourses" class="btn btn-default" value="Suchen" action="#{searchCourseBean.search()}"/>
+                                        </div>
+                                    </div>                                                                  
+                                </h:form>
+                            </div>
+                        </div>
+                        <h:panelGroup rendered="#{searchCourseBean.renderTable}">
+                        <div class="panel panel-info">
+                            <div class="panel-body">
+                                <h:dataTable value="#{searchCourseBean.searchResult}" var="file"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+                        
+                                     <h:column>
+                                         <!-- column header -->
+                                         <f:facet name="header">ID</f:facet>
+                                         <!-- row record -->
+                                         #{course.courseID}
+                                     </h:column>
+                                     
+                                     <h:column>  
+                                         <f:facet name="header">Title</f:facet>  
+                                         <h:link outcome="courseDetail" value="#{course.title}" >
+                                             <f:param name="courseID" value="#{course.courseID}" />
+                                         </h:link>
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">Max. Teilnehmer</f:facet>
+                                         #{course.maxUsers}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">Beginnt</f:facet>
+                                         #{course.startdate}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">Endet</f:facet>
+                                         #{course.enddate}
+                                     </h:column>
+                                     
+                                     
+                                     <f:facet name="footer">
+                                    <div class="row" style="text-align: center;">
+                                    <ul class="pagination">
+                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
+                                                action="#{myCoursesBean.goToSpecificPage}">
+                                                <f:param name="page" value="back" />
+                                            </h:commandButton></li>
 
-								<div class="row" style="text-align:center;">
-									<ul class="pagination">
-									    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-									    <li class="active"><a href="#">1</a></li>
-									    <li><a href="#">2</a></li>
-									    <li><a href="#">3</a></li>
-									    <li><a href="#">4</a></li>
-									    <li><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-									</ul>
-								</div>
-							</div>
-						</div>								
-					</div>
-				</div>
-			</body>
-		</ui:define>
-	</ui:composition>
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{myCoursesBean.pagination.currentPageNumber-1}"
+                                                action="#{myCoursesBean.goToSpecificPage}"
+                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=2}">
+                                                <f:param name="page"
+                                                    value="#{myCoursesBean.pagination.currentPageNumber-2}" />
+                                            </h:commandButton></li>
+
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{myCoursesBean.pagination.currentPageNumber}"
+                                                action="#{myCoursesBean.goToSpecificPage}"
+                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=1}">
+                                                <f:param name="page"
+                                                    value="#{myCoursesBean.pagination.currentPageNumber-1}" />
+                                            </h:commandButton></li>
+
+                                        <li><h:commandButton style="font-weight:bold;"
+                                                class="btn btn-primary" id="currentDisplayedPage"
+                                                value="#{myCoursesBean.pagination.currentPageNumber +1}"
+                                                action="#{myCoursesBean.goToSpecificPage}">
+                                                <f:param name="page"
+                                                    value="#{myCoursesBean.pagination.currentPageNumber}" />
+                                            </h:commandButton></li>
+
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{myCoursesBean.pagination.currentPageNumber+2}"
+                                                action="#{myCoursesBean.goToSpecificPage}"
+                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}">
+                                                <f:param name="page"
+                                                    value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+                                            </h:commandButton></li>
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{myCoursesBean.pagination.currentPageNumber+3}"
+                                                action="#{myCoursesBean.goToSpecificPage}"
+                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+2}">
+                                                <f:param name="page"
+                                                    value="#{myCoursesBean.pagination.currentPageNumber+2}" />
+                                            </h:commandButton></li>
+
+                                        <li><h:commandButton class="btn btn-info" value="Weiter"
+                                                action="#{myCoursesBean.goToSpecificPage}">
+                                                <f:param name="page" value="forward" />
+                                            </h:commandButton></li>
+                                    </ul>
+                                </div>
+                            </f:facet>
+                                     
+                                     
+                                 </h:dataTable>
+
+                                <div class="row" style="text-align:center;">
+                                    <ul class="pagination">
+                                        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                                        <li class="active"><a href="#">1</a></li>
+                                        <li><a href="#">2</a></li>
+                                        <li><a href="#">3</a></li>
+                                        <li><a href="#">4</a></li>
+                                        <li><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>  
+                        </h:panelGroup>         
+                    </div>
+                </div>
+            </body>
+        </ui:define>
+    </ui:composition>
 </html>
