@@ -140,7 +140,6 @@ public class RegisterUserBean {
 	this.transaction = new Connection();
 	transaction.start();
 	
-	try {
             	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
             	if(UserDAO.emailExists(transaction, this.getUserToRegistrate().getEmail())) {
             	    
@@ -150,6 +149,7 @@ public class RegisterUserBean {
                         msg.setSeverity(FacesMessage.SEVERITY_INFO);
                         facesContext.addMessage(null, msg);
                         facesContext.renderResponse();
+                        return "/facelets/open/authenticate.xhtml?faces-redirect=false";
             	} else {	
             	    
             	    // Gibt es die angegebene E-Mail-Adresse noch nicht, erstelle einen
@@ -160,16 +160,7 @@ public class RegisterUserBean {
             	    
             	    mail.sendAuthentificationMessage(userID, veriString);
             	}
-	} catch(InvalidDBTransferException e) {
-	    LogHandler.getInstance().error("Fehler bei der Registrierung eines Benutzers!");
-	    
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
-            msg.setSeverity(FacesMessage.SEVERITY_INFO);
-            facesContext.addMessage(null, msg);
-            facesContext.renderResponse();
-	    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-	}
+
 	
 	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)
 	
