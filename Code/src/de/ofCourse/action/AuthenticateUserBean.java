@@ -115,71 +115,74 @@ public class AuthenticateUserBean {
 	try {
         	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
         	id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
-        	
-        	this.transaction.commit();
+	
+    	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
+    	// Passwort falsch sind
+    	// -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht aktiviert
+    	// wurde.
+    	// Ansonsten wird die ID des Benutzers zurückgegeben
+    	if(id == -1) {
+    	    // Fehlermeldung in den FacesContext werfen.
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                FacesMessage msg = new FacesMessage("Benutzername oder Passwort falsch!");
+                msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                facesContext.addMessage(null, msg);
+                facesContext.renderResponse();
+    
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+                // fehlgeschlagen ist.
+                this.transaction.rollback();
+                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+    	} else if(id == -2) {
+    	    // Fehlermeldung in den FacesContext werfen.
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                FacesMessage msg = new FacesMessage("Benutzerkonto nicht aktiv!");
+                msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                facesContext.addMessage(null, msg);
+                facesContext.renderResponse();
+    
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+                // fehlgeschlagen ist.
+                this.transaction.rollback();
+                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+    	} else if(id == -3) {
+    	    // Fehlermeldung in den FacesContext werfen.
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
+                msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                facesContext.addMessage(null, msg);
+                facesContext.renderResponse();
+    
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+                // fehlgeschlagen ist.
+                this.transaction.rollback();
+                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+    	} else {
+    	    // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
+    	    // Daten mittels Benutzerid von der Datenbank abfragen.
+    	    sessionUser.setLanguage(Language.DE);
+    	    sessionUser.setUserID(id);
+    	    sessionUser.setUserRole(UserDAO.getUserRole(this.transaction, id));
+    	    sessionUser.setUserStatus(UserDAO.getUserStatus(this.transaction, id));
+    
+    	    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
+                HttpSession session = (HttpSession) FacesContext.getCurrentInstance().
+            	    getExternalContext().getSession(true);
+                session.setAttribute("loggedin", true);
+                session.setAttribute("userID", id);
+                session.setAttribute("userRole", sessionUser.getUserRole());
+                
+                // Auf myCourses Seite weiterleiten, da der Login-Vorgang
+                // erfolgreich war.
+                this.transaction.commit();
+                return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
+    	   }
+    	
 	} catch(InvalidDBTransferException e) {
 	    this.transaction.rollback();
 	}
 	
-	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
-	// Passwort falsch sind
-	// -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht aktiviert
-	// wurde.
-	// Ansonsten wird die ID des Benutzers zurückgegeben
-	if(id == -1) {
-	    // Fehlermeldung in den FacesContext werfen.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("Benutzername oder Passwort falsch!");
-            msg.setSeverity(FacesMessage.SEVERITY_INFO);
-            facesContext.addMessage(null, msg);
-            facesContext.renderResponse();
-
-            // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
-            // fehlgeschlagen ist.
-            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-	} else if(id == -2) {
-	    // Fehlermeldung in den FacesContext werfen.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("Benutzerkonto nicht aktiv!");
-            msg.setSeverity(FacesMessage.SEVERITY_INFO);
-            facesContext.addMessage(null, msg);
-            facesContext.renderResponse();
-
-            // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
-            // fehlgeschlagen ist.
-            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-	} else if(id == -3) {
-	    // Fehlermeldung in den FacesContext werfen.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
-            msg.setSeverity(FacesMessage.SEVERITY_INFO);
-            facesContext.addMessage(null, msg);
-            facesContext.renderResponse();
-
-            // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
-            // fehlgeschlagen ist.
-            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-	} else {
-	    // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
-	    // Daten mittels Benutzerid von der Datenbank abfragen.
-	    sessionUser.setLanguage(Language.DE);
-	    sessionUser.setUserID(id);
-	    sessionUser.setUserRole(UserDAO.getUserRole(this.transaction, id));
-	    sessionUser.setUserStatus(UserDAO.getUserStatus(this.transaction, id));
-
-	    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().
-        	    getExternalContext().getSession(true);
-            session.setAttribute("loggedin", true);
-            session.setAttribute("userID", id);
-            session.setAttribute("userRole", sessionUser.getUserRole());
-            
-            // Auf myCourses Seite weiterleiten, da der Login-Vorgang
-            // erfolgreich war.
-            return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
-	}
-	
-	
+	return "/facelets/open/authenticate.xhtml?faces-redirect=false";
     }
 
     /**
