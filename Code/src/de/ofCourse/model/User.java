@@ -73,13 +73,62 @@ public class User implements Serializable {
 	return this.address;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object other) {
-	return false;
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	User other = (User) obj;
+	if (Float.floatToIntBits(accountBalance) != Float
+		.floatToIntBits(other.accountBalance))
+	    return false;
+	if (address == null) {
+	    if (other.address != null)
+		return false;
+	} else if (!address.equals(other.address))
+	    return false;
+	if (dateOfBirth == null) {
+	    if (other.dateOfBirth != null)
+		return false;
+	} else if (!dateOfBirth.equals(other.dateOfBirth))
+	    return false;
+	if (email == null) {
+	    if (other.email != null)
+		return false;
+	} else if (!email.equals(other.email))
+	    return false;
+	if (firstname == null) {
+	    if (other.firstname != null)
+		return false;
+	} else if (!firstname.equals(other.firstname))
+	    return false;
+	if (lastname == null) {
+	    if (other.lastname != null)
+		return false;
+	} else if (!lastname.equals(other.lastname))
+	    return false;
+	if (profilImage == null) {
+	    if (other.profilImage != null)
+		return false;
+	} else if (!profilImage.equals(other.profilImage))
+	    return false;
+	if (salutation != other.salutation)
+	    return false;
+	if (userID != other.userID)
+	    return false;
+	if (userRole != other.userRole)
+	    return false;
+	if (userStatus != other.userStatus)
+	    return false;
+	if (username == null) {
+	    if (other.username != null)
+		return false;
+	} else if (!username.equals(other.username))
+	    return false;
+	return true;
     }
 
     /**
@@ -183,13 +232,31 @@ public class User implements Serializable {
 	return this.userID;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
+    @Override
     public int hashCode() {
-	return 0;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + Float.floatToIntBits(accountBalance);
+	result = prime * result + ((address == null) ? 0 : address.hashCode());
+	result = prime * result
+		+ ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());
+	result = prime * result + ((email == null) ? 0 : email.hashCode());
+	result = prime * result
+		+ ((firstname == null) ? 0 : firstname.hashCode());
+	result = prime * result
+		+ ((lastname == null) ? 0 : lastname.hashCode());
+	result = prime * result
+		+ ((profilImage == null) ? 0 : profilImage.hashCode());
+	result = prime * result
+		+ ((salutation == null) ? 0 : salutation.hashCode());
+	result = prime * result + userID;
+	result = prime * result
+		+ ((userRole == null) ? 0 : userRole.hashCode());
+	result = prime * result
+		+ ((userStatus == null) ? 0 : userStatus.hashCode());
+	result = prime * result
+		+ ((username == null) ? 0 : username.hashCode());
+	return result;
     }
 
     /**

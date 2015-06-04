@@ -11,16 +11,13 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
-import de.ofCourse.model.Language;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
-import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 

@@ -44,13 +44,57 @@ public class Address {
      */
     private Integer zipCode;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object other) {
-	return false;
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((city == null) ? 0 : city.hashCode());
+	result = prime * result + ((country == null) ? 0 : country.hashCode());
+	result = prime * result
+		+ ((houseNumber == null) ? 0 : houseNumber.hashCode());
+	result = prime * result + id;
+	result = prime * result + ((street == null) ? 0 : street.hashCode());
+	result = prime * result + ((zipCode == null) ? 0 : zipCode.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Address other = (Address) obj;
+	if (city == null) {
+	    if (other.city != null)
+		return false;
+	} else if (!city.equals(other.city))
+	    return false;
+	if (country == null) {
+	    if (other.country != null)
+		return false;
+	} else if (!country.equals(other.country))
+	    return false;
+	if (houseNumber == null) {
+	    if (other.houseNumber != null)
+		return false;
+	} else if (!houseNumber.equals(other.houseNumber))
+	    return false;
+	if (id != other.id)
+	    return false;
+	if (street == null) {
+	    if (other.street != null)
+		return false;
+	} else if (!street.equals(other.street))
+	    return false;
+	if (zipCode == null) {
+	    if (other.zipCode != null)
+		return false;
+	} else if (!zipCode.equals(other.zipCode))
+	    return false;
+	return true;
     }
 
     /**
