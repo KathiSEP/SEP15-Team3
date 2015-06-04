@@ -791,21 +791,20 @@ public class UserDAO {
      * @param mail the mail address of the user to be updated
      * @throws InvalidDBTransferException
      */
-    public static void overridePassword(Transaction trans, String mail, String password, String salt)
+    public static void overridePassword(Transaction trans, String mail, String password)
     		throws InvalidDBTransferException {
         PreparedStatement statement = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
 
         String sql = "UPDATE \"users\" "
-                + "SET pw_hash = ?, salt = ? "
+                + "SET pw_hash = ? "
                 + "WHERE email = ?";
         
         try {
             statement = conn.prepareStatement(sql);
             statement.setString(1, password);
-            statement.setString(2, salt);
-            statement.setString(3, mail);
+            statement.setString(2, mail);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new InvalidDBTransferException();

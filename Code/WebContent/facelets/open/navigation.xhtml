@@ -33,10 +33,18 @@
                     </div>
                     <ul class="nav navbar-nav collapse navbar-collapse">
                         <li><h:outputLink value="#{request.contextPath}/facelets/open/courses/search.xhtml">Suche</h:outputLink></li>
-                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Profil</h:outputLink></li>
                         <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/myCourses.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Meine Kurse</h:outputLink></li>
                         <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/scheduler.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Terminplaner</h:outputLink></li>
-                        <li><h:outputLink value="#{request.contextPath}/facelets/user/systemAdministrator/adminManagement.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Administration</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Profil</h:outputLink></li>
+                        <h:panelGroup rendered="#{(navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+	                        <li class="dropdown">
+	                        	<h:outputLink value="#" class="dropdown-toggle" p:data-toggle="dropdown" role="button" aria-expanded="false">Administration<span class="caret"></span></h:outputLink>
+	                        	<ul class="dropdown-menu" role="menu">
+	                        		<li><h:outputLink value="#{request.contextPath}/facelets/user/courseLeader/activateUsers.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Benutzer aktivieren</h:outputLink></li>
+	                       			<li><h:outputLink value="#{request.contextPath}/facelets/user/systemAdministrator/adminManagement.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Seitenverwaltung</h:outputLink></li>
+	                        	</ul>
+	                        </li>
+                        </h:panelGroup>
                     </ul>
                 </div>
             </nav>

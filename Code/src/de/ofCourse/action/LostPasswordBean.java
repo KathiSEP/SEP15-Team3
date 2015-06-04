@@ -28,7 +28,7 @@ import java.util.Random;
  * <p>
  * This class is ManagedBean of the facelet <code>authenticate</code>.
  * 
- * @author Tobias Fuchs
+ * @author Ricky Strohmeier
  *
  */
 @ManagedBean
@@ -70,7 +70,7 @@ public class LostPasswordBean {
     public void resetPassword() {
     	String salt = "";
     	String newHashedPassword = PasswordHash.hash(generateNewPassword(), salt);
-    	UserDAO.overridePassword(transaction, emailAddressToResetPassword, newHashedPassword, salt);
+    	UserDAO.overridePassword(transaction, emailAddressToResetPassword, newHashedPassword);
     }
 
     /**
@@ -145,5 +145,4 @@ public class LostPasswordBean {
     	while(password[iterator = random.nextInt(length)] != 0);
     	return iterator;
     }
-
 }

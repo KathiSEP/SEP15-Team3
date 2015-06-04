@@ -27,7 +27,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet
  * <code>navigation</code>.
  * 
- * @author Tobias Fuchs
+ * @author Ricky Strohmeier
  *
  */
 @ManagedBean
@@ -43,12 +43,6 @@ public class NavigationBean {
     private SessionUserBean sessionUser;
 
     /**
-     * Stores the transaction that is used for database interaction.
-     */
-    private Transaction transaction;
-    private boolean isAdmin;
-
-    /**
      * Performs the logout action.<br>
      * By pressing the <code>logout</code> button, the user is logged out. That
      * means his userStatus is set to <code>ANONYMOUS</code> and he is
@@ -57,10 +51,9 @@ public class NavigationBean {
      * @return the link to the welcome page
      */
     public String logout() {
-	sessionUser = null;
-	FacesContext.getCurrentInstance().getExternalContext()
-		.invalidateSession();
-	return "/facelets/open/index.xhtml?faces-redirect=true";
+    	sessionUser = null;
+    	FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+    	return "/facelets/open/index.xhtml?faces-redirect=true";
     }
 
     /**
@@ -80,13 +73,5 @@ public class NavigationBean {
      */
     public void setSessionUser(SessionUserBean userSession) {
 	this.sessionUser = userSession;
-    }
-
-    public boolean isAdmin() {
-	return isAdmin;
-    }
-
-    public void setAdmin(boolean isAdmin) {
-	this.isAdmin = isAdmin;
     }
 }

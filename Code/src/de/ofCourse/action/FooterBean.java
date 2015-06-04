@@ -12,7 +12,7 @@ import javax.faces.bean.RequestScoped;
  * <p>
  * This is the ManagedBean and Controller of the facelet <code>footer</code>.
  * 
- * @author Tobias Fuchs
+ * @author Ricky Strohmeier
  * 
  */
 @ManagedBean
