@@ -83,7 +83,6 @@ public class AuthenticateUserBean {
 	// Session neu initialisieren, da auf der Login-Seite noch keiner 
 	// eingeloggt sein kann.
 	loginUser = new User();
-	//this.sessionUser = new SessionUserBean();
     }
     
     /**
@@ -102,7 +101,6 @@ public class AuthenticateUserBean {
 	
 	int id = -3;
 	// Eingegebenes Passwort hashen
-	// TODO salt hinzufügen    stimmt das so ???
 	String salt = "";
 	String passwordHash = PasswordHash.hash(this.loginPassword, salt);
 	

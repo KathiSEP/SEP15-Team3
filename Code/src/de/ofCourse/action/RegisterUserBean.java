@@ -63,7 +63,9 @@ public class RegisterUserBean {
     public void setUserToRegistrate(User userToRegistrate) {
         this.userToRegistrate = userToRegistrate;
     }
-    
+    /**
+     * Sets a flag so that the database query won't be executed
+     */
     public void activateTesting() {
 	this.testing = true;
     }
@@ -103,15 +105,25 @@ public class RegisterUserBean {
 	      .getCurrentInstance().getExternalContext().getRequest();
 	 String veriString = request.getParameter("veri");
 	 
-
+	 mail = new MailBean();
 		
 	 if(veriString != null && veriString.length() > 0) {
 	     this.transaction = new Connection();
 	     transaction.start();
 	     if(UserDAO.verifyUser(this.transaction, veriString)) {
-		 // Erfolgsmeldung
+		// Erfolgsmeldung in den FacesContext werfen.
+                 FacesContext facesContext = FacesContext.getCurrentInstance();
+                 FacesMessage msg = new FacesMessage("Ihr Konto wurde aktiviert.");
+                 msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                 facesContext.addMessage(null, msg);
+                 facesContext.renderResponse();
 	     } else {
-		 // Fehlermeldung
+		// Fehlermeldung in den FacesContext werfen.
+                 FacesContext facesContext = FacesContext.getCurrentInstance();
+                 FacesMessage msg = new FacesMessage("Bitte überprüfen Sie den Aktivierungslink.");
+                 msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                 facesContext.addMessage(null, msg);
+                 facesContext.renderResponse();
 	     }
 	     this.transaction.commit();
 	 }
@@ -140,7 +152,6 @@ public class RegisterUserBean {
 	String veriString = "";
 	
 	// Eingegebenes Passwort hashen
-	// TODO salt  Stimmt das so????
 	String salt = "";
 	String passwordHash = PasswordHash.hash(this.getRegisterPassword(), salt);
 	
@@ -173,16 +184,23 @@ public class RegisterUserBean {
                     
             	    this.transaction.commit();            	    
             	    
-            	    //mail.sendAuthentificationMessage(userID, veriString);
+            	    mail.sendAuthentificationMessage(userID, veriString);
             	}
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();
 	}
 	}
 	
-	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)
 	
+	// Erfolgsmeldung in den FacesContext werfen.
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        FacesMessage msg = new FacesMessage("Sie haben sich erfolgreich im System registriert. Bitte bestätigen Sie den Aktivierungslink aus der Verifizierungsmail");
+        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+        facesContext.addMessage(null, msg);
+        facesContext.renderResponse();
 	return "/facelets/open/index.xhtml?faces-redirect=false";
+	
+	
     }
     
     
