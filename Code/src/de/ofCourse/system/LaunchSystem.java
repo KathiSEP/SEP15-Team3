@@ -55,12 +55,14 @@ public class LaunchSystem {
         PropertyManager.getInstance();
         DatabaseConnectionManager.getInstance();
         LogHandler.getInstance();
-        System.out.println("Initialsierung abgeschlossen");
+        
         LogHandler.getInstance().error("finished");
         //Erstellt die Datenbank
-        DatabaseTableCreator.buildUpDatabase();
-        SetupAdmin.createInitialAdmin();
+        //DatabaseTableCreator.buildUpDatabase();
+        //SetupAdmin.createInitialAdmin();
+        DatabaseTableDestroyer.dropTables();
         LogHandler.getInstance().error("finished");
+        System.out.println("Initialsierung abgeschlossen");
     }
 
     /**

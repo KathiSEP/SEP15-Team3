@@ -24,6 +24,7 @@ import javax.servlet.ServletResponse;
  */
 public class EncodingFilter implements Filter {
 
+    private String encoding = "utf-8";
     /**
      * Takes the filter out of service.
      *
@@ -31,7 +32,7 @@ public class EncodingFilter implements Filter {
      */
     @Override
     public void destroy() {
-	// TODO Auto-generated method stub
+	// brauchen wir nicht
 
     }
 
@@ -57,7 +58,8 @@ public class EncodingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
 	    FilterChain chain) throws IOException, ServletException {
-	// TODO Auto-generated method stub
+        request.setCharacterEncoding(encoding);
+        chain.doFilter(request, response);
 
     }
 
@@ -71,7 +73,11 @@ public class EncodingFilter implements Filter {
      */
     @Override
     public void init(FilterConfig arg0) throws ServletException {
-	// TODO Auto-generated method stub
+    String encodingParam = arg0.getInitParameter("encoding");
+    
+    if(encodingParam != null){
+        encoding = encodingParam;
+    }
 
     }
 

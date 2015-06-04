@@ -65,7 +65,7 @@ public class DatabaseTableCreator {
 				"admin_verification BOOLEAN NOT NULL," +
 				"profile_image BYTEA," +
 				"role ROLE NOT NULL," +
-				"status STATUS NOT NULL" +
+				"status STATUS NOT NULL,veri_string VARCHAR(130) UNIQUE NOT NULL" +
 			");" +
 			"ALTER SEQUENCE users_id_seq RESTART WITH 10000";
     
