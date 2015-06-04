@@ -26,28 +26,27 @@
                                         <div class="col-lg-4">
                                             <div class="input-group">
                                                 <span class="input-group-addon" style="width:80px; text-align:right;">Zeitraum:</span>
-                                                <h:selectOneMenu class="form-control" value="Gesamtes Angebot" id="filterDate">
+                                                <h:selectOneMenu class="form-control" value="#{searchCourseBean.displayPeriod}" id="filterDate">
                                                     <f:selectItem itemValue="day" itemLabel="Tagesangebot" />
                                                     <f:selectItem itemValue="week" itemLabel="Wochenangebot" />
                                                     <f:selectItem itemValue="total" itemLabel="Gesamtes Angebot" />
                                                 </h:selectOneMenu>
-                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Suchen" />
+                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Suchen" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
                                             </div>
                                             <br/>
                                         </div>
-                                        <div class="col-lg-3">
+                                        <h:panelGroup rendered="#{(searchCourseBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+                                        <div class="col-lg-3" >
                                             <div class="input-group">
                                                 <span class="input-group-addon" style="width:100px; text-align:right;">Filtereigenschaft:</span>
-                                                <h:selectOneMenu class="form-control" value="Titel" id="filterProperty">
-                                                    <f:selectItem itemValue="day" itemLabel="Titel" />
-                                                    <f:selectItem itemValue="id" itemLabel="Kurs-ID" />
-                                                    <f:selectItem itemValue="location" itemLabel="Ort" />
+                                                <h:selectOneMenu class="form-control" id="filterProperty" value="#{searchCourseBean.searchParam}">
+                                                    <f:selectItem itemValue="title" itemLabel="Titel" />
+                                                    <f:selectItem itemValue="courseID" itemLabel="Kurs-ID" />
                                                     <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-                                                    <f:selectItem itemValue="time" itemLabel="Zeit" />
-                                                    <f:selectItem itemValue="date" itemLabel="Datum" />
                                                 </h:selectOneMenu>
                                             </div>
                                         </div>
+                                        </h:panelGroup> 
                                         <div class="col-lg-3">
                                             <div class="input-group">
                                                 <h:inputText class="form-control" id="filterInput" style="width:230px;"></h:inputText>
@@ -101,52 +100,13 @@
                                     <div class="row" style="text-align:center;">
                                     <ul class="pagination">
                                     
-                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
-                                                action="#{myCoursesBean.goToSpecificPage}">
+                                        <li><h:commandButton class="btn btn-info" value="Zurück"
+                                                action="#{searchCourseBean.goToSpecificPage()}">
                                                 <f:param name="page" value="back" />
                                             </h:commandButton></li>
-
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber-1}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=2}">
-                                                <f:param name="page"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber-2}" />
-                                            </h:commandButton></li>
-
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=1}">
-                                                <f:param name="page"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber-1}" />
-                                            </h:commandButton></li>
-
-                                        <li><h:commandButton style="font-weight:bold;"
-                                                class="btn btn-primary" id="currentDisplayedPage"
-                                                value="#{myCoursesBean.pagination.currentPageNumber +1}"
-                                                action="#{myCoursesBean.goToSpecificPage}">
-                                                <f:param name="page"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber}" />
-                                            </h:commandButton></li>
-
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber+2}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}">
-                                                <f:param name="page"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber+1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber+3}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+2}">
-                                                <f:param name="page"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber+2}" />
-                                            </h:commandButton></li>
-
+                                            
                                         <li><h:commandButton class="btn btn-info" value="Weiter"
-                                                action="#{myCoursesBean.goToSpecificPage}">
+                                                action="#{searchCourseBean.goToSpecificPage()}">
                                                 <f:param name="page" value="forward" />
                                             </h:commandButton></li>
                                     </ul>

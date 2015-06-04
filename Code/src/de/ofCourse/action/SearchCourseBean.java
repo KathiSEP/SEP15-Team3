@@ -3,13 +3,11 @@
  */
 package de.ofCourse.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -62,7 +60,7 @@ public class SearchCourseBean implements Pagination {
      * it's a list of users.
      */
     private List<Course> searchResult;
-
+    
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -98,11 +96,15 @@ public class SearchCourseBean implements Pagination {
      * using pagination.
      * 
      */
-    public void displayCoursesInSpecificPeriod() {
+    public void displayCoursesInPeriod() {
+    	
     }
 
     @PostConstruct
     public void init() {
+    	displayPeriod = "total";
+    	searchParam = "title";
+    	pagination = new PaginationData();
     	pagination.setCurrentPageNumber(0);
     	pagination.setElementsPerPage(10);
     	pagination.setSortAsc(true);
@@ -115,7 +117,7 @@ public class SearchCourseBean implements Pagination {
      * @return the selected display period
      */
     public String getDisplayPeriod() {
-	return displayPeriod;
+    	return displayPeriod;
     }
 
     /**
@@ -126,6 +128,7 @@ public class SearchCourseBean implements Pagination {
      *            the selected display period
      */
     public void setDisplayPeriod(String displayPeriod) {
+    	this.displayPeriod = displayPeriod;
     }
 
     /**
@@ -136,6 +139,9 @@ public class SearchCourseBean implements Pagination {
      * in the facelet.
      */
     public void search() {
+    	
+    	System.out.println("Suchbegriff im Bean in search: " + searchParam);
+    	
     	transaction = new Connection();
     	transaction.start();
     	searchResult = CourseDAO.getCourses(transaction, pagination,
@@ -149,7 +155,7 @@ public class SearchCourseBean implements Pagination {
      * @return whether only free courses are to be displayed
      */
     public boolean getSearchOnlyFreeCourses() {
-	return searchOnlyFreeCourses;
+    	return searchOnlyFreeCourses;
     }
 
     /**
@@ -159,7 +165,7 @@ public class SearchCourseBean implements Pagination {
      * @return list of found courses
      */
     public List<Course> getSearchResult() {
-	return searchResult;
+    	return searchResult;
     }
 
     /**
@@ -170,16 +176,17 @@ public class SearchCourseBean implements Pagination {
      *            list of users found in the database for the actual search
      */
     public void setSearchResult(List<Course> searchResult) {
+    	this.searchResult = searchResult;
     }
 
-    /**
+	/**
      * Returns the value of the attribute <code>searchParam</code> that stores
      * the selected search parameter.
      * 
      * @return the selected search parameter
      */
     public String getSearchParam() {
-	return searchParam;
+    	return searchParam;
     }
 
     /**
@@ -190,6 +197,7 @@ public class SearchCourseBean implements Pagination {
      *            the selected search parameter
      */
     public void setSearchParam(String searchParam) {
+    	this.searchParam = searchParam;
     }
 
     /**
@@ -199,7 +207,7 @@ public class SearchCourseBean implements Pagination {
      * @return the entered search term
      */
     public String getSearchTerm() {
-	return searchString;
+    	return searchString;
     }
 
     /**
@@ -210,6 +218,7 @@ public class SearchCourseBean implements Pagination {
      *            the entered search term
      */
     public void setSearchString(String searchString) {
+    	this.searchString = searchString;
     }
 
     public boolean isRenderTable() {
@@ -231,7 +240,7 @@ public class SearchCourseBean implements Pagination {
      * @return link to the course detail page
      */
     public String loadCourseDetailPageOfSelectedCourse() {
-	return null;
+    	return "courseDetail";
     }
 
     /**
@@ -265,7 +274,7 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public PaginationData getPagination() {
-	return pagination;
+    	return pagination;
     }
 
     /**
@@ -273,6 +282,7 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+    	this.pagination = pagination;
     }
 
     
@@ -283,7 +293,7 @@ public class SearchCourseBean implements Pagination {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -292,7 +302,8 @@ public class SearchCourseBean implements Pagination {
      * @param userSession
      *            session of the user
      */
-    public void setSessionUser(SessionUserBean userSession) {
+    public void setSessionUser(SessionUserBean sessionUser) {
+    	this.sessionUser = sessionUser;
     }
 
 }

@@ -6,6 +6,7 @@ package de.ofCourse.Database.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,9 +94,164 @@ public class CourseDAO {
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String searchParam, String searchString)
 	    throws InvalidDBTransferException {
-	return null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	List<Course> result = new ArrayList<Course>();
+    	
+    	switch (searchParam) {
+    		case "courseID":
+    			try {
+    				int courseID = Integer.parseInt(searchString);
+    				result = getCoursesByID(conn, courseID);
+    			} catch (NumberFormatException e) {
+    				LogHandler.getInstance().error("Error occoured when parsing the search string to an integer value.");
+    				e.printStackTrace();
+    			}
+    			break;
+    		case "title":
+    			result = getCoursesByTitle(conn, searchString);
+    			break;
+    		case "leader":
+    			result = getCoursesOfLeader(conn, searchString);
+    			break;
+    		default:
+    			;
+    	}
+		return null;
     }
+    
+    private static void setProperties(Course course, List<Object> tuple) {
+		course.setCourseID((Integer) tuple.get(0));
+		course.setTitle((String) tuple.get(1));
+		course.setMaxUsers((Integer) tuple.get(2));
+		course.setStartdate((Date) tuple.get(3));
+		course.setEnddate((Date) tuple.get(4));
+	}
+    
+    private static List<Course> getResult(ResultSet rst) {
+    	List<Course> result = new ArrayList<Course>();
+    	try {
+    		int cols = rst.getMetaData().getColumnCount();
+    		while (rst.next()) {
+    			int i = 1;
+    			List<Object> tuple = new ArrayList<Object>();
+    			Course course = new Course();
+    			while (i <= cols) {
+    				Object o = rst.getObject(i);
+    				tuple.add(o);
+    				i++;
+    			}
+    			setProperties(course, tuple);
+    			result.add(course);
+    		}
+    		if (!result.isEmpty()) {
+    			return result;
+    		}
+    	} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    private static List<Course> getCoursesByID (java.sql.Connection conn, int courseID) {
+    	String getCoursesQuery = "SELECT * FROM \"courses\" " +
+    			"WHERE CAST(id AS TEXT) LIKE '%?%'";
+    	PreparedStatement stmt = null;
+    	ResultSet rst = null;
+    	List<Course> result = null;
+    	
+    	try {
+			stmt = conn.prepareStatement(getCoursesQuery);
+			stmt.setInt(1, courseID);
+			rst = stmt.executeQuery();
+			result = getResult(rst);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rst != null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	return result;
+    }
+    
+    private static List<Course> getCoursesByTitle (java.sql.Connection conn, String title) {
+    	String getCoursesQuery = "SELECT * FROM \"courses\" " +
+				"WHERE titel ILIKE LOWER('%?%')";
+    	PreparedStatement stmt = null;
+    	ResultSet rst = null;
+    	List<Course> result = null;
 
+    	try {
+			stmt = conn.prepareStatement(getCoursesQuery);
+			stmt.setString(1, title);
+			rst = stmt.executeQuery();
+			result = getResult(rst);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rst != null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	return result;
+    }
+    
+    private static List<Course> getCoursesOfLeader (java.sql.Connection conn, String name) {
+    	String getCoursesQuery = "";
+    	PreparedStatement stmt = null;
+    	
+    	ResultSet rst = null;
+    	List<Course> result = null;
+
+    	try {
+			stmt = conn.prepareStatement(getCoursesQuery);
+			stmt.setString(1, name);
+			rst = stmt.executeQuery();
+			result = getResult(rst);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rst != null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	return result;
+    }
+    
     /**
      * Returns a list of courses which titles contain the search term the user
      * has entered. The list is ordered by the passed parameter.
@@ -155,7 +311,7 @@ public class CourseDAO {
      */
     public static Course getCourse(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-	return null;
+    	return null;
     }
 
     /**
