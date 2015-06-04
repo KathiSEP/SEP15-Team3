@@ -179,8 +179,7 @@ public class CourseDAO {
 
 	ArrayList<Course> coursesOf = new ArrayList<Course>();
 	String getCourseQuery = "SELECT id, titel FROM \"courses\" "
-		+ "WHERE courses.id IN (SELECT course_id FROM"
-		+ " \"course_participants\" "
+		+ "WHERE courses.id IN (SELECT course_id FROM \"course_participants\" "
 		+ "WHERE participant_id = ?) ORDER BY ? "
 		+ getSortDirectionAsString(pagination.isSortAsc())
 		+ " LIMIT ? OFFSET ?";
@@ -197,7 +196,6 @@ public class CourseDAO {
 
 	// ////////////////////////////////////////////////////////////////
 	// Überprüfen mit ifs ob weitergemacht werden soll oder nicht
-	// Whrscheinlich currenPageNum -1
 	// ///////////////////////////////////////////////////////////////
 
 	System.out.println(pagination.getElementsPerPage());
@@ -229,52 +227,50 @@ public class CourseDAO {
 		coursesOf.add(fetchedCourse);
 	    }
 
-	    if (coursesOf.size() > 0) {
-		// Fetches the leaders of a course
-		ResultSet fetchedLeaders;
-		for (int i = 0; i < coursesOf.size(); ++i) {
-		    stmt = conn.prepareStatement(getCourseLeadersQuery);
-		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedLeaders = stmt.executeQuery();
-		    while (fetchedLeaders.next()) {
-			User courseAdmin = new User();
-			courseAdmin.setUsername(fetchedLeaders
-				.getString("nickname"));
-			coursesOf.get(i).getCourseAdmins().add(courseAdmin);
-		    }
+	    // Fetches the leaders of a course
+	    ResultSet fetchedLeaders;
+	    for (int i = 0; i < coursesOf.size(); ++i) {
+		stmt = conn.prepareStatement(getCourseLeadersQuery);
+		stmt.setInt(1, coursesOf.get(i).getCourseID());
+		fetchedLeaders = stmt.executeQuery();
+		while (fetchedLeaders.next()) {
+		    User courseAdmin = new User();
+		    courseAdmin.setUsername(fetchedLeaders
+			    .getString("nickname"));
+		    coursesOf.get(i).getCourseAdmins().add(courseAdmin);
 		}
+	    }
 
-		// Fetches the leaders of a course
-		ResultSet fetchedNextUnit;
-		Timestamp stamp;
-		Date date;
-		CourseUnit courseUnit;
+	    // Fetches the leaders of a course
+	    ResultSet fetchedNextUnit;
+	    Timestamp stamp;
+	    Date date;
+	    CourseUnit courseUnit;
 
-		for (int i = 0; i < coursesOf.size(); ++i) {
-		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
-		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedNextUnit = stmt.executeQuery();
-		    while (fetchedNextUnit.next()) {
-			courseUnit = new CourseUnit();
-			stamp = fetchedNextUnit.getTimestamp("start_time");
-			date = new Date(stamp.getYear(), stamp.getMonth(),
-				stamp.getDate(), stamp.getHours(),
-				stamp.getMinutes());
-			courseUnit.setStarttime(date);
-			if (fetchedNextUnit.getString("location") != null) {
-			    courseUnit.setLocation(fetchedNextUnit
-				    .getString("location"));
-			} else {
-			    courseUnit.setLocation("Nicht angegeben");
-			}
-			coursesOf.get(i).setNextCourseUnit(courseUnit);
+	    for (int i = 0; i < coursesOf.size(); ++i) {
+		stmt = conn.prepareStatement(getNextCourseUnitQuery);
+		stmt.setInt(1, coursesOf.get(i).getCourseID());
+		fetchedNextUnit = stmt.executeQuery();
+		while (fetchedNextUnit.next()) {
+		    courseUnit = new CourseUnit();
+		    stamp = fetchedNextUnit.getTimestamp("start_time");
+		    date = new Date(stamp.getYear(), stamp.getMonth(),
+			    stamp.getDate(), stamp.getHours(),
+			    stamp.getMinutes());
+		    courseUnit.setStarttime(date);
+		    if (fetchedNextUnit.getString("location") != null) {
+			courseUnit.setLocation(fetchedNextUnit
+				.getString("location"));
+		    } else {
+			courseUnit.setLocation("Nicht angegeben");
 		    }
+		    coursesOf.get(i).setNextCourseUnit(courseUnit);
 		}
 	    }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occoured during fetching"
-			    + " the next set of courses of a user.");
+	    LogHandler
+		    .getInstance()
+		    .error("Error occoured during fetching the next set of courses of a user.");
 	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	}

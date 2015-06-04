@@ -20,7 +20,7 @@ import de.ofCourse.model.UserStatus;
  * @author Tobias Fuchs
  *
  */
-@ManagedBean
+@ManagedBean(name="sessionUser")
 @SessionScoped
 public class SessionUserBean implements Serializable {
 

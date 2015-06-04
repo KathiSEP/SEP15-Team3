@@ -42,7 +42,23 @@ public class AuthenticateUserBean {
      */
     private User loginUser;
     
+    @ManagedProperty("#{mailBean}")
+    private MailBean mailBean;
     
+    /**
+     * @return the mailBean
+     */
+    public MailBean getMailBean() {
+        return mailBean;
+    }
+
+    /**
+     * @param mailBean the mailBean to set
+     */
+    public void setMailBean(MailBean mailBean) {
+        this.mailBean = mailBean;
+    }
+
     /**
      * The password which was inserted by the user.
      */
@@ -66,7 +82,7 @@ public class AuthenticateUserBean {
 	// Session neu initialisieren, da auf der Login-Seite noch keiner 
 	// eingeloggt sein kann.
 	loginUser = new User();
-	this.sessionUser = new SessionUserBean();
+	//this.sessionUser = new SessionUserBean();
     }
     
     /**
@@ -83,16 +99,18 @@ public class AuthenticateUserBean {
      */
     public String login() {
 	
+        mailBean.sendMail("sebastian@nrschwarz.de", "ich selbset", "testmail", "ich schreibe eine Mail");
 	// Eingegebenes Passwort hashen
-	// TODO salt hinzufügen
-	// String passwordHash = PasswordHash.hashPW(this.loginPassword);
+	// TODO salt hinzufügen    stimmt das so ???
+	String salt = "";
+	String passwordHash = PasswordHash.hash(this.loginPassword, salt);
 	
 	// Neues Transaction Objekt erstellen für die Datenbankverbindung
 	this.transaction = new Connection();
 	transaction.start();
 	
-	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash
-	int id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), this.loginPassword);
+	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
+	int id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
 	
 	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
 	// Passwort falsch sind

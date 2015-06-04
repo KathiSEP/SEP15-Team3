@@ -82,28 +82,27 @@ public class DatabaseConnectionManager {
 	int numberOfConnections = Integer.parseInt(NUMBER_OF_CONNECTIONS);
 	int difference = numberOfConnections
 		- (freeConnections.size() + numberOfConnectionsInUse);
-	
+
 	if (difference > 0) {
 	    for (int i = 0; i < difference; ++i) {
 		freeConnections.add(establishConnection());
 	    }
 	}
-
 	// As long there's no free connection to the database
 	while (freeConnections.isEmpty()) {
 	    try {
 		wait();
 	    } catch (InterruptedException e) {
-		// TODO: Logging message
+		LogHandler.getInstance().error(
+			"Error occured during waiting for a connection.");
 	    }
 	}
-
 	// There's a free connection
 	int indexLastElement = freeConnections.size() - 1;
 	Connection connection = freeConnections.get(indexLastElement);
 	freeConnections.remove(indexLastElement);
 	++numberOfConnectionsInUse;
-	
+	LogHandler.getInstance().debug("Connection returned.");
 	return connection;
     }
 
@@ -115,9 +114,11 @@ public class DatabaseConnectionManager {
 	    if (!connection.isClosed() && connection != null) {
 		--numberOfConnectionsInUse;
 		freeConnections.add(connection);
+		LogHandler.getInstance().debug("Connection released.");
 	    }
 	} catch (SQLException e) {
-	    // TODO Logging message
+	    LogHandler.getInstance().error(
+		    "Error occured during releasing the connection.");
 	}
 	// Notifies all waiting threads that there's a free connection
 	notifyAll();
@@ -132,7 +133,7 @@ public class DatabaseConnectionManager {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
 	    int numberOfConnections = Integer.parseInt(NUMBER_OF_CONNECTIONS);
-	    
+
 	    for (int i = 0; i < numberOfConnections; ++i) {
 		Connection conn = establishConnection();
 		if (conn != null) {
@@ -170,9 +171,12 @@ public class DatabaseConnectionManager {
 			    .getInstance().getPropertyConfig("dbpassword"));
 	    connection.setAutoCommit(false);
 	} catch (SQLException e) {
-	    // TODO: Logging message
-		System.out.println("SQLEXCEPTION");
+	    LogHandler.getInstance().error(
+		    "Error occured during establishing a database"
+			    + "connection. Please check whether the login"
+			    + " credentials a set correct.");
 	}
+	LogHandler.getInstance().debug("Connection established.");
 	return connection;
     }
 
@@ -186,7 +190,9 @@ public class DatabaseConnectionManager {
 		try {
 		    connection.close();
 		} catch (SQLException e) {
-		    // TODO: Logging message
+		    LogHandler.getInstance().error(
+			    "Error occured during closing"
+				    + " the connections to the database.");
 		}
 	    }
 	}
@@ -199,7 +205,8 @@ public class DatabaseConnectionManager {
 	try {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
-	    // TODO: Logging message
+	    LogHandler.getInstance().error(
+		    "Error occoured during" + " loading the database driver!");
 	}
     }
 }

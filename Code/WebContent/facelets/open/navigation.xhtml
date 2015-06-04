@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
-	  xmlns:f="http://java.sun.com/jsf/core">
-	<h:body>
-		<ui:composition>
-			<nav class="navbar navbar-default">
-				<div class="container-fluid">
-					<div class="navbar-header">
-	    				<button type="button" class="collapsed navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-   				        	<span class="sr-only">Toggle navigation</span>
-					        <span class="icon-bar"></span>
-					        <span class="icon-bar"></span>
-					        <span class="icon-bar"></span>
-	    				</button>
-						<a class="navbar-brand" href="#{request.contextPath}">
-							<h:graphicImage value="/resources/img/logo.png" alt="Logo" title="OfCourse" width="170"/>
-						</a>
-	    			</div>
-	    			<div class="navbar-collapse collapse navbar-right">
-	    				<h:form>
-	    					<h:commandButton class="btn btn-danger navbar-btn btn-minsize" value="Logout" action="#{navigationBean.logout}" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}" />
-	    					<h:commandButton class="btn btn-success btn-minsize navbar-btn" value="Registrieren/Login" action="/facelets/open/authenticate.xhtml" rendered="#{!(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}" />
-	    					<h:commandLink action="#{navigationBean.sessionUser.setLanguage('de')}" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}">
-	    						<h:graphicImage url="/resources/img/germanFlag.gif" alt="DE" title="Deutsche Version" width="50"/>
-	    					</h:commandLink>
-	    					<h:commandLink action="#{navigationBean.sessionUser.setLanguage('en')}" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}">
-	    						<h:graphicImage url="/resources/img/englishFlag.gif" alt="EN" title="English Version" width="50"/>
-    						</h:commandLink>
-	    				</h:form>
-	    			</div>
-	    			<ul class="nav navbar-nav collapse navbar-collapse">
-	    				<li><h:outputLink value="#{request.contextPath}/facelets/open/courses/search.xhtml">Suche</h:outputLink></li>
-	    				<li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' or 'COURSE_LEADER' or 'SYSTEM_ADMINISTRATOR'))}">Profil</h:outputLink></li>
-	    				<li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/myCourses.xhtml" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}">Meine Kurse</h:outputLink></li>
-	    				<li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/scheduler.xhtml" rendered="#{(navigationBean.sessionUser.userRole == ('REGISTERED_USER' || 'COURSE_LEADER' || 'SYSTEM_ADMINISTRATOR'))}">Terminplaner</h:outputLink></li>
-	    				<li><h:outputLink value="#{request.contextPath}/facelets/user/systemAdministrator/adminManagement.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Administration</h:outputLink></li>
-	    			</ul>
-				</div>
-			</nav>
-		</ui:composition>
-	</h:body>
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <ui:composition>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="collapsed navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#{request.contextPath}">
+                            <h:graphicImage value="/resources/img/logo.png" alt="Logo" title="OfCourse" width="170"/>
+                        </a>
+                    </div>
+                    <div class="navbar-collapse collapse navbar-right">
+                        <h:form>
+                            <h:commandButton class="btn btn-danger navbar-btn btn-minsize" value="Logout" action="#{navigationBean.logout}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
+                            <h:commandButton class="btn btn-success btn-minsize navbar-btn" value="Registrieren/Login" action="/facelets/open/authenticate.xhtml" rendered="#{!(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
+                            <h:commandLink action="#{navigationBean.sessionUser.setLanguage('de')}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+                                <h:graphicImage url="/resources/img/germanFlag.gif" alt="DE" title="Deutsche Version" width="50"/>
+                            </h:commandLink>
+                            <h:commandLink action="#{navigationBean.sessionUser.setLanguage('en')}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+                                <h:graphicImage url="/resources/img/englishFlag.gif" alt="EN" title="English Version" width="50"/>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                    <ul class="nav navbar-nav collapse navbar-collapse">
+                        <li><h:outputLink value="#{request.contextPath}/facelets/open/courses/search.xhtml">Suche</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Profil</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/myCourses.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Meine Kurse</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/scheduler.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Terminplaner</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/systemAdministrator/adminManagement.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Administration</h:outputLink></li>
+                    </ul>
+                </div>
+            </nav>
+        </ui:composition>
+    </h:body>
 </html>

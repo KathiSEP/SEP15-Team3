@@ -3,12 +3,28 @@
  */
 package de.ofCourse.action;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+
+
+
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
+
 import de.ofCourse.model.SmtpServer;
+import de.ofCourse.utilities.PropertyManager;
 
 /**
  * Sends emails to lists of recipients and provides the service of sending
@@ -19,7 +35,7 @@ import de.ofCourse.model.SmtpServer;
  * 
  * @author Tobias Fuchs
  */
-@ManagedBean
+@ManagedBean(eager = true)
 @ApplicationScoped
 public class MailBean {
 
@@ -28,6 +44,22 @@ public class MailBean {
      */
     private SmtpServer smtpServer;
 
+    
+    
+    @PostConstruct
+    private void init(){
+        smtpServer = new SmtpServer();
+        
+        smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail("smtphost"));
+        smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail("smtpport")));
+        //TODO fehlt noch
+        smtpServer.setSsl(true);
+        smtpServer.setUsername(PropertyManager.getInstance().getPropertyMail("mailusername"));
+        smtpServer.setPassword(PropertyManager.getInstance().getPropertyMail("mailpassword"));
+        
+    }
+    
+    
     /**
      * 
      * Sends an email to a list of recipients. The email contains a subject and
@@ -42,8 +74,53 @@ public class MailBean {
      * @param message
      *            message of the email
      */
-    public void sendMail(List<String> recipients, String sender,
+    public void sendMail(String recipients, String sender,
 	    String subject, String message) {
+        //für testzwecke nur eine mail List<String>
+        Properties prop = new Properties();
+        
+        
+        Authenticator loginAuth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication(){
+                PasswordAuthentication loginData = new PasswordAuthentication(smtpServer.getUsername(), smtpServer.getPassword());
+                return loginData;
+            }
+            
+            
+        };
+        
+        
+        // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
+        prop.put("mail.smtp.host", this.smtpServer.getHostaddr());
+        prop.put("mail.smtph.port", this.smtpServer.getPort());
+        
+        
+        Session session = Session.getDefaultInstance(prop, loginAuth);
+        
+        try{
+            // https://javamail.java.net/nonav/docs/api/
+            MimeMessage mail = new MimeMessage(session);
+            
+            mail.setFrom(new InternetAddress(sender, "OfCourse"));
+            mail.addRecipient(Message.RecipientType.TO, new InternetAddress("sebastian@nrschwarz.de"));
+            
+            mail.setSubject("Testmail");
+            mail.setText("Hallo Sebastian, Email versand funktioniert");
+            
+            Transport trans = session.getTransport("smtps");
+            trans.connect(prop.getProperty("mail.smtp.host"), smtpServer.getUsername() , smtpServer.getPassword());
+            trans.sendMessage(mail, mail.getAllRecipients());
+            System.out.println("Mail wird verschickt");
+            trans.close();
+        }catch (MessagingException e){
+            //TODO Logging
+            System.out.println("Fehler!");
+            
+        } catch (UnsupportedEncodingException e){
+            System.out.println("EingabeFehler");
+            //TODO Logging
+        }
     }
 
     /**

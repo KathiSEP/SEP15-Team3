@@ -1,13 +1,16 @@
+
 /**
  * This package represents the business logic of the ofCourse system.
  */
 package de.ofCourse.action;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import de.ofCourse.Database.dao.UserDAO;
@@ -60,6 +63,38 @@ public class RegisterUserBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    @ManagedProperty("#{mailBean}")
+    private MailBean mail;
+    
+    /**
+     * @return the mail
+     */
+    public MailBean getMail() {
+        return mail;
+    }
+
+    /**
+     * @param mail the mail to set
+     */
+    public void setMail(MailBean mail) {
+        this.mail = mail;
+    }
+
+    @PostConstruct
+    private void init(){
+	 HttpServletRequest request = (HttpServletRequest) FacesContext
+	      .getCurrentInstance().getExternalContext().getRequest();
+	 String veriString = request.getParameter("veri");
+	 
+	 if(veriString != null && veriString.length() > 0) {
+	     if(UserDAO.verifyUser(this.transaction, veriString)) {
+		 // Erfolgsmeldung
+	     } else {
+		 // Fehlermeldung
+	     }
+	 }
+    }
 
     /**
      * Registers a new user with the entered user data in the system.<br>
@@ -71,9 +106,12 @@ public class RegisterUserBean {
      */
     public String registerUser() {
 	
+	String veriString = "";
+	
 	// Eingegebenes Passwort hashen
-	// TODO salt
-	String passwordHash = PasswordHash.hashPW(this.getRegisterPassword(), );
+	// TODO salt  Stimmt das so????
+	String salt = "";
+	String passwordHash = PasswordHash.hash(this.getRegisterPassword(), salt );
 	
 	// Datenbankverbindung initialisieren
 	this.transaction = new Connection();
@@ -92,10 +130,14 @@ public class RegisterUserBean {
 	    
 	    // Gibt es die angegebene E-Mail-Adresse noch nicht, erstelle einen
 	    // neuen Benutzer.
-	    UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
+	    veriString = UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
+
+	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
+	    
+	    mail.sendAuthentificationMessage(userID, veriString);
 	}
 	
-	// TODO Erfolgsmeldung ausgeben
+	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)
 	
 	return "/facelets/open/index.xhtml?faces-redirect=false";
     }

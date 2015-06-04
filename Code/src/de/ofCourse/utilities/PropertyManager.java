@@ -6,7 +6,10 @@ package de.ofCourse.utilities;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
 import javax.faces.context.FacesContext;
+
+import de.ofCourse.system.LogHandler;
 
 /**
  * Provides the functionality to read out a property file, which contains system
@@ -116,7 +119,6 @@ public class PropertyManager {
 	if (configFileLoaded && !configProperty.equals(null)) {
 	    readValue = configProperty.getProperty(key).toString();
 	}
-
 	return readValue;
     }
 
@@ -136,7 +138,6 @@ public class PropertyManager {
 	if (loggingConfigFileLoaded && !loggingConfigProperty.equals(null)) {
 	    readValue = loggingConfigProperty.getProperty(key).toString();
 	}
-
 	return readValue;
     }
 
@@ -155,7 +156,6 @@ public class PropertyManager {
 	if (mailConfigFileLoaded && !mailConfigProperty.equals(null)) {
 	    readValue = mailConfigProperty.getProperty(key).toString();
 	}
-
 	return readValue;
     }
 
@@ -169,7 +169,6 @@ public class PropertyManager {
      *         null, otherwise
      */
     private static Properties loadConfigProperty() {
-
 	Properties property = new Properties();
 
 	try {
@@ -177,15 +176,13 @@ public class PropertyManager {
 		    .getExternalContext()
 		    .getResourceAsStream(CONFIGFILEPATH + CONFIGFILENAME));
 	    configFileLoaded = true;
-
 	} catch (FileNotFoundException e) {
 	    configFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the config property. Config poperty not found.");
 	} catch (IOException e) {
 	    configFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the config property.");
 	}
-
 	return property;
     }
 
@@ -206,15 +203,13 @@ public class PropertyManager {
 		    .getExternalContext()
 		    .getResourceAsStream(LOGGINGFILEPATH + LOGGINGFILENAME));
 	    loggingConfigFileLoaded = true;
-
 	} catch (FileNotFoundException e) {
 	    loggingConfigFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the logging property. Logging poperty not found.");
 	} catch (IOException e) {
 	    loggingConfigFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the logging property.");
 	}
-
 	return property;
     }
 
@@ -235,15 +230,13 @@ public class PropertyManager {
 		    .getExternalContext()
 		    .getResourceAsStream(EMAILFILEPATH + EMAILFILENAME));
 	    mailConfigFileLoaded = true;
-
 	} catch (FileNotFoundException e) {
 	    mailConfigFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the mail property. Mail poperty not found.");
 	} catch (IOException e) {
 	    mailConfigFileLoaded = false;
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during loading the mail property.");
 	}
-
 	return property;
     }
 }
