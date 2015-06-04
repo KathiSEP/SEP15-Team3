@@ -12,6 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
@@ -348,7 +351,6 @@ public class UserDAO {
 		case "INACTIVE":
 		    userStatus = UserStatus.INACTIVE;
 		    break;
-		default:
 		}
 	    } else {
 		userStatus = null;
@@ -407,7 +409,6 @@ public class UserDAO {
 		case "SYSTEM_ADMINISTRATOR":
 		    userRole = UserRole.SYSTEM_ADMINISTRATOR;
 		    break;
-		default:
 		}
 	    } else {
 		userRole = null;
@@ -590,8 +591,6 @@ public class UserDAO {
                 	case "MS":
                 	    user.setSalutation(Salutation.MS);
                 	    break;
-                	default:
-                	    //TODO Fehlermeldung nötig?
                 	}
         	
         	user.setProfilImage(res.getString("profile_image"));
@@ -605,8 +604,6 @@ public class UserDAO {
         		case "SYSTEM_ADMINISTRATOR":
         		    user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
         		    break;
-        		default:
-        		     //TODO Fehlermeldung nötig ? 
         		}
         	
         	String userStatus =res.getString("status");
@@ -620,8 +617,6 @@ public class UserDAO {
         		case "INACTIVE":
         		    user.setUserStatus(UserStatus.INACTIVE);
         		    break;
-        		default:
-        		    //TODO Fehlermeldung nötig ?
         		}
 
         	//neue Datenbankabfrage für die Adresse des Benutzers
@@ -637,14 +632,21 @@ public class UserDAO {
         	    address.setStreet(res.getString("street"));
         	    address.setHouseNumber(res.getInt("house_nr"));
         	} else {
-        	    //Fehler
+        	    address = null;
         	}
         	//dem Userobjekt das Adressobjekt zuweisen
     	    	user.setAddress(address);
 	    }
 	    else
 	    {
-		//TODO Fehler, kein Benutzer mit diesem Benutzernamen
+		
+		// Fehler, kein Benutzer mit diesem Benutzernamen
+	        FacesContext facesContext = FacesContext.getCurrentInstance();
+	        FacesMessage msg = new FacesMessage("Es existiert kein Benutzer mit diesem Benutzernamen.");
+	        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+	        facesContext.addMessage(null, msg);
+	        facesContext.renderResponse();
+	        
 		user = null;
 	    }
 
@@ -699,11 +701,17 @@ public class UserDAO {
 		//id mit zugehörigem Wert aus der Datenbank füllen.
 		id = res.getInt("id");
 		
-    	    	//TODO Attribute belegen
+    	    	
 	    }
 	    else
 	    {
-		//TODO Fehler, kein Benutzer mit diesem Benutzernamen
+		// Fehler, kein Benutzer mit diesem Benutzernamen
+	        FacesContext facesContext = FacesContext.getCurrentInstance();
+	        FacesMessage msg = new FacesMessage("Es existiert kein Benutzer mit diesem Benutzernamen.");
+	        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+	        facesContext.addMessage(null, msg);
+	        facesContext.renderResponse();
+	        
 		id = -1;
 	    }
 
