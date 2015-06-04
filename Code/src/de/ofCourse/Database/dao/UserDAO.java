@@ -263,7 +263,39 @@ public class UserDAO {
      */
     public static User getUser(Transaction trans, int userID)
     		throws InvalidDBTransferException {
-	
+        
+        User user = new User();
+        
+        
+        
+        PreparedStatement prep = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        //Datenbankabfrage
+        String sql = "SELECT * FROM \"users\" WHERE id=?";
+        
+        try{
+            prep = conn.prepareStatement(sql);        
+            prep.setInt(1, userID);
+            
+            //preparedStatement ausführen, gibt resultSet als Liste zurück (hier
+            //ein Eintrag in der Liste, da Benutzername einzigartig).
+            ResultSet res = prep.executeQuery();
+            if(res.next()){
+                String username = res.getString("nickname");
+                user = getUser(trans, username);
+                return user;
+            } else {
+                
+                //kein Benutzer mit der ID;
+                return null;
+            }
+        
+        } catch(SQLException e){
+            //TODO logger und Fehlermeldung
+        }
+        
 	return null;
     }
     
