@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.ofCourse.utilities.PropertyManager;
 
@@ -91,6 +92,7 @@ public class DatabaseConnectionManager {
 	// If there are not the number of connections active as determined in
 	// the configuration file
 	int numberOfConnections;
+
 	if (debug) {
 	    numberOfConnections = 3;
 	} else {
@@ -102,7 +104,10 @@ public class DatabaseConnectionManager {
 
 	if (difference > 0) {
 	    for (int i = 0; i < difference; ++i) {
-		freeConnections.add(establishConnection());
+		Connection conn = establishConnection();
+		if (conn != null) {
+		    databaseConnectionManager.freeConnections.add(conn);
+		}
 	    }
 	}
 	// As long there's no free connection to the database
@@ -124,11 +129,22 @@ public class DatabaseConnectionManager {
 	Connection connection = freeConnections.get(indexLastElement);
 	freeConnections.remove(indexLastElement);
 	++numberOfConnectionsInUse;
-	if (debug) {
-	    System.out.println("LOGGING MESSAGE:   " + "Connection returned.");
+	if (connection != null) {
+	    if (debug) {
+		System.out.println("LOGGING MESSAGE:   "
+			+ "Connection returned.");
+	    } else {
+		LogHandler.getInstance().debug("Connection returned.");
+	    }
 	} else {
-	    LogHandler.getInstance().debug("Connection returned.");
+	    if (debug) {
+		System.out.println("LOGGING MESSAGE:   "
+			+ "Connection is null.");
+	    } else {
+		LogHandler.getInstance().debug("Connection is null.");
+	    }
 	}
+
 	return connection;
     }
 
@@ -184,6 +200,7 @@ public class DatabaseConnectionManager {
 		}
 	    }
 	}
+
 	return databaseConnectionManager;
     }
 
@@ -209,7 +226,8 @@ public class DatabaseConnectionManager {
 		System.out.println("LOGGING MESSAGE:   "
 			+ "Error occured during establishing a database"
 			+ "connection. Please check whether the login"
-			+ " credentials a set correct.");
+			+ " credentials are set correctly and the"
+			+ " connection to the database is alive.");
 	    }
 	} else {
 	    try {
@@ -231,7 +249,8 @@ public class DatabaseConnectionManager {
 		LogHandler.getInstance().error(
 			"Error occured during establishing a database"
 				+ "connection. Please check whether the login"
-				+ " credentials a set correct.");
+				+ " credentials are set correctly  and the"
+				+ " connection to the database is alive.");
 
 	    }
 	}
@@ -243,17 +262,18 @@ public class DatabaseConnectionManager {
      * all connections.
      */
     public void shutDown() {
-	for (Connection connection : this.freeConnections) {
+	ListIterator<Connection> it = freeConnections.listIterator(0);
+
+	while (it.hasNext()) {
+	    Connection connection = it.next();
 	    if (connection != null) {
 		try {
-		    freeConnections.remove(connection);
 		    connection.close();
 		    if (debug) {
 			System.out.println("LOGGING MESSAGE:   "
 				+ "Connection closed.");
 		    } else {
-			LogHandler.getInstance().error(
-				"Connection closed.");
+			LogHandler.getInstance().error("Connection closed.");
 		    }
 		} catch (SQLException e) {
 		    if (debug) {
@@ -268,6 +288,8 @@ public class DatabaseConnectionManager {
 		}
 	    }
 	}
+
+	freeConnections.clear();
     }
 
     /**
