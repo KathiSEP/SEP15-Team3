@@ -10,6 +10,10 @@ package de.ofCourse.model;
  *
  */
 public class Address {
+    
+    public Address() {
+	
+    }
 
     /**
      * stores the id of the address
@@ -33,12 +37,12 @@ public class Address {
      * stores the houseNumber where the user lives or where the course
      * will be hold
      */
-    private int houseNumber;
+    private Integer houseNumber;
     /**
      * stores the zipdCode where the user lives or where the course will be
      * hold
      */
-    private int zipCode;
+    private Integer zipCode;
 
     /*
      * (non-Javadoc)
@@ -90,7 +94,7 @@ public class Address {
      * 
      * @return the houseNumber where the user lives or the course will be hold
      */
-    public int getHouseNumber() {
+    public Integer getHouseNumber() {
 	return this.houseNumber;
     }
 
@@ -99,7 +103,7 @@ public class Address {
      * 
      * @return the zipCode where the user lives or the course will be hold
      */
-    public int getZipCode() {
+    public Integer getZipCode() {
 	return this.zipCode;
     }
 
@@ -149,7 +153,7 @@ public class Address {
      * @param houseNumber
      *          the new houseNumber to set
      */
-    public void setHouseNumber(int houseNumber) {
+    public void setHouseNumber(Integer houseNumber) {
 	this.houseNumber = houseNumber;
     }
 
@@ -159,7 +163,7 @@ public class Address {
      * @param zipCode
      *          the new zipCode to set
      */
-    public void setZipCode(int zipCode) {
+    public void setZipCode(Integer zipCode) {
 	this.zipCode = zipCode;
     }
 

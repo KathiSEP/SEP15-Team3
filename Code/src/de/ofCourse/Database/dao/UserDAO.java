@@ -265,8 +265,7 @@ public class UserDAO {
     		throws InvalidDBTransferException {
         
         User user = new User();
-        
-        
+             
         
         PreparedStatement prep = null;
         Connection connection = (Connection) trans;

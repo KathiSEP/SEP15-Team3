@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.model.Address;
 import de.ofCourse.model.Language;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -101,7 +102,9 @@ public class RegisterUserBean {
 		 // Fehlermeldung
 	     }
 	 }
-	 userToRegistrate = new User();
+	 this.userToRegistrate = new User();
+	 this.userToRegistrate.setAddress(new Address());
+	 System.out.println("test");
     }
 
     /**
@@ -113,6 +116,8 @@ public class RegisterUserBean {
      * username is already in use, a error message is displayed.
      */
     public String registerUser() {
+	
+	System.out.println("register");
 	
 	String veriString = "";
 	
