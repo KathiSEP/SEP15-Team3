@@ -15,7 +15,8 @@ import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
- * Checks whether the entered user name already exists in the system.
+ * Checks whether the entered user name already exists in the system and if it 
+ * has a length between 5 and 100 signs.
  * 
  * @author Katharina Hölzl
  *
@@ -27,7 +28,7 @@ public class UserNameValidator implements Validator {
     /**
      * Gets called when you want to register or change your user name when 
      * you’re already registered. The method checks if the entered user name 
-     * already exists in the system.
+     * already exists in the system and if it's length is between 5 and 100 signs.
      */
     @Override
     public void validate(FacesContext arg0, UIComponent arg1, Object value)

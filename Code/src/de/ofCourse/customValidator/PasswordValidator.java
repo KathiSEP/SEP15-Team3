@@ -16,7 +16,8 @@ import javax.faces.validator.ValidatorException;
 
 /**
  * Checks whether the inserted password fulfills certain security requirements
- * regarding length and choice of signs.
+ * regarding length and choice of signs and if the two insertet passwords are 
+ * equal.
  * 
  * @author Katharina Hölzl
  *
@@ -30,7 +31,8 @@ public class PasswordValidator implements Validator {
      * already registered. The method checks if the provided requirements like
      * usage of at least 8 signs, usage of at least one special character, usage
      * of at least one number and usage of lower and upper case. Furthermore
-     * it's not allowed to use mutations like 'ß'.
+     * it's not allowed to use mutations like 'ß'. On top of that it checks if
+     * the two inserted passwords are equal.
      */
 
     private Pattern pattern;
@@ -71,7 +73,7 @@ public class PasswordValidator implements Validator {
 	    throw new ValidatorException(
 		    new FacesMessage(
 			    "Das Passwort muss mindestens "
-			    + "ein Sonderzeichen, Ziffern und Groß- und "
+			    + "ein Sonderzeichen (@,#,$,%,!,_,?,&), Ziffern und Groß- und "
 			    + "Kleinbuchstaben enthalten. ß, ä, ö, ü sind "
 			    + "nicht erlaubt."));
 	}

@@ -421,6 +421,17 @@ public class UserDAO {
 	return userRole;
     }
     
+    /**
+     * 
+     * @param trans
+     *  	the Transaction object which contains the connection to the
+     *          database
+     * @param veriString
+     * 		
+     * @return
+     * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+     */
     public static boolean verifyUser(Transaction trans, String veriString) 
 	    throws InvalidDBTransferException{   
 	boolean success = false;
@@ -572,11 +583,11 @@ public class UserDAO {
         	user.setEmail(res.getString("email"));
         	user.setDateOfBirth(new java.util.Date(res.getDate("date_of_birth").getTime()));
         	
-        	String salutation =res.getString("form_of_adress");
+        	String salutation =res.getString("form_of_address");
                 	switch(salutation){
-                	case "mr":
+                	case "MR":
                 	    user.setSalutation(Salutation.MR);
-                	case "ms":
+                	case "MS":
                 	    user.setSalutation(Salutation.MS);
                 	default:
                 	    //TODO Fehlermeldung nötig?
@@ -586,11 +597,11 @@ public class UserDAO {
         	
         	String userRole = res.getString("role");
         		switch(userRole) {
-        		case "registered_user":
+        		case "REGISTERED_USER":
         		    user.setUserRole(UserRole.REGISTERED_USER);
-        		case "course_instructor":
+        		case "COURSE_LEADER":
         		    user.setUserRole(UserRole.COURSE_LEADER);
-        		case "administrator":
+        		case "SYSTEM_ADMINISTRATOR":
         		    user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
         		default:
         		     //TODO Fehlermeldung nötig ? 
@@ -598,13 +609,13 @@ public class UserDAO {
         	
         	String userStatus =res.getString("status");
         		switch(userStatus){
-        		case "anonymous":
+        		case "ANONYMOUS":
         		    user.setUserStatus(UserStatus.ANONYMOUS);
-        		case "not_activated":
+        		case "NOT_ACTIVATED":
         		    user.setUserStatus(UserStatus.NOT_ACTIVATED);
-        		case "registered":
+        		case "REGISTERED":
         		    user.setUserStatus(UserStatus.REGISTERED);
-        		case "inactive":
+        		case "INACTIVE":
         		    user.setUserStatus(UserStatus.INACTIVE);
         		default:
         		    //TODO Fehlermeldung nötig ?

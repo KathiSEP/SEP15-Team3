@@ -267,10 +267,19 @@ public class RegisterUserBean {
         return userToRegistrate;
     }
 
+    /**
+     * Returns the value of the attribute <code>SaluString</code>.
+     * @return the verification string
+     */
     public String getSaluString() {
 	return saluString;
     }
 
+    /**
+     * Sets the value of the attribute <code>SaluString</code>.
+     * @param saluString
+     * 			String to verify
+     */			
     public void setSaluString(String saluString) {
 	this.saluString = saluString;
     }

@@ -14,8 +14,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- * Checks whether the inserted password fulfills certain security requirements
- * regarding length and choice of signs.
+ * Checks whether the inserted e-mail has a correct format.
  * 
  * @author Katharina Hölzl
  *
@@ -25,11 +24,9 @@ import javax.faces.validator.ValidatorException;
 public class EmailValidator implements Validator {
 
     /**
-     * Gets called when you want to register or change your password when you’re
-     * already registered. The method checks if the provided requirements like
-     * usage of at least 8 signs, usage of at least one special character, usage
-     * of at least one number and usage of lower and upper case. Furthermore
-     * it's not allowed to use mutations like 'ß'.
+     * Gets called when you want to register, change your e-mail or lost your 
+     * password. The method checks if the e-mail has a valid format and if 
+     * if it has more than 319 signs.
      */
     private Pattern pattern;
     private Matcher matcher;
