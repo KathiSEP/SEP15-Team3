@@ -4,8 +4,6 @@
 package de.ofCourse.customValidator;
 
 import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -34,25 +32,22 @@ public class DateOfBirthValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent arg1, Object value)
 	    throws ValidatorException {
 	Date dateToday = new Date();
-	String dateOfBirthString = value.toString();
-
+	Date dateOfBirth = null;
+	
 	try {
-	    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-	    Date dateOfBirth = format.parse(dateOfBirthString);
-
+	    dateOfBirth = (Date) value;
+	} catch(Exception e) {
+	    throw new ValidatorException(new FacesMessage("Datum muss im Format dd.MM.yyyy angegeben werden."));
+	}
+	
 	    long spread = dateToday.getTime() - dateOfBirth.getTime();
-	    long hundredFiftyYears = 150 * 365 * 24 * 60 * 60;
+	    long hundredFiftyYears = 4730400000000L;
 	    long past = dateToday.getTime() - hundredFiftyYears;
 
 	    if ((spread < 0) || (dateOfBirth.getTime() < past)) {
 		throw new ValidatorException(new FacesMessage("Datum liegt in "
 			+ "der Zukunft oder mehr als 150 Jahre zurück."));
 	    }
-
-	} catch (ParseException e) {
-	    throw new ValidatorException(new FacesMessage("Datum muss dem"
-		    + "Format dd.MM.yyyy entsprechen."));
-	}
     }
 
 }

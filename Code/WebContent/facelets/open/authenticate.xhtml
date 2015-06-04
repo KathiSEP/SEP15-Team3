@@ -86,8 +86,9 @@
                                     <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordRegister"
-                                                       value="#{registerUserBean.registerPassword}" binding="#{passwordRegister}" 
+                                                       value="#{registerUserBean.registerPassword}" 
                                                        required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
+                                                       <f:attribute name="confirmPassword" value="#{confirmPassword}" />
                                                      <f:validator validatorId="passwordValidator" />
                                         </h:inputSecret>
                                     </div>
@@ -96,9 +97,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordConfirmRegister"
                                                        value="#{registerUserBean.registerConfirmPassword}"
-                                                       required="true"  requiredMessage="Bitte geben Sie Ihr Passwort zur Bestätigung ein. ">
-                                                       <f:attribute name="passwordRegister" value="#{passwordRegister}" />
-                                                     <f:validator validatorId="confirmPasswordValidator"/>
+                                                       required="true"  requiredMessage="Bitte geben Sie Ihr Passwort zur Bestätigung ein. " binding="#{confirmPassword}">
+                                                       
                                         </h:inputSecret>
                                     </div>
                                     
@@ -106,8 +106,9 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="birthdateRegister"
                                                      value="#{registerUserBean.userToRegistrate.dateOfBirth}"
-                                                     converterMessage="Datum existiert nicht oder Format (yyyy-MM-dd) ist falsch. " >
-                                                     <f:convertDateTime pattern="yyyy-MM-dd" timeZone="Europe/Berlin" />
+                                                     converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. " >
+                                                     <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
+                                                     <f:validator validatorId="dateOfBirthValidator" />
                                         </h:inputText>
                                     </div>
                                     
@@ -163,9 +164,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="emailRegister"
                                                      value="#{registerUserBean.userToRegistrate.email}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie Ihre E-MAil-Adresse ein. "
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 319 Zeichen lang sein und ein gültiges Format haben. ">
-                                                     <f:validateLength minimum ="1" maximum="319" />
+                                                     required="true"  requiredMessage="Bitte geben Sie Ihre E-MAil-Adresse ein. ">
+                                                     <f:validator validatorId="emailValidator" />
                                         </h:inputText>
                                     </div>
                                     
