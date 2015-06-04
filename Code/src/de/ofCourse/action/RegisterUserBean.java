@@ -52,6 +52,13 @@ public class RegisterUserBean {
      */
     private User userToRegistrate;
     
+    /**
+     * @param userToRegistrate the userToRegistrate to set
+     */
+    public void setUserToRegistrate(User userToRegistrate) {
+        this.userToRegistrate = userToRegistrate;
+    }
+
     private String registerPassword;
     
     private String registerConfirmPassword;
@@ -94,6 +101,7 @@ public class RegisterUserBean {
 		 // Fehlermeldung
 	     }
 	 }
+	 userToRegistrate = new User();
     }
 
     /**
