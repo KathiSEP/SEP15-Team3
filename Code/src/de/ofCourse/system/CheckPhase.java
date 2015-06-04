@@ -68,7 +68,6 @@ public class CheckPhase implements PhaseListener {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
     
-    private Transaction transaction;
 
     /**
      * Constructor of the class <code>CheckPhase</code>.<br>
@@ -258,7 +257,7 @@ public class CheckPhase implements PhaseListener {
 	try {
 	    ctx.redirect(ctx.getRequestContextPath() + page);
 	} catch (IOException e) {
-	    // TODO: Logging message
+	    LogHandler.getInstance().error("Error during redirecting.");
 	}
     }
 
