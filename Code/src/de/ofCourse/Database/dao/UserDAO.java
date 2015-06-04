@@ -630,18 +630,23 @@ public class UserDAO {
         		    break;
         		}
 
+        	conn.commit();
         	//neue Datenbankabfrage für die Adresse des Benutzers
-        	sql = "SELECT * FROM addresses WHERE user=?";
-        	pS.setInt(1, user.getUserID()); 
+        	sql = "SELECT * FROM \"addresses\" WHERE user_id=?";
+        	PreparedStatement pr = null;
+        	pr = conn.prepareStatement(sql);
+        	pr.setInt(1, user.getUserID()); 
         	
-        	res = pS.executeQuery();
-        	if(res.next()) {
-        	    address.setId(res.getInt("id"));
-        	    address.setCity(res.getString("city"));
-        	    address.setCountry(res.getString("country"));
-        	    address.setZipCode(res.getInt("zip_code"));
-        	    address.setStreet(res.getString("street"));
-        	    address.setHouseNumber(res.getInt("house_nr"));
+        	ResultSet res2 = pr.executeQuery();
+        	
+        	
+        	if(res2.next()) {
+        	    address.setId(res2.getInt("id"));
+        	    address.setCity(res2.getString("city"));
+        	    address.setCountry(res2.getString("country"));
+        	    address.setZipCode(res2.getInt("zip_code"));
+        	    address.setStreet(res2.getString("street"));
+        	    address.setHouseNumber(res2.getInt("house_nr"));
         	} else {
         	    address = null;
         	}
