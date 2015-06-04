@@ -569,8 +569,8 @@ public class UserDAO {
 		user.setUserId(res.getInt("id"));
         	user.setFirstname(res.getString("first_name"));
         	user.setLastname(res.getString("name"));
-        	user.setEmail(res.getString("mail"));
-        	user.setDateOfBirth(res.getDate("date_of_bith"));
+        	user.setEmail(res.getString("email"));
+        	user.setDateOfBirth(new java.util.Date(res.getDate("date_of_birth").getTime()));
         	
         	String salutation =res.getString("form_of_adress");
                 	switch(salutation){

@@ -47,6 +47,8 @@ public class RegisterUserBean {
      */
     private Transaction transaction;
     
+    private boolean testing = false;
+    
     /**
      * Represents a user object. It stores the data which is entered by the user
      * who wants to register.
@@ -60,6 +62,10 @@ public class RegisterUserBean {
      */
     public void setUserToRegistrate(User userToRegistrate) {
         this.userToRegistrate = userToRegistrate;
+    }
+    
+    public void activateTesting() {
+	this.testing = true;
     }
 
     private String registerPassword;
@@ -97,12 +103,17 @@ public class RegisterUserBean {
 	      .getCurrentInstance().getExternalContext().getRequest();
 	 String veriString = request.getParameter("veri");
 	 
+
+		
 	 if(veriString != null && veriString.length() > 0) {
+	     this.transaction = new Connection();
+	     transaction.start();
 	     if(UserDAO.verifyUser(this.transaction, veriString)) {
 		 // Erfolgsmeldung
 	     } else {
 		 // Fehlermeldung
 	     }
+	     this.transaction.commit();
 	 }
 	 this.userToRegistrate = new User();
 	 this.userToRegistrate.setAddress(new Address());
@@ -131,8 +142,11 @@ public class RegisterUserBean {
 	// Eingegebenes Passwort hashen
 	// TODO salt  Stimmt das so????
 	String salt = "";
-	String passwordHash = PasswordHash.hash(this.getRegisterPassword(), salt );
+	String passwordHash = PasswordHash.hash(this.getRegisterPassword(), salt);
 	
+	if(testing) {
+	    return "/facelets/open/index.xhtml?faces-redirect=false";
+	} else {
 	// Datenbankverbindung initialisieren
 	this.transaction = new Connection();
 	transaction.start();
@@ -146,6 +160,8 @@ public class RegisterUserBean {
                         msg.setSeverity(FacesMessage.SEVERITY_INFO);
                         facesContext.addMessage(null, msg);
                         facesContext.renderResponse();
+                        
+                        this.transaction.rollback();
                         return "/facelets/open/authenticate.xhtml?faces-redirect=false";
             	} else {	
             	    
@@ -161,6 +177,7 @@ public class RegisterUserBean {
             	}
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();
+	}
 	}
 	
 	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)

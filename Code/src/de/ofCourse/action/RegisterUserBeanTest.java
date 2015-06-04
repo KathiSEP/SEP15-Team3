@@ -13,7 +13,10 @@ public class RegisterUserBeanTest {
 
     @Test
     public void test() {
+	
 	RegisterUserBean registerUserBean = new RegisterUserBean();
+	
+	registerUserBean.activateTesting();
 	
 	User user = new User();
 	Address address = new Address();
@@ -47,6 +50,8 @@ public class RegisterUserBeanTest {
 	assertEquals(password, registerUserBean.getRegisterConfirmPassword());
 	
 	registerUserBean.setSaluString(saluString);
+	
+	assertEquals(saluString, registerUserBean.getSaluString());
 	
 	assertEquals(registerUserBean.registerUser(), "/facelets/open/index.xhtml?faces-redirect=false");
     }
