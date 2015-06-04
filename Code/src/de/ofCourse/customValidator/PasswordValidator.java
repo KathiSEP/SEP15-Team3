@@ -37,7 +37,7 @@ public class PasswordValidator implements Validator {
     private Matcher matcher;
 
     private static final String PasswordPattern = "((?=.*\\d)(?=.*[a-z])"
-	    + "(?=.*[A-Z])(?=.*[@#$%]).{6,20})";
+	    + "(?=.*[A-Z])(?=.*[@#$%!_?&]).{6,20})";
 
     public PasswordValidator() {
 	pattern = Pattern.compile(PasswordPattern);

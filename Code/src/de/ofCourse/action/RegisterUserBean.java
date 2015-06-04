@@ -139,7 +139,7 @@ public class RegisterUserBean {
 	// Datenbankverbindung initialisieren
 	this.transaction = new Connection();
 	transaction.start();
-	
+	try {
             	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
             	if(UserDAO.emailExists(transaction, this.getUserToRegistrate().getEmail())) {
             	    
@@ -157,10 +157,14 @@ public class RegisterUserBean {
             	    veriString = UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
             
             	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
+                    
+            	    this.transaction.commit();            	    
             	    
-            	    mail.sendAuthentificationMessage(userID, veriString);
+            	    //mail.sendAuthentificationMessage(userID, veriString);
             	}
-
+	} catch (InvalidDBTransferException e) {
+	    this.transaction.rollback();
+	}
 	
 	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)
 	

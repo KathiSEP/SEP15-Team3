@@ -27,7 +27,7 @@ public class DatabaseTableCreator {
 	
 	private static final String CREATE_FORM_OF_ADDRESS =
 			"CREATE TYPE form_of_address AS ENUM (" +
-					"'MR.', 'MS.'" +
+					"'MR', 'MS'" +
     		")";
     
     private static final String CREATE_ROLE =

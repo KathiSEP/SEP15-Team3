@@ -134,7 +134,7 @@ public class UserDAO {
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
 			+ "pw_hash, date_of_birth, form_of_address, credit_balance, "
 			+ "email_verification, admin_verification, role, status, veri_string) "
-			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?)";
 		
 	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
 	    // ob der Benutzer die Daten angegeben hat oder ob in die 
@@ -162,7 +162,7 @@ public class UserDAO {
 	    if(user.getSalutation() == null) {
 		pS.setString(7, null);
 	    } else {
-		pS.setString(7, user.getSalutation().toString() + ".");
+		pS.setString(7, user.getSalutation().toString());
 	    }
 	    pS.setDouble(8, user.getAccountBalance());
 	    pS.setBoolean(9, false);
@@ -170,8 +170,6 @@ public class UserDAO {
 	    pS.setString(11, UserRole.REGISTERED_USER.toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
-	    
-	    System.out.println(pS.toString());
 	    
 	    pS.executeUpdate();	   
 	    

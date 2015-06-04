@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Language;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -102,7 +103,7 @@ public class AuthenticateUserBean {
      */
     public String login() {
 	
-        
+	int id = -3;
 	// Eingegebenes Passwort hashen
 	// TODO salt hinzufügen    stimmt das so ???
 	String salt = "";
@@ -110,10 +111,15 @@ public class AuthenticateUserBean {
 	
 	// Neues Transaction Objekt erstellen für die Datenbankverbindung
 	this.transaction = new Connection();
-	transaction.start();
-	
-	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
-	int id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
+	this.transaction.start();
+	try {
+        	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
+        	id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
+        	
+        	this.transaction.commit();
+	} catch(InvalidDBTransferException e) {
+	    this.transaction.rollback();
+	}
 	
 	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
 	// Passwort falsch sind
@@ -135,6 +141,17 @@ public class AuthenticateUserBean {
 	    // Fehlermeldung in den FacesContext werfen.
             FacesContext facesContext = FacesContext.getCurrentInstance();
             FacesMessage msg = new FacesMessage("Benutzerkonto nicht aktiv!");
+            msg.setSeverity(FacesMessage.SEVERITY_INFO);
+            facesContext.addMessage(null, msg);
+            facesContext.renderResponse();
+
+            // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+            // fehlgeschlagen ist.
+            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+	} else if(id == -3) {
+	    // Fehlermeldung in den FacesContext werfen.
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
             msg.setSeverity(FacesMessage.SEVERITY_INFO);
             facesContext.addMessage(null, msg);
             facesContext.renderResponse();
