@@ -428,7 +428,7 @@ public class UserDAO {
      *          database
      * @param veriString
      * 		
-     * @return
+     * @return true if it succeed, else false
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
      */
@@ -589,6 +589,7 @@ public class UserDAO {
                 	    user.setSalutation(Salutation.MR);
                 	case "MS":
                 	    user.setSalutation(Salutation.MS);
+                	    break;
                 	default:
                 	    //TODO Fehlermeldung nötig?
                 	}
@@ -603,6 +604,7 @@ public class UserDAO {
         		    user.setUserRole(UserRole.COURSE_LEADER);
         		case "SYSTEM_ADMINISTRATOR":
         		    user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
+        		    break;
         		default:
         		     //TODO Fehlermeldung nötig ? 
         		}
@@ -617,6 +619,7 @@ public class UserDAO {
         		    user.setUserStatus(UserStatus.REGISTERED);
         		case "INACTIVE":
         		    user.setUserStatus(UserStatus.INACTIVE);
+        		    break;
         		default:
         		    //TODO Fehlermeldung nötig ?
         		}
