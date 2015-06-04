@@ -35,23 +35,26 @@ public class Connection implements Transaction {
 
     @Override
     public void commit() {
-        java.sql.Connection sqlConn = (java.sql.Connection) conn;
+        
         try {
-            sqlConn.commit();
+            conn.commit();
+            releaseConnection();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
         	System.out.println("Commit fehlgeschlagen");
             e.printStackTrace();
             releaseConnection(); 
         }
-        releaseConnection();              
+                     
     }
 
     @Override
     public void rollback() {
-        java.sql.Connection sqlConn = (java.sql.Connection) conn;
+        
         try {
-            sqlConn.rollback();
+            
+            conn.rollback();
+            releaseConnection(); 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -72,8 +75,7 @@ public class Connection implements Transaction {
      * Release the stored connection back to the DatabaseConnectionManager
      */
     public void releaseConnection(){
-        java.sql.Connection sqlConn = (java.sql.Connection) conn;
-        DatabaseConnectionManager.getInstance().releaseConnection(sqlConn);
+        DatabaseConnectionManager.getInstance().releaseConnection(conn);
         conn = null;
     }
 
