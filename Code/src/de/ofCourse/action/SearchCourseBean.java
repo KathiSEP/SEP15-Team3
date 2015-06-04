@@ -61,6 +61,8 @@ public class SearchCourseBean implements Pagination {
      */
     private List<Course> searchResult;
     
+    private List<Course> periodResult;
+    
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -178,6 +180,14 @@ public class SearchCourseBean implements Pagination {
     public void setSearchResult(List<Course> searchResult) {
     	this.searchResult = searchResult;
     }
+
+	public List<Course> getPeriodResult() {
+		return periodResult;
+	}
+
+	public void setPeriodResult(List<Course> periodResult) {
+		this.periodResult = periodResult;
+	}
 
 	/**
      * Returns the value of the attribute <code>searchParam</code> that stores

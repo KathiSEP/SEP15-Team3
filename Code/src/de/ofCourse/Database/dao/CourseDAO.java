@@ -96,28 +96,30 @@ public class CourseDAO {
 	    throws InvalidDBTransferException {
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
-    	List<Course> result = new ArrayList<Course>();
+    	int limit = pagination.getElementsPerPage();
+    	int offset = limit * pagination.getCurrentPageNumber();
+    	List<Course> result = null;
     	
     	switch (searchParam) {
     		case "courseID":
     			try {
     				int courseID = Integer.parseInt(searchString);
-    				result = getCoursesByID(conn, courseID);
+    				result = getCoursesByID(conn, limit, offset, courseID);
     			} catch (NumberFormatException e) {
     				LogHandler.getInstance().error("Error occoured when parsing the search string to an integer value.");
     				e.printStackTrace();
     			}
     			break;
     		case "title":
-    			result = getCoursesByTitle(conn, searchString);
+    			result = getCoursesByTitle(conn, limit, offset, searchString);
     			break;
     		case "leader":
-    			result = getCoursesOfLeader(conn, searchString);
+    			result = getCoursesOfLeader(conn, limit, offset, searchString);
     			break;
     		default:
     			;
     	}
-		return null;
+		return result;
     }
     
     private static void setProperties(Course course, List<Object> tuple) {
@@ -153,9 +155,9 @@ public class CourseDAO {
     	return null;
     }
     
-    private static List<Course> getCoursesByID (java.sql.Connection conn, int courseID) {
+    private static List<Course> getCoursesByID (java.sql.Connection conn, int limit, int offset, int courseID) {
     	String getCoursesQuery = "SELECT * FROM \"courses\" " +
-    			"WHERE CAST(id AS TEXT) LIKE '%?%'";
+    			"WHERE CAST(id AS TEXT) LIKE '%?%' LIMIT ? OFFSET ?";
     	PreparedStatement stmt = null;
     	ResultSet rst = null;
     	List<Course> result = null;
@@ -163,6 +165,8 @@ public class CourseDAO {
     	try {
 			stmt = conn.prepareStatement(getCoursesQuery);
 			stmt.setInt(1, courseID);
+			stmt.setInt(2, limit);
+			stmt.setInt(3, offset);
 			rst = stmt.executeQuery();
 			result = getResult(rst);
 		} catch (SQLException e) {
@@ -186,9 +190,9 @@ public class CourseDAO {
     	return result;
     }
     
-    private static List<Course> getCoursesByTitle (java.sql.Connection conn, String title) {
+    private static List<Course> getCoursesByTitle (java.sql.Connection conn, int limit, int offset, String title) {
     	String getCoursesQuery = "SELECT * FROM \"courses\" " +
-				"WHERE titel ILIKE LOWER('%?%')";
+				"WHERE titel ILIKE LOWER('%?%') LIMIT ? OFFSET ?";
     	PreparedStatement stmt = null;
     	ResultSet rst = null;
     	List<Course> result = null;
@@ -196,6 +200,8 @@ public class CourseDAO {
     	try {
 			stmt = conn.prepareStatement(getCoursesQuery);
 			stmt.setString(1, title);
+			stmt.setInt(2, limit);
+			stmt.setInt(3, offset);
 			rst = stmt.executeQuery();
 			result = getResult(rst);
 		} catch (SQLException e) {
@@ -219,16 +225,21 @@ public class CourseDAO {
     	return result;
     }
     
-    private static List<Course> getCoursesOfLeader (java.sql.Connection conn, String name) {
-    	String getCoursesQuery = "";
+    private static List<Course> getCoursesOfLeader (java.sql.Connection conn, int limit, int offset, String name) {
+    	String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"Users\", \"course_instructors\" " +
+    			"WHERE \"Users\".name = '?' " +
+    			"and \"Users\".id = \"course_instructors\".course_instructor " +
+    			"and \"course_instructors\".course = courses.id  LIMIT ? OFFSET ?";
     	PreparedStatement stmt = null;
-    	
     	ResultSet rst = null;
     	List<Course> result = null;
-
+    	
     	try {
 			stmt = conn.prepareStatement(getCoursesQuery);
 			stmt.setString(1, name);
+			stmt.setInt(2, limit);
+			stmt.setInt(3, offset);
 			rst = stmt.executeQuery();
 			result = getResult(rst);
 		} catch (SQLException e) {
