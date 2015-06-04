@@ -246,7 +246,15 @@ public class DatabaseConnectionManager {
 	for (Connection connection : this.freeConnections) {
 	    if (connection != null) {
 		try {
+		    freeConnections.remove(connection);
 		    connection.close();
+		    if (debug) {
+			System.out.println("LOGGING MESSAGE:   "
+				+ "Connection closed.");
+		    } else {
+			LogHandler.getInstance().error(
+				"Connection closed.");
+		    }
 		} catch (SQLException e) {
 		    if (debug) {
 			System.out.println("LOGGING MESSAGE:   "
