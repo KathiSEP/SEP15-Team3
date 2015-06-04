@@ -99,7 +99,7 @@ public class CheckPhase implements PhaseListener {
 	listForAnonymousUsers.add("/facelets/open/agb.xhtml");
 	listForAnonymousUsers.add("/facelets/open/help.xhtml");
 	listForAnonymousUsers.add("/facelets/open/courses/search.xhtml");
-	listForAnonymousUsers.add("/facelets/open/courses/courseDetails.xhtml");
+	listForAnonymousUsers.add("/facelets/open/courses/courseDetail.xhtml");
 	return listForAnonymousUsers;
     }
 
