@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,7 +24,13 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
 
+import javax.faces.context.FacesContext;
+
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.SmtpServer;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -74,9 +81,8 @@ public class MailBean {
      * @param message
      *            message of the email
      */
-    public void sendMail(String recipients, String sender,
-	    String subject, String message) {
-        //für testzwecke nur eine mail List<String>
+    public void sendMail(List<String> recipients, String subject, String message) {
+        //für testzwecke nur eine mail 
         Properties prop = new Properties();
         
         
@@ -89,11 +95,14 @@ public class MailBean {
             
             
         };
-        
-        
+     
+      
         // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
         prop.put("mail.smtp.host", this.smtpServer.getHostaddr());
         prop.put("mail.smtph.port", this.smtpServer.getPort());
+        prop.put("mail.smtp.starttls.enable", "true");
+        //prop.put("mail.smtp.ssl.enable", "true");
+        prop.put("mail.smtp.auth", "true");
         
         
         Session session = Session.getDefaultInstance(prop, loginAuth);
@@ -102,24 +111,27 @@ public class MailBean {
             // https://javamail.java.net/nonav/docs/api/
             MimeMessage mail = new MimeMessage(session);
             
-            mail.setFrom(new InternetAddress(sender, "OfCourse"));
-            mail.addRecipient(Message.RecipientType.TO, new InternetAddress("sebastian@nrschwarz.de"));
+            mail.setFrom(new InternetAddress(smtpServer.getUsername()));
+            
+            for(String mailAddresse : recipients){
+                mail.addRecipients(Message.RecipientType.TO, mailAddresse);
+            }
+            
             
             mail.setSubject("Testmail");
             mail.setText("Hallo Sebastian, Email versand funktioniert");
+                                   
+            Transport transport = session.getTransport("smtp");
             
-            Transport trans = session.getTransport("smtps");
-            trans.connect(prop.getProperty("mail.smtp.host"), smtpServer.getUsername() , smtpServer.getPassword());
-            trans.sendMessage(mail, mail.getAllRecipients());
+            // Eingabe von benutzerdaten und password
+            transport.connect("smtp.gmail.com", smtpServer.getUsername(), smtpServer.getPassword());
+            transport.sendMessage(mail, mail.getAllRecipients());
+            transport.close();
             System.out.println("Mail wird verschickt");
-            trans.close();
         }catch (MessagingException e){
             //TODO Logging
             System.out.println("Fehler!");
             
-        } catch (UnsupportedEncodingException e){
-            System.out.println("EingabeFehler");
-            //TODO Logging
         }
     }
 
@@ -133,8 +145,25 @@ public class MailBean {
      * 
      * @param userID
      *            ID of the user, who receives the message.
+     * @param veriString 
      */
-    public void sendAuthentificationMessage(int userID) {
+    public void sendAuthentificationMessage(int userID, String veriString) {
+        
+        // User who should get the authentificationMessage will be loaded from Database
+        Transaction trans = new Connection();
+        trans.start();
+        User userToInform = UserDAO.getUser(trans, userID);
+        
+        // E-Mail Messenge:
+        String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
+        messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
+        messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
+        messenge + createLink() + "/authenticate" + veriString + "\n\n";
+        
+        String subject = "Authentication Mail";
+        
+        sendSingleMail(userToInform.getEmail(), subject, messenge);
+        
     }
 
     /**
@@ -175,6 +204,30 @@ public class MailBean {
      *            smtpSserver - object to set
      */
     public void setSmtpServer(SmtpServer smtpServer) {
+    }
+    
+    /**
+     * @return
+     */
+    private String createLink(){
+        
+        String requestScheme = FacesContext.getCurrentInstance().getExternalContext().getRequestScheme();
+        String requestHost = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
+        String requestContextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+        
+        // arbeiten wir nur auf den standart ports?? dann evtl weglassen
+        int requestPorts = FacesContext.getCurrentInstance().getExternalContext().getRequestServerPort();
+        
+        String link = requestScheme + "://" + requestHost +":" + requestPorts + requestContextPath;
+        return link;
+    }
+    
+    
+    private void sendSingleMail(String maildaddress, String subject, String messenge){
+        List<String> recipients = new ArrayList<String>();
+        recipients.add(maildaddress);
+        sendMail(recipients, subject, messenge);
+            
     }
 
 }

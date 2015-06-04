@@ -3,6 +3,9 @@
  */
 package de.ofCourse.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -99,7 +102,9 @@ public class AuthenticateUserBean {
      */
     public String login() {
 	
-        mailBean.sendMail("sebastian@nrschwarz.de", "ich selbset", "testmail", "ich schreibe eine Mail");
+        List<String> recipients = new ArrayList<String>();
+        recipients.add("sebastian@nrschwarz.de");
+        mailBean.sendMail(recipients, "testmail", "ich schreibe eine Mail");
 	// Eingegebenes Passwort hashen
 	// TODO salt hinzufügen    stimmt das so ???
 	String salt = "";
