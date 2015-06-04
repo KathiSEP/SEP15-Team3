@@ -89,7 +89,7 @@
                                                        value="#{registerUserBean.registerPassword}" 
                                                        required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
                                                        <f:attribute name="confirmPassword" value="#{confirmPassword}" />
-                                                      />
+                                                     <f:validator validatorId="passwordValidator" />
                                         </h:inputSecret>
                                     </div>
                                     
