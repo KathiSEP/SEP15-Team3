@@ -70,6 +70,7 @@ public class LaunchSystem {
      */
     @PreDestroy
     public void shutdownMaintenance() {
+        DatabaseConnectionManager.getInstance().shutDown();
     }
 
     /**
