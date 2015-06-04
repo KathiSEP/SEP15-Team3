@@ -9,6 +9,11 @@
 			<default-locale>de</default-locale>
 		</locale-config>
 	</application>
+    <lifecycle>
+        <phase-listener>
+             de.ofCourse.system.CheckPhase 
+        </phase-listener>
+    </lifecycle>
 
     <validator>
         <validator-id> userNameValidator </validator-id>

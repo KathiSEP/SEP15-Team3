@@ -67,6 +67,8 @@ public class CheckPhase implements PhaseListener {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    private Transaction transaction;
 
     /**
      * Constructor of the class <code>CheckPhase</code>.<br>
@@ -196,6 +198,8 @@ public class CheckPhase implements PhaseListener {
 	    sessionUser.setUserRole((UserRole) sessionMap.get("userRole"));
 	}
 
+
+	
 	if (!loginPage && !loggedIn) {
 	    if (!this.isPermittedPageAnonymousUser(fctx)) {
 		// Redirect to login page

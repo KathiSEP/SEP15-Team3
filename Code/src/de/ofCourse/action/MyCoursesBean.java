@@ -80,10 +80,8 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @PostConstruct
     private void init() {
-
 	this.registeredCourses = new ArrayList<Course>();
-	System.out.println("MAn:" + this.sessionUser.getUserID());
-
+	
 	pagination = new PaginationData();
 	this.pagination.setSortAsc(true);
 	this.pagination.setElementsPerPage(elementsPerPage);

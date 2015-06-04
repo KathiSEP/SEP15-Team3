@@ -198,18 +198,16 @@ public class CourseDAO {
 	// Überprüfen mit ifs ob weitergemacht werden soll oder nicht
 	// ///////////////////////////////////////////////////////////////
 
-	System.out.println(pagination.getElementsPerPage());
-	System.out.println(pagination.getCurrentPageNumber());
 	int calculateOffset = pagination.getElementsPerPage()
 		* pagination.getCurrentPageNumber();
-	System.out.println();
+
 	PreparedStatement stmt = null;
 	try {
 	    stmt = conn.prepareStatement(getCourseQuery);
 	    stmt.setInt(1, userID);
 	    stmt.setString(2, "'titel'");
 	    stmt.setInt(3, pagination.getElementsPerPage());
-	    stmt.setInt(4, 0);
+	    stmt.setInt(4, calculateOffset);
 	    ResultSet fetchedCourses = stmt.executeQuery();
 
 	    // Fills the list coursesOf with courses from the database.
@@ -227,44 +225,46 @@ public class CourseDAO {
 		coursesOf.add(fetchedCourse);
 	    }
 
-	    // Fetches the leaders of a course
-	    ResultSet fetchedLeaders;
-	    for (int i = 0; i < coursesOf.size(); ++i) {
-		stmt = conn.prepareStatement(getCourseLeadersQuery);
-		stmt.setInt(1, coursesOf.get(i).getCourseID());
-		fetchedLeaders = stmt.executeQuery();
-		while (fetchedLeaders.next()) {
-		    User courseAdmin = new User();
-		    courseAdmin.setUsername(fetchedLeaders
-			    .getString("nickname"));
-		    coursesOf.get(i).getCourseAdmins().add(courseAdmin);
-		}
-	    }
-
-	    // Fetches the leaders of a course
-	    ResultSet fetchedNextUnit;
-	    Timestamp stamp;
-	    Date date;
-	    CourseUnit courseUnit;
-
-	    for (int i = 0; i < coursesOf.size(); ++i) {
-		stmt = conn.prepareStatement(getNextCourseUnitQuery);
-		stmt.setInt(1, coursesOf.get(i).getCourseID());
-		fetchedNextUnit = stmt.executeQuery();
-		while (fetchedNextUnit.next()) {
-		    courseUnit = new CourseUnit();
-		    stamp = fetchedNextUnit.getTimestamp("start_time");
-		    date = new Date(stamp.getYear(), stamp.getMonth(),
-			    stamp.getDate(), stamp.getHours(),
-			    stamp.getMinutes());
-		    courseUnit.setStarttime(date);
-		    if (fetchedNextUnit.getString("location") != null) {
-			courseUnit.setLocation(fetchedNextUnit
-				.getString("location"));
-		    } else {
-			courseUnit.setLocation("Nicht angegeben");
+	    if (coursesOf.size() > 0) {
+		// Fetches the leaders of a course
+		ResultSet fetchedLeaders;
+		for (int i = 0; i < coursesOf.size(); ++i) {
+		    stmt = conn.prepareStatement(getCourseLeadersQuery);
+		    stmt.setInt(1, coursesOf.get(i).getCourseID());
+		    fetchedLeaders = stmt.executeQuery();
+		    while (fetchedLeaders.next()) {
+			User courseAdmin = new User();
+			courseAdmin.setUsername(fetchedLeaders
+				.getString("nickname"));
+			coursesOf.get(i).getCourseAdmins().add(courseAdmin);
 		    }
-		    coursesOf.get(i).setNextCourseUnit(courseUnit);
+		}
+
+		// Fetches the leaders of a course
+		ResultSet fetchedNextUnit;
+		Timestamp stamp;
+		Date date;
+		CourseUnit courseUnit;
+
+		for (int i = 0; i < coursesOf.size(); ++i) {
+		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
+		    stmt.setInt(1, coursesOf.get(i).getCourseID());
+		    fetchedNextUnit = stmt.executeQuery();
+		    while (fetchedNextUnit.next()) {
+			courseUnit = new CourseUnit();
+			stamp = fetchedNextUnit.getTimestamp("start_time");
+			date = new Date(stamp.getYear(), stamp.getMonth(),
+				stamp.getDate(), stamp.getHours(),
+				stamp.getMinutes());
+			courseUnit.setStarttime(date);
+			if (fetchedNextUnit.getString("location") != null) {
+			    courseUnit.setLocation(fetchedNextUnit
+				    .getString("location"));
+			} else {
+			    courseUnit.setLocation("Nicht angegeben");
+			}
+			coursesOf.get(i).setNextCourseUnit(courseUnit);
+		    }
 		}
 	    }
 	} catch (SQLException e) {

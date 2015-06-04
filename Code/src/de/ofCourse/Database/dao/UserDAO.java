@@ -306,12 +306,16 @@ public class UserDAO {
 		switch(userStatusString) {
 		case "ANONYMOUS":
 		    userStatus = UserStatus.ANONYMOUS;
+		    break;
 		case "NOT_ACTIVATED":
 		    userStatus = UserStatus.NOT_ACTIVATED;
+		    break;
 		case "REGISTERED":
 		    userStatus = UserStatus.REGISTERED;
+		    break;
 		case "INACTIVE":
 		    userStatus = UserStatus.INACTIVE;
+		    break;
 		default:
 		}
 	    } else {
@@ -364,10 +368,13 @@ public class UserDAO {
 		switch(userRoleString) {
 		case "REGISTERED_USER":
 		    userRole = UserRole.REGISTERED_USER;
+		    break;
 		case "COURSE_LEADER":
 		    userRole = UserRole.COURSE_LEADER;
+		    break;
 		case "SYSTEM_ADMINISTRATOR":
 		    userRole = UserRole.SYSTEM_ADMINISTRATOR;
+		    break;
 		default:
 		}
 	    } else {

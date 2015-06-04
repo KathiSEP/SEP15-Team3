@@ -150,6 +150,7 @@ public class AuthenticateUserBean {
 	    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().
         	    getExternalContext().getSession(true);
+            session.setAttribute("loggedin", true);
             session.setAttribute("userID", id);
             session.setAttribute("userRole", sessionUser.getUserRole());
             

@@ -41,7 +41,7 @@ public class NavigationBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
+
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -49,26 +49,27 @@ public class NavigationBean {
     private boolean isAdmin;
 
     /**
-     * Performs the logout action.<br> By pressing the <code>logout</code>
-     * button, the user is logged out. That means his userStatus is set to
-     * <code>ANONYMOUS</code> and he is redirected to the welcome page.
+     * Performs the logout action.<br>
+     * By pressing the <code>logout</code> button, the user is logged out. That
+     * means his userStatus is set to <code>ANONYMOUS</code> and he is
+     * redirected to the welcome page.
      * 
      * @return the link to the welcome page
      */
     public String logout() {
-    	sessionUser = null;
-    	FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("loggedin");
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        return "/facelets/open/index.xhtml?faces-redirect=true";
+	sessionUser = null;
+	FacesContext.getCurrentInstance().getExternalContext()
+		.invalidateSession();
+	return "/facelets/open/index.xhtml?faces-redirect=true";
     }
-    
+
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-        return sessionUser;
+	return sessionUser;
     }
 
     /**
@@ -78,14 +79,14 @@ public class NavigationBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
-        this.sessionUser = userSession;
+	this.sessionUser = userSession;
     }
 
-	public boolean isAdmin() {
-		return isAdmin;
-	}
+    public boolean isAdmin() {
+	return isAdmin;
+    }
 
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
+    public void setAdmin(boolean isAdmin) {
+	this.isAdmin = isAdmin;
+    }
 }
