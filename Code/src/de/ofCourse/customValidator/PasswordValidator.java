@@ -46,12 +46,20 @@ public class PasswordValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent arg1, Object value)
 	    throws ValidatorException {
 	
-	matcher = pattern.matcher(value.toString());
+	String password = value.toString();
+	
+	if(password.length() < 8 || password.length() > 100) {
+	    throw new ValidatorException(
+		    new FacesMessage(
+			    "Das Passwort muss mindestens 8 Zeichen lang sein, darf aber höchstens 100 Zeichen lang sein."));
+	}
+	
+	matcher = pattern.matcher(password);
 	
 	if (!matcher.matches()) {
 	    throw new ValidatorException(
 		    new FacesMessage(
-			    "Das Passwort muss mindestens 8 Zeichen lang sein, "
+			    "Das Passwort muss mindestens "
 			    + "ein Sonderzeichen, Ziffern und Groß- und "
 			    + "Kleinbuchstaben enthalten. ß, ä, ö, ü sind "
 			    + "nicht erlaubt."));

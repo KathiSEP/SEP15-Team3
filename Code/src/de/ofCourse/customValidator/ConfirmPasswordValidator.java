@@ -31,22 +31,16 @@ public class ConfirmPasswordValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value)
 	    throws ValidatorException {
-	String password = value.toString();
+	String passwordConfirm = value.toString();
 	
-	UIInput uiInputVerifyPassword = (UIInput) component.getAttributes()
+	UIInput uiInputConfirmPassword = (UIInput) component.getAttributes()
 		.get("passwordRegister");
-
-	if(uiInputVerifyPassword == null) {
-	    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "sameError.", "Bitte bestätigen Sie"
-	    	+ "Ihr Passwort durch erneute Eingabe!"));
-	} else {
-            String verifyPassword = uiInputVerifyPassword.getSubmittedValue()
-                    .toString();
+	  String passwordRegister = uiInputConfirmPassword.getSubmittedValue()
+		.toString();
         	
-	    if(!password.equals(verifyPassword)){
-		throw new ValidatorException(new FacesMessage());
+	    if(!passwordConfirm.equals(passwordRegister)){
+		throw new ValidatorException(new FacesMessage("Passwörter müssen überein stimmen."));
 	    }
-	}
 
     }
 

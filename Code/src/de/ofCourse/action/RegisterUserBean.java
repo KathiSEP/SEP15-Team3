@@ -14,10 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Language;
+import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -52,6 +55,8 @@ public class RegisterUserBean {
      * who wants to register.
      */
     private User userToRegistrate;
+    
+    private String saluString;
     
     /**
      * @param userToRegistrate the userToRegistrate to set
@@ -104,7 +109,6 @@ public class RegisterUserBean {
 	 }
 	 this.userToRegistrate = new User();
 	 this.userToRegistrate.setAddress(new Address());
-	 System.out.println("test");
     }
 
     /**
@@ -117,7 +121,13 @@ public class RegisterUserBean {
      */
     public String registerUser() {
 	
-	System.out.println("register");
+	if(this.saluString.equals("mr.")) {
+	    this.getUserToRegistrate().setSalutation(Salutation.MR);
+	} else if(this.saluString.equals("ms.")) {
+	    this.getUserToRegistrate().setSalutation(Salutation.MS);
+	} else {
+	    this.getUserToRegistrate().setSalutation(null);
+	}
 	
 	String veriString = "";
 	
@@ -130,24 +140,35 @@ public class RegisterUserBean {
 	this.transaction = new Connection();
 	transaction.start();
 	
-	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
-	if(UserDAO.emailExists(transaction, this.getUserToRegistrate().getEmail())) {
+	try {
+            	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
+            	if(UserDAO.emailExists(transaction, this.getUserToRegistrate().getEmail())) {
+            	    
+            	    // Fehlermeldung in den FacesContext werfen, wenn die Mail schon existiert.
+                        FacesContext facesContext = FacesContext.getCurrentInstance();
+                        FacesMessage msg = new FacesMessage("E-Mail existiert bereits!");
+                        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                        facesContext.addMessage(null, msg);
+                        facesContext.renderResponse();
+            	} else {	
+            	    
+            	    // Gibt es die angegebene E-Mail-Adresse noch nicht, erstelle einen
+            	    // neuen Benutzer.
+            	    veriString = UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
+            
+            	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
+            	    
+            	    mail.sendAuthentificationMessage(userID, veriString);
+            	}
+	} catch(InvalidDBTransferException e) {
+	    LogHandler.getInstance().error("Fehler bei der Registrierung eines Benutzers!");
 	    
-	    // Fehlermeldung in den FacesContext werfen, wenn die Mail schon existiert.
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("E-Mail existiert bereits!");
+            FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
             msg.setSeverity(FacesMessage.SEVERITY_INFO);
             facesContext.addMessage(null, msg);
             facesContext.renderResponse();
-	} else {	
-	    
-	    // Gibt es die angegebene E-Mail-Adresse noch nicht, erstelle einen
-	    // neuen Benutzer.
-	    veriString = UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
-
-	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
-	    
-	    mail.sendAuthentificationMessage(userID, veriString);
+	    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
 	}
 	
 	// TODO Erfolgsmeldung ausgeben (aber erst auf der startseite!!)
@@ -217,6 +238,14 @@ public class RegisterUserBean {
      */
     public User getUserToRegistrate() {
         return userToRegistrate;
+    }
+
+    public String getSaluString() {
+	return saluString;
+    }
+
+    public void setSaluString(String saluString) {
+	this.saluString = saluString;
     }
 
 }

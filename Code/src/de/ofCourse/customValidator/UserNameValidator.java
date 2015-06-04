@@ -35,11 +35,21 @@ public class UserNameValidator implements Validator {
 	
 	String username = value.toString();
 	
+	if(username.length() < 5 || username.length() > 100) {
+	    throw new ValidatorException(new FacesMessage("Der Benutzername muss zwischen 5 und 100 Zeichen lang sein."));
+	}
+	
 	Transaction transaction = new Connection();
 	transaction.start();
 	int id = UserDAO.getUserID(transaction, username);
 	
 	if(id != -1){
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage msg = new FacesMessage("Dieser Benutzername "
+	    	+ "ist bereits vergeben.");
+            msg.setSeverity(FacesMessage.SEVERITY_INFO);
+            facesContext.addMessage(null, msg);
+            facesContext.renderResponse();
 	    throw new ValidatorException(new FacesMessage("Dieser Benutzername "
 	    	+ "ist bereits vergeben."));
 	}

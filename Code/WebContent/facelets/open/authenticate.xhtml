@@ -50,9 +50,9 @@
                                     <div class="input-group">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
                                         <h:selectOneMenu class="form-control" id="titleRegister" 
-                                                          value="#{registerUserBean.userToRegistrate.salutation}">
-                                            <f:selectItem itemValue="Herr" itemLabel="Herr" />
-                                            <f:selectItem itemValue="Frau" itemLabel="Frau" />
+                                                          value="#{registerUserBean.saluString}">
+                                            <f:selectItem itemValue="mr." itemLabel="Herr" />
+                                            <f:selectItem itemValue="ms." itemLabel="Frau" />
                                         </h:selectOneMenu>
                                     </div>
                                     
@@ -78,9 +78,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="usernameRegister"
                                                      value="#{registerUserBean.userToRegistrate.username}"
-                                                     required="true"  requiredMessage="Bitte geben Sie einen Benutzernamen ein. "
-                                                     validatorMessage="Ihr Nachname muss zwischen 5 und 100 Zeichen lang sein. ">
-                                                     <f:validateLength minimum="5" maximum="100" />
+                                                     required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein. ">
+                                                     <f:validator validatorId="userNameValidator"/>
                                         </h:inputText>
                                     </div>
                                     
@@ -88,9 +87,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordRegister"
                                                        value="#{registerUserBean.registerPassword}" binding="#{passwordRegister}" 
-                                                       required="true" requiredMessage="Bitte geben Sie ein Passwort ein. "
-                                                       validatorMessage="Password">
-                                                     <f:validateLength maximum="100" />
+                                                       required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
+                                                     <f:validator validatorId="passwordValidator" />
                                         </h:inputSecret>
                                     </div>
                                     
@@ -98,9 +96,9 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordConfirmRegister"
                                                        value="#{registerUserBean.registerConfirmPassword}"
-                                                       required="true"  requiredMessage="Bitte geben Sie Ihr Passwort zur Bestätigung ein. "
-                                                       validatorMessage="ConfirmPassword">
-                                                     <f:validateLength maximum="100" />
+                                                       required="true"  requiredMessage="Bitte geben Sie Ihr Passwort zur Bestätigung ein. ">
+                                                       <f:attribute name="passwordRegister" value="#{passwordRegister}" />
+                                                     <f:validator validatorId="confirmPasswordValidator"/>
                                         </h:inputSecret>
                                     </div>
                                     
@@ -173,7 +171,7 @@
                                     
                                     <br />
                                     <div>
-                                        <h:selectBooleanCheckbox value="" required="true"  
+                                        <h:selectBooleanCheckbox value="true" required="true"  
                                                           requiredMessage="Bitte bestätigen Sie die AGBs."/> 
                                                           Ich habe die AGBs gelesen und stimme zu.
                                         <a href="#{request.contextPath}/facelets/open/agb.xhtml" target="_blank">AGBs lesen</a>
