@@ -12,8 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
+
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
@@ -639,13 +638,6 @@ public class UserDAO {
 	    }
 	    else
 	    {
-		
-		// Fehler, kein Benutzer mit diesem Benutzernamen
-	        FacesContext facesContext = FacesContext.getCurrentInstance();
-	        FacesMessage msg = new FacesMessage("Es existiert kein Benutzer mit diesem Benutzernamen.");
-	        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-	        facesContext.addMessage(null, msg);
-	        facesContext.renderResponse();
 	        
 		user = null;
 	    }
@@ -705,12 +697,6 @@ public class UserDAO {
 	    }
 	    else
 	    {
-		// Fehler, kein Benutzer mit diesem Benutzernamen
-	        FacesContext facesContext = FacesContext.getCurrentInstance();
-	        FacesMessage msg = new FacesMessage("Es existiert kein Benutzer mit diesem Benutzernamen.");
-	        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-	        facesContext.addMessage(null, msg);
-	        facesContext.renderResponse();
 	        
 		id = -1;
 	    }
