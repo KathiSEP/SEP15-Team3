@@ -102,9 +102,7 @@ public class AuthenticateUserBean {
      */
     public String login() {
 	
-        List<String> recipients = new ArrayList<String>();
-        recipients.add("sebastian@nrschwarz.de");
-        mailBean.sendMail(recipients, "testmail", "ich schreibe eine Mail");
+        
 	// Eingegebenes Passwort hashen
 	// TODO salt hinzufügen    stimmt das so ???
 	String salt = "";
