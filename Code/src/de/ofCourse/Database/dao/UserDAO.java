@@ -173,8 +173,20 @@ public class UserDAO {
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
 	    
-	    pS.executeUpdate();	   
+	    pS.executeUpdate();	 
 	    
+	    sql = "Insert into \"addresses\" (user_id, country, "
+			+ "city, zip_code, street, house_nr) "
+			+ "values (?, ?, ?, ?, ?, ?)";
+	    pS = conn.prepareStatement(sql);
+	    pS.setInt(1, UserDAO.getUserID(trans, user.getUsername()));
+	    pS.setString(2, user.getAddress().getCountry());
+	    pS.setString(3, user.getAddress().getCity());
+	    pS.setInt(4, user.getAddress().getZipCode());
+	    pS.setString(5, user.getAddress().getStreet());
+	    pS.setInt(6, user.getAddress().getHouseNumber());
+	    
+	    pS.executeUpdate();	 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
 	    throw new InvalidDBTransferException();
@@ -682,7 +694,7 @@ public class UserDAO {
 	try {
 	    pS = conn.prepareStatement(sql);	    
 	    pS.setString(1, username);
-	    
+	    System.out.println(pS.toString());
 	    //preparedStatement ausführen, gibt resultSet als Liste zurück (hier
 	    //ein Eintrag in der Liste, da Benutzername einzigartig).
 	    ResultSet res = pS.executeQuery();
@@ -691,20 +703,16 @@ public class UserDAO {
 	    //Eintrag gibt, ansonsten 0.
 	    if(res.next()) {
 		//id mit zugehörigem Wert aus der Datenbank füllen.
-		id = res.getInt("id");
-		
-    	    	
+		id = res.getInt("id");    	    	
 	    }
 	    else
-	    {
-	        
+	    {	        
 		id = -1;
 	    }
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	
 	return id;

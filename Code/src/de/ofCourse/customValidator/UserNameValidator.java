@@ -44,13 +44,8 @@ public class UserNameValidator implements Validator {
 	transaction.start();
 	int id = UserDAO.getUserID(transaction, username);
 	
+	transaction.commit();
 	if(id != -1){
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage msg = new FacesMessage("Dieser Benutzername "
-	    	+ "ist bereits vergeben.");
-            msg.setSeverity(FacesMessage.SEVERITY_INFO);
-            facesContext.addMessage(null, msg);
-            facesContext.renderResponse();
 	    throw new ValidatorException(new FacesMessage("Dieser Benutzername "
 	    	+ "ist bereits vergeben."));
 	}

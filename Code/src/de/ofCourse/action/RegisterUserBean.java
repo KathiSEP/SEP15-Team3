@@ -184,7 +184,7 @@ public class RegisterUserBean {
                     
             	    this.transaction.commit();            	    
             	    
-            	    mail.sendAuthentificationMessage(userID, veriString);
+            	    //mail.sendAuthentificationMessage(userID, veriString);
             	}
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();
