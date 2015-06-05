@@ -74,6 +74,8 @@ public class SearchCourseBean implements Pagination {
     private String searchString;
     
     private boolean renderTable;
+    
+    private boolean pagingSearchTerm;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -100,6 +102,8 @@ public class SearchCourseBean implements Pagination {
      */
     public void displayCoursesInPeriod() {
     	
+    	
+    	setPagingSearchTerm(false);
     }
 
     @PostConstruct
@@ -132,7 +136,7 @@ public class SearchCourseBean implements Pagination {
     public void setDisplayPeriod(String displayPeriod) {
     	this.displayPeriod = displayPeriod;
     }
-
+    
     /**
      * Searches for courses in the system according to the selected search
      * parameter and the respective search term. <br>
@@ -141,16 +145,20 @@ public class SearchCourseBean implements Pagination {
      * in the facelet.
      */
     public void search() {
-    	
-    	System.out.println("Suchbegriff im Bean in search: " + searchParam);
-    	
     	transaction = new Connection();
     	transaction.start();
-    	searchResult = CourseDAO.getCourses(transaction, pagination,
+    	
+    	if (!searchString.isEmpty()) {
+    		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
-    	setRenderTable(true);
+    		if (result != null) {
+    			searchResult = result;
+    			setRenderTable(true);
+    			setPagingSearchTerm(true);
+    		}
+    	}
     }
-
+    
     /**
      * Returns whether only free courses are to be displayed.
      * 
@@ -211,16 +219,6 @@ public class SearchCourseBean implements Pagination {
     }
 
     /**
-     * Returns the value of the attribute <code>searchTerm</code> that stores
-     * the entered search term.
-     * 
-     * @return the entered search term
-     */
-    public String getSearchTerm() {
-    	return searchString;
-    }
-
-    /**
      * Sets the value of the attribute <code>searchTerm</code> that stores the
      * entered search term.
      * 
@@ -231,17 +229,25 @@ public class SearchCourseBean implements Pagination {
     	this.searchString = searchString;
     }
 
-    public boolean isRenderTable() {
-		return renderTable;
+    public String getSearchString() {
+		return searchString;
 	}
 
-
-
+	public boolean isRenderTable() {
+		return renderTable;
+	}
+	
 	public void setRenderTable(boolean renderTable) {
 		this.renderTable = renderTable;
 	}
 
+	public boolean isPagingSearchTerm() {
+		return pagingSearchTerm;
+	}
 
+	public void setPagingSearchTerm(boolean pagingSearchTerm) {
+		this.pagingSearchTerm = pagingSearchTerm;
+	}
 
 	/**
      * Redirects the user to the <code>courseDetail</code> page of a certain
@@ -270,12 +276,10 @@ public class SearchCourseBean implements Pagination {
 				.getRequestParameterMap().get("page"));
 		transaction.start();
 		
-		try {
-			this.searchResult = CourseDAO.getCoursesOf(transaction, this.getPagination(),
-							this.sessionUser.getUserID());
-			this.transaction.commit();
-		} catch (InvalidDBTransferException e) {
-			this.transaction.rollback();
+		if (pagingSearchTerm) {
+			search();
+		} else {
+			displayCoursesInPeriod();
 		}
     }
 

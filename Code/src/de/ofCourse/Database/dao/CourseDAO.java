@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,25 +59,53 @@ public class CourseDAO {
 	    throws InvalidDBTransferException {
     }
 
-    /**
-     * Returns a list of courses which take place on the current date.
-     * 
-     * @param trans
-     *            the Transaction object which contains the connection to the
-     *            database
-     * @param pagination
-     *            the Pagination object which contains the amount of elements
-     *            which are to be retrieved
-     * @return the list of courses, or null if no courses were retrieved
-     * @throws InvalidDBTransferException
-     *             if any error occurred during the execution of the method
-     */
     public static List<Course> getCourses(Transaction trans,
-	    PaginationData pagination) throws InvalidDBTransferException {
-	return null;
+	    PaginationData pagination, String period) throws InvalidDBTransferException {
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	int limit = pagination.getElementsPerPage();
+    	int offset = limit * pagination.getCurrentPageNumber();
+    	List<Course> result = null;
+    	
+    	switch (period) {
+		case "day":
+			result = currentDateCourses(conn, limit, offset);
+			break;
+		case "week":
+			result = currentWeekCourses(conn, limit, offset);
+			break;
+		case "total":
+			result = getAllCourses(conn, limit, offset);
+			break;
+		default:
+			;
+    	}
+    	return result;
     }
+    
+    private static List<Course> currentDateCourses(java.sql.Connection conn,
+			int limit, int offset) {
+ 	    String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"course_units\" " +
+ 	    		"WHERE \"course_units\".start_time::date = current_date " +
+ 	    		"AND \"course_units\".course_id = \"courses\".id ";
+ 	    
+		return null;
+	}
 
-    /**
+	private static List<Course> currentWeekCourses(java.sql.Connection conn,
+			int limit, int offset) {
+		
+		return null;
+	}
+
+	private static List<Course> getAllCourses(java.sql.Connection conn,
+			int limit, int offset) {
+		
+		return null;
+	}
+	
+	/**
      * Returns a list of courses which titles contain the search term the user
      * has entered.
      * 

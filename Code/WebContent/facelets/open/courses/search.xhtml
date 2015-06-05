@@ -31,7 +31,7 @@
                                                     <f:selectItem itemValue="week" itemLabel="Wochenangebot" />
                                                     <f:selectItem itemValue="total" itemLabel="Gesamtes Angebot" />
                                                 </h:selectOneMenu>
-                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Suchen" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
+                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Anzeigen" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
                                             </div>
                                             <br/>
                                         </div>
@@ -49,7 +49,7 @@
                                         </h:panelGroup> 
                                         <div class="col-lg-3">
                                             <div class="input-group">
-                                                <h:inputText class="form-control" id="filterInput" style="width:230px;"></h:inputText>
+                                                <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"></h:inputText>
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
