@@ -85,14 +85,39 @@ public class CourseDAO {
     
     private static List<Course> currentDateCourses(java.sql.Connection conn,
 			int limit, int offset) {
- 	    String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    	String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
     			"courses.end_date FROM \"courses\", \"course_units\" " +
  	    		"WHERE \"course_units\".start_time::date = current_date " +
  	    		"AND \"course_units\".course_id = \"courses\".id ";
- 	    
-		return null;
+ 	    Statement stmt = null;
+	    ResultSet rst = null;
+	    List<Course> result = null;
+		
+	    try {
+	   	    stmt = conn.createStatement();
+	   	    rst = stmt.executeQuery(getCoursesQuery);
+	   	    result = getResult(rst);
+	    } catch (SQLException e) {
+		   e.printStackTrace();
+	    } finally {
+		    if (rst != null) {
+		   	    try {
+		   	        rst.close();
+		   	    } catch (SQLException e) {
+		   	 	    e.printStackTrace();
+		   	    }
+		    }
+		    if (stmt != null) {
+		    	try {
+		    		stmt.close();
+		   	    } catch (SQLException e) {
+		   	    	e.printStackTrace();
+		   	    }
+		    }
+	    }
+		return result;
 	}
-
+    
 	private static List<Course> currentWeekCourses(java.sql.Connection conn,
 			int limit, int offset) {
 		
