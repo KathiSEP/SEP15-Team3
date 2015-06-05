@@ -778,14 +778,8 @@ public class UserDAO {
             statement.setInt(8, user.getUserID());
             statement.executeUpdate();
         } catch (SQLException e) {
+        	LogHandler.getInstance().error("SQL Exception occoured during executing updateUser(Transaction trans, User user, String pwHash)");
             throw new InvalidDBTransferException();
-            //TODO Logging message
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                /* ignored */
-            }
         }
     }
 
@@ -812,14 +806,8 @@ public class UserDAO {
             statement.setString(2, mail);
             statement.executeUpdate();
         } catch (SQLException e) {
+        	LogHandler.getInstance().error("SQL Exception occoured during executing overridePassword(Transaction trans, String mail, String password");
             throw new InvalidDBTransferException();
-            //TODO Logging message
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                /* ignored */
-            }
         }
     }
 
