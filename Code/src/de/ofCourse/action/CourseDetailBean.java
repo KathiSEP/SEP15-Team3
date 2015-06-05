@@ -9,6 +9,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
@@ -86,14 +87,8 @@ public class CourseDetailBean implements Pagination {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
-    /**
-     * Returns the course details page in its editable state.
-     * 
-     * @return link to the next page
-     */
-    public String editCourse() {
-	return null;
-    }
+    private boolean editMode;
+    private int courseID;
 
     /**
      * Saves the edited course data and sets the course details page to its
@@ -104,6 +99,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String saveCourse() {
+    	editMode = false;
 	return null;
     }
 
@@ -112,6 +108,9 @@ public class CourseDetailBean implements Pagination {
      * is to display.
      */
     public void initializeCourseDetails() {
+    	if (courseID > 0) {
+    		course = CourseDAO.getCourse(transaction, courseID);    		
+    	}
     }
 
     /**
@@ -363,5 +362,41 @@ public class CourseDetailBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
     }
+
+    /**
+     * Returns the edit mode flag.
+     * 
+     * @return true when in edit mode, false if not
+     */
+	public boolean getEditMode() {
+		return editMode;
+	}
+
+	/**
+	 * Set-method for the edit mode flag.
+	 * 
+	 * @param editMode the boolean flag to be set
+	 */
+	public void setEditMode(boolean editMode) {
+		this.editMode = editMode;
+	}
+
+	/**
+	 * Returns the course's id.
+	 * 
+	 * @return the courseID
+	 */
+	public int getCourseID() {
+		return courseID;
+	}
+
+	/**
+	 * Set-method for the course's id.
+	 * 
+	 * @param courseID the courseID to set
+	 */
+	public void setCourseID(int courseID) {
+		this.courseID = courseID;
+	}
 
 }

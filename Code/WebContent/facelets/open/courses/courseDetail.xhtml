@@ -67,6 +67,15 @@
 								</div>
 							</div>
 						</div>
+						<h:panelGroup rendered="true">
+							<div class="panel panel-info">
+								<div class="panel-heading"><strong>Verwaltung</strong></div>
+								<div class="panel-body">
+									<h:button class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}"/>
+									<h:button class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}"/>
+								</div>
+							</div>
+						</h:panelGroup>
 					</div>
 				</div>
 				<div class="panel panel-info">
