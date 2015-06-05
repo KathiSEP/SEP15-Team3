@@ -61,8 +61,6 @@ public class SearchCourseBean implements Pagination {
      */
     private List<Course> searchResult;
     
-    private List<Course> periodResult;
-    
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -91,21 +89,7 @@ public class SearchCourseBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-
-    /**
-     * Displays the course offer of the system.<br>
-     * The user can constrain by selecting a display period in which time period
-     * the shown courses take place. Furthermore it is also possible to display
-     * the complete course offer of the system. The courses are displayed by
-     * using pagination.
-     * 
-     */
-    public void displayCoursesInPeriod() {
-    	
-    	
-    	setPagingSearchTerm(false);
-    }
-
+    
     @PostConstruct
     public void init() {
     	displayPeriod = "total";
@@ -116,6 +100,30 @@ public class SearchCourseBean implements Pagination {
     	pagination.setSortAsc(true);
     }
 
+    /**
+     * Displays the course offer of the system.<br>
+     * The user can constrain by selecting a display period in which time period
+     * the shown courses take place. Furthermore it is also possible to display
+     * the complete course offer of the system. The courses are displayed by
+     * using pagination.
+     * 
+     */
+    public void displayCoursesInPeriod() {
+    	transaction = new Connection();
+    	transaction.start();
+    	
+    	List<Course> result = CourseDAO.getCourses(transaction, pagination,
+    			displayPeriod);
+    	if (result != null) {
+    		searchResult = result;
+    		transaction.commit();
+    		setPagingSearchTerm(false);
+    		setRenderTable(true);
+    	} else {
+    		transaction.rollback();
+    	}
+    }
+    
     /**
      * Returns the value of the attribute <code>displayPeriod</code> that stores
      * the selected display period.
@@ -153,8 +161,11 @@ public class SearchCourseBean implements Pagination {
     			searchParam, searchString);
     		if (result != null) {
     			searchResult = result;
-    			setRenderTable(true);
+    			transaction.commit();
     			setPagingSearchTerm(true);
+    			setRenderTable(true);
+    		} else {
+    			transaction.rollback();
     		}
     	}
     }
@@ -188,15 +199,7 @@ public class SearchCourseBean implements Pagination {
     public void setSearchResult(List<Course> searchResult) {
     	this.searchResult = searchResult;
     }
-
-	public List<Course> getPeriodResult() {
-		return periodResult;
-	}
-
-	public void setPeriodResult(List<Course> periodResult) {
-		this.periodResult = periodResult;
-	}
-
+    
 	/**
      * Returns the value of the attribute <code>searchParam</code> that stores
      * the selected search parameter.

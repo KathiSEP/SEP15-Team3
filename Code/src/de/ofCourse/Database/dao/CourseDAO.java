@@ -8,8 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,9 +56,17 @@ public class CourseDAO {
     public static void createCourse(Transaction trans, Course course)
 	    throws InvalidDBTransferException {
     }
-
+    
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String period) throws InvalidDBTransferException {
+    	String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"course_units\" " +
+ 	    		"WHERE \"course_units\".start_time::date = current_date " +
+ 	    		"AND \"course_units\".course_id = \"courses\".id LIMIT ? OFFSET ?";
+    	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"course_units\" " +
+ 	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' LIMIT ? OFFSET ?";
+    	String getAllCourses = "SELECT * FROM \"courses\" LIMIT ? OFFSET ?";
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
     	int limit = pagination.getElementsPerPage();
@@ -69,13 +75,13 @@ public class CourseDAO {
     	
     	switch (period) {
 		case "day":
-			result = currentDateCourses(conn, limit, offset);
+			result = getCoursesInPeriod(conn, limit, offset, currentDateCourses);
 			break;
 		case "week":
-			result = currentWeekCourses(conn, limit, offset);
+			result = getCoursesInPeriod(conn, limit, offset, currentWeekCourses);
 			break;
 		case "total":
-			result = getAllCourses(conn, limit, offset);
+			result = getCoursesInPeriod(conn, limit, offset, getAllCourses);
 			break;
 		default:
 			;
@@ -83,19 +89,17 @@ public class CourseDAO {
     	return result;
     }
     
-    private static List<Course> currentDateCourses(java.sql.Connection conn,
-			int limit, int offset) {
-    	String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"course_units\" " +
- 	    		"WHERE \"course_units\".start_time::date = current_date " +
- 	    		"AND \"course_units\".course_id = \"courses\".id ";
- 	    Statement stmt = null;
+    private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
+			int limit, int offset, String query) {
+    	PreparedStatement stmt = null;
 	    ResultSet rst = null;
 	    List<Course> result = null;
 		
 	    try {
-	   	    stmt = conn.createStatement();
-	   	    rst = stmt.executeQuery(getCoursesQuery);
+	   	    stmt = conn.prepareStatement(query);
+	   	    stmt.setInt(1, limit);
+			stmt.setInt(2, offset);
+	   	    rst = stmt.executeQuery(query);
 	   	    result = getResult(rst);
 	    } catch (SQLException e) {
 		   e.printStackTrace();
@@ -116,19 +120,7 @@ public class CourseDAO {
 		    }
 	    }
 		return result;
-	}
-    
-	private static List<Course> currentWeekCourses(java.sql.Connection conn,
-			int limit, int offset) {
-		
-		return null;
-	}
-
-	private static List<Course> getAllCourses(java.sql.Connection conn,
-			int limit, int offset) {
-		
-		return null;
-	}
+    }
 	
 	/**
      * Returns a list of courses which titles contain the search term the user
@@ -285,7 +277,7 @@ public class CourseDAO {
     			"courses.end_date FROM \"courses\", \"Users\", \"course_instructors\" " +
     			"WHERE \"Users\".name = '?' " +
     			"and \"Users\".id = \"course_instructors\".course_instructor " +
-    			"and \"course_instructors\".course = courses.id  LIMIT ? OFFSET ?";
+    			"and \"course_instructors\".course = courses.id LIMIT ? OFFSET ?";
     	PreparedStatement stmt = null;
     	ResultSet rst = null;
     	List<Course> result = null;
