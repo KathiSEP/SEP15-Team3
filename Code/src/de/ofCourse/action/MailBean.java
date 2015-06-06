@@ -55,7 +55,13 @@ public class MailBean {
     
     @PostConstruct
     private void init(){
-        smtpServer = new SmtpServer();
+        smtpSetup();
+        
+    }
+
+
+	private void smtpSetup() {
+		smtpServer = new SmtpServer();
         
         smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail("smtphost"));
         smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail("smtpport")));
@@ -63,8 +69,7 @@ public class MailBean {
         smtpServer.setSsl(true);
         smtpServer.setUsername(PropertyManager.getInstance().getPropertyMail("mailusername"));
         smtpServer.setPassword(PropertyManager.getInstance().getPropertyMail("mailpassword"));
-        
-    }
+	}
     
     
     /**
@@ -84,7 +89,7 @@ public class MailBean {
     public void sendMail(List<String> recipients, String subject, String message) {
         //für testzwecke nur eine mail 
         Properties prop = new Properties();
-        
+        smtpSetup();
         
         Authenticator loginAuth = new Authenticator() {
             @Override
@@ -98,8 +103,8 @@ public class MailBean {
      
       
         // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
-        prop.put("mail.smtp.host", this.smtpServer.getHostaddr());
-        prop.put("mail.smtph.port", this.smtpServer.getPort());
+        prop.put("mail.smtp.host", smtpServer.getHostaddr());
+        prop.put("mail.smtph.port", smtpServer.getPort());
         prop.put("mail.smtp.starttls.enable", "true");
         //prop.put("mail.smtp.ssl.enable", "true");
         prop.put("mail.smtp.auth", "true");
@@ -118,8 +123,8 @@ public class MailBean {
             }
             
             
-            mail.setSubject("Testmail");
-            mail.setText("Hallo Sebastian, Email versand funktioniert");
+            mail.setSubject(subject);
+            mail.setText(message);
                                    
             Transport transport = session.getTransport("smtp");
             

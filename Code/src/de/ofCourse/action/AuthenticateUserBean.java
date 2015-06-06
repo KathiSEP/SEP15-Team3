@@ -110,7 +110,7 @@ public class AuthenticateUserBean {
 	try {
         	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
         	id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
-	
+			
     	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
     	// Passwort falsch sind
     	// -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht aktiviert
