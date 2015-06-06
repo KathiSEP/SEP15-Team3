@@ -163,7 +163,7 @@ public class MailBean {
         String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
         messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
         messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
-        messenge + createLink() + "/authenticate" + veriString + "\n\n";
+        messenge + createLink() + "/authenticate/veri=" + veriString + "\n\n";
         
         String subject = "Authentication Mail";
         
