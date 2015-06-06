@@ -99,7 +99,7 @@ public class CourseDAO {
 	   	    stmt = conn.prepareStatement(query);
 	   	    stmt.setInt(1, limit);
 			stmt.setInt(2, offset);
-	   	    rst = stmt.executeQuery(query);
+	   	    rst = stmt.executeQuery();
 	   	    result = getResult(rst);
 	    } catch (SQLException e) {
 		   e.printStackTrace();
@@ -181,6 +181,7 @@ public class CourseDAO {
     	List<Course> result = new ArrayList<Course>();
     	try {
     		int cols = rst.getMetaData().getColumnCount();
+    		
     		while (rst.next()) {
     			int i = 1;
     			List<Object> tuple = new ArrayList<Object>();
@@ -204,7 +205,7 @@ public class CourseDAO {
     
     private static List<Course> getCoursesByID (java.sql.Connection conn, int limit, int offset, int courseID) {
     	String getCoursesQuery = "SELECT * FROM \"courses\" " +
-    			"WHERE CAST(id AS TEXT) LIKE '%?%' LIMIT ? OFFSET ?";
+    			"WHERE CAST(id AS TEXT) LIKE '% ? %' LIMIT ? OFFSET ?";
     	PreparedStatement stmt = null;
     	ResultSet rst = null;
     	List<Course> result = null;

@@ -114,6 +114,7 @@ public class SearchCourseBean implements Pagination {
     	
     	List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			displayPeriod);
+    	
     	if (result != null) {
     		searchResult = result;
     		transaction.commit();
@@ -159,12 +160,19 @@ public class SearchCourseBean implements Pagination {
     	if (!searchString.isEmpty()) {
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
+    		
     		if (result != null) {
     			searchResult = result;
+    			
+    			System.out.println("im bean searchResult course ID:" + searchResult.get(0).getCourseID());
+    			
     			transaction.commit();
     			setPagingSearchTerm(true);
     			setRenderTable(true);
     		} else {
+    			
+    			System.out.println("result is NULL");
+    			
     			transaction.rollback();
     		}
     	}

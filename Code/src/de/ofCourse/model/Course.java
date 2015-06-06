@@ -52,7 +52,7 @@ public class Course implements Serializable {
      * Stores the maximal amount of Users the Course can handle.
      * 
      */
-    private int maxUsers;
+    private Integer maxUsers;
     /**
      * Stores the Logo of the Course
      */
@@ -130,7 +130,7 @@ public class Course implements Serializable {
      * 
      * @return the maximal amount of Users the Course can handle
      */
-    public int getMaxUsers() {
+    public Integer getMaxUsers() {
 	return maxUsers;
     }
 
@@ -235,7 +235,7 @@ public class Course implements Serializable {
      * @param maxUsers
      *          new maximum of users the course can handle to set
      */
-    public void setMaxUsers(int maxUsers) {
+    public void setMaxUsers(Integer maxUsers) {
 	this.maxUsers = maxUsers;
     }
 
