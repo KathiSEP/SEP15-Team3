@@ -94,8 +94,7 @@ public class SystemDAO {
 	    pS = conn.prepareStatement(sql);
 
 	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Aktivierung einzigartig).
+	    // (hier ein Eintrag in der Liste, da Aktivierung einzigartig).
 	    ResultSet res = pS.executeQuery();
 
 	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
@@ -110,12 +109,10 @@ public class SystemDAO {
 		    activation = Activation.ADMIN;
 		case "COMPLETE":
 		    activation = Activation.COMPLETE;
-		default:
-		    // TODO Fehlermeldung nötig?
+		break;
 		}
 
 	    } else {
-		// TODO fehlermeldung nötig ??
 		return null;
 	    }
 

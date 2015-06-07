@@ -158,6 +158,7 @@ public class RegisterUserBean {
 	if(testing) {
 	    return "/facelets/open/index.xhtml?faces-redirect=false";
 	} else {
+	    
 	// Datenbankverbindung initialisieren
 	this.transaction = new Connection();
 	transaction.start();

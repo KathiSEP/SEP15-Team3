@@ -701,7 +701,6 @@ public class UserDAO {
 	try {
 	    pS = conn.prepareStatement(sql);	    
 	    pS.setString(1, username);
-	    System.out.println(pS.toString());
 	    //preparedStatement ausführen, gibt resultSet als Liste zurück (hier
 	    //ein Eintrag in der Liste, da Benutzername einzigartig).
 	    ResultSet res = pS.executeQuery();
