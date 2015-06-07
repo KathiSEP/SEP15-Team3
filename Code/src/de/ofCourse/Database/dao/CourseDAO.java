@@ -3,6 +3,8 @@
  */
 package de.ofCourse.Database.dao;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +18,8 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -54,6 +58,49 @@ public class CourseDAO {
      */
     public static void createCourse(Transaction trans, Course course)
 	    throws InvalidDBTransferException {
+	
+	//SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+		PreparedStatement pS = null;
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		
+		    String sql = "Insert into \"courses\" (titel, max_participants, "
+		    	+ "start_date, end_date, description, image) "
+				+ "values (?, ?, ?, ?, ?, ?)";
+		
+		//mögliche SQL-Injektion abfangen
+		try {
+		    			
+		    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
+		    // ob der Benutzer die Daten angegeben hat oder ob in die 
+		    // Datenbank null-Werte geschrieben werden müssen.
+		    pS = conn.prepareStatement(sql);	    
+		    if(course.getTitle() == null || course.getTitle().length() < 1) {
+			pS.setString(1, null);
+		    } else {
+			pS.setString(1, course.getTitle());
+		    }
+		    pS.setInt(2, course.getMaxUsers());
+		    pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
+		    pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
+		    if(course.getDescription() == null || course.getDescription().length() < 1) {
+			pS.setString(5, null);
+		    } else {
+			pS.setString(5, course.getDescription());
+		    }	
+		    if(course.getCourseImage() == null || course.getCourseImage().length() < 1) {
+			pS.setString(6, null);
+		    } else {
+			pS.setString(6, course.getCourseImage());
+		    }			    
+		    
+		    pS.executeUpdate();	 
+		     
+		} catch (SQLException e) {
+		    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+		    throw new InvalidDBTransferException();
+		    
+		} 
     }
     
     public static List<Course> getCourses(Transaction trans,
@@ -526,6 +573,25 @@ public class CourseDAO {
      */
     public static void deleteCourse(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
+	
+	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	PreparedStatement pS = null;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	
+	String sql = "DELETE FROM \"courses\" WHERE id = ?";
+	//mögliche SQL-Injektion abfangen
+	try {
+	    pS = conn.prepareStatement(sql);	    
+	    pS.setInt(1, courseID);
+	    
+	    pS.executeUpdate();
+
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+	    throw new InvalidDBTransferException();
+	    
+	} 
     }
 
     /**
@@ -589,6 +655,31 @@ public class CourseDAO {
      */
     public static void addLeaderToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
+	//SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+	PreparedStatement pS = null;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	
+	String sql = "Insert into \"course_instructors\" (course_instructor_id, course_id) "
+			+ "values (?, ?)";
+	
+	//mögliche SQL-Injektion abfangen
+	try {
+	    			
+	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
+	    // ob der Benutzer die Daten angegeben hat oder ob in die 
+	    // Datenbank null-Werte geschrieben werden müssen.
+	    pS = conn.prepareStatement(sql);	    
+	    pS.setInt(1, courseID);
+	    pS.setInt(2, userID);
+	    
+	    pS.executeUpdate();	 
+	     
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+	    throw new InvalidDBTransferException();
+	    
+	} 	
     }
 
     /**
@@ -609,6 +700,26 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void removeLeaderFromCourse(Transaction trans, int userID,
-	    int course) throws InvalidDBTransferException {
+	    int courseID) throws InvalidDBTransferException {
+	
+	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	PreparedStatement pS = null;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	
+	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
+	//mögliche SQL-Injektion abfangen
+	try {
+	    pS = conn.prepareStatement(sql);	    
+	    pS.setInt(1, courseID);
+	    pS.setInt(2, userID);
+	    
+	    pS.executeUpdate();
+
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+	    throw new InvalidDBTransferException();
+	    
+	} 
     }
 }
