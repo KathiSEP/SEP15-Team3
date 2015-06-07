@@ -9,11 +9,7 @@
 			<default-locale>de</default-locale>
 		</locale-config>
 	</application>
-    <lifecycle>
-        <phase-listener>
-             de.ofCourse.system.CheckPhase 
-        </phase-listener>
-    </lifecycle>
+   
     
     <validator>
         <validator-id>emailValidator</validator-id>
@@ -30,6 +26,14 @@
     <validator>
         <validator-id>dateOfBirthValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.DateOfBirthValidator</validator-class>
+    </validator>
+    <validator>
+        <validator-id>priceValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.PriceValidator</validator-class>
+    </validator>
+    <validator>
+        <validator-id>courseInstructorValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.CourseInstructorValidator</validator-class>
     </validator>
    
 </faces-config>

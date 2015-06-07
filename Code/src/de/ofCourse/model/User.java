@@ -63,6 +63,15 @@ public class User implements Serializable {
      * stores the id with which the user can be identify
      */
     private int userID;
+    
+    private boolean selected;
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
 
     /**
      * Returns the value of the attribute <code>address</code>.
@@ -82,47 +91,10 @@ public class User implements Serializable {
 	if (getClass() != obj.getClass())
 	    return false;
 	User other = (User) obj;
-	if (Float.floatToIntBits(accountBalance) != Float
-		.floatToIntBits(other.accountBalance))
-	    return false;
-	if (address == null) {
-	    if (other.address != null)
-		return false;
-	} else if (!address.equals(other.address))
-	    return false;
-	if (dateOfBirth == null) {
-	    if (other.dateOfBirth != null)
-		return false;
-	} else if (!dateOfBirth.equals(other.dateOfBirth))
-	    return false;
-	if (email == null) {
-	    if (other.email != null)
-		return false;
-	} else if (!email.equals(other.email))
-	    return false;
-	if (firstname == null) {
-	    if (other.firstname != null)
-		return false;
-	} else if (!firstname.equals(other.firstname))
-	    return false;
-	if (lastname == null) {
-	    if (other.lastname != null)
-		return false;
-	} else if (!lastname.equals(other.lastname))
-	    return false;
-	if (profilImage == null) {
-	    if (other.profilImage != null)
-		return false;
-	} else if (!profilImage.equals(other.profilImage))
-	    return false;
-	if (salutation != other.salutation)
-	    return false;
+	
 	if (userID != other.userID)
 	    return false;
-	if (userRole != other.userRole)
-	    return false;
-	if (userStatus != other.userStatus)
-	    return false;
+
 	if (username == null) {
 	    if (other.username != null)
 		return false;
@@ -378,6 +350,20 @@ public class User implements Serializable {
      */
     public void setAccountBalance(float balance) {
 	this.accountBalance = balance;
+    }
+
+    /**
+     * @return the selected
+     */
+    public boolean isSelected() {
+	return selected;
+    }
+
+    /**
+     * @param selected the selected to set
+     */
+    public void setSelected(boolean selected) {
+	this.selected = selected;
     }
 
 }
