@@ -27,6 +27,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.SmtpServer;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -153,19 +154,26 @@ public class MailBean {
         // User who should get the authentificationMessage will be loaded from Database
         Transaction trans = new Connection();
         trans.start();
-        User userToInform = UserDAO.getUser(trans, userID);
-        trans.commit();
+        try{
+           User userToInform = UserDAO.getUser(trans, userID); 
+           trans.commit();
+         //TODO try catch?
+           // E-Mail Messenge:
+           String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
+           messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
+           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
+           messenge + createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
+           
+           String subject = "Authentication Mail";
+           
+           sendSingleMail(userToInform.getEmail(), subject, messenge);
+        } catch (InvalidDBTransferException e){
+           trans.rollback(); 
+        }
         
-        //TODO try catch?
-        // E-Mail Messenge:
-        String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
-        messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
-        messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
-        messenge + createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
         
-        String subject = "Authentication Mail";
         
-        sendSingleMail(userToInform.getEmail(), subject, messenge);
+        
         
     }
 
