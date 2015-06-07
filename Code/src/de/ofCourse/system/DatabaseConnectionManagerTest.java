@@ -31,6 +31,7 @@ public class DatabaseConnectionManagerTest {
 	// e.g. PropertyManager).
 	DatabaseConnectionManager.debugMode(true);
 
+
 	// Checks whether the DatabaseConnectionsManager is no null
 	assertNotNull(DatabaseConnectionManager.getInstance());
 

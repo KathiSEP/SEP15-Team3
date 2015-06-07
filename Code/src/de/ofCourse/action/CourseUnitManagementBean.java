@@ -3,16 +3,29 @@
  */
 package de.ofCourse.action;
 
+
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+import javax.servlet.http.HttpSession;
 
+import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -42,7 +55,12 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @ViewScoped
-public class CourseUnitManagementBean implements Pagination {
+public class CourseUnitManagementBean implements Pagination, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Stores the transaction that is used for database interaction.
@@ -55,6 +73,26 @@ public class CourseUnitManagementBean implements Pagination {
     private User userToAdd;
 
     /**
+     * Stores a list of users that participate a course unit.
+     */
+    private DataModel<User> participants;
+
+    /**
+     * @return the participants
+     */
+    public DataModel<User> getParticipants() {
+	return participants;
+    }
+
+    /**
+     * @param participants
+     *            the participants to set
+     */
+    public void setParticipants(DataModel<User> participants) {
+	this.participants = participants;
+    }
+
+    /**
      * Stores a list of users that are to be removed from the course unit.
      */
     private List<User> usersToDelete;
@@ -62,7 +100,22 @@ public class CourseUnitManagementBean implements Pagination {
     /**
      * Stores whether a course unit takes place regularly.
      */
-    private boolean isRegularCourseUnit;
+    private boolean regularCourseUnit;
+
+    /**
+     * @return the regularCourseUnit
+     */
+    public boolean isRegularCourseUnit() {
+	return regularCourseUnit;
+    }
+
+    /**
+     * @param regularCourseUnit
+     *            the regularCourseUnit to set
+     */
+    public void setRegularCourseUnit(boolean regularCourseUnit) {
+	this.regularCourseUnit = regularCourseUnit;
+    }
 
     /**
      * Stores the cycle of a course unit. That means if the course unit takes
@@ -76,10 +129,24 @@ public class CourseUnitManagementBean implements Pagination {
      */
     private CourseUnit courseUnit;
 
+    private boolean editMode;
+
     /**
-     * Sstores the participants of the course unit.
+     * @return the editMode
      */
-    private List<User> participientsOfCourseUnit;
+    public boolean isEditMode() {
+	return editMode;
+    }
+
+    /**
+     * @param editMode
+     *            the editMode to set
+     */
+    public void setEditMode(boolean editMode) {
+	this.editMode = editMode;
+    }
+
+    private int courseUnitId = 0;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -96,6 +163,82 @@ public class CourseUnitManagementBean implements Pagination {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    @PostConstruct
+    private void init() {
+	transaction = new Connection();
+
+	
+	
+	
+	
+	
+
+	this.usersToDelete = new ArrayList<User>();
+
+	// ///////////////////////////////////////////
+	// TESTING
+
+	this.editMode = true;
+	courseUnit = new CourseUnit();
+	courseUnit.setTitle("Title");
+	courseUnit.setStarttime(new Date(12345000));
+	courseUnit.setEndtime(new Date(1223467899));
+	courseUnit.setLocation("HS 13");
+	Address myAddress = new Address();
+	myAddress.setHouseNumber(6);
+	myAddress.setStreet("Roehrn");
+	myAddress.setCity("Ortenburg");
+	myAddress.setZipCode(94496);
+	courseUnit.setAddress(myAddress);
+	courseUnit.setDescription("Das ist eine Beschreibung");
+
+	User courseAdmin = new User();
+	courseAdmin.setUsername("Sepp");
+	courseUnit.setCourseAdmin(courseAdmin);
+
+	this.cycleOfCourseUnit = new Cycle();
+
+	this.userToAdd = new User();
+	userToAdd.setUserId(12345);
+	userToAdd.setFirstname("Hans");
+	userToAdd.setLastname("Bauer");
+
+	HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+		.getExternalContext().getSession(true);
+	session.setAttribute("loggedin", true);
+
+
+	
+	this.participants = new ListDataModel<User>();
+	this.participants.setWrappedData(Arrays.asList(userToAdd));
+	
+	
+
+	// ////////////////////////////////////////////////////////////
+    }
+
+    /**
+     * @return the cycleOfCourseUnit
+     */
+    public Cycle getCycleOfCourseUnit() {
+	return cycleOfCourseUnit;
+    }
+
+    /**
+     * @param cycleOfCourseUnit
+     *            the cycleOfCourseUnit to set
+     */
+    public void setCycleOfCourseUnit(Cycle cycleOfCourseUnit) {
+	this.cycleOfCourseUnit = cycleOfCourseUnit;
+    }
+
+    /**
+     * @return the usersToDelete
+     */
+    public List<User> getUsersToDelete() {
+	return usersToDelete;
+    }
+
     /**
      * Creates a new course unit with the entered data and returns the link to
      * the updated course details page. That means that the method creates a new
@@ -107,6 +250,7 @@ public class CourseUnitManagementBean implements Pagination {
      * @return link to the courseDetails page
      */
     public String createCourseUnit() {
+	System.out.println("Create Course Unit");
 	return null;
     }
 
@@ -115,17 +259,6 @@ public class CourseUnitManagementBean implements Pagination {
      * is to display.
      */
     public void initializeCourseUnit() {
-    }
-
-    /**
-     * Realizes the editing of a course unit that takes place not regularly.<br>
-     * Editing the course unit means that the database entry of the course unit
-     * is updated updated with the entered data.
-     * 
-     * @return the link to this page
-     */
-    public String editCourseUnit() {
-	return null;
     }
 
     /**
@@ -143,7 +276,8 @@ public class CourseUnitManagementBean implements Pagination {
      *            whether all course units of the cycle are to be edited
      * @return the link to this page
      */
-    public String saveCourseUnit(boolean editAllIfRegular) {
+    public String saveCourseUnit() {
+	System.out.println("Save Course Unit");
 	return null;
     }
 
@@ -158,7 +292,8 @@ public class CourseUnitManagementBean implements Pagination {
      *            whether the course unit takes place regularly or not
      * @return link to the course details page
      */
-    public String deleteCourseUnit(boolean deleteAllIfRegular) {
+    public String deleteCourseUnit() {
+	System.out.println("Delete Course Unit");
 	return null;
     }
 
@@ -168,6 +303,9 @@ public class CourseUnitManagementBean implements Pagination {
      * updated. In this case the user need not to pay for the course unit.
      */
     public void addUserToCourseUnit() {
+	System.out.println("Add user: " + this.userToAdd.getFirstname() + " "
+		+ this.userToAdd.getLastname() + " with ID "
+		+ this.userToAdd.getUserID() + " to the course unit");
     }
 
     /**
@@ -186,7 +324,13 @@ public class CourseUnitManagementBean implements Pagination {
      *            the new user that is to be added to the course unit
      */
     public void setUserToAdd(User userToAdd) {
+	this.userToAdd = userToAdd;
     }
+
+    
+    
+    
+  
 
     /**
      * Deletes the selected users from the course unit and transfer the paid
@@ -196,6 +340,22 @@ public class CourseUnitManagementBean implements Pagination {
      * database entry of the course unit is updated.
      */
     public void deleteUsersFromCourseUnit() {
+	List<User> items = (List<User>) this.participants.getWrappedData();
+	usersToDelete = new ArrayList<User>();
+	for (User item : items) {
+	    if (item.isSelected() && !(this.usersToDelete.contains(item.getUserID()))) {
+		this.usersToDelete.add(item);
+	    }
+	}
+	
+	System.out.println("Delete users:");
+	for (int i = 0; i < this.usersToDelete.size(); ++i) {
+	    System.out.println("BenutzerID: " + this.usersToDelete.get(i).getUserID());
+	    
+	}
+	
+	//Aktualisierte Liste aus der Datenbank
+	this.participants.setWrappedData(Arrays.asList());
     }
 
     /**
@@ -204,9 +364,6 @@ public class CourseUnitManagementBean implements Pagination {
      * 
      * @return list of users to delete from the course unit
      */
-    public List<User> getUserToDelete() {
-	return usersToDelete;
-    }
 
     /**
      * Sets the value of the attribute <code>usersToDelete</code> that stores
@@ -216,33 +373,7 @@ public class CourseUnitManagementBean implements Pagination {
      *            new list of users to delete from the course unit
      */
     public void setUsersToDelete(List<User> usersToDelete) {
-    }
-
-    /**
-     * Returns whether a course unit takes place regularly.
-     * 
-     * @return boolean whether a course unit takes place regularly
-     */
-    public boolean getIsRegularCourseUnit() {
-	return isRegularCourseUnit;
-    }
-
-    /**
-     * Returns the value of the attribute <code>cycle</code> of the course unit.
-     * 
-     * @return the cycle of the course unit
-     */
-    public Cycle getCylceOfCourseUnit() {
-	return cycleOfCourseUnit;
-    }
-
-    /**
-     * Sets the value of the attribute <code>cycle</code> of the course unit.
-     * 
-     * @param cycle
-     *            the new cycle of the course unit
-     */
-    public void setCylceOfCourseUnit(Cycle cycle) {
+	this.usersToDelete = usersToDelete;
     }
 
     /**
@@ -261,26 +392,7 @@ public class CourseUnitManagementBean implements Pagination {
      *            the new value of the attribute courseUnit
      */
     public void setCourseUnit(CourseUnit courseUnit) {
-    }
-
-    /**
-     * Returns the value of the attribute <code>participientsOfCourseUnit</code>
-     * .
-     * 
-     * 
-     * @return list of participants
-     */
-    public List<User> getParticipientsOfCourseUnit() {
-	return participientsOfCourseUnit;
-    }
-
-    /**
-     * Sets the value of the attribute <code>participientsOfCourseUnit</code>.
-     * 
-     * @param participients
-     *            the new participants list
-     */
-    public void setParticipientsOfCourseUnit(List<User> participients) {
+	this.courseUnit = courseUnit;
     }
 
     /**
@@ -312,9 +424,9 @@ public class CourseUnitManagementBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+	this.pagination = pagination;
     }
 
-   
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
@@ -331,6 +443,22 @@ public class CourseUnitManagementBean implements Pagination {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+	this.sessionUser = userSession;
+    }
+
+    /**
+     * @return the courseUnitId
+     */
+    public int getCourseUnitId() {
+	return courseUnitId;
+    }
+
+    /**
+     * @param courseUnitId
+     *            the courseUnitId to set
+     */
+    public void setCourseUnitId(int courseUnitId) {
+	this.courseUnitId = courseUnitId;
     }
 
 }

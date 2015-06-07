@@ -5,12 +5,15 @@ package de.ofCourse.system;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -89,60 +92,86 @@ public class DatabaseConnectionManager {
      * @return connection for database access
      */
     public synchronized Connection getConnection() {
-	// If there are not the number of connections active as determined in
-	// the configuration file
+	Connection connection = null;
 	int numberOfConnections;
 
+	// Tries 5 times to get a connection
+	int counter = 0;
+	int indexLastElement;
+
+	do {
+	    // There's a free connection
+	    if (!this.freeConnections.isEmpty()) {
+		indexLastElement = freeConnections.size() - 1;
+		connection = freeConnections.get(indexLastElement);
+		freeConnections.remove(indexLastElement);
+	    } else {
+		// There's no free connection
+		try {
+		    wait(20);
+		} catch (InterruptedException e) {
+		    if (debug) {
+			System.out.println("LOGGING MESSAGE:   "
+				+ "Error occured during "
+				+ "waiting for a connection.");
+		    } else {
+			LogHandler.getInstance().error(
+				"Error occured during waiting"
+					+ " for a connection.");
+		    }
+		}
+
+	    }
+	    counter--;
+	} while ((!this.isConnectionActive(connection))
+		&& (counter <= 5 || freeConnections.size() > 0));
+
+	// Fetches the actual number of granted connections
 	if (debug) {
 	    numberOfConnections = 3;
 	} else {
 	    numberOfConnections = Integer.parseInt(PropertyManager
 		    .getInstance().getPropertyConfig("dbconnections"));
 	}
+	/*
+	 * Calculates if there are as much as connections in use as granted by
+	 * the configuration
+	 */
 	int difference = numberOfConnections
 		- (freeConnections.size() + numberOfConnectionsInUse);
 
-	if (difference > 0) {
-	    for (int i = 0; i < difference; ++i) {
-		Connection conn = establishConnection();
-		if (conn != null) {
-		    databaseConnectionManager.freeConnections.add(conn);
-		}
+	/*
+	 * If there's no active connection in <code>the freeConnections<\code>
+	 * list and not the full number of connections are active
+	 */
+	if (!this.isConnectionActive(connection) && difference > 0) {
+	    connection = establishConnection();
+	    if (debug) {
+		System.out.println("LOGGING MESSAGE:   "
+			+ "New Connection established.");
+	    } else {
+		LogHandler.getInstance().debug("New Connection established.");
 	    }
 	}
-	// As long there's no free connection to the database
-	while (freeConnections.isEmpty()) {
-	    try {
-		wait();
-	    } catch (InterruptedException e) {
-		if (debug) {
-		    System.out.println("LOGGING MESSAGE:   "
-			    + "Error occured during waiting for a connection.");
-		} else {
-		    LogHandler.getInstance().error(
-			    "Error occured during waiting for a connection.");
-		}
+
+	// Check the connection again
+	if (!this.isConnectionActive(connection)) {
+	    if (debug) {
+		System.out.println("LOGGING MESSAGE:   "
+			+ "Not able to get a active "
+			+ "connection to the database.");
+	    } else {
+		LogHandler.getInstance().error(
+			"Not able to get a active connection to the database.");
 	    }
+	    throw new InvalidDBTransferException();
 	}
-	// There's a free connection
-	int indexLastElement = freeConnections.size() - 1;
-	Connection connection = freeConnections.get(indexLastElement);
-	freeConnections.remove(indexLastElement);
+
 	++numberOfConnectionsInUse;
-	if (connection != null) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Connection returned.");
-	    } else {
-		LogHandler.getInstance().debug("Connection returned.");
-	    }
+	if (debug) {
+	    System.out.println("LOGGING MESSAGE:   " + "Connection returned.");
 	} else {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Connection is null.");
-	    } else {
-		LogHandler.getInstance().debug("Connection is null.");
-	    }
+	    LogHandler.getInstance().debug("Connection returned.");
 	}
 
 	return connection;
@@ -290,6 +319,37 @@ public class DatabaseConnectionManager {
 	}
 
 	freeConnections.clear();
+    }
+
+    /**
+     * Checks whether the connection to the database is active.
+     * 
+     * @param connection
+     *            connection to the database
+     * @return true, if the connection is active<br>
+     *         false, otherwise
+     */
+    private boolean isConnectionActive(Connection connection) {
+	boolean active = false;
+
+	if (connection != null) {
+	    PreparedStatement stmt = null;
+	    String query = "SELECT 0;";
+
+	    try {
+		stmt = connection.prepareStatement(query);
+		stmt.execute();
+
+		stmt.close();
+		active = true;
+	    } catch (SQLException e) {
+		this.freeConnections.remove(connection);
+		System.out.println("Not active");
+		active = false;
+	    }
+
+	}
+	return active;
     }
 
     /**

@@ -62,7 +62,20 @@ public class LaunchSystem {
         SetupAdmin.createInitialAdmin();
         //DatabaseTableDestroyer.dropTables();
         LogHandler.getInstance().error("finished");
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run(){
+                shutdownMaintenance();
+            }
+        });
+        
         System.out.println("Initialsierung abgeschlossen");
+
+    
+    
+    
+    
     }
 
     /**

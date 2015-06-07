@@ -28,7 +28,8 @@ public class CourseUnit implements Serializable {
      * stores the description of the courseunit (could include
      * information, needed equipment etc)
      */
-    private String description;
+    private String description; 
+    
     /**
      * stores the Date and time when the CourseUnit starts.
      */
@@ -68,10 +69,7 @@ public class CourseUnit implements Serializable {
      * 
      */
     private List<User> users;
-    /**
-     * stores the Logo of the CourseUnit
-     */
-    private String courseImage;
+    
     /**
      * stores the room description where the CourseUnit will be hold (Is
      * needed besides the Address for example if the CourseUnit is hold in
@@ -179,14 +177,6 @@ public class CourseUnit implements Serializable {
 	return this.users;
     }
 
-    /**
-     * Returns the value of the attribute <code>courseImage</code>.
-     *
-     * @return the logo of the courseUnit
-     */
-    public String getCourseImage() {
-	return this.courseImage;
-    }
 
     /**
      * Returns the value of the attribute <code>location</code>.
@@ -307,15 +297,7 @@ public class CourseUnit implements Serializable {
 	this.users = users;
     }
 
-    /**
-     * Sets the value of the attribute <code>courseImage</code>.
-     * 
-     * @param image
-     *          new Logo to set
-     */
-    public void setCourseImage(String image) {
-	this.courseImage = image;
-    }
+
 
     /**
      * Sets the value of the attribute <code>location</code>.
