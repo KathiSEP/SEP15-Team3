@@ -3,7 +3,7 @@
  */
 package de.ofCourse.action;
 
-import java.io.UnsupportedEncodingException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -55,14 +55,12 @@ public class MailBean {
     
     @PostConstruct
     private void init(){
-        smtpSetup();
-        
+        smtpSetup();        
     }
 
 
 	private void smtpSetup() {
 		smtpServer = new SmtpServer();
-        
         smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail("smtphost"));
         smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail("smtpport")));
         //TODO fehlt noch
@@ -96,9 +94,7 @@ public class MailBean {
             protected PasswordAuthentication getPasswordAuthentication(){
                 PasswordAuthentication loginData = new PasswordAuthentication(smtpServer.getUsername(), smtpServer.getPassword());
                 return loginData;
-            }
-            
-            
+            }          
         };
      
       

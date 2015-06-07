@@ -83,20 +83,20 @@ public class RegisterUserBean {
     private SessionUserBean sessionUser;
     
     @ManagedProperty("#{mailBean}")
-    private MailBean mail;
+    private MailBean mailBean;
     
     /**
      * @return the mail
      */
-    public MailBean getMail() {
-        return mail;
+    public MailBean getMailBean() {
+        return mailBean;
     }
 
     /**
      * @param mail the mail to set
      */
-    public void setMail(MailBean mail) {
-        this.mail = mail;
+    public void setMailBean(MailBean mailBean) {
+        this.mailBean = mailBean;
     }
 
     @PostConstruct
@@ -105,7 +105,7 @@ public class RegisterUserBean {
 	      .getCurrentInstance().getExternalContext().getRequest();
 	 String veriString = request.getParameter("veri");
 	 
-	 mail = new MailBean();
+	 mailBean = new MailBean();
 		
 	 if(veriString != null && veriString.length() > 0) {
 	     this.transaction = new Connection();
@@ -182,9 +182,10 @@ public class RegisterUserBean {
             
             	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
                     
-            	    this.transaction.commit();            	    
+            	               	    
+            	    this.transaction.commit(); 
+            	    mailBean.sendAuthentificationMessage(userID, veriString);
             	    
-            	    mail.sendAuthentificationMessage(userID, veriString);
             	}
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();

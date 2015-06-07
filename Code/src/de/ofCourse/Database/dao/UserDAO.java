@@ -452,13 +452,15 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
-	String sql = "Update \"users\" SET email_verification = ?, veri_string = ? WHERE veri_string=?";
+	String sql = "UPDATE \"users\" SET email_verification=?, veri_string=?, status=? WHERE veri_string=?";
 	//mögliche SQL-Injektion abfangen
 	try {
 	    pS = conn.prepareStatement(sql);	    
 	    pS.setBoolean(1, true);
-	    pS.setString(2, null);
-	    pS.setString(3, veriString);
+	    pS.setString(2, "0");
+	    pS.setString(3, UserStatus.REGISTERED.toString());
+	    pS.setString(4, veriString);
+	    
 	    
 	    //preparedStatement ausführen, gibt resultSet als Liste zurück (hier
 	    //ein Eintrag in der Liste, da Benutzername einzigartig).

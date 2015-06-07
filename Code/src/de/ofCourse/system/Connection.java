@@ -60,7 +60,7 @@ public class Connection implements Transaction {
             e.printStackTrace();
             releaseConnection(); 
         }
-        releaseConnection();    
+        
     }
     
     /**
