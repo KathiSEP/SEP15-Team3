@@ -154,7 +154,9 @@ public class MailBean {
         Transaction trans = new Connection();
         trans.start();
         User userToInform = UserDAO.getUser(trans, userID);
+        trans.commit();
         
+        //TODO try catch?
         // E-Mail Messenge:
         String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
         messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
