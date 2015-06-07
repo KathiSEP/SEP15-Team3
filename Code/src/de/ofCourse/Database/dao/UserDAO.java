@@ -452,7 +452,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
-	String sql = "UPDATE \"users\" SET email_verification=?, veri_string=?, status=? WHERE veri_string=?";
+	String sql = "UPDATE \"users\" SET email_verification=?, veri_string=?, status=?::status WHERE veri_string=?";
 	//mögliche SQL-Injektion abfangen
 	try {
 	    pS = conn.prepareStatement(sql);	    
