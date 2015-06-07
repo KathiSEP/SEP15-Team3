@@ -6,7 +6,6 @@ package de.ofCourse.Database.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,29 +58,31 @@ public class CourseDAO {
     
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String period) throws InvalidDBTransferException {
-    	String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"course_units\" " +
- 	    		"WHERE \"course_units\".start_time::date = current_date " +
- 	    		"AND \"course_units\".course_id = \"courses\".id LIMIT ? OFFSET ?";
-    	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"course_units\" " +
- 	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' LIMIT ? OFFSET ?";
-    	String getAllCourses = "SELECT * FROM \"courses\" LIMIT ? OFFSET ?";
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
     	int limit = pagination.getElementsPerPage();
     	int offset = limit * pagination.getCurrentPageNumber();
+    	String orderParam = getOrderParam(pagination.getSortColumn());
+    	String dir = getSortDirection(pagination.isSortAsc());
     	List<Course> result = null;
+    	String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"course_units\" " +
+ 	    		"WHERE \"course_units\".start_time::date = current_date " +
+ 	    		"AND \"course_units\".course_id = \"courses\".id ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
+    	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+    			"courses.end_date FROM \"courses\", \"course_units\" " +
+ 	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
+    	String getAllCourses = "SELECT * FROM \"courses\" ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
     	
     	switch (period) {
 		case "day":
-			result = getCoursesInPeriod(conn, limit, offset, currentDateCourses);
+			result = getCoursesInPeriod(conn, limit, offset, orderParam, currentDateCourses);
 			break;
 		case "week":
-			result = getCoursesInPeriod(conn, limit, offset, currentWeekCourses);
+			result = getCoursesInPeriod(conn, limit, offset, orderParam, currentWeekCourses);
 			break;
 		case "total":
-			result = getCoursesInPeriod(conn, limit, offset, getAllCourses);
+			result = getCoursesInPeriod(conn, limit, offset, orderParam, getAllCourses);
 			break;
 		default:
 			;
@@ -90,15 +91,16 @@ public class CourseDAO {
     }
     
     private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
-			int limit, int offset, String query) {
+			int limit, int offset, String orderParam, String query) {
     	PreparedStatement stmt = null;
 	    ResultSet rst = null;
 	    List<Course> result = null;
 		
 	    try {
 	   	    stmt = conn.prepareStatement(query);
-	   	    stmt.setInt(1, limit);
-			stmt.setInt(2, offset);
+	   	    stmt.setString(1, orderParam);
+	   	    stmt.setInt(2, limit);
+			stmt.setInt(3, offset);
 	   	    rst = stmt.executeQuery();
 	   	    result = getResult(rst);
 	    } catch (SQLException e) {
@@ -145,37 +147,85 @@ public class CourseDAO {
     	java.sql.Connection conn = connection.getConn();
     	int limit = pagination.getElementsPerPage();
     	int offset = limit * pagination.getCurrentPageNumber();
+    	String orderParam = getOrderParam(pagination.getSortColumn());
+    	String dir = getSortDirection(pagination.isSortAsc());
     	List<Course> result = null;
     	
     	switch (searchParam) {
-    		case "courseID":
-    			try {
-    				int courseID = Integer.parseInt(searchString);
-    				result = getCoursesByID(conn, limit, offset, courseID);
-    			} catch (NumberFormatException e) {
-    				LogHandler.getInstance().error("Error occoured when parsing the search string to an integer value.");
-    				e.printStackTrace();
-    			}
-    			break;
-    		case "title":
-    			result = getCoursesByTitle(conn, limit, offset, searchString);
-    			break;
-    		case "leader":
-    			result = getCoursesOfLeader(conn, limit, offset, searchString);
-    			break;
-    		default:
-    			;
+		case "courseID":
+			String getCoursesByID = "SELECT * FROM \"courses\" " +
+	    			"WHERE CAST(id AS TEXT) LIKE ? ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
+			result = getCourses(conn, limit, offset, searchString, getCoursesByID);
+			
+			break;
+		case "title":
+			String getCoursesByTitel = "SELECT * FROM \"courses\" " +
+					"WHERE LOWER(titel) LIKE LOWER(?) ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
+			result = getCourses(conn, limit, offset, searchString, getCoursesByTitel);
+			break;
+		case "leader":
+			String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
+	    			"courses.end_date FROM \"courses\", \"users\", \"course_instructors\" " +
+	    			"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
+	    			"AND \"users\".id = \"course_instructors\".course_instructor_id " +
+	    			"AND \"course_instructors\".course_id = courses.id ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
+			result = getCourses(conn, limit, offset, searchString, getCoursesQuery);
+			break;
+		default:
+			;
     	}
 		return result;
     }
     
-    private static void setProperties(Course course, List<Object> tuple) {
-		course.setCourseID((Integer) tuple.get(0));
-		course.setTitle((String) tuple.get(1));
-		course.setMaxUsers((Integer) tuple.get(2));
-		course.setStartdate((Date) tuple.get(3));
-		course.setEnddate((Date) tuple.get(4));
-	}
+    private static String getOrderParam(String orderParam) {
+    	switch (orderParam) {
+    	case "title":
+    		return "titel";
+		case "maxUsers":
+    		return "max_participants";
+		case "starts":
+    		return "start_date";
+		case "ends":
+    		return "end_date";
+		default:
+    		return "id";
+    	}
+    }
+    
+    private static List<Course> getCourses (java.sql.Connection conn, int limit, int offset, String searchString, String query) {
+    	PreparedStatement stmt = null;
+    	ResultSet rst = null;
+    	List<Course> result = null;
+    	String search = "%" + searchString + "%";
+    	
+    	try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, search);
+			stmt.setInt(2, limit);
+			stmt.setInt(3, offset);
+			
+			rst = stmt.executeQuery();
+			result = getResult(rst);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rst != null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	return result;
+    }
     
     private static List<Course> getResult(ResultSet rst) {
     	List<Course> result = new ArrayList<Course>();
@@ -203,113 +253,13 @@ public class CourseDAO {
     	return null;
     }
     
-    private static List<Course> getCoursesByID (java.sql.Connection conn, int limit, int offset, int courseID) {
-    	String getCoursesQuery = "SELECT * FROM \"courses\" " +
-    			"WHERE CAST(id AS TEXT) LIKE '% ? %' LIMIT ? OFFSET ?";
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	List<Course> result = null;
-    	
-    	try {
-			stmt = conn.prepareStatement(getCoursesQuery);
-			stmt.setInt(1, courseID);
-			stmt.setInt(2, limit);
-			stmt.setInt(3, offset);
-			rst = stmt.executeQuery();
-			result = getResult(rst);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-    	return result;
-    }
-    
-    private static List<Course> getCoursesByTitle (java.sql.Connection conn, int limit, int offset, String title) {
-    	String getCoursesQuery = "SELECT * FROM \"courses\" " +
-				"WHERE titel ILIKE LOWER('%?%') LIMIT ? OFFSET ?";
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	List<Course> result = null;
-
-    	try {
-			stmt = conn.prepareStatement(getCoursesQuery);
-			stmt.setString(1, title);
-			stmt.setInt(2, limit);
-			stmt.setInt(3, offset);
-			rst = stmt.executeQuery();
-			result = getResult(rst);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-    	return result;
-    }
-    
-    private static List<Course> getCoursesOfLeader (java.sql.Connection conn, int limit, int offset, String name) {
-    	String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"Users\", \"course_instructors\" " +
-    			"WHERE \"Users\".name = '?' " +
-    			"and \"Users\".id = \"course_instructors\".course_instructor " +
-    			"and \"course_instructors\".course = courses.id LIMIT ? OFFSET ?";
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	List<Course> result = null;
-    	
-    	try {
-			stmt = conn.prepareStatement(getCoursesQuery);
-			stmt.setString(1, name);
-			stmt.setInt(2, limit);
-			stmt.setInt(3, offset);
-			rst = stmt.executeQuery();
-			result = getResult(rst);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-    	return result;
-    }
+    private static void setProperties(Course course, List<Object> tuple) {
+		course.setCourseID((Integer) tuple.get(0));
+		course.setTitle((String) tuple.get(1));
+		course.setMaxUsers((Integer) tuple.get(2));
+		course.setStartdate((Date) tuple.get(3));
+		course.setEnddate((Date) tuple.get(4));
+	}
     
     /**
      * Returns a list of courses which titles contain the search term the user
@@ -396,7 +346,7 @@ public class CourseDAO {
 	String getCourseQuery = "SELECT id, titel FROM \"courses\" "
 		+ "WHERE courses.id IN (SELECT course_id FROM \"course_participants\" "
 		+ "WHERE participant_id = ?) ORDER BY ? "
-		+ getSortDirectionAsString(pagination.isSortAsc())
+		+ getSortDirection(pagination.isSortAsc())
 		+ " LIMIT ? OFFSET ?";
 	String getCourseLeadersQuery = "SELECT nickname FROM \"users\" "
 		+ "WHERE users.id IN " + "(SELECT course_instructor_id "
@@ -500,7 +450,7 @@ public class CourseDAO {
      *            whether the sort direction is ascending order
      * @return the sort direction as String
      */
-    private static String getSortDirectionAsString(boolean isSortAsc) {
+    private static String getSortDirection(boolean isSortAsc) {
 	if (isSortAsc) {
 	    return "ASC";
 	} else {

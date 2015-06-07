@@ -41,7 +41,7 @@
                                             </div>
                                             <br/>
                                         </div>
-                                        <h:panelGroup rendered="#{(searchCourseBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+                                        <!--   <h:panelGroup rendered="#{(searchCourseBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"> -->
                                         <div class="col-lg-3" >
                                             <div class="input-group">
                                                 <span class="input-group-addon" style="width:100px; text-align:right;">Filtereigenschaft:</span>
@@ -52,7 +52,7 @@
                                                 </h:selectOneMenu>
                                             </div>
                                         </div>
-                                        </h:panelGroup> 
+                                        <!--   </h:panelGroup> --> 
                                         <div class="col-lg-3">
                                             <div class="input-group">
                                                 <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"></h:inputText>
@@ -84,7 +84,15 @@
                                      
                                      
                                      <h:column>  
-                                         <f:facet name="header">ID</f:facet>  
+                                         <f:facet name="header">
+                                         
+                                         <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                            <f:attribute name="sort" value="courseID" />
+                                            <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="courseID" />
+                                             ID
+                                         </h:commandLink>
+                                         
+                                         </f:facet>  
                                          <h:link outcome="courseDetail" value="#{course.courseID}" >
                                              <f:param name="courseID" value="#{course.courseID}" />
                                          </h:link>

@@ -12,7 +12,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.system.Connection;
@@ -61,6 +60,8 @@ public class SearchCourseBean implements Pagination {
      */
     private List<Course> searchResult;
     
+    private String orderParam;
+    
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -74,6 +75,12 @@ public class SearchCourseBean implements Pagination {
     private boolean renderTable;
     
     private boolean pagingSearchTerm;
+    
+    private String orderPeriod;
+    
+    private String orderSearchParam;
+    
+    private String orderSearchString;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -97,6 +104,7 @@ public class SearchCourseBean implements Pagination {
     	pagination = new PaginationData();
     	pagination.setCurrentPageNumber(0);
     	pagination.setElementsPerPage(10);
+    	pagination.setSortColumn("courseID");
     	pagination.setSortAsc(true);
     }
 
@@ -111,7 +119,6 @@ public class SearchCourseBean implements Pagination {
     public void displayCoursesInPeriod() {
     	transaction = new Connection();
     	transaction.start();
-    	
     	List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			displayPeriod);
     	
@@ -120,7 +127,12 @@ public class SearchCourseBean implements Pagination {
     		transaction.commit();
     		setPagingSearchTerm(false);
     		setRenderTable(true);
+    		
+    		orderPeriod = displayPeriod;
+    		orderSearchParam = searchParam;
+    		orderSearchString = searchString;
     	} else {
+    		setRenderTable(false);
     		transaction.rollback();
     	}
     }
@@ -163,19 +175,21 @@ public class SearchCourseBean implements Pagination {
     		
     		if (result != null) {
     			searchResult = result;
-    			
-    			System.out.println("im bean searchResult course ID:" + searchResult.get(0).getCourseID());
-    			
     			transaction.commit();
     			setPagingSearchTerm(true);
     			setRenderTable(true);
+    			
+    			orderPeriod = displayPeriod;
+        		orderSearchParam = searchParam;
+        		orderSearchString = searchString;
     		} else {
-    			
-    			System.out.println("result is NULL");
-    			
+    			setRenderTable(false);
     			transaction.rollback();
     		}
+    	} else {
+    		setRenderTable(false);
     	}
+    	
     }
     
     /**
@@ -208,6 +222,14 @@ public class SearchCourseBean implements Pagination {
     	this.searchResult = searchResult;
     }
     
+	public String getOrderParam() {
+		return orderParam;
+	}
+
+	public void setOrderParam(String orderParam) {
+		this.orderParam = orderParam;
+	}
+
 	/**
      * Returns the value of the attribute <code>searchParam</code> that stores
      * the selected search parameter.
@@ -275,6 +297,32 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
+    	transaction = new Connection();
+	    transaction.start();
+    	pagination.setSortColumn(orderParam);
+    	List<Course> result;
+    	
+    	if (pagination.isSortAsc()) {
+    		pagination.setSortAsc(false);
+    	} else {
+    		pagination.setSortAsc(true);
+    	}
+    	if (pagingSearchTerm) {
+    		result = CourseDAO.getCourses(transaction, pagination,
+        			orderSearchParam, orderSearchString);
+		} else {
+	    	result = CourseDAO.getCourses(transaction, pagination,
+	    			orderPeriod);
+		}
+    	
+    	if (result != null) {
+    		searchResult = result;
+    		transaction.commit();
+    	} else {
+    		setRenderTable(false);
+    		transaction.rollback();
+    	}
+    	pagination.setSortColumn("courseID");
     }
 
     /**
@@ -285,7 +333,6 @@ public class SearchCourseBean implements Pagination {
     	this.pagination.actualizeCurrentPageNumber(FacesContext
 				.getCurrentInstance().getExternalContext()
 				.getRequestParameterMap().get("page"));
-		transaction.start();
 		
 		if (pagingSearchTerm) {
 			search();
