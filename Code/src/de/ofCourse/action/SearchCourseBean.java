@@ -189,7 +189,6 @@ public class SearchCourseBean implements Pagination {
     	} else {
     		setRenderTable(false);
     	}
-    	
     }
     
     /**
@@ -322,7 +321,6 @@ public class SearchCourseBean implements Pagination {
     		setRenderTable(false);
     		transaction.rollback();
     	}
-    	pagination.setSortColumn("courseID");
     }
 
     /**
@@ -335,9 +333,9 @@ public class SearchCourseBean implements Pagination {
 				.getRequestParameterMap().get("page"));
 		
 		if (pagingSearchTerm) {
-			search();
+			//search(); -> selber DAO aufrufen, weil in search() werden order-paramter neu gesetzt!!
 		} else {
-			displayCoursesInPeriod();
+			//displayCoursesInPeriod();
 		}
     }
 
