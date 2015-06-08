@@ -202,8 +202,22 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.transaction.rollback();
 	}
 
-	this.usersToDelete = new ArrayList<User>();
 
+	Address myAddress = new Address();
+	myAddress.setHouseNumber(6);
+	myAddress.setStreet("Roehrn");
+	myAddress.setCity("Ortenburg");
+	myAddress.setZipCode(94496);
+	courseUnit.setAddress(myAddress);
+	courseUnit.setDescription("Das ist eine Beschreibung");
+
+	User courseAdmin = new User();
+	courseAdmin.setUsername("Sepp");
+	courseUnit.setCourseAdmin(courseAdmin);
+
+	this.cycleOfCourseUnit = new Cycle();
+	
+	
 	// ///////////////////////////////////////////
 	// TESTING
 
@@ -289,6 +303,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    + " a new course unit.");
 	    this.transaction.rollback();
 	}
+	System.out.println("Funkt");
 	return null;
     }
 

@@ -88,6 +88,7 @@ public class CourseUnitDAO {
 	    stmt.close();
     } catch (SQLException e) {
 	    LogHandler.getInstance().error("Error occured during creating a new course unit");
+	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	    
 	} 
