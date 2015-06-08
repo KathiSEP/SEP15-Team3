@@ -264,6 +264,7 @@ public class CourseUnitDAO {
 			    + courseUnitId + ".");
 	    throw new InvalidDBTransferException();
 	}
+	System.out.println(numberParticipants);
 	return numberParticipants;
     }
 
@@ -303,10 +304,10 @@ public class CourseUnitDAO {
 	    PaginationData pagination, int courseUnitId)
 	    throws InvalidDBTransferException {
 	ArrayList<User> participants = new ArrayList<User>();
-	String query = "SELECT id, lastname, fistname FROM"
+	String query = "SELECT id, name, first_name FROM"
 		+ " users WHERE users.id IN"
 		+ " (SELECT participant_id FROM course_unit_participants"
-		+ " WHERE course_id = ?) ORDER BY ? "
+		+ " WHERE course_unit_id = ?) ORDER BY ? "
 		+ getSortDirection(pagination.isSortAsc())
 		+ " LIMIT ? OFFSET ?";
 
@@ -335,11 +336,12 @@ public class CourseUnitDAO {
 		}
 
 		if (fetchedParticipants.getString("first_name") != null) {
-		    fetchedUser.setLastname(fetchedParticipants
+		    fetchedUser.setFirstname(fetchedParticipants
 			    .getString("first_name"));
 		} else {
-		    fetchedUser.setLastname("Nicht angegeben");
+		    fetchedUser.setFirstname("Nicht angegeben");
 		}
+		participants.add(fetchedUser);
 	    }
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(

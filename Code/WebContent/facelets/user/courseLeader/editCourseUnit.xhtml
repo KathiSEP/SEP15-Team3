@@ -315,47 +315,47 @@
 												<li><h:commandButton class="btn btn-info"
 														value="Zurueck"
 														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="page" value="back" />
+														<f:param name="site" value="back" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-default"
 														value="#{courseUnitManagementBean.pagination.currentPageNumber-1}"
 														action="#{courseUnitManagementBean.goToSpecificPage}"
 														rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=2}">
-														<f:param name="page"
+														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber-2}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-default"
 														value="#{courseUnitManagementBean.pagination.currentPageNumber}"
 														action="#{courseUnitManagementBean.goToSpecificPage}"
 														rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}">
-														<f:param name="page"
+														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
 													</h:commandButton></li>
 												<li><h:commandButton style="font-weight:bold;"
-														class="btn btn-primary" id="currentDisplayedPage"
+														class="btn btn-primary" 
 														value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
 														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="page"
+														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-default"
 														value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
 														action="#{courseUnitManagementBean.goToSpecificPage}"
 														rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}">
-														<f:param name="page"
+														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-default"
 														value="#{courseUnitManagementBean.pagination.currentPageNumber+3}"
 														action="#{courseUnitManagementBean.goToSpecificPage}"
 														rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+2}">
-														<f:param name="page"
+														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber+2}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-info"
 														value="Weiter"
 														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="page" value="forward" />
+														<f:param name="site" value="forward" />
 													</h:commandButton></li>
 											</ul>
 										</div>

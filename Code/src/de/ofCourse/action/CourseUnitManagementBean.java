@@ -65,6 +65,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private static final long serialVersionUID = 1L;
 
+    private static final int elementsPerPage = 10;
+
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -150,7 +152,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     private int courseUnitId = 0;
-    
+
     private int courseID;
 
     /**
@@ -170,22 +172,49 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     @PostConstruct
     private void init() {
+	
+	pagination = new PaginationData(elementsPerPage, 0,"title", true);
+	
+	this.participants = new ListDataModel<User>();
+	this.usersToDelete = new ArrayList<User>();
+	courseUnit = new CourseUnit();
+	this.cycleOfCourseUnit = new Cycle();
+	
+	this.courseID = 10000;
+	this.courseUnitId= 10000;
+	this.editMode = false;
+	
 	transaction = new Connection();
+	transaction.start();
+	try {
+	   
+	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
+		    .getNumberOfParticipants(transaction, courseUnitId));
+	    this.participants.setWrappedData(CourseUnitDAO
+		    .getParticipiantsOfCourseUnit(transaction, pagination,
+			    courseUnitId));
+	    
+	    this.transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during updating the"
+			    + " page with elements from database.");
+	    this.transaction.rollback();
+	}
 
 	this.usersToDelete = new ArrayList<User>();
 
 	// ///////////////////////////////////////////
 	// TESTING
 
-	this.editMode = false;
-	courseUnit = new CourseUnit();
+	/*courseUnit = new CourseUnit();
 	courseUnit.setTitle("Title");
 	courseUnit.setStarttime(new Date(12345000));
 	courseUnit.setEndtime(new Date(1223467899));
 	courseUnit.setMinUsers(1);
 	courseUnit.setMaxUsers(3);
 	courseUnit.setLocation("HS 13");
-	this.courseID = 10000;
+	
 	Address myAddress = new Address();
 	myAddress.setHouseNumber(6);
 	myAddress.setStreet("Roehrn");
@@ -209,9 +238,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		.getExternalContext().getSession(true);
 	session.setAttribute("loggedin", true);
 
-	this.participants = new ListDataModel<User>();
-	this.participants.setWrappedData(Arrays.asList(userToAdd));
-
+	//this.participants = new ListDataModel<User>();
+	//this.participants.setWrappedData(Arrays.asList(userToAdd));
+*/
 	// ////////////////////////////////////////////////////////////
     }
 
@@ -406,6 +435,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
+	this.pagination.actualizeCurrentPageNumber(FacesContext
+		.getCurrentInstance().getExternalContext()
+		.getRequestParameterMap().get("site"));
+	transaction.start();
+	try {
+	    this.participants.setWrappedData(CourseUnitDAO
+		    .getParticipiantsOfCourseUnit(transaction, pagination,
+			    courseUnitId));
+	    this.transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during fething data for pagination.");
+	    this.transaction.rollback();
+	}
     }
 
     /**
@@ -413,7 +456,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     @Override
     public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
+	// Not needed in this bean
 
     }
 
