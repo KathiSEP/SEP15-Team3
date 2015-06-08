@@ -3,8 +3,6 @@
  */
 package de.ofCourse.action;
 
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +18,17 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpSession;
 
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -147,6 +150,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     private int courseUnitId = 0;
+    
+    private int courseID;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -167,23 +172,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private void init() {
 	transaction = new Connection();
 
-	
-	
-	
-	
-	
-
 	this.usersToDelete = new ArrayList<User>();
 
 	// ///////////////////////////////////////////
 	// TESTING
 
-	this.editMode = true;
+	this.editMode = false;
 	courseUnit = new CourseUnit();
 	courseUnit.setTitle("Title");
 	courseUnit.setStarttime(new Date(12345000));
 	courseUnit.setEndtime(new Date(1223467899));
+	courseUnit.setMinUsers(1);
+	courseUnit.setMaxUsers(3);
 	courseUnit.setLocation("HS 13");
+	this.courseID = 10000;
 	Address myAddress = new Address();
 	myAddress.setHouseNumber(6);
 	myAddress.setStreet("Roehrn");
@@ -207,12 +209,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		.getExternalContext().getSession(true);
 	session.setAttribute("loggedin", true);
 
-
-	
 	this.participants = new ListDataModel<User>();
 	this.participants.setWrappedData(Arrays.asList(userToAdd));
-	
-	
 
 	// ////////////////////////////////////////////////////////////
     }
@@ -250,7 +248,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return link to the courseDetails page
      */
     public String createCourseUnit() {
-	System.out.println("Create Course Unit");
+	transaction.start();
+	try {
+
+	    CourseUnitDAO.createCourseUnit(transaction, courseUnit, courseID);
+	    this.transaction.commit();
+
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance()
+		    .error("Error occured during creating the"
+			    + " a new course unit.");
+	    this.transaction.rollback();
+	}
 	return null;
     }
 
@@ -327,11 +336,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	this.userToAdd = userToAdd;
     }
 
-    
-    
-    
-  
-
     /**
      * Deletes the selected users from the course unit and transfer the paid
      * price for the course unit automatically back to the accounts of the
@@ -343,18 +347,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	List<User> items = (List<User>) this.participants.getWrappedData();
 	usersToDelete = new ArrayList<User>();
 	for (User item : items) {
-	    if (item.isSelected() && !(this.usersToDelete.contains(item.getUserID()))) {
+	    if (item.isSelected()
+		    && !(this.usersToDelete.contains(item.getUserID()))) {
 		this.usersToDelete.add(item);
 	    }
 	}
-	
+
 	System.out.println("Delete users:");
 	for (int i = 0; i < this.usersToDelete.size(); ++i) {
-	    System.out.println("BenutzerID: " + this.usersToDelete.get(i).getUserID());
-	    
+	    System.out.println("BenutzerID: "
+		    + this.usersToDelete.get(i).getUserID());
+
 	}
-	
-	//Aktualisierte Liste aus der Datenbank
+
+	// Aktualisierte Liste aus der Datenbank
 	this.participants.setWrappedData(Arrays.asList());
     }
 

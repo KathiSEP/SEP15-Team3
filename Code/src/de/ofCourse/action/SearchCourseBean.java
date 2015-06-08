@@ -103,11 +103,8 @@ public class SearchCourseBean implements Pagination {
     public void init() {
     	displayPeriod = "total";
     	searchParam = "title";
-    	pagination = new PaginationData();
-    	pagination.setCurrentPageNumber(0);
-    	pagination.setElementsPerPage(10);
-    	pagination.setSortColumn("courseID");
-    	pagination.setSortAsc(true);
+    	pagination = new PaginationData(10, 0,"courseID", true);
+    
     }
 
     /**

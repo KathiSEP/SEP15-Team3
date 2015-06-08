@@ -62,11 +62,7 @@ public class PaginationData implements Serializable {
 	this.sortAsc = sortAsc;
     }
 
-    /**
-     * Empty default constructor.
-     */
-    public PaginationData() {
-    }
+
 
     /**
      * Actualizes the number of the current displayed page.

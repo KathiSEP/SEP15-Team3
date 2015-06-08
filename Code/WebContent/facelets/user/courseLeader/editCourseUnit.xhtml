@@ -87,6 +87,8 @@
 									<h:inputText class="form-control" style="width:300px;"
 										id="endTimeCourseUnit"
 										value="#{courseUnitManagementBean.courseUnit.endtime}"
+										required="true"
+                                        requiredMessage="Bitte geben Sie ein Ende ein. "
 										converterMessage="Datum existiert nicht oder Format (HH:mm) ist falsch. ">
 										<f:convertDateTime pattern="HH:mm" timeZone="Europe/Berlin" />
 									</h:inputText>

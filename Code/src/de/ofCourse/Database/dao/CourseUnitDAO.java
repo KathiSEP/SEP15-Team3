@@ -6,13 +6,10 @@ package de.ofCourse.Database.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
-import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
@@ -58,6 +55,43 @@ public class CourseUnitDAO {
     public static void createCourseUnit(Transaction trans,
 	    CourseUnit courseUnit, int courseID)
 	    throws InvalidDBTransferException {
+	String query = "INSERT INTO \"course_units\""
+		+ " (course_id, max_participants, titel,"
+		+ " min_participants, fee, location, start_time, end_time, description)"
+		+ " VALUES (?, ?, ?::TEXT[], ?, ?, ?::TEXT[], ?, ?, ?::TEXT[])";
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+	try{
+	    stmt = conn.prepareStatement(query);
+	    
+	    stmt.setInt(1, courseID);
+	    stmt.setInt(2, courseUnit.getMaxUsers());
+	    if(courseUnit.getTitle().length() < 1 || courseUnit.getTitle() == null ) {
+		stmt.setString(3, null);
+	    } else {
+		stmt.setString(3, "{"+courseUnit.getTitle()+"}");
+	    }
+	    stmt.setInt(4, courseUnit.getMinUsers());
+	    stmt.setFloat(5, courseUnit.getPrice());
+	    stmt.setString(6, "{"+courseUnit.getLocation()+"}");
+	    stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getStarttime().getTime()));
+	    stmt.setTimestamp(8, new java.sql.Timestamp(courseUnit.getEndtime().getTime()));
+	    if(courseUnit.getDescription().length() < 1||courseUnit.getDescription() == null) {
+		stmt.setString(9, null);
+	    } else {
+		stmt.setString(9, "{"+courseUnit.getDescription()+"}");
+	    }	
+	    
+	    stmt.executeUpdate();
+	    stmt.close();
+    } catch (SQLException e) {
+	    LogHandler.getInstance().error("Error occured during creating a new course unit");
+	    throw new InvalidDBTransferException();
+	    
+	} 
+
     }
 
     /**
@@ -245,7 +279,6 @@ public class CourseUnitDAO {
 	int calculatedOffset = pagination.getElementsPerPage()
 		* pagination.getCurrentPageNumber();
 	return calculatedOffset;
-
     }
 
     /**
@@ -283,34 +316,35 @@ public class CourseUnitDAO {
 	int offset = calculateOffset(pagination);
 	PreparedStatement stmt = null;
 	try {
-	    
+
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, courseUnitId);
 	    stmt.setString(2, "'name'");
 	    stmt.setInt(3, pagination.getElementsPerPage());
 	    stmt.setInt(4, offset);
 	    ResultSet fetchedParticipants = stmt.executeQuery();
- 
+
 	    while (fetchedParticipants.next()) {
 		User fetchedUser = new User();
-		
 		fetchedUser.setUserID(fetchedParticipants.getInt("id"));
 		if (fetchedParticipants.getString("name") != null) {
-		    fetchedUser.setLastname(fetchedParticipants.getString("name"));
+		    fetchedUser.setLastname(fetchedParticipants
+			    .getString("name"));
 		} else {
 		    fetchedUser.setLastname("Nicht angegeben");
 		}
-		
+
 		if (fetchedParticipants.getString("first_name") != null) {
-		    fetchedUser.setLastname(fetchedParticipants.getString("first_name"));
+		    fetchedUser.setLastname(fetchedParticipants
+			    .getString("first_name"));
 		} else {
 		    fetchedUser.setLastname("Nicht angegeben");
 		}
-	    } 
+	    }
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured during fetching the next set of participants of a course.");
+	    LogHandler.getInstance().error(
+		    "Error occoured during fetching the"
+			    + " next set of participants of a course.");
 	    throw new InvalidDBTransferException();
 	}
 	return participants;
