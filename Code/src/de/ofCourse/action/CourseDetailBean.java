@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
 import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -51,7 +52,7 @@ import de.ofCourse.system.Transaction;
 @ManagedBean
 @ViewScoped
 public class CourseDetailBean implements Pagination {
-    
+
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -109,11 +110,11 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String saveCourse() {
-    	if (getEditMode()) {    	    
-    	    //CourseDAO.updateCourse(transaction, course);
+        if (getEditMode()) {
+            // CourseDAO.updateCourse(transaction, course);
             setEditMode(false);
-    	}
-	return "#";
+        }
+        return "#";
     }
 
     /**
@@ -123,8 +124,8 @@ public class CourseDetailBean implements Pagination {
     @PostConstruct
     public void init() {
         if (courseID > 0) {
-    		course = CourseDAO.getCourse(transaction, courseID);
-    	}
+            course = CourseDAO.getCourse(transaction, courseID);
+        }
     }
 
     public String enableEditMode() {
@@ -138,7 +139,7 @@ public class CourseDetailBean implements Pagination {
      * @return the course
      */
     public Course getCourse() {
-	return course;
+        return course;
     }
 
     /**
@@ -156,7 +157,7 @@ public class CourseDetailBean implements Pagination {
      * @return whether the user has registered for course news
      */
     public boolean registeredForCourseNews() {
-	return registeredForCourseNews;
+        return registeredForCourseNews;
     }
 
     /**
@@ -175,45 +176,44 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occurs during the sign up process
      */
     public String signUpForCourse() throws CourseRegistrationException {
-        //I have to start a transaction for database comunication
+        // I have to start a transaction for database comunication
         Transaction trans = Connection.create();
         trans.start();
-        
-        
-        try{ 
-            //First i fetch the number of Participants and the maximum amount a Course can handle
-            int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans, courseID);
+
+        try {
+            // First i fetch the number of Participants and the maximum amount a
+            // Course can handle
+            int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans,
+                    courseID);
             Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
-            
-            if(courseToSignUp.getMaxUsers() > numberOfParticipants){
-                
-                //Add user to course_participant list on the database server
-                CourseDAO.addUserToCourse(trans, sessionUser.getUserID(), courseID);
-                if(registeredForCourseNews){
-                    CourseDAO.addUserToInformUser(trans, sessionUser.getUserID(), courseID);
+
+            if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
+
+                // Add user to course_participant list on the database server
+                CourseDAO.addUserToCourse(trans, sessionUser.getUserID(),
+                        courseID);
+                if (registeredForCourseNews) {
+                    CourseDAO.addUserToInformUser(trans,
+                            sessionUser.getUserID(), courseID);
                 }
-                LogHandler.getInstance().debug("User:"+ sessionUser.getUserID() + "Succesfull signed for course:" + courseID);
-                
-            }else{
-               //If the course is full we throw the CourseRegistrationException
-               throw new CourseRegistrationException(); 
+                LogHandler.getInstance().debug(
+                        "User:" + sessionUser.getUserID()
+                                + "Succesfull signed for course:" + courseID);
+
+            } else {
+                // If the course is full we throw the
+                // CourseRegistrationException
+                throw new CourseRegistrationException();
             }
-        } catch(InvalidDBTransferException e){
-            //TODO Error Handling
-            LogHandler.getInstance().error("Error occured while User:" + sessionUser.getUserID() + " signing up for course:" + courseID);
+        } catch (InvalidDBTransferException e) {
+            // TODO Error Handling
+            LogHandler.getInstance().error(
+                    "Error occured while User:" + sessionUser.getUserID()
+                            + " signing up for course:" + courseID);
         }
-        
-        
-        
-        
-        
-        
-        
-        
-	return "#";
+
+        return "#";
     }
-
-
 
     /**
      * Signs a user off from a course and returns the updated page.<br>
@@ -231,7 +231,7 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occours during the sign off process
      */
     public String signOffFromCourse() throws CourseRegistrationException {
-	return "#";
+        return "#";
     }
 
     /**
@@ -260,8 +260,86 @@ public class CourseDetailBean implements Pagination {
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign up process
      */
+    /**
+     * @return
+     * @throws CourseRegistrationException
+     */
     public String signUpForCourseUnits() throws CourseRegistrationException {
-	return null;
+        Transaction trans = Connection.create();
+        trans.start();
+        // TODO an rickys faclet anpassen
+        int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap()
+                .get("CourseUNitID"));
+        
+        //Instanziere alle Models aus der Datenbank die gebraucht werden
+        CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(trans,
+                courseUnitID);
+        User userWhoTryToSignUp = UserDAO.getUser(trans,
+                sessionUser.getUserID());
+        int currentAmountOfParticipants = CourseUnitDAO
+                .getNumberOfParticipants(trans, courseUnitID);
+        
+        
+        if (courseUnitIsFull(courseUnitToSign, currentAmountOfParticipants)) {
+            
+            //Methode berechnet neuen Kontostand
+            float newAccountBalance = signingUpForUser(courseUnitToSign,
+                    userWhoTryToSignUp);
+            
+            //Kontostand wird geupdatet und der User in die CourseUnit eingetragen
+            CourseUnitDAO.addUserToCourseUnit(trans, sessionUser.getUserID(), courseUnitID);
+            UserDAO.updateAccountBalance(trans, sessionUser.getUserID(), newAccountBalance);
+            LogHandler.getInstance().debug("User succesfully added to CourseUnit");
+            
+            return "x";
+        } else {
+            LogHandler
+                    .getInstance()
+                    .debug("The courseUnit:"
+                            + courseUnitID
+                            + "has reached maximal amount of Particpants. User:"
+                            + userWhoTryToSignUp.getUserID() + "cant sign up");
+            throw new CourseRegistrationException();
+
+        }
+
+    }
+
+    /**
+     * @author Sebastian
+     * @param courseUnitToSign
+     * @param currentAmountOfParticipants
+     * @return
+     */
+    private boolean courseUnitIsFull(CourseUnit courseUnitToSign,
+            int currentAmountOfParticipants) {
+        return courseUnitToSign.getMaxUsers() > currentAmountOfParticipants;
+    }
+
+    /**
+     * @author Sebastian
+     * @param courseUnitToSign
+     * @param userWhoTryToSignUp
+     * @return
+     */
+    private float signingUpForUser(CourseUnit courseUnitToSign,
+            User userWhoTryToSignUp) {
+        if (userWhoTryToSignUp.getAccountBalance() >= courseUnitToSign
+                .getPrice()) {
+            return userWhoTryToSignUp.getAccountBalance()
+                    - courseUnitToSign.getPrice();
+        } else {
+            LogHandler
+                    .getInstance()
+                    .debug("User:"
+                            + userWhoTryToSignUp.getUserID()
+                            + "has not enough money to take part in the course:"
+                            + courseUnitToSign.getCourseUnitID());
+            throw new CourseRegistrationException();
+
+        }
+
     }
 
     /**
@@ -284,7 +362,7 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occurs during the sign off process
      */
     public String signOffFromCourseUnits() throws CourseRegistrationException {
-	return null;
+        return null;
     }
 
     /**
@@ -293,7 +371,7 @@ public class CourseDetailBean implements Pagination {
      * @return list of selected course units
      */
     public List<CourseUnit> getSelectedCourseUnits() {
-	return selectedCourseUnits;
+        return selectedCourseUnits;
     }
 
     /**
@@ -311,7 +389,7 @@ public class CourseDetailBean implements Pagination {
      * @return list of leaders
      */
     public List<User> getLeadersOfCourse() {
-	return leadersOfCourse;
+        return leadersOfCourse;
     }
 
     /**
@@ -329,7 +407,7 @@ public class CourseDetailBean implements Pagination {
      * @return list of course units
      */
     public List<CourseUnit> getCourseUnitsOfCourse() {
-	return courseUnitsOfCourse;
+        return courseUnitsOfCourse;
     }
 
     /**
@@ -348,7 +426,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadParticipientsPage() {
-	return null;
+        return null;
     }
 
     /**
@@ -357,7 +435,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadCreateCourseUnitPage() {
-	return null;
+        return null;
     }
 
     /**
@@ -366,7 +444,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadEditCourseUnitPage() {
-	return null;
+        return null;
     }
 
     /**
@@ -381,17 +459,15 @@ public class CourseDetailBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
-    
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     public PaginationData getPagination() {
-	return pagination;
+        return pagination;
     }
 
     /**
@@ -407,7 +483,7 @@ public class CourseDetailBean implements Pagination {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -424,35 +500,37 @@ public class CourseDetailBean implements Pagination {
      * 
      * @return true when in edit mode, false if not
      */
-	public boolean getEditMode() {
-		return editMode;
-	}
+    public boolean getEditMode() {
+        return editMode;
+    }
 
-	/**
-	 * Set-method for the edit mode flag.
-	 * 
-	 * @param editMode the boolean flag to be set
-	 */
-	public void setEditMode(boolean editMode) {
-		this.editMode = editMode;
-	}
+    /**
+     * Set-method for the edit mode flag.
+     * 
+     * @param editMode
+     *            the boolean flag to be set
+     */
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+    }
 
-	/**
-	 * Returns the course's id.
-	 * 
-	 * @return the courseID
-	 */
-	public int getCourseID() {
-		return courseID;
-	}
+    /**
+     * Returns the course's id.
+     * 
+     * @return the courseID
+     */
+    public int getCourseID() {
+        return courseID;
+    }
 
-	/**
-	 * Set-method for the course's id.
-	 * 
-	 * @param courseID the courseID to set
-	 */
-	public void setCourseID(int courseID) {
-		this.courseID = courseID;
-	}
+    /**
+     * Set-method for the course's id.
+     * 
+     * @param courseID
+     *            the courseID to set
+     */
+    public void setCourseID(int courseID) {
+        this.courseID = courseID;
+    }
 
 }
