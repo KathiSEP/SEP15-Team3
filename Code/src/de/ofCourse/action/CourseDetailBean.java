@@ -9,12 +9,16 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
+
 import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -156,7 +160,72 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occurs during the sign up process
      */
     public String signUpForCourse() throws CourseRegistrationException {
+        //I have to start a transaction for database comunication
+        Transaction trans = Connection.create();
+        trans.start();
+        
+        //First i fetch the course object i have to update and check if course is full
+        try{ 
+            Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
+            if(!checkIFCourseIsFull(courseToSignUp)){
+                
+                //Now that we know the course has space for a new user we fetch the user object
+                User userWhoSignedUp = UserDAO.getUser(trans, sessionUser.getUserID());
+                
+                //and add him to the course participants list
+                addUserToCourse(userWhoSignedUp, courseToSignUp);
+                    
+                
+                
+                
+                
+            }else{
+               //If the course is full we throw the CourseRegistrationException
+               throw new CourseRegistrationException(); 
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
 	return null;
+    }
+
+    
+    
+    /**
+     * @param userWhoSignedUp
+     * @param courseToSignUp
+     */
+    private void addUserToCourse(User userWhoSignedUp, Course courseToSignUp) {
+        
+        courseToSignUp.getUsers().add(userWhoSignedUp);
+        if(registeredForCourseNews()){
+            courseToSignUp.getUsersToInform().add(userWhoSignedUp);
+        }
+        
+    }
+
+    /**
+     * Says wheather the Course has reached his maximal limit or not
+     * 
+     * @author Sebastian
+     * @param courseToSignUp
+     * @return true if maxUser is bigger then CourseParticipants size
+     */
+    private boolean checkIFCourseIsFull(Course courseToSignUp) {
+        
+        
+        if(courseToSignUp.getMaxUsers() > courseToSignUp.getUsers().size()){
+            return true;
+        }else{
+          return false;  
+        }
+        
     }
 
     /**

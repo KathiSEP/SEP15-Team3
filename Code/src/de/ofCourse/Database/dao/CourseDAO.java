@@ -821,4 +821,39 @@ public class CourseDAO {
 	    
 	} 
     }
+    
+    /**
+     * 
+     * @author Sebastian
+     * @param trans
+     * @param courseID
+     * @return
+     */
+    public static Integer getNumberOfParticipants(Transaction trans, int courseID ){
+        
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String countSQLstat = "SELECT COUNT(*) FROM \"course_participants\" WHERE course_id=?";
+        ResultSet resultSet = null;
+        
+        try{
+            pS = conn.prepareStatement(countSQLstat);
+            pS.setInt(1, courseID);
+            
+            resultSet = pS.executeQuery();
+            pS.close();
+            resultSet.close();
+            LogHandler.getInstance().debug("Methode getNumberOfParticipants was succesfull");
+            return resultSet.getInt(1); 
+            
+        } catch(SQLException e){
+            LogHandler.getInstance().error("Exception occured during getNumberOfParticipants");
+        }
+        return -1;
+        
+    }
+    
+    
 }
