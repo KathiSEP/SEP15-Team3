@@ -18,6 +18,7 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
@@ -164,16 +165,19 @@ public class CourseDetailBean implements Pagination {
         Transaction trans = Connection.create();
         trans.start();
         
-        //First i fetch the course object i have to update and check if course is full
+        
         try{ 
+            //First i fetch the number of Participants and the maximum amount a Course can handle
+            int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans, courseID);
             Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
-            if(!checkIFCourseIsFull(courseToSignUp)){
+            
+            if(courseToSignUp.getMaxUsers() > numberOfParticipants){
                 
-                //Now that we know the course has space for a new user we fetch the user object
-                User userWhoSignedUp = UserDAO.getUser(trans, sessionUser.getUserID());
-                
-                //and add him to the course participants list
-                addUserToCourse(userWhoSignedUp, courseToSignUp);
+                //Add user to course_participant list on the database server
+                CourseDAO.addUserToCourse(trans, sessionUser.getUserID(), courseID);
+                if(registeredForCourseNews){
+                    
+                }
                     
                 
                 
@@ -196,19 +200,7 @@ public class CourseDetailBean implements Pagination {
     }
 
     
-    
-    /**
-     * @param userWhoSignedUp
-     * @param courseToSignUp
-     */
-    private void addUserToCourse(User userWhoSignedUp, Course courseToSignUp) {
-        
-        courseToSignUp.getUsers().add(userWhoSignedUp);
-        if(registeredForCourseNews()){
-            courseToSignUp.getUsersToInform().add(userWhoSignedUp);
-        }
-        
-    }
+
 
     /**
      * Says wheather the Course has reached his maximal limit or not

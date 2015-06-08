@@ -700,6 +700,8 @@ public class CourseDAO {
      * containing course participants in the database.
      * </p>
      * 
+     * 
+     * @author Sebastian
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
@@ -712,7 +714,26 @@ public class CourseDAO {
      */
     public static void addUserToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        PreparedStatement pS = null;
+        
+        String addUserToCourse = "INSERT INTO \"course_participants\" (participant_id,course_id) VALUES (?,?)";
+        
+        try{
+            setRelationMethode(userID, courseID, conn, addUserToCourse);
+            
+            LogHandler.getInstance().debug("Methode addUserToCourse was succesfull");
+            
+        }catch(SQLException e){
+            //TODO fehler auffangen
+            LogHandler.getInstance().error("Error occured during addUserToCOurse");
+        }
     }
+
+    
 
     /**
      * Removes a user from a course's list of participants.
@@ -765,14 +786,7 @@ public class CourseDAO {
 	//mögliche SQL-Injektion abfangen
 	try {
 	    			
-	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
-	    // ob der Benutzer die Daten angegeben hat oder ob in die 
-	    // Datenbank null-Werte geschrieben werden müssen.
-	    pS = conn.prepareStatement(sql);	    
-	    pS.setInt(1, courseID);
-	    pS.setInt(2, userID);
-	    
-	    pS.executeUpdate();	 
+	    setRelationMethode(courseID, userID, conn, sql);	 
 	     
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
@@ -809,11 +823,7 @@ public class CourseDAO {
 	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
 	//mögliche SQL-Injektion abfangen
 	try {
-	    pS = conn.prepareStatement(sql);	    
-	    pS.setInt(1, courseID);
-	    pS.setInt(2, userID);
-	    
-	    pS.executeUpdate();
+	    setRelationMethode(courseID, userID, conn, sql);
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
@@ -849,11 +859,54 @@ public class CourseDAO {
             return resultSet.getInt(1); 
             
         } catch(SQLException e){
+            //TODO Error Handling
             LogHandler.getInstance().error("Exception occured during getNumberOfParticipants");
         }
         return -1;
         
     }
     
+    /**
+     * 
+     * @author Sebastian
+     * @param trans
+     * @param userID
+     * @param courseID
+     */
+    public static void addUserToInformUser(Transaction trans, int userID, int courseID){
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement stmt = null;
+        
+        String addUserToInformUser = "INSERT INTO \"inform_user\" (user_id,course_id) VALUES (?,?)";
+        try{
+            setRelationMethode(userID, courseID, conn, addUserToInformUser);
+            LogHandler.getInstance().debug("Methode addUserToInformUser was succesfull");
+        } catch (SQLException e){
+           //Error Handling
+            LogHandler.getInstance().error("Exception occured during addUserToInformUser");
+        }
+        
+    }
+    
+    
+    /**
+     * 
+     * @author Sebastian
+     * @param userID
+     * @param courseID
+     * @param conn
+     * @param preparedStmt
+     * @throws SQLException
+     */
+    private static void setRelationMethode(int userID, int courseID,
+            java.sql.Connection conn, String preparedStmt) throws SQLException {
+        PreparedStatement pS;
+        pS = conn.prepareStatement(preparedStmt);
+        pS.setInt(1, userID);
+        pS.setInt(2, courseID);
+        pS.executeUpdate();
+    }
     
 }
