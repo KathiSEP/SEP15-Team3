@@ -105,7 +105,7 @@ public class AuthenticateUserBean {
 	String passwordHash = PasswordHash.hash(this.loginPassword, salt);
 	
 	// Neues Transaction Objekt erstellen für die Datenbankverbindung
-	this.transaction = new Connection();
+	this.transaction = Connection.create();
 	this.transaction.start();
 	try {
         	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword

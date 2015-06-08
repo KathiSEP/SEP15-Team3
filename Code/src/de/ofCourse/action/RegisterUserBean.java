@@ -108,7 +108,7 @@ public class RegisterUserBean {
 	 mailBean = new MailBean();
 		
 	 if(veriString != null && veriString.length() > 0) {
-	     this.transaction = new Connection();
+	     this.transaction = Connection.create();
 	     transaction.start();
 	     if(UserDAO.verifyUser(this.transaction, veriString)) {
 		// Erfolgsmeldung in den FacesContext werfen.
@@ -160,7 +160,7 @@ public class RegisterUserBean {
 	} else {
 	    
 	// Datenbankverbindung initialisieren
-	this.transaction = new Connection();
+	this.transaction = Connection.create();
 	transaction.start();
 	try {
             	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
