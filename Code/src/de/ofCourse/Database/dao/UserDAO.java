@@ -935,7 +935,7 @@ public class UserDAO {
     }
     
     
-    public static boolean userIsParticpant(Transaction trans, int userID, int courseID) throws InvalidDBTransferException{
+    public static boolean userIsParticpantInCourse(Transaction trans, int userID, int courseID) throws InvalidDBTransferException{
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
@@ -950,4 +950,9 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public static boolean userIsParticpantInCourseUnit(Transaction trans, int userID, int courseID) throws InvalidDBTransferException{
+        
+    }
+    
 }
