@@ -220,7 +220,8 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occours during the sign off process
      */
     public String signOffFromCourse() throws CourseRegistrationException {
-	return null;
+        Transaction trans = Connection.create();
+        return null;
     }
 
     /**
