@@ -290,29 +290,27 @@ public class CourseUnitDAO {
 	    stmt.setInt(3, pagination.getElementsPerPage());
 	    stmt.setInt(4, offset);
 	    ResultSet fetchedParticipants = stmt.executeQuery();
-
-	    // Fills the list coursesOf with courses from the database.
-	    // At this time only id an title is set
+ 
 	    while (fetchedParticipants.next()) {
 		User fetchedUser = new User();
 		
 		fetchedUser.setUserID(fetchedParticipants.getInt("id"));
-
-		if (fetchedCourses.getString("titel") != null) {
-		    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
+		if (fetchedParticipants.getString("name") != null) {
+		    fetchedUser.setLastname(fetchedParticipants.getString("name"));
 		} else {
-		    fetchedCourse.setTitle("Nicht angegeben");
+		    fetchedUser.setLastname("Nicht angegeben");
 		}
-		coursesOf.add(fetchedCourse);
-	    }
-
-	   
-	    
+		
+		if (fetchedParticipants.getString("first_name") != null) {
+		    fetchedUser.setLastname(fetchedParticipants.getString("first_name"));
+		} else {
+		    fetchedUser.setLastname("Nicht angegeben");
+		}
+	    } 
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("Error occoured during fetching the next set of courses of a user.");
-	    e.printStackTrace();
+		    .error("Error occoured during fetching the next set of participants of a course.");
 	    throw new InvalidDBTransferException();
 	}
 	return participants;
