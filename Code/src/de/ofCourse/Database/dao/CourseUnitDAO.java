@@ -185,6 +185,20 @@ public class CourseUnitDAO {
      */
     public static void addUserToCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String addUserToCourseUnit = "INSERT INTO \"course_unit_participants\" (participant_id,course_unit_id) VALUES (?,?)";
+        
+        try{
+            CourseDAO.setRelationMethode(userID, courseUnitID, conn, addUserToCourseUnit);
+            LogHandler.getInstance().debug("User:"+ userID + "succesfully added to CourseUnit:" + courseUnitID);
+        } catch(SQLException e){
+            LogHandler.getInstance().error("User:"+ userID + "couldnt be added to CourseUnit:" + courseUnitID);
+            throw new InvalidDBTransferException();
+        }
+        
+        
     }
 
     /**

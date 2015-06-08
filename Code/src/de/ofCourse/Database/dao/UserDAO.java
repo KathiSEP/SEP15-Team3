@@ -316,9 +316,10 @@ public class UserDAO {
 
 	} catch (SQLException e) {
 	    // TODO logger und Fehlermeldung
+	    throw new InvalidDBTransferException();
 	}
 
-	return null;
+	
     }
 
     /**
@@ -921,6 +922,13 @@ public class UserDAO {
      * @param courseID
      * @return
      */
+    /**
+     * @param trans
+     * @param userID
+     * @param courseID
+     * @return
+     * @throws InvalidDBTransferException
+     */
     public static boolean userWantsToBeInformed(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 	Connection connection = (Connection) trans;
@@ -938,7 +946,7 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().debug(
 		    "Error occured during UserWantsToBeInformed methode ");
-	    return false;
+	    throw new InvalidDBTransferException();
 	}
     }
 
@@ -968,11 +976,20 @@ public class UserDAO {
 	return returnStatment;
     }
 
+    /**
+     * 
+     * @author Sebastian
+     * @param trans
+     * @param userID
+     * @param courseID
+     * @return
+     * @throws InvalidDBTransferException
+     */
     public static boolean userIsParticpant(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-
+	
 	String searchUserCourse = "SELECT FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
 
 	try {
@@ -984,7 +1001,28 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().debug(
 		    "Error occured during UserIsParticipant methode ");
-	    return false;
+	    throw new InvalidDBTransferException();
 	}
+    }
+    
+    public static void updateAccountBalance(Transaction trans, int userID, float newAccountBalance ){
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        //TODO spalte evlt noch nciht richtig
+        
+        String updateAccountBalance = "UPDATE \"users\" SET account_balance = ? WHERE user_id = ?";
+        
+        try{
+            PreparedStatement pS = conn.prepareStatement(updateAccountBalance);
+            pS.setFloat(1, newAccountBalance);
+            pS.setInt(2, userID);
+            pS.executeUpdate();
+            pS.close();
+            LogHandler.getInstance().debug("AccountBalance succesfully update of User:" + userID);
+        }catch(SQLException e){
+            LogHandler.getInstance().error("Error acurred while updating Account Balance of User:" + userID);
+            throw new InvalidDBTransferException();
+        }
     }
 }

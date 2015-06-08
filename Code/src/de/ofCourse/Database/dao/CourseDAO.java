@@ -771,6 +771,7 @@ public class CourseDAO {
             // TODO fehler auffangen
             LogHandler.getInstance().error(
                     "Error occured during addUserToCOurse");
+            throw new InvalidDBTransferException();
         }
     }
 
@@ -809,6 +810,7 @@ public class CourseDAO {
             LogHandler.getInstance().error(
                     "Error occured while trying to delete User:" + userID
                             + " from course:" + courseID);
+            throw new InvalidDBTransferException();
         }
 
     }
@@ -925,8 +927,8 @@ public class CourseDAO {
             // TODO Error Handling
             LogHandler.getInstance().error(
                     "Exception occured during getNumberOfParticipants");
+            throw new InvalidDBTransferException();
         }
-        return -1;
 
     }
 
@@ -952,6 +954,7 @@ public class CourseDAO {
             // Error Handling
             LogHandler.getInstance().error(
                     "Exception occured during addUserToInformUser");
+            throw new InvalidDBTransferException();
         }
 
     }
@@ -965,7 +968,7 @@ public class CourseDAO {
      * @param preparedStmt
      * @throws SQLException
      */
-    private static void setRelationMethode(int userID, int courseID,
+    static void setRelationMethode(int userID, int courseID,
             java.sql.Connection conn, String preparedStmt) throws SQLException {
         PreparedStatement pS;
         pS = conn.prepareStatement(preparedStmt);
