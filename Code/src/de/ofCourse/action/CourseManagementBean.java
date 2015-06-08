@@ -5,12 +5,17 @@ package de.ofCourse.action;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -40,11 +45,6 @@ public class CourseManagementBean {
     private Transaction transaction;
 
     /**
-     * Stores an leader that is to be added to the course.
-     */
-    private User leaderToAdd;
-
-    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
@@ -56,11 +56,17 @@ public class CourseManagementBean {
      * Stores the entered or displayed data of the course.
      */
     private Course course;
-
+    
     /**
-     * Stores a list of leaders that are to be removed from the course.
+     * Stores the ID of the course leader.
      */
-    private List<User> leadersToDelete;
+    private Integer courseLeaderID;
+    
+    @PostConstruct
+    private void init() {
+        this.course = new Course();
+        this.courseLeaderID = null;
+    }
 
     /**
      * Creates a new course with the entered data and returns the courseDetails
@@ -71,81 +77,41 @@ public class CourseManagementBean {
      * @return link to the courseDetail page
      */
     public String createCourse() {
-	return null;
-    }
+        
+        int createdCourseID = 0;
+        
+        this.transaction = Connection.create();
+        transaction.start();
+        try {
+            // Überprüfen, ob die eingegebene E-Mail-Adresse im System
+            // bereits existiert.
+            
+            createdCourseID = CourseDAO.createCourse(transaction, this.getCourse());
+            
+            if (createdCourseID < 0) {
 
-    /**
-     * Uploads a selected picture file from the local system to the server. The
-     * picture needs to be a .jpg <br>
-     */
-    public void uploadCoursePic() {
-    }
+                // Fehlermeldung in den FacesContext werfen, wenn die Mail
+                // schon existiert.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Beim Erstellen des Kurses trat ein Fehler auf!");
 
-    /**
-     * Deletes the actual displayed course from the system and returns the link
-     * to the next page.<br>
-     * That means that the method deletes the course from the database. All
-     * course units of this course are deleted as well. The money that the
-     * participants have paid for the course units is automatically transfered
-     * back to their accounts.
-     * 
-     * @return link to next page
-     */
-    public String deleteCourse() {
-	return null;
-    }
+                this.transaction.rollback();
+                return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
+            } else {
 
-    /**
-     * Adds the selected course leaders to the course.<br>
-     * That means the leaders are to the the courseAdmins list and the database
-     * entry of the course is updated.
-     */
-    public void addCourseLeader() {
-    }
-
-    /**
-     * Returns the value of the attribute <code>leaderToAdd</code>.
-     * 
-     * @return the leader that is to be added to the course
-     */
-    public User getLeaderToAdd() {
-	return leaderToAdd;
-    }
-
-    /**
-     * Sets the value of the attribute <code>leaderToAdd</code>.
-     * 
-     * @param leaderToAdd
-     *            the new leader to add
-     */
-    public void setLeaderToAdd(User leaderToAdd) {
-    }
-
-    /**
-     * Removes the selected course leaders from the course.<br>
-     * That means the leaders are removed from the courseAdmins list and the
-     * database entry of the course is updated.
-     */
-    public void removeCourseLeaders() {
-    }
-
-    /**
-     * Returns the value of the attribute <code>leadersToDelete</code> that
-     * stores the leaders the are selected and shall be deleted.
-     * 
-     * @return list of leaders
-     */
-    public List<User> getLeadersToDelete() {
-	return leadersToDelete;
-    }
-
-    /**
-     * Sets the value of the attribute <code>leadersToDelete</code>.
-     * 
-     * @param leadersToDelete
-     *            new list of leaders
-     */
-    public void setLeadersToDelete(List<User> leadersToDelete) {
+                // Gibt es die angegebene E-Mail-Adresse noch nicht,
+                // erstelle einen
+                // neuen Benutzer.
+                
+                // Erfolgsmeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");
+                
+                this.transaction.commit();
+                return "/facelets/open/courses/courseDetail.xhtml?id=" + createdCourseID;
+            }
+        } catch (InvalidDBTransferException e) {
+            this.transaction.rollback();
+        }
     }
 
     /**
@@ -184,5 +150,13 @@ public class CourseManagementBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+    }
+
+    public int getCourseLeaderID() {
+        return courseLeaderID;
+    }
+
+    public void setCourseLeaderID(int courseLeaderID) {
+        this.courseLeaderID = courseLeaderID;
     }
 }

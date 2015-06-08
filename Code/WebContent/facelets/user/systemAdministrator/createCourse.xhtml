@@ -13,12 +13,13 @@
 			<h1>Neuen Kurs anlegen</h1>
 			<div class="row">
 				<div class="col-lg-12">
-					<p style="font-size: 16px;">Bitte tragen Sie die Daten des
-						neuen Kurses ein.</p>
+					<p style="font-size: 16px;">
+					   Bitte tragen Sie die Daten des neuen Kurses ein.
+				    </p>
 				</div>
 			</div>
 			<div class="row" style="padding-top: 20px;">
-				<div class="col-lg-6">
+				<div class="col-lg-12">
 				    <div class="row">
 				        <div class="col-lg-12">
 		                    <div class="panel panel-info">
@@ -29,157 +30,71 @@
 		                            <h:form class="form-horizontal" id="formCreateCourse">
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;"><strong>Kurs-ID:</strong></span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="idRegister" readonly="true" value="0815"></h:inputText>
-		                                </div>
-		                                <br />
-		                                <div class="input-group" style="padding-top: 5px;">
-		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Titel:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="titleRegister"></h:inputText>
+		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
+		                                        id="courseTitle"></h:inputText>
+		                                    <h:message for="courseTitle" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Beschreibung:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="descriptionRegister"></h:inputText>
+		                                    <h:inputTextarea class="form-control" cols="45" rows="3" value="#{courseManagementBean.course.description}"
+		                                        id="courseDescription"></h:inputTextarea>
+		                                    <h:message for="courseDescription" style="color:red" />
 		                                </div>
+                                        <div class="input-group" style="padding-top: 5px;">
+                                            <span class="input-group-addon"
+                                                style="width: 160px; text-align: right;">Kursleiter-ID:</span>
+                                            <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}"
+                                                id="courseLeaderID">
+                                                <f:validator validatorId="courseInstructorValidator"/>
+                                                </h:inputText>
+                                            <h:message for="courseLeaderID" style="color:red" />
+                                        </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">max. Teilnehmerzahl:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="maxParticipantsRegister"></h:inputText>
+		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.maxUsers}"
+		                                        id="courseParticipants"></h:inputText>
+		                                    <h:message for="courseParticipants" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Startdatum:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="startDateRegister"></h:inputText>
+		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
+		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+                                                <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
+		                                        </h:inputText>
+		                                    <h:message for="courseStartDate" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Enddatum:</span>
 		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="endDateRegister"></h:inputText>
+		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+		                                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
+		                                        </h:inputText>
+		                                    <h:message for="courseEndDate" style="color:red" />
 		                                </div>
-		                                <br />
-		                                <h:commandButton id="createNewCourse"
-		                                    class="btn btn-info pull-right" value="Kurs anlegen" />
-		                            </h:form>
-		                        </div>
-		                    </div>				        
-				        </div>
-				    </div>
-				    <div class="row">
-                        <div class="col-lg-12">
-		                   <div class="panel panel-info">
-		                        <div class="panel-heading">
-		                            <strong>Kursbild</strong>
-		                        </div>
-		                        <div class="panel-body">
-		                        <h:form class="form-horizontal" id="formCourseImage">
-		                        <div class="input-group" style="padding-top: 5px;">
-		                            <h:inputText class="form-control" id="profileImage"></h:inputText>
-		                            <span class="input-group-btn"><button
-		                                    class="btn btn-default" type="button">Bild auswählen</button>
-		                            </span>
-		                        </div>
-		                        </h:form>
-		                        
+				                        <div class="input-group" style="padding-top: 5px; width:500px;">
+				                            <span class="input-group-addon"
+                                                style="width: 160px; text-align: right;">Kursbild:</span>
+				                            <h:inputText class="form-control" id="courseImage">
+				                            <f:validator validatorId="imageValidator"/>
+				                            </h:inputText>
+				                            <span class="input-group-btn"><button
+				                                    class="btn btn-default" type="button">Bild auswählen</button>
+				                            </span>
+				                            <h:message for="courseImage" style="color:red" />
+				                        </div>
+                                        <br />
+                                        <h:commandButton id="createNewCourse" class="btn btn-info" action="#{courseManagementBean.createCourse}" value="Kurs anlegen" />
+		                             </h:form>		                        
 		                        </div>
 		                    </div>      
                         </div>
                     </div>
-				</div>
-				<div class="col-lg-6">
-				    <div class="row">
-				        <div class="col-lg-12">
-		                    <div class="panel panel-info">
-		                        <div class="panel-heading">
-		                            <strong>Kursleiter hinzufügen</strong>
-		                        </div>
-		                        <div class="panel-body">
-		                            <h:form class="form-horizontal" id="formCourseInstructor">
-		                                <div class="input-group" style="padding-top: 5px;">
-		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Benutzername:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="usernameRegister"></h:inputText>
-		                                </div>
-		                                <div class="input-group" style="padding-top: 5px;">
-		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">E-Mail:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="mailRegister"></h:inputText>
-		                                </div>
-		                                <div class="input-group" style="padding-top: 5px;">
-		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Kursleiter-ID:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="idRegister"></h:inputText>
-		                                </div>
-		                              
-		                                <br />
-		                                <h:commandButton id="addCourseInstructor"
-		                                    class="btn btn-info pull-right" value="Kursleiter hinzufügen" />
-		                            </h:form>
-		                        </div>
-		                    </div>				        
-				        </div>
-				    </div>
-				    <div class="row">
-				        <div class="col-lg-12">
-		                    <div class="panel panel-info">
-		                        <div class="panel-heading">
-		                            <strong>Kursleiter löschen</strong>
-		                        </div>
-		                        <div class="panel-body">
-		                        <h:form class="form-horizontal" id="formDeleteCourseInstructor">
-		                        <div class="input-group" style="padding-top: 5px;">
-		                            <h:dataTable value= "#{courseManagementBean.leadersToDelete}" 
-		                                         id ="courseInstructorTable" 
-		                                         var="user"
-		                                         class =" table table-hover">
-		                                  <h:column>
-				                                <f:facet name="header">
-				                                               Benutzername
-				                                </f:facet>
-				                                <h:outputText value="user.username" />
-				                            </h:column>
-				                            <h:column>
-				                                <f:facet name="header">
-				                                              E-Mail-Adresse
-				                                </f:facet>
-				                                <h:outputText value="user.email" />
-				                            </h:column>
-				                            <h:column>
-				                                <f:facet name="header">
-				                                               Benutzer-ID
-				                                </f:facet>
-				                                <h:outputText value="user.userID" />
-		                                  </h:column>
-		                                  <h:column>
-				                                <f:facet name="header" />
-					                                <h:commandButton id="delete" class="btn btn-info"
-	                                                               value="Kursleiter entfernen"
-	                                                               action="#{CourseManagementBean.removeCourseLeaders}">
-	                                                               <f:param name="userID" value="#{user.userID}" />
-	                                               </h:commandButton>
-                                          </h:column>
-                                          
-                                          
-                                          
-		                            </h:dataTable>
-		                            
-		                        </div>
-		                         </h:form>
-		                        </div>
-		                    </div>  				        
-				        </div>
-				    </div>
-                </div>				
+				</div>		
 			</div>
 		</body>
 	</ui:define>

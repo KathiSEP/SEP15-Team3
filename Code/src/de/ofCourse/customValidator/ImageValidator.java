@@ -27,9 +27,9 @@ public class ImageValidator implements Validator {
      *  
      */
     @Override
-    public void validate(FacesContext arg0, UIComponent arg1, Object arg2)
+    public void validate(FacesContext fc, UIComponent component, Object value)
 	    throws ValidatorException {
-	// TODO Auto-generated method stub
+	
 
     }
 

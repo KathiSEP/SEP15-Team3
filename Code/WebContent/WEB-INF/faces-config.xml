@@ -35,5 +35,8 @@
         <validator-id>courseInstructorValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.CourseInstructorValidator</validator-class>
     </validator>
-   
+    <validator>
+        <validator-id>imageValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.ImageValidator</validator-class>
+    </validator>   
 </faces-config>
