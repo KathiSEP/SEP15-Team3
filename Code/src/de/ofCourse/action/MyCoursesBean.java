@@ -80,10 +80,11 @@ public class MyCoursesBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
-	pagination = new PaginationData(elementsPerPage, 0,"title", true);
+	
+	pagination = new PaginationData(elementsPerPage,0,"title",true);
+	
 	transaction = new Connection();
-	
-	
+
 	transaction.start();
 	try {
 	    this.pagination.actualizeNumberOfPages(CourseDAO
@@ -102,6 +103,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 
     }
 
+   
 
     /**
      * Redirects the user to the <code>courseDetail</code> page of the selected
@@ -118,19 +120,19 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	pagination.actualizeCurrentPageNumber(FacesContext
+	this.pagination.actualizeCurrentPageNumber(FacesContext
 		.getCurrentInstance().getExternalContext()
 		.getRequestParameterMap().get("site"));
 	transaction.start();
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
-		    .getCoursesOf(transaction, getPagination(),
-			    sessionUser.getUserID());
-	    transaction.commit();
+		    .getCoursesOf(transaction, this.getPagination(),
+			    this.sessionUser.getUserID());
+	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during fething data for pagination.");
-	    transaction.rollback();
+	    this.transaction.rollback();
 	}
     }
 

@@ -52,7 +52,7 @@ public class PaginationData implements Serializable {
      * @param sortAsc
      *            whether the displayed data in ascending order
      * @param numberOfPages
-     *            the number of sites to display
+     *            the number of pages to display
      */
     public PaginationData(int elementsPerPage, int currentPageNumber,
 	    String sortCoulmn, boolean sortAsc) {
@@ -62,12 +62,18 @@ public class PaginationData implements Serializable {
 	this.sortAsc = sortAsc;
     }
 
+   
+
+    public PaginationData() {
+	// TODO Auto-generated constructor stub
+    }
+
 
 
     /**
-     * Actualizes the number of the current displayed site.
+     * Actualizes the number of the current displayed page.
      * 
-     * @param page
+     * @param site
      *            the selected page number<br>
      *            <code>forward</code>, the forward button was selected<br>
      *            <code>back</code>, the back button was selected
@@ -138,9 +144,9 @@ public class PaginationData implements Serializable {
     }
 
     /**
-     * Returns the value of the attribute <code>elementsPerPage</code>.
+     * Returns the value of the attribute <code>itemsPerPage</code>.
      * 
-     * @return the number of elements shown on one page
+     * @return the number of items shown on one page
      */
     public int getElementsPerPage() {
 	return elementsPerPage;
@@ -149,7 +155,7 @@ public class PaginationData implements Serializable {
     /**
      * Sets the value of the attribute <code>elementsPerPage</code>.
      * 
-     * @param elementsPerPage
+     * @param itemsPerPage
      *            new amount of items which are shown on the page
      */
     public void setElementsPerPage(int elementsPerPage) {
@@ -168,7 +174,7 @@ public class PaginationData implements Serializable {
     /**
      * Sets the value of the attribute <code>currentPageNumber</code>.
      * 
-     * @param currentPageNumber
+     * @param shownPageNum
      *            new Page Number which is shown
      */
     public void setCurrentPageNumber(int currentPageNum) {

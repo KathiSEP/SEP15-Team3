@@ -510,9 +510,6 @@ public class CourseDAO {
                 + "WHERE participant_id = ?) ORDER BY ? "
                 + getSortDirection(pagination.isSortAsc())
                 + " LIMIT ? OFFSET ?";
-        String getCourseLeadersQuery = "SELECT nickname FROM \"users\" "
-                + "WHERE users.id IN " + "(SELECT course_instructor_id "
-                + "FROM \"course_instructors\" WHERE course_id = ?)";
         String getNextCourseUnitQuery = "SELECT start_time, location "
                 + "FROM \"course_units\" WHERE course_units.course_id = ? "
                 + "AND course_units.start_time >= CURRENT_DATE "
