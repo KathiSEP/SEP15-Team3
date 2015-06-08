@@ -69,69 +69,84 @@
 						</div>
 					</div>
 				</div>
-				
-				<div class="panel panel-info">
-                            <div class="panel-heading">
-                                <strong>Kursbild</strong>
-                            </div>
-                            <div class="panel-body">
-                            <div class="input-group">
-                                <h:inputText class="form-control" id="profileImage"></h:inputText>
-                                <span class="input-group-btn"><button
-                                        class="btn btn-default" type="button">Bild auswählen</button>
-                                </span>
-                            </div>
-                            
-                            </div>
-                </div>                          
-				
-	
 				<div class="col-lg-6">
+				    <div class="row">
+				        <div class="col-lg-12">
+		                    <div class="panel panel-info">
+		                        <div class="panel-heading">
+		                            <strong>Kursleiter hinzufügen</strong>
+		                        </div>
+		                        <div class="panel-body">
+		                            <h:form class="form-horizontal" id="formCourseInstructor">
+		                                <div class="input-group" style="padding-top: 5px;">
+		                                    <span class="input-group-addon"
+		                                        style="width: 160px; text-align: right;">Benutzername:</span>
+		                                    <h:inputText class="form-control" style="width:340px;"
+		                                        id="usernameRegister"></h:inputText>
+		                                </div>
+		                                <div class="input-group" style="padding-top: 5px;">
+		                                    <span class="input-group-addon"
+		                                        style="width: 160px; text-align: right;">E-Mail:</span>
+		                                    <h:inputText class="form-control" style="width:340px;"
+		                                        id="mailRegister"></h:inputText>
+		                                </div>
+		                                <div class="input-group" style="padding-top: 5px;">
+		                                    <span class="input-group-addon"
+		                                        style="width: 160px; text-align: right;">Kursleiter-ID:</span>
+		                                    <h:inputText class="form-control" style="width:340px;"
+		                                        id="idRegister"></h:inputText>
+		                                </div>
+		                              
+		                                <br />
+		                                <h:commandButton id="addCourseInstructor"
+		                                    class="btn btn-info pull-right" value="Kursleiter hinzufügen" />
+		                            </h:form>
+		                        </div>
+		                    </div>				        
+				        </div>
+				    </div>
+				    <div class="row">
+				        <div class="col-lg-12">
+		                    <div class="panel panel-info">
+		                        <div class="panel-heading">
+		                            <strong>Kursleiter löschen</strong>
+		                        </div>
+		                        <div class="panel-body">
+		                        <h:form class="form-horizontal" id="formDeleteCourseInstructor">
+		                        <div class="input-group" style="padding-top: 5px;">
+		                            <h:commandButton id="addCourseInstructor"
+		                                class="btn btn-info pull-right" value="Kursleiter entfernen" />
+		                        </div>
+		                         </h:form>
+		                        </div>
+		                    </div>  				        
+				        </div>
+				    </div>
+
+                </div>				
+			</div>
+			<div class="row">
+			    <div class="col-lg-6">
 					<div class="panel panel-info">
-						<div class="panel-heading">
-							<strong>Kursleiter hinzufügen</strong>
-						</div>
-						<div class="panel-body">
-                            <h:form class="form-horizontal" id="formCourseInstructor">
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Benutzername:</span>
-                                    <h:inputText class="form-control" style="width:340px;"
-                                        id="usernameRegister"></h:inputText>
-                                </div>
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">E-Mail:</span>
-                                    <h:inputText class="form-control" style="width:340px;"
-                                        id="mailRegister"></h:inputText>
-                                </div>
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Kursleiter-ID:</span>
-                                    <h:inputText class="form-control" style="width:340px;"
-                                        id="idRegister"></h:inputText>
-                                </div>
-                              
-                                <br />
-                                <h:commandButton id="addCourseInstructor"
-                                    class="btn btn-info pull-right" value="Kursleiter hinzufügen" />
-                            </h:form>
+                        <div class="panel-heading">
+                            <strong>Kursbild</strong>
                         </div>
-					</div>
+                        <div class="panel-body">
+                        <h:form class="form-horizontal" id="formCourseImage">
+                        <div class="input-group" style="padding-top: 5px;">
+                            <h:inputText class="form-control" id="profileImage"></h:inputText>
+                            <span class="input-group-btn"><button
+                                    class="btn btn-default" type="button">Bild auswählen</button>
+                            </span>
+                        </div>
+                        </h:form>
+                        
+                        </div>
+	                </div>                          
+			    </div>
+			    <div class="col-lg-6">
+               
 				</div>
-				<div class="panel panel-info">
-                            <div class="panel-heading">
-                                <strong>Kursleiter löschen</strong>
-                            </div>
-                            <div class="panel-body">
-                            <div class="input-group">
-                                <h:commandButton id="addCourseInstructor"
-                                    class="btn btn-info pull-right" value="Kursleiter entfernen" />
-                            </div>
-                            
-                            </div>
-                </div>                 
-				
 			</div>
 		</body>
 	</ui:define>
