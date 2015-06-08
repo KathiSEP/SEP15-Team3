@@ -17,6 +17,7 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -42,6 +43,43 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseDAO {
 
+    public boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
+            throws InvalidDBTransferException {
+        
+        boolean courseLeaderExists = false;
+        
+        // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "SELECT * FROM users WHERE id = ? AND role != ?::role";
+
+        // mögliche SQL-Injektion abfangen
+        try {
+
+            // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
+            // ob der Benutzer die Daten angegeben hat oder ob in die
+            // Datenbank null-Werte geschrieben werden müssen.
+            pS = conn.prepareStatement(sql);
+            pS.setInt(1, courseLeaderID);
+            pS.setString(2, UserRole.REGISTERED_USER.toString());
+
+            ResultSet res = pS.executeQuery();
+            courseLeaderExists = res.next();
+            
+            pS.close();
+            res.close();
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+            throw new InvalidDBTransferException();
+
+        }
+        return courseLeaderExists;
+    }
+    
     /**
      * Adds a new course to the list of courses in the database.
      * 
@@ -53,9 +91,11 @@ public class CourseDAO {
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
      */
-    public static void createCourse(Transaction trans, Course course)
+    public static int createCourse(Transaction trans, Course course)
             throws InvalidDBTransferException {
 
+        int generatedCourseID = -1;
+        
         // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
@@ -63,7 +103,7 @@ public class CourseDAO {
 
         String sql = "Insert into \"courses\" (titel, max_participants, "
                 + "start_date, end_date, description, image) "
-                + "values ({?}, ?, ?, ?, {?}, ?)";
+                + "values ({?}, ?, ?, ?, {?}, ?) RETURNING id";
 
         // mögliche SQL-Injektion abfangen
         try {
@@ -93,8 +133,11 @@ public class CourseDAO {
                 pS.setString(6, course.getCourseImage());
             }
 
-            pS.executeUpdate();
-
+            ResultSet res = pS.executeQuery();
+            res.next();
+            generatedCourseID = res.getInt("id");
+            pS.close();
+            res.close();
         } catch (SQLException e) {
             LogHandler
                     .getInstance()
@@ -102,6 +145,7 @@ public class CourseDAO {
             throw new InvalidDBTransferException();
 
         }
+        return generatedCourseID;
     }
 
     public static int getNumberOfCourses(Transaction trans, String param,
@@ -680,7 +724,7 @@ public class CourseDAO {
             pS.setInt(1, courseID);
 
             pS.executeUpdate();
-
+            pS.close();
         } catch (SQLException e) {
             LogHandler
                     .getInstance()
