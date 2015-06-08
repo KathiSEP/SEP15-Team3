@@ -3,8 +3,6 @@
  */
 package de.ofCourse.Database.dao;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +17,6 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
-import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -58,219 +54,232 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void createCourse(Transaction trans, Course course)
-	    throws InvalidDBTransferException {
-	
-	//SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
-		PreparedStatement pS = null;
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-		
-		    String sql = "Insert into \"courses\" (titel, max_participants, "
-		    	+ "start_date, end_date, description, image) "
-				+ "values ({?}, ?, ?, ?, {?}, ?)";
-		
-		//mögliche SQL-Injektion abfangen
-		try {
-		    			
-		    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
-		    // ob der Benutzer die Daten angegeben hat oder ob in die 
-		    // Datenbank null-Werte geschrieben werden müssen.
-		    pS = conn.prepareStatement(sql);	    
-		    if(course.getTitle() == null || course.getTitle().length() < 1) {
-			pS.setString(1, null);
-		    } else {
-			pS.setString(1, course.getTitle());
-		    }
-		    pS.setInt(2, course.getMaxUsers());
-		    pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
-		    pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
-		    if(course.getDescription() == null || course.getDescription().length() < 1) {
-			pS.setString(5, null);
-		    } else {
-			pS.setString(5, course.getDescription());
-		    }	
-		    if(course.getCourseImage() == null || course.getCourseImage().length() < 1) {
-			pS.setString(6, null);
-		    } else {
-			pS.setString(6, course.getCourseImage());
-		    }			    
-		    
-		    pS.executeUpdate();	 
-		     
-		} catch (SQLException e) {
-		    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
-		    throw new InvalidDBTransferException();
-		    
-		} 
+            throws InvalidDBTransferException {
+
+        // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "Insert into \"courses\" (titel, max_participants, "
+                + "start_date, end_date, description, image) "
+                + "values ({?}, ?, ?, ?, {?}, ?)";
+
+        // mögliche SQL-Injektion abfangen
+        try {
+
+            // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
+            // ob der Benutzer die Daten angegeben hat oder ob in die
+            // Datenbank null-Werte geschrieben werden müssen.
+            pS = conn.prepareStatement(sql);
+            if (course.getTitle() == null || course.getTitle().length() < 1) {
+                pS.setString(1, null);
+            } else {
+                pS.setString(1, course.getTitle());
+            }
+            pS.setInt(2, course.getMaxUsers());
+            pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
+            pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
+            if (course.getDescription() == null
+                    || course.getDescription().length() < 1) {
+                pS.setString(5, null);
+            } else {
+                pS.setString(5, course.getDescription());
+            }
+            if (course.getCourseImage() == null
+                    || course.getCourseImage().length() < 1) {
+                pS.setString(6, null);
+            } else {
+                pS.setString(6, course.getCourseImage());
+            }
+
+            pS.executeUpdate();
+
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+            throw new InvalidDBTransferException();
+
+        }
     }
-    
-    public static int getNumberOfCourses(Transaction trans, String param, String searchString) {
-    	Connection connection = (Connection) trans;
-    	java.sql.Connection conn = connection.getConn();
-    	String query = null;
-    	switch (param) {
-    	case "day":
-    		query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" " +
-     	    		"WHERE \"course_units\".start_time::date = current_date " +
-     	    		"AND \"course_units\".course_id = \"courses\".id";
-    		return countCourses(conn, query);
-    	case "week":
-    		query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" " +
-     	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
-    		return countCourses(conn, query);
-    	case "total":
-    		query = "SELECT COUNT(*) FROM \"courses\"";
-    		return countCourses(conn, query);
-    	case "courseID":
-    		query = "SELECT COUNT(*) FROM \"courses\" " +
-	    			"WHERE CAST(id AS TEXT) LIKE ?";
-    		return countCourses(conn, query, searchString);
-    	case "title":
-    		query = "SELECT COUNT(*) FROM \"courses\" " +
-					"WHERE LOWER(titel) LIKE LOWER(?)";
-    		return countCourses(conn, query, searchString);
-    	case "leader":
-    		query = "SELECT COUNT(*) FROM \"courses\", \"users\", \"course_instructors\" " +
-	    			"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
-	    			"AND \"users\".id = \"course_instructors\".course_instructor_id " +
-	    			"AND \"course_instructors\".course_id = courses.id";
-    		return countCourses(conn, query, searchString);
-    	}
-    	return 0;
+
+    public static int getNumberOfCourses(Transaction trans, String param,
+            String searchString) {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String query = null;
+        switch (param) {
+        case "day":
+            query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" "
+                    + "WHERE \"course_units\".start_time::date = current_date "
+                    + "AND \"course_units\".course_id = \"courses\".id";
+            return countCourses(conn, query);
+        case "week":
+            query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" "
+                    + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
+            return countCourses(conn, query);
+        case "total":
+            query = "SELECT COUNT(*) FROM \"courses\"";
+            return countCourses(conn, query);
+        case "courseID":
+            query = "SELECT COUNT(*) FROM \"courses\" "
+                    + "WHERE CAST(id AS TEXT) LIKE ?";
+            return countCourses(conn, query, searchString);
+        case "title":
+            query = "SELECT COUNT(*) FROM \"courses\" "
+                    + "WHERE LOWER(titel) LIKE LOWER(?)";
+            return countCourses(conn, query, searchString);
+        case "leader":
+            query = "SELECT COUNT(*) FROM \"courses\", \"users\", \"course_instructors\" "
+                    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
+                    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
+                    + "AND \"course_instructors\".course_id = courses.id";
+            return countCourses(conn, query, searchString);
+        }
+        return 0;
     }
-    
+
     private static int countCourses(java.sql.Connection conn, String query) {
-    	Statement stmt = null;
-    	ResultSet rst = null;
-    	int numCourses = 0;
-    	
-    	try {
-	   	    stmt = conn.createStatement();
-	   	    rst = stmt.executeQuery(query);
-	   	    rst.next();
-		    numCourses = rst.getInt(1);
-	    } catch (SQLException e) {
-		   e.printStackTrace();
-	    } finally {
-		    if (rst != null) {
-		   	    try {
-		   	        rst.close();
-		   	    } catch (SQLException e) {
-		   	 	    e.printStackTrace();
-		   	    }
-		    }
-		    if (stmt != null) {
-		    	try {
-		    		stmt.close();
-		   	    } catch (SQLException e) {
-		   	    	e.printStackTrace();
-		   	    }
-		    }
-	    }
-    	return numCourses;
+        Statement stmt = null;
+        ResultSet rst = null;
+        int numCourses = 0;
+
+        try {
+            stmt = conn.createStatement();
+            rst = stmt.executeQuery(query);
+            rst.next();
+            numCourses = rst.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rst != null) {
+                try {
+                    rst.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return numCourses;
     }
-    
-    private static int countCourses(java.sql.Connection conn, String query, String searchString) {
-    	PreparedStatement stmt = null;
-	    ResultSet rst = null;
-	    int numCourses = 0;
-    	
-    	try {
-	   	    stmt = conn.prepareStatement(query);
-	   	    stmt.setString(1, searchString);
-	   	    rst = stmt.executeQuery();
-	   	    rst.next();
-		    numCourses = rst.getInt(1);
-	    } catch (SQLException e) {
-		   e.printStackTrace();
-	    } finally {
-		    if (rst != null) {
-		   	    try {
-		   	        rst.close();
-		   	    } catch (SQLException e) {
-		   	 	    e.printStackTrace();
-		   	    }
-		    }
-		    if (stmt != null) {
-		    	try {
-		    		stmt.close();
-		   	    } catch (SQLException e) {
-		   	    	e.printStackTrace();
-		   	    }
-		    }
-	    }
-    	return numCourses;
+
+    private static int countCourses(java.sql.Connection conn, String query,
+            String searchString) {
+        PreparedStatement stmt = null;
+        ResultSet rst = null;
+        int numCourses = 0;
+
+        try {
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, searchString);
+            rst = stmt.executeQuery();
+            rst.next();
+            numCourses = rst.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rst != null) {
+                try {
+                    rst.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return numCourses;
     }
-    
+
     public static List<Course> getCourses(Transaction trans,
-	    PaginationData pagination, String period) throws InvalidDBTransferException {
-    	Connection connection = (Connection) trans;
-    	java.sql.Connection conn = connection.getConn();
-    	int limit = pagination.getElementsPerPage();
-    	int offset = limit * pagination.getCurrentPageNumber();
-    	String orderParam = getOrderParam(pagination.getSortColumn());
-    	String dir = getSortDirection(pagination.isSortAsc());
-    	List<Course> result = null;
-    	String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"course_units\" " +
- 	    		"WHERE \"course_units\".start_time::date = current_date " +
- 	    		"AND \"course_units\".course_id = \"courses\".id ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
-    	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-    			"courses.end_date FROM \"courses\", \"course_units\" " +
- 	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
-    	String getAllCourses = "SELECT * FROM \"courses\" ORDER BY ? " + dir + " LIMIT ? OFFSET ?";
-    	
-    	switch (period) {
-		case "day":
-			result = getCoursesInPeriod(conn, limit, offset, orderParam, currentDateCourses);
-			break;
-		case "week":
-			result = getCoursesInPeriod(conn, limit, offset, orderParam, currentWeekCourses);
-			break;
-		case "total":
-			result = getCoursesInPeriod(conn, limit, offset, orderParam, getAllCourses);
-			break;
-		default:
-			;
-    	}
-    	return result;
+            PaginationData pagination, String period)
+            throws InvalidDBTransferException {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        int limit = pagination.getElementsPerPage();
+        int offset = limit * pagination.getCurrentPageNumber();
+        String orderParam = getOrderParam(pagination.getSortColumn());
+        String dir = getSortDirection(pagination.isSortAsc());
+        List<Course> result = null;
+        String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+                + "courses.end_date FROM \"courses\", \"course_units\" "
+                + "WHERE \"course_units\".start_time::date = current_date "
+                + "AND \"course_units\".course_id = \"courses\".id ORDER BY ? "
+                + dir + " LIMIT ? OFFSET ?";
+        String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+                + "courses.end_date FROM \"courses\", \"course_units\" "
+                + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' ORDER BY ? "
+                + dir + " LIMIT ? OFFSET ?";
+        String getAllCourses = "SELECT * FROM \"courses\" ORDER BY ? " + dir
+                + " LIMIT ? OFFSET ?";
+
+        switch (period) {
+        case "day":
+            result = getCoursesInPeriod(conn, limit, offset, orderParam,
+                    currentDateCourses);
+            break;
+        case "week":
+            result = getCoursesInPeriod(conn, limit, offset, orderParam,
+                    currentWeekCourses);
+            break;
+        case "total":
+            result = getCoursesInPeriod(conn, limit, offset, orderParam,
+                    getAllCourses);
+            break;
+        default:
+            ;
+        }
+        return result;
     }
-    
+
     private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
-			int limit, int offset, String orderParam, String query) {
-    	PreparedStatement stmt = null;
-	    ResultSet rst = null;
-	    List<Course> result = null;
-	    
-	    try {
-	   	    stmt = conn.prepareStatement(query);
-	   	    stmt.setString(1, orderParam);
-	   	    stmt.setInt(2, limit);
-			stmt.setInt(3, offset);
-	   	    rst = stmt.executeQuery();
-	   	    result = getResult(rst);
-	    } catch (SQLException e) {
-		   e.printStackTrace();
-	    } finally {
-		    if (rst != null) {
-		   	    try {
-		   	        rst.close();
-		   	    } catch (SQLException e) {
-		   	 	    e.printStackTrace();
-		   	    }
-		    }
-		    if (stmt != null) {
-		    	try {
-		    		stmt.close();
-		   	    } catch (SQLException e) {
-		   	    	e.printStackTrace();
-		   	    }
-		    }
-	    }
-		return result;
+            int limit, int offset, String orderParam, String query) {
+        PreparedStatement stmt = null;
+        ResultSet rst = null;
+        List<Course> result = null;
+
+        try {
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, orderParam);
+            stmt.setInt(2, limit);
+            stmt.setInt(3, offset);
+            rst = stmt.executeQuery();
+            result = getResult(rst);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rst != null) {
+                try {
+                    rst.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
     }
-	
-	/**
+
+    /**
      * Returns a list of courses which titles contain the search term the user
      * has entered.
      * 
@@ -287,126 +296,133 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static List<Course> getCourses(Transaction trans,
-	    PaginationData pagination, String searchParam, String searchString)
-	    throws InvalidDBTransferException {
-    	Connection connection = (Connection) trans;
-    	java.sql.Connection conn = connection.getConn();
-    	int limit = pagination.getElementsPerPage();
-    	int offset = limit * pagination.getCurrentPageNumber();
-    	String orderParam = getOrderParam(pagination.getSortColumn());
-    	String dir = getSortDirection(pagination.isSortAsc());
-    	List<Course> result = null;
-    	
-    	switch (searchParam) {
-		case "courseID":
-			String getCoursesByID = "SELECT * FROM \"courses\" " +
-	    			"WHERE CAST(id AS TEXT) LIKE ? ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
-			result = getCourses(conn, limit, offset, searchString, getCoursesByID);
-			
-			break;
-		case "title":
-			String getCoursesByTitel = "SELECT * FROM \"courses\" " +
-					"WHERE LOWER(titel) LIKE LOWER(?) ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
-			result = getCourses(conn, limit, offset, searchString, getCoursesByTitel);
-			break;
-		case "leader":
-			String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date," +
-	    			"courses.end_date FROM \"courses\", \"users\", \"course_instructors\" " +
-	    			"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
-	    			"AND \"users\".id = \"course_instructors\".course_instructor_id " +
-	    			"AND \"course_instructors\".course_id = courses.id ORDER BY " + orderParam + " " + dir + " LIMIT ? OFFSET ?";
-			result = getCourses(conn, limit, offset, searchString, getCoursesQuery);
-			break;
-		default:
-			;
-    	}
-		return result;
+            PaginationData pagination, String searchParam, String searchString)
+            throws InvalidDBTransferException {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        int limit = pagination.getElementsPerPage();
+        int offset = limit * pagination.getCurrentPageNumber();
+        String orderParam = getOrderParam(pagination.getSortColumn());
+        String dir = getSortDirection(pagination.isSortAsc());
+        List<Course> result = null;
+
+        switch (searchParam) {
+        case "courseID":
+            String getCoursesByID = "SELECT * FROM \"courses\" "
+                    + "WHERE CAST(id AS TEXT) LIKE ? ORDER BY " + orderParam
+                    + " " + dir + " LIMIT ? OFFSET ?";
+            result = getCourses(conn, limit, offset, searchString,
+                    getCoursesByID);
+
+            break;
+        case "title":
+            String getCoursesByTitel = "SELECT * FROM \"courses\" "
+                    + "WHERE LOWER(titel) LIKE LOWER(?) ORDER BY " + orderParam
+                    + " " + dir + " LIMIT ? OFFSET ?";
+            result = getCourses(conn, limit, offset, searchString,
+                    getCoursesByTitel);
+            break;
+        case "leader":
+            String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+                    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
+                    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
+                    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
+                    + "AND \"course_instructors\".course_id = courses.id ORDER BY "
+                    + orderParam + " " + dir + " LIMIT ? OFFSET ?";
+            result = getCourses(conn, limit, offset, searchString,
+                    getCoursesQuery);
+            break;
+        default:
+            ;
+        }
+        return result;
     }
-    
+
     private static String getOrderParam(String orderParam) {
-    	switch (orderParam) {
-    	case "title":
-    		return "titel";
-		case "maxUsers":
-    		return "max_participants";
-		case "starts":
-    		return "start_date";
-		case "ends":
-    		return "end_date";
-		default:
-    		return "id";
-    	}
+        switch (orderParam) {
+        case "title":
+            return "titel";
+        case "maxUsers":
+            return "max_participants";
+        case "starts":
+            return "start_date";
+        case "ends":
+            return "end_date";
+        default:
+            return "id";
+        }
     }
-    
-    private static List<Course> getCourses (java.sql.Connection conn, int limit, int offset, String searchString, String query) {
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	List<Course> result = null;
-    	String search = "%" + searchString + "%";
-    	
-    	try {
-			stmt = conn.prepareStatement(query);
-			stmt.setString(1, search);
-			stmt.setInt(2, limit);
-			stmt.setInt(3, offset);
-			
-			rst = stmt.executeQuery();
-			result = getResult(rst);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-    	return result;
+
+    private static List<Course> getCourses(java.sql.Connection conn, int limit,
+            int offset, String searchString, String query) {
+        PreparedStatement stmt = null;
+        ResultSet rst = null;
+        List<Course> result = null;
+        String search = "%" + searchString + "%";
+
+        try {
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, search);
+            stmt.setInt(2, limit);
+            stmt.setInt(3, offset);
+
+            rst = stmt.executeQuery();
+            result = getResult(rst);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rst != null) {
+                try {
+                    rst.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
     }
-    
+
     private static List<Course> getResult(ResultSet rst) {
-    	List<Course> result = new ArrayList<Course>();
-    	try {
-    		int cols = rst.getMetaData().getColumnCount();
-    		
-    		while (rst.next()) {
-    			int i = 1;
-    			List<Object> tuple = new ArrayList<Object>();
-    			Course course = new Course();
-    			while (i <= cols) {
-    				Object o = rst.getObject(i);
-    				tuple.add(o);
-    				i++;
-    			}
-    			setProperties(course, tuple);
-    			result.add(course);
-    		}
-    		if (!result.isEmpty()) {
-    			return result;
-    		}
-    	} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	return null;
+        List<Course> result = new ArrayList<Course>();
+        try {
+            int cols = rst.getMetaData().getColumnCount();
+
+            while (rst.next()) {
+                int i = 1;
+                List<Object> tuple = new ArrayList<Object>();
+                Course course = new Course();
+                while (i <= cols) {
+                    Object o = rst.getObject(i);
+                    tuple.add(o);
+                    i++;
+                }
+                setProperties(course, tuple);
+                result.add(course);
+            }
+            if (!result.isEmpty()) {
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    
+
     private static void setProperties(Course course, List<Object> tuple) {
-		course.setCourseID((Integer) tuple.get(0));
-		course.setTitle((String) tuple.get(1));
-		course.setMaxUsers((Integer) tuple.get(2));
-		course.setStartdate((Date) tuple.get(3));
-		course.setEnddate((Date) tuple.get(4));
-	}
-    
+        course.setCourseID((Integer) tuple.get(0));
+        course.setTitle((String) tuple.get(1));
+        course.setMaxUsers((Integer) tuple.get(2));
+        course.setStartdate((Date) tuple.get(3));
+        course.setEnddate((Date) tuple.get(4));
+    }
+
     /**
      * Returns a list of courses which titles contain the search term the user
      * has entered. The list is ordered by the passed parameter.
@@ -427,9 +443,9 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static List<Course> getCoursesOrdered(Transaction trans,
-	    PaginationData pagination, String searchString, String searchParam,
-	    String orderParam) throws InvalidDBTransferException {
-	return null;
+            PaginationData pagination, String searchString, String searchParam,
+            String orderParam) throws InvalidDBTransferException {
+        return null;
     }
 
     /**
@@ -447,8 +463,8 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static List<User> getLeaders(Transaction trans, int courseID)
-	    throws InvalidDBTransferException {
-	return null;
+            throws InvalidDBTransferException {
+        return null;
     }
 
     /**
@@ -465,8 +481,8 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static Course getCourse(Transaction trans, int courseID)
-	    throws InvalidDBTransferException {
-    	return null;
+            throws InvalidDBTransferException {
+        return null;
     }
 
     /**
@@ -485,89 +501,89 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static List<Course> getCoursesOf(Transaction trans,
-	    PaginationData pagination, int userID)
-	    throws InvalidDBTransferException {
+            PaginationData pagination, int userID)
+            throws InvalidDBTransferException {
 
-	ArrayList<Course> coursesOf = new ArrayList<Course>();
-	String getCourseQuery = "SELECT id, titel FROM \"courses\" "
-		+ "WHERE courses.id IN (SELECT course_id FROM \"course_participants\" "
-		+ "WHERE participant_id = ?) ORDER BY ? "
-		+ getSortDirection(pagination.isSortAsc())
-		+ " LIMIT ? OFFSET ?";
-	String getCourseLeadersQuery = "SELECT nickname FROM \"users\" "
-		+ "WHERE users.id IN " + "(SELECT course_instructor_id "
-		+ "FROM \"course_instructors\" WHERE course_id = ?)";
-	String getNextCourseUnitQuery = "SELECT start_time, location "
-		+ "FROM \"course_units\" WHERE course_units.course_id = ? "
-		+ "AND course_units.start_time >= CURRENT_DATE "
-		+ "ORDER BY course_units.start_time ASC LIMIT 1";
+        ArrayList<Course> coursesOf = new ArrayList<Course>();
+        String getCourseQuery = "SELECT id, titel FROM \"courses\" "
+                + "WHERE courses.id IN (SELECT course_id FROM \"course_participants\" "
+                + "WHERE participant_id = ?) ORDER BY ? "
+                + getSortDirection(pagination.isSortAsc())
+                + " LIMIT ? OFFSET ?";
+        String getCourseLeadersQuery = "SELECT nickname FROM \"users\" "
+                + "WHERE users.id IN " + "(SELECT course_instructor_id "
+                + "FROM \"course_instructors\" WHERE course_id = ?)";
+        String getNextCourseUnitQuery = "SELECT start_time, location "
+                + "FROM \"course_units\" WHERE course_units.course_id = ? "
+                + "AND course_units.start_time >= CURRENT_DATE "
+                + "ORDER BY course_units.start_time ASC LIMIT 1";
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	int calculateOffset = pagination.getElementsPerPage()
-		* pagination.getCurrentPageNumber();
+        int calculateOffset = pagination.getElementsPerPage()
+                * pagination.getCurrentPageNumber();
 
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(getCourseQuery);
-	    stmt.setInt(1, userID);
-	    stmt.setString(2, "'titel'");
-	    stmt.setInt(3, pagination.getElementsPerPage());
-	    stmt.setInt(4, calculateOffset);
-	    ResultSet fetchedCourses = stmt.executeQuery();
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(getCourseQuery);
+            stmt.setInt(1, userID);
+            stmt.setString(2, "'titel'");
+            stmt.setInt(3, pagination.getElementsPerPage());
+            stmt.setInt(4, calculateOffset);
+            ResultSet fetchedCourses = stmt.executeQuery();
 
-	    // Fills the list coursesOf with courses from the database.
-	    // At this time only id an title is set
-	    while (fetchedCourses.next()) {
-		Course fetchedCourse = new Course();
-		fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
+            // Fills the list coursesOf with courses from the database.
+            // At this time only id an title is set
+            while (fetchedCourses.next()) {
+                Course fetchedCourse = new Course();
+                fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
 
-		if (fetchedCourses.getString("titel") != null) {
-		    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
-		} else {
-		    fetchedCourse.setTitle("Nicht angegeben");
-		}
-		coursesOf.add(fetchedCourse);
-	    }
+                if (fetchedCourses.getString("titel") != null) {
+                    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
+                } else {
+                    fetchedCourse.setTitle("Nicht angegeben");
+                }
+                coursesOf.add(fetchedCourse);
+            }
 
-	    if (coursesOf.size() > 0) {
-		
-		// Fetches the leaders of a course
-		ResultSet fetchedNextUnit;
-		Timestamp stamp;
-		Date date;
-		CourseUnit courseUnit;
+            if (coursesOf.size() > 0) {
 
-		for (int i = 0; i < coursesOf.size(); ++i) {
-		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
-		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedNextUnit = stmt.executeQuery();
-		    while (fetchedNextUnit.next()) {
-			courseUnit = new CourseUnit();
-			stamp = fetchedNextUnit.getTimestamp("start_time");
-			date = new Date(stamp.getYear(), stamp.getMonth(),
-				stamp.getDate(), stamp.getHours(),
-				stamp.getMinutes());
-			courseUnit.setStarttime(date);
-			if (fetchedNextUnit.getString("location") != null) {
-			    courseUnit.setLocation(fetchedNextUnit
-				    .getString("location"));
-			} else {
-			    courseUnit.setLocation("Nicht angegeben");
-			}
-			coursesOf.get(i).setNextCourseUnit(courseUnit);
-		    }
-		}
-	    }
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured during fetching the next set of courses of a user.");
-	    e.printStackTrace();
-	    throw new InvalidDBTransferException();
-	}
-	return coursesOf;
+                // Fetches the leaders of a course
+                ResultSet fetchedNextUnit;
+                Timestamp stamp;
+                Date date;
+                CourseUnit courseUnit;
+
+                for (int i = 0; i < coursesOf.size(); ++i) {
+                    stmt = conn.prepareStatement(getNextCourseUnitQuery);
+                    stmt.setInt(1, coursesOf.get(i).getCourseID());
+                    fetchedNextUnit = stmt.executeQuery();
+                    while (fetchedNextUnit.next()) {
+                        courseUnit = new CourseUnit();
+                        stamp = fetchedNextUnit.getTimestamp("start_time");
+                        date = new Date(stamp.getYear(), stamp.getMonth(),
+                                stamp.getDate(), stamp.getHours(),
+                                stamp.getMinutes());
+                        courseUnit.setStarttime(date);
+                        if (fetchedNextUnit.getString("location") != null) {
+                            courseUnit.setLocation(fetchedNextUnit
+                                    .getString("location"));
+                        } else {
+                            courseUnit.setLocation("Nicht angegeben");
+                        }
+                        coursesOf.get(i).setNextCourseUnit(courseUnit);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("Error occoured during fetching the next set of courses of a user.");
+            e.printStackTrace();
+            throw new InvalidDBTransferException();
+        }
+        return coursesOf;
     }
 
     /**
@@ -579,11 +595,11 @@ public class CourseDAO {
      * @return the sort direction as String
      */
     private static String getSortDirection(boolean isSortAsc) {
-	if (isSortAsc) {
-	    return "ASC";
-	} else {
-	    return "DESC";
-	}
+        if (isSortAsc) {
+            return "ASC";
+        } else {
+            return "DESC";
+        }
     }
 
     /**
@@ -600,29 +616,29 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static int getNumberOfMyCourses(Transaction trans, int userID)
-	    throws InvalidDBTransferException {
-	int numberOfCourses = 0;
-	String countQuery = "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN "
-		+ "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
+            throws InvalidDBTransferException {
+        int numberOfCourses = 0;
+        String countQuery = "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN "
+                + "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(countQuery);
-	    stmt.setInt(1, userID);
-	    ResultSet resultSet = stmt.executeQuery();
-	    resultSet.next();
-	    numberOfCourses = resultSet.getInt(1);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured during fetching the number of courses of a certain user.");
-	    e.printStackTrace();
-	    throw new InvalidDBTransferException();
-	}
-	return numberOfCourses;
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(countQuery);
+            stmt.setInt(1, userID);
+            ResultSet resultSet = stmt.executeQuery();
+            resultSet.next();
+            numberOfCourses = resultSet.getInt(1);
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("Error occoured during fetching the number of courses of a certain user.");
+            e.printStackTrace();
+            throw new InvalidDBTransferException();
+        }
+        return numberOfCourses;
     }
 
     /**
@@ -638,7 +654,7 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void updateCourse(Transaction trans, Course course)
-	    throws InvalidDBTransferException {
+            throws InvalidDBTransferException {
     }
 
     /**
@@ -653,26 +669,28 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void deleteCourse(Transaction trans, int courseID)
-	    throws InvalidDBTransferException {
-	
-	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
-	PreparedStatement pS = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	
-	String sql = "DELETE FROM \"courses\" WHERE id = ?";
-	//mögliche SQL-Injektion abfangen
-	try {
-	    pS = conn.prepareStatement(sql);	    
-	    pS.setInt(1, courseID);
-	    
-	    pS.executeUpdate();
+            throws InvalidDBTransferException {
 
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
-	    throw new InvalidDBTransferException();
-	    
-	} 
+        // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "DELETE FROM \"courses\" WHERE id = ?";
+        // mögliche SQL-Injektion abfangen
+        try {
+            pS = conn.prepareStatement(sql);
+            pS.setInt(1, courseID);
+
+            pS.executeUpdate();
+
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+            throw new InvalidDBTransferException();
+
+        }
     }
 
     /**
@@ -695,25 +713,25 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void addUserToCourse(Transaction trans, int userID,
-	    int courseID) throws InvalidDBTransferException {
-        
+            int courseID) throws InvalidDBTransferException {
+
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-              
+
         String addUserToCourse = "INSERT INTO \"course_participants\" (participant_id,course_id) VALUES (?,?)";
-        
-        try{
+
+        try {
             setRelationMethode(userID, courseID, conn, addUserToCourse);
-            
-            LogHandler.getInstance().debug("Methode addUserToCourse was succesfull");
-            
-        }catch(SQLException e){
-            //TODO fehler auffangen
-            LogHandler.getInstance().error("Error occured during addUserToCOurse");
+
+            LogHandler.getInstance().debug(
+                    "Methode addUserToCourse was succesfull");
+
+        } catch (SQLException e) {
+            // TODO fehler auffangen
+            LogHandler.getInstance().error(
+                    "Error occured during addUserToCOurse");
         }
     }
-
-    
 
     /**
      * Removes a user from a course's list of participants.
@@ -734,20 +752,24 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void removeUserFromCourse(Transaction trans, int userID,
-	    int courseID) throws InvalidDBTransferException {
-        
+            int courseID) throws InvalidDBTransferException {
+
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        
+
         String removeUserFromCourse = "DELETE FROM \"course_participants\" WHERE participant_id = ? AND course_id = ?";
-        
-        try{
+
+        try {
             setRelationMethode(userID, courseID, conn, removeUserFromCourse);
-            LogHandler.getInstance().error("Deleting User:" + userID + " from course:" + courseID + "was succesfull");
-        } catch(SQLException e) {
-            LogHandler.getInstance().error("Error occured while trying to delete User:" + userID + " from course:" + courseID);
+            LogHandler.getInstance().error(
+                    "Deleting User:" + userID + " from course:" + courseID
+                            + "was succesfull");
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "Error occured while trying to delete User:" + userID
+                            + " from course:" + courseID);
         }
-        
+
     }
 
     /**
@@ -768,25 +790,27 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void addLeaderToCourse(Transaction trans, int userID,
-	    int courseID) throws InvalidDBTransferException {
-	//SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+            int courseID) throws InvalidDBTransferException {
+        // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	
-	String sql = "Insert into \"course_instructors\" (course_instructor_id, course_id) "
-			+ "values (?, ?)";
-	
-	//mögliche SQL-Injektion abfangen
-	try {
-	    			
-	    setRelationMethode(courseID, userID, conn, sql);	 
-	     
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
-	    throw new InvalidDBTransferException();
-	    
-	} 	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "Insert into \"course_instructors\" (course_instructor_id, course_id) "
+                + "values (?, ?)";
+
+        // mögliche SQL-Injektion abfangen
+        try {
+
+            setRelationMethode(courseID, userID, conn, sql);
+
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+            throw new InvalidDBTransferException();
+
+        }
     }
 
     /**
@@ -807,25 +831,27 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      */
     public static void removeLeaderFromCourse(Transaction trans, int userID,
-	    int courseID) throws InvalidDBTransferException {
-	
-	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+            int courseID) throws InvalidDBTransferException {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	
-	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
-	//mögliche SQL-Injektion abfangen
-	try {
-	    setRelationMethode(courseID, userID, conn, sql);
+        // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
-	    throw new InvalidDBTransferException();
-	    
-	} 
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
+        // mögliche SQL-Injektion abfangen
+        try {
+            setRelationMethode(courseID, userID, conn, sql);
+
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+            throw new InvalidDBTransferException();
+
+        }
     }
-    
+
     /**
      * 
      * @author Sebastian
@@ -833,33 +859,36 @@ public class CourseDAO {
      * @param courseID
      * @return
      */
-    public static Integer getNumberOfParticipants(Transaction trans, int courseID ){
-        
+    public static Integer getNumberOfParticipants(Transaction trans,
+            int courseID) {
+
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        
+
         String countSQLstat = "SELECT COUNT(*) FROM \"course_participants\" WHERE course_id=?";
         ResultSet resultSet = null;
-        
-        try{
+
+        try {
             pS = conn.prepareStatement(countSQLstat);
             pS.setInt(1, courseID);
-            
+
             resultSet = pS.executeQuery();
             pS.close();
             resultSet.close();
-            LogHandler.getInstance().debug("Methode getNumberOfParticipants was succesfull");
-            return resultSet.getInt(1); 
-            
-        } catch(SQLException e){
-            //TODO Error Handling
-            LogHandler.getInstance().error("Exception occured during getNumberOfParticipants");
+            LogHandler.getInstance().debug(
+                    "Methode getNumberOfParticipants was succesfull");
+            return resultSet.getInt(1);
+
+        } catch (SQLException e) {
+            // TODO Error Handling
+            LogHandler.getInstance().error(
+                    "Exception occured during getNumberOfParticipants");
         }
         return -1;
-        
+
     }
-    
+
     /**
      * 
      * @author Sebastian
@@ -867,23 +896,25 @@ public class CourseDAO {
      * @param userID
      * @param courseID
      */
-    public static void addUserToInformUser(Transaction trans, int userID, int courseID){
-        
+    public static void addUserToInformUser(Transaction trans, int userID,
+            int courseID) {
+
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
 
         String addUserToInformUser = "INSERT INTO \"inform_user\" (user_id,course_id) VALUES (?,?)";
-        try{
+        try {
             setRelationMethode(userID, courseID, conn, addUserToInformUser);
-            LogHandler.getInstance().debug("Methode addUserToInformUser was succesfull");
-        } catch (SQLException e){
-           //Error Handling
-            LogHandler.getInstance().error("Exception occured during addUserToInformUser");
+            LogHandler.getInstance().debug(
+                    "Methode addUserToInformUser was succesfull");
+        } catch (SQLException e) {
+            // Error Handling
+            LogHandler.getInstance().error(
+                    "Exception occured during addUserToInformUser");
         }
-        
+
     }
-    
-    
+
     /**
      * 
      * @author Sebastian
@@ -901,5 +932,5 @@ public class CourseDAO {
         pS.setInt(2, courseID);
         pS.executeUpdate();
     }
-    
+
 }

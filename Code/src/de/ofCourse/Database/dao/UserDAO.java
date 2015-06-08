@@ -89,11 +89,11 @@ public class UserDAO {
 	    } else {
 		exists = false;
 	    }
-
+	    pS.close();
+	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	return exists;
     }
@@ -191,10 +191,12 @@ public class UserDAO {
 	    pS.setInt(6, user.getAddress().getHouseNumber());
 	    
 	    pS.executeUpdate();	 
+	    
+	    pS.close();
+	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	
 	return veriString;
@@ -372,11 +374,12 @@ public class UserDAO {
 	    } else {
 		userStatus = null;
 	    }
+	    pS.close();
+	    res.close();
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing getUserStatus(Transaction trans, int userID)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	return userStatus;
     }    
@@ -432,11 +435,12 @@ public class UserDAO {
 	    } else {
 		userRole = null;
 	    }
+	    pS.close();
+	    res.close();
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing getUserRole(Transaction trans, int userID)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	return userRole;
     }
@@ -470,8 +474,7 @@ public class UserDAO {
 	    pS.setString(2, "0");
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
-	    
-	    
+	    	    
 	    //preparedStatement ausführen, gibt resultSet als Liste zurück (hier
 	    //ein Eintrag in der Liste, da Benutzername einzigartig).
 	    if(pS.executeUpdate() == 1) {
@@ -479,11 +482,10 @@ public class UserDAO {
 	    } else {
 		success = false;
 	    }
-
+	    pS.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing proveLogin(Transaction trans, String username, String passwordHash)");
-	    throw new InvalidDBTransferException();
-	    
+	    throw new InvalidDBTransferException();	    
 	} 
 	
 	return success;
@@ -510,7 +512,10 @@ public class UserDAO {
     public static int proveLogin(Transaction trans, String username, 
 	    String passwordHash) throws InvalidDBTransferException{
 	
-	int id = -1;
+	final int wrongUsernameOrPassword = -1;
+	final int accountNotActivated = -2;
+	
+	int id = wrongUsernameOrPassword;
 	
 	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;
@@ -540,15 +545,16 @@ public class UserDAO {
 		    if(res.getString("status").equals(UserStatus.REGISTERED.toString())){
 			id = res.getInt("id");
 		    } else {
-			id = -2;
+			id = accountNotActivated;
 		    }
 		} else {
-		    id = -1;
+		    id = wrongUsernameOrPassword;
 		}
 	    } else {
-		id = -1;
+		id = wrongUsernameOrPassword;
 	    }
-
+	    pS.close();
+	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing proveLogin(Transaction trans, String username, String passwordHash)");
 	    throw new InvalidDBTransferException();
@@ -674,7 +680,8 @@ public class UserDAO {
 	        
 		user = null;
 	    }
-
+	    pS.close();
+	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing getUser(Transaction trans, String username)");
 	    throw new InvalidDBTransferException();
@@ -702,8 +709,10 @@ public class UserDAO {
     public static int getUserID(Transaction trans, String username)
 	    throws InvalidDBTransferException {
 	
+	final int userDoesNotExist = -1;
+	
 	//Neues Integer id erstellen.
-	int id = -1;
+	int id = userDoesNotExist;
 	
 	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;
@@ -729,9 +738,10 @@ public class UserDAO {
 	    }
 	    else
 	    {	        
-		id = -1;
+		id = userDoesNotExist;
 	    }
-
+	    pS.close();
+	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
 	    throw new InvalidDBTransferException();	    
