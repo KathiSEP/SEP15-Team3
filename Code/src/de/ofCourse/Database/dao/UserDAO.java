@@ -861,4 +861,36 @@ public class UserDAO {
 	    throws InvalidDBTransferException {
 	return null;
 }
+    
+    /**
+     *TODO
+     * @author Sebastian
+     * @param trans
+     * @param userID
+     * @param courseID
+     * @return
+     */
+    public static boolean userWantsToBeInformed(Transaction trans, int userID, int courseID) throws InvalidDBTransferException{
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String searchUserInUserToInform = "SELECT FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+        PreparedStatement pS = null;
+        ResultSet resultSet = null;
+        try{
+            pS = conn.prepareStatement(searchUserInUserToInform);
+            pS.setInt(1, userID);
+            pS.setInt(2, courseID);
+            resultSet = pS.executeQuery();
+            LogHandler.getInstance().debug("UserWantsToBeInformed methode was succesfull");
+            boolean returnStatment = resultSet.next();
+            resultSet.close();
+            pS.close();
+            return returnStatment;
+        
+        } catch (SQLException e){
+            LogHandler.getInstance().debug("Error occured during UserWantsToBeInformed methode ");
+            return false;
+        }
+    }
 }

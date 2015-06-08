@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -14,12 +15,14 @@ import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -176,17 +179,17 @@ public class CourseDetailBean implements Pagination {
                 //Add user to course_participant list on the database server
                 CourseDAO.addUserToCourse(trans, sessionUser.getUserID(), courseID);
                 if(registeredForCourseNews){
-                    
+                    CourseDAO.addUserToInformUser(trans, sessionUser.getUserID(), courseID);
                 }
-                    
-                
-                
-                
+                LogHandler.getInstance().debug("User:"+ sessionUser.getUserID() + "Succesfull signed for course:" + courseID);
                 
             }else{
                //If the course is full we throw the CourseRegistrationException
                throw new CourseRegistrationException(); 
             }
+        } catch(InvalidDBTransferException e){
+            //TODO Error Handling
+            LogHandler.getInstance().error("Error occured while User:" + sessionUser.getUserID() + " signing up for course:" + courseID);
         }
         
         
@@ -199,26 +202,7 @@ public class CourseDetailBean implements Pagination {
 	return null;
     }
 
-    
 
-
-    /**
-     * Says wheather the Course has reached his maximal limit or not
-     * 
-     * @author Sebastian
-     * @param courseToSignUp
-     * @return true if maxUser is bigger then CourseParticipants size
-     */
-    private boolean checkIFCourseIsFull(Course courseToSignUp) {
-        
-        
-        if(courseToSignUp.getMaxUsers() > courseToSignUp.getUsers().size()){
-            return true;
-        }else{
-          return false;  
-        }
-        
-    }
 
     /**
      * Signs a user off from a course and returns the updated page.<br>

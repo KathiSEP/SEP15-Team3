@@ -699,9 +699,7 @@ public class CourseDAO {
         
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        
-        PreparedStatement pS = null;
-        
+              
         String addUserToCourse = "INSERT INTO \"course_participants\" (participant_id,course_id) VALUES (?,?)";
         
         try{
@@ -724,6 +722,7 @@ public class CourseDAO {
      * of course participants in the database.
      * </p>
      * 
+     * @author Sebastian
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
@@ -736,6 +735,19 @@ public class CourseDAO {
      */
     public static void removeUserFromCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String removeUserFromCourse = "DELETE FROM \"course_participants\" WHERE participant_id = ? AND course_id = ?";
+        
+        try{
+            setRelationMethode(userID, courseID, conn, removeUserFromCourse);
+            LogHandler.getInstance().error("Deleting User:" + userID + " from course:" + courseID + "was succesfull");
+        } catch(SQLException e) {
+            LogHandler.getInstance().error("Error occured while trying to delete User:" + userID + " from course:" + courseID);
+        }
+        
     }
 
     /**
@@ -758,7 +770,7 @@ public class CourseDAO {
     public static void addLeaderToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 	//SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
-	PreparedStatement pS = null;
+
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
@@ -798,7 +810,7 @@ public class CourseDAO {
 	    int courseID) throws InvalidDBTransferException {
 	
 	//SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
-	PreparedStatement pS = null;
+
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
@@ -859,8 +871,7 @@ public class CourseDAO {
         
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        PreparedStatement stmt = null;
-        
+
         String addUserToInformUser = "INSERT INTO \"inform_user\" (user_id,course_id) VALUES (?,?)";
         try{
             setRelationMethode(userID, courseID, conn, addUserToInformUser);
