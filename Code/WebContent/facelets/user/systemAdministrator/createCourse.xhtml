@@ -138,8 +138,41 @@
 		                        <div class="panel-body">
 		                        <h:form class="form-horizontal" id="formDeleteCourseInstructor">
 		                        <div class="input-group" style="padding-top: 5px;">
-		                            <h:commandButton id="addCourseInstructor"
-		                                class="btn btn-info pull-right" value="Kursleiter entfernen" />
+		                            <h:dataTable value= "#{courseManagementBean.leadersToDelete}" 
+		                                         id ="courseInstructorTable" 
+		                                         var="user"
+		                                         class =" table table-hover">
+		                                  <h:column>
+				                                <f:facet name="header">
+				                                               Benutzername
+				                                </f:facet>
+				                                <h:outputText value="user.username" />
+				                            </h:column>
+				                            <h:column>
+				                                <f:facet name="header">
+				                                              E-Mail-Adresse
+				                                </f:facet>
+				                                <h:outputText value="user.email" />
+				                            </h:column>
+				                            <h:column>
+				                                <f:facet name="header">
+				                                               Benutzer-ID
+				                                </f:facet>
+				                                <h:outputText value="user.userID" />
+		                                  </h:column>
+		                                  <h:column>
+				                                <f:facet name="header" />
+					                                <h:commandButton id="delete" class="btn btn-info"
+	                                                               value="Kursleiter entfernen"
+	                                                               action="#{CourseManagementBean.removeCourseLeaders}">
+	                                                               <f:param name="userID" value="#{user.userID}" />
+	                                               </h:commandButton>
+                                          </h:column>
+                                          
+                                          
+                                          
+		                            </h:dataTable>
+		                            
 		                        </div>
 		                         </h:form>
 		                        </div>
