@@ -17,7 +17,7 @@ public class Cycle {
     /**
      * stores the Date and time when the first courseUnit will take place
      */
-    private Date starttime;
+    private int courseID;
     /**
      * stores the days till the next unit should take place
      */
@@ -28,12 +28,12 @@ public class Cycle {
     private int numberOfUnits;
 
     /**
-     * Returns the value of the attribute <code>starttime</code>.
+     * Returns the value of the attribute <code>courseID</code>.
      * 
-     * @return the Date and Time the first unit should start
+     * @return the id of the associated course 
      */
-    public Date getStarttime() {
-	return this.starttime;
+    public int getCourseID() {
+	return this.courseID;
     }
 
     /**
@@ -55,13 +55,13 @@ public class Cycle {
     }
 
     /**
-     * Sets the value of the attribute <code>startingTime</code>.
+     * Sets the value of the attribute <code>courseId</code>.
      * 
-     * @param startingTime
-     *          new startingTime to set
+     * @param courseID
+     *          the associated courseID
      */
-    public void setStarttime(Date startingTime) {
-	this.starttime = startingTime;
+    public void setCourseID(int courseID) {
+	this.courseID = courseID;
     }
 
     /**
