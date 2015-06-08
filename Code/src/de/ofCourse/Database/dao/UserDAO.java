@@ -60,6 +60,8 @@ public class UserDAO {
      * 	       return false
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static boolean emailExists(Transaction trans, String email)
 		throws InvalidDBTransferException {
@@ -109,6 +111,8 @@ public class UserDAO {
      * @return the created id of the user
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static String createUser(Transaction trans, User user, String pwHash)
     		throws InvalidDBTransferException {
@@ -324,6 +328,8 @@ public class UserDAO {
      * @return the status of the user
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static UserStatus getUserStatus(Transaction trans, int userID)
 		throws InvalidDBTransferException {
@@ -386,6 +392,8 @@ public class UserDAO {
      * @return the role of the user
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static UserRole getUserRole(Transaction trans, int userID)
     		throws InvalidDBTransferException {
@@ -443,6 +451,8 @@ public class UserDAO {
      * @return true if it succeed, else false
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static boolean verifyUser(Transaction trans, String veriString) 
 	    throws InvalidDBTransferException{   
@@ -494,6 +504,8 @@ public class UserDAO {
      * 		<br>or 0 if the username or password is wrong
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static int proveLogin(Transaction trans, String username, 
 	    String passwordHash) throws InvalidDBTransferException{
@@ -557,6 +569,8 @@ public class UserDAO {
      * @return the user
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     
     public static User getUser(Transaction trans, String username)
@@ -682,6 +696,8 @@ public class UserDAO {
      * @return the user's ID
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static int getUserID(Transaction trans, String username)
 	    throws InvalidDBTransferException {

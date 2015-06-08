@@ -75,6 +75,8 @@ public class SystemDAO {
      * @return type of activation
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static Activation getActivationType(Transaction trans)
 	    throws InvalidDBTransferException {
