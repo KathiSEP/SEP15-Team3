@@ -895,21 +895,58 @@ public class UserDAO {
         java.sql.Connection conn = connection.getConn();
         
         String searchUserInUserToInform = "SELECT FROM \"inform_users\" WHERE user_id=? AND course_id=?";
-        PreparedStatement pS = null;
-        ResultSet resultSet = null;
+        
         try{
-            pS = conn.prepareStatement(searchUserInUserToInform);
-            pS.setInt(1, userID);
-            pS.setInt(2, courseID);
-            resultSet = pS.executeQuery();
+            boolean returnStatment = isInTable(userID, courseID, conn,
+                    searchUserInUserToInform);
             LogHandler.getInstance().debug("UserWantsToBeInformed methode was succesfull");
-            boolean returnStatment = resultSet.next();
-            resultSet.close();
-            pS.close();
             return returnStatment;
         
         } catch (SQLException e){
             LogHandler.getInstance().debug("Error occured during UserWantsToBeInformed methode ");
+            return false;
+        }
+    }
+
+    /**
+     * 
+     * @author Sebastian
+     * @param userID
+     * @param courseID
+     * @param conn
+     * @param searchUserInUserToInform
+     * @return
+     * @throws SQLException
+     */
+    private static boolean isInTable(int userID, int courseID,
+            java.sql.Connection conn, String searchUserInUserToInform)
+            throws SQLException {
+        PreparedStatement pS;
+        ResultSet resultSet;
+        pS = conn.prepareStatement(searchUserInUserToInform);
+        pS.setInt(1, userID);
+        pS.setInt(2, courseID);
+        resultSet = pS.executeQuery();
+        
+        boolean returnStatment = resultSet.next();
+        resultSet.close();
+        pS.close();
+        return returnStatment;
+    }
+    
+    
+    public static boolean userIsParticpant(Transaction trans, int userID, int courseID) throws InvalidDBTransferException{
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String searchUserCourse = "SELECT FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
+        
+        try{
+            boolean returnStatement = isInTable(userID, courseID, conn, searchUserCourse);
+            LogHandler.getInstance().debug("UserIsParticipant methode was succesfull");
+            return returnStatement;
+        } catch(SQLException e){
+            LogHandler.getInstance().debug("Error occured during UserIsParticipant methode ");
             return false;
         }
     }
