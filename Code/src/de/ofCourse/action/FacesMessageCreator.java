@@ -11,31 +11,32 @@ import javax.faces.context.FacesContext;
  *
  */
 public class FacesMessageCreator {
+
     /**
-     * Creates a new FacesMessage with the given message.
+     * Create the FacesMessage with the given message.
      * 
      * @param component
-     *            binding of the message to the component
+     *          binding of the message to the component
      * @param message
-     *            message to display
+     *          exception which was thrown
      */
     public static void createFacesMessage(String component, String message) {
         createFacesMessage(component, message, FacesMessage.SEVERITY_INFO);
     }
 
+
     /**
-     * Creates the FacesMessage with the given exception.
+     * Create the FacesMessage with the message of the given exception.
      * 
      * @param component
-     *            binding of the message to the component
+     *          binding of the message to the component
      * @param e
-     *            exception which was thrown
+     *          exception which was thrown
      */
     public static void createFacesMessage(String component, Exception e) {
         createFacesMessage(component, e.getMessage(),
                 FacesMessage.SEVERITY_INFO);
     }
-
     /**
      * Creates the FacesMessage with the given message of the exception and the
      * given severity.
