@@ -76,6 +76,8 @@ public class SearchCourseBean implements Pagination {
     
     private boolean pagingSearchTerm;
     
+    private boolean columnSort;
+    
     private String orderPeriod;
     
     private String orderSearchParam;
@@ -119,6 +121,8 @@ public class SearchCourseBean implements Pagination {
     public void displayCoursesInPeriod() {
     	transaction = new Connection();
     	transaction.start();
+    	pagination.setSortColumn("courseID");
+    	pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
     	List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			displayPeriod);
     	
@@ -127,7 +131,7 @@ public class SearchCourseBean implements Pagination {
     		transaction.commit();
     		setPagingSearchTerm(false);
     		setRenderTable(true);
-    		
+    		columnSort = false;
     		orderPeriod = displayPeriod;
     		orderSearchParam = searchParam;
     		orderSearchString = searchString;
@@ -170,6 +174,8 @@ public class SearchCourseBean implements Pagination {
     	transaction.start();
     	
     	if (!searchString.isEmpty()) {
+    		pagination.setSortColumn(searchParam);
+    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
     		
@@ -178,7 +184,7 @@ public class SearchCourseBean implements Pagination {
     			transaction.commit();
     			setPagingSearchTerm(true);
     			setRenderTable(true);
-    			
+    			columnSort = false;
     			orderPeriod = displayPeriod;
         		orderSearchParam = searchParam;
         		orderSearchString = searchString;
@@ -299,6 +305,7 @@ public class SearchCourseBean implements Pagination {
     	transaction = new Connection();
 	    transaction.start();
     	pagination.setSortColumn(orderParam);
+    	columnSort = true;
     	List<Course> result;
     	
     	if (pagination.isSortAsc()) {
@@ -328,15 +335,41 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
+    	transaction = new Connection();
+	    transaction.start();
     	this.pagination.actualizeCurrentPageNumber(FacesContext
 				.getCurrentInstance().getExternalContext()
 				.getRequestParameterMap().get("page"));
+    	String period;
+    	String param;
+    	String term;
+    	List<Course> result;
+    	
+    	if (columnSort) {
+    		period = orderPeriod;
+    		param = orderSearchParam;
+    		term = orderSearchString;
+    	} else {
+    		period = displayPeriod;
+    		param = searchParam;
+    		term = searchString;
+    	}
 		
 		if (pagingSearchTerm) {
-			//search(); -> selber DAO aufrufen, weil in search() werden order-paramter neu gesetzt!!
+			result = CourseDAO.getCourses(transaction, pagination,
+        			param, term);
 		} else {
-			//displayCoursesInPeriod();
+			result = CourseDAO.getCourses(transaction, pagination,
+	    			period);
 		}
+		
+		if (result != null) {
+    		searchResult = result;
+    		transaction.commit();
+    	} else {
+    		setRenderTable(false);
+    		transaction.rollback();
+    	}
     }
 
     /**

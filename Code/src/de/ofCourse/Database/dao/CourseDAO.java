@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,6 +104,104 @@ public class CourseDAO {
 		} 
     }
     
+    public static int getNumberOfCourses(Transaction trans, String param, String searchString) {
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	String query = null;
+    	switch (param) {
+    	case "day":
+    		query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" " +
+     	    		"WHERE \"course_units\".start_time::date = current_date " +
+     	    		"AND \"course_units\".course_id = \"courses\".id";
+    		return countCourses(conn, query);
+    	case "week":
+    		query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" " +
+     	    		"WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
+    		return countCourses(conn, query);
+    	case "total":
+    		query = "SELECT COUNT(*) FROM \"courses\"";
+    		return countCourses(conn, query);
+    	case "courseID":
+    		query = "SELECT COUNT(*) FROM \"courses\" " +
+	    			"WHERE CAST(id AS TEXT) LIKE ?";
+    		return countCourses(conn, query, searchString);
+    	case "title":
+    		query = "SELECT COUNT(*) FROM \"courses\" " +
+					"WHERE LOWER(titel) LIKE LOWER(?)";
+    		return countCourses(conn, query, searchString);
+    	case "leader":
+    		query = "SELECT COUNT(*) FROM \"courses\", \"users\", \"course_instructors\" " +
+	    			"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
+	    			"AND \"users\".id = \"course_instructors\".course_instructor_id " +
+	    			"AND \"course_instructors\".course_id = courses.id";
+    		return countCourses(conn, query, searchString);
+    	}
+    	return 0;
+    }
+    
+    private static int countCourses(java.sql.Connection conn, String query) {
+    	Statement stmt = null;
+    	ResultSet rst = null;
+    	int numCourses = 0;
+    	
+    	try {
+	   	    stmt = conn.createStatement();
+	   	    rst = stmt.executeQuery(query);
+	   	    rst.next();
+		    numCourses = rst.getInt(1);
+	    } catch (SQLException e) {
+		   e.printStackTrace();
+	    } finally {
+		    if (rst != null) {
+		   	    try {
+		   	        rst.close();
+		   	    } catch (SQLException e) {
+		   	 	    e.printStackTrace();
+		   	    }
+		    }
+		    if (stmt != null) {
+		    	try {
+		    		stmt.close();
+		   	    } catch (SQLException e) {
+		   	    	e.printStackTrace();
+		   	    }
+		    }
+	    }
+    	return numCourses;
+    }
+    
+    private static int countCourses(java.sql.Connection conn, String query, String searchString) {
+    	PreparedStatement stmt = null;
+	    ResultSet rst = null;
+	    int numCourses = 0;
+    	
+    	try {
+	   	    stmt = conn.prepareStatement(query);
+	   	    stmt.setString(1, searchString);
+	   	    rst = stmt.executeQuery();
+	   	    rst.next();
+		    numCourses = rst.getInt(1);
+	    } catch (SQLException e) {
+		   e.printStackTrace();
+	    } finally {
+		    if (rst != null) {
+		   	    try {
+		   	        rst.close();
+		   	    } catch (SQLException e) {
+		   	 	    e.printStackTrace();
+		   	    }
+		    }
+		    if (stmt != null) {
+		    	try {
+		    		stmt.close();
+		   	    } catch (SQLException e) {
+		   	    	e.printStackTrace();
+		   	    }
+		    }
+	    }
+    	return numCourses;
+    }
+    
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String period) throws InvalidDBTransferException {
     	Connection connection = (Connection) trans;
@@ -142,7 +241,7 @@ public class CourseDAO {
     	PreparedStatement stmt = null;
 	    ResultSet rst = null;
 	    List<Course> result = null;
-		
+	    
 	    try {
 	   	    stmt = conn.prepareStatement(query);
 	   	    stmt.setString(1, orderParam);

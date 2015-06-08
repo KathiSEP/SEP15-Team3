@@ -65,6 +65,7 @@
                                 </h:form>
                             </div>
                         </div>
+                        <h:form class="form-horizontal" id="formResultTable">
                         <h:panelGroup rendered="#{searchCourseBean.renderTable}">
                         <div class="panel panel-info">
                             <div class="panel-body">
@@ -85,13 +86,10 @@
                                      
                                      <h:column>  
                                          <f:facet name="header">
-                                         
-                                         <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                            <f:attribute name="sort" value="courseID" />
-                                            <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="courseID" />
-                                             ID
-                                         </h:commandLink>
-                                         
+                                            <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="courseID" />
+                                                ID
+                                            </h:commandLink>
                                          </f:facet>  
                                          <h:link outcome="courseDetail" value="#{course.courseID}" >
                                              <f:param name="courseID" value="#{course.courseID}" />
@@ -99,24 +97,44 @@
                                      </h:column>
                                      
                                      <h:column>  
-                                         <f:facet name="header">Title</f:facet>  
+                                         <f:facet name="header">
+                                            <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="title" />
+                                                Titel
+                                            </h:commandLink>
+                                         </f:facet>  
                                          <h:link outcome="courseDetail" value="#{course.title}" >
                                              <f:param name="courseID" value="#{course.courseID}" />
                                          </h:link>
                                      </h:column>
                                      
                                      <h:column>
-                                         <f:facet name="header">Max. Teilnehmer</f:facet>
+                                         <f:facet name="header">
+                                            <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="maxUsers" />
+                                                Max. Teilnehmer
+                                            </h:commandLink>
+                                         </f:facet>
                                          #{course.maxUsers}
                                      </h:column>
                                      
                                      <h:column>
-                                         <f:facet name="header">Beginnt</f:facet>
+                                         <f:facet name="header">
+                                            <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="starts" />
+                                                Beginnt
+                                            </h:commandLink>
+                                         </f:facet>
                                          #{course.startdate}
                                      </h:column>
                                      
                                      <h:column>
-                                         <f:facet name="header">Endet</f:facet>
+                                         <f:facet name="header">
+                                            <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="ends" />
+                                                Endet
+                                            </h:commandLink>
+                                         </f:facet>
                                          #{course.enddate}
                                      </h:column>
                                      
@@ -140,7 +158,8 @@
                                  </h:dataTable>
                             </div>
                         </div>  
-                        </h:panelGroup>         
+                        </h:panelGroup>
+                        </h:form>        
                     </div>
                 </div>
             </body>
