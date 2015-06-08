@@ -55,12 +55,11 @@ public class PaginationData implements Serializable {
      *            the number of pages to display
      */
     public PaginationData(int elementsPerPage, int currentPageNumber,
-	    String sortCoulmn, boolean sortAsc, int numberOfPages) {
+	    String sortCoulmn, boolean sortAsc) {
 	this.elementsPerPage = elementsPerPage;
 	this.currentPageNumber = currentPageNumber;
 	this.sortColumn = sortCoulmn;
 	this.sortAsc = sortAsc;
-	this.numberOfPages = numberOfPages;
     }
 
     /**

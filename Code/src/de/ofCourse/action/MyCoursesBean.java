@@ -1,4 +1,3 @@
-
 /**
  * This package represents the business logic of the ofCourse system.
  */
@@ -81,12 +80,8 @@ public class MyCoursesBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
-	
-	pagination = new PaginationData();
-	this.pagination.setSortAsc(true);
-	this.pagination.setElementsPerPage(elementsPerPage);
-	this.pagination.setSortColumn("title");
-	this.pagination.setCurrentPageNumber(0);
+
+	pagination = new PaginationData(elementsPerPage, 0, "title", true);
 	transaction = new Connection();
 
 	this.actualizeDisplayData();

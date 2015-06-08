@@ -163,9 +163,6 @@ public class CourseUnit implements Serializable {
 	return this.cycle;
     }
 
-    
-
-
     /**
      * Returns the value of the attribute <code>location</code>.
      * 
@@ -274,10 +271,6 @@ public class CourseUnit implements Serializable {
     public void setCourseAdmin(User courseAdmin) {
 	this.courseAdmin = courseAdmin;
     }
-
-   
-
-
 
     /**
      * Sets the value of the attribute <code>location</code>.

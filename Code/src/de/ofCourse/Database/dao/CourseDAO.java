@@ -505,10 +505,6 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// ////////////////////////////////////////////////////////////////
-	// Überprüfen mit ifs ob weitergemacht werden soll oder nicht
-	// ///////////////////////////////////////////////////////////////
-
 	int calculateOffset = pagination.getElementsPerPage()
 		* pagination.getCurrentPageNumber();
 
@@ -525,7 +521,6 @@ public class CourseDAO {
 	    // At this time only id an title is set
 	    while (fetchedCourses.next()) {
 		Course fetchedCourse = new Course();
-		fetchedCourse.setCourseAdmins((List) new ArrayList<Course>());
 		fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
 
 		if (fetchedCourses.getString("titel") != null) {
@@ -537,20 +532,7 @@ public class CourseDAO {
 	    }
 
 	    if (coursesOf.size() > 0) {
-		// Fetches the leaders of a course
-		ResultSet fetchedLeaders;
-		for (int i = 0; i < coursesOf.size(); ++i) {
-		    stmt = conn.prepareStatement(getCourseLeadersQuery);
-		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedLeaders = stmt.executeQuery();
-		    while (fetchedLeaders.next()) {
-			User courseAdmin = new User();
-			courseAdmin.setUsername(fetchedLeaders
-				.getString("nickname"));
-			coursesOf.get(i).getCourseAdmins().add(courseAdmin);
-		    }
-		}
-
+		
 		// Fetches the leaders of a course
 		ResultSet fetchedNextUnit;
 		Timestamp stamp;
