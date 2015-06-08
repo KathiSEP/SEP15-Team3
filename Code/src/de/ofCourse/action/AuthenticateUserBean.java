@@ -42,10 +42,10 @@ public class AuthenticateUserBean {
      * password, which are needed to log in.
      */
     private User loginUser;
-    
+
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
-    
+
     /**
      * @return the mailBean
      */
@@ -54,7 +54,8 @@ public class AuthenticateUserBean {
     }
 
     /**
-     * @param mailBean the mailBean to set
+     * @param mailBean
+     *            the mailBean to set
      */
     public void setMailBean(MailBean mailBean) {
         this.mailBean = mailBean;
@@ -64,7 +65,7 @@ public class AuthenticateUserBean {
      * The password which was inserted by the user.
      */
     private String loginPassword;
-    
+
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -79,15 +80,16 @@ public class AuthenticateUserBean {
     private SessionUserBean sessionUser;
 
     @PostConstruct
-    private void init(){
-	// Session neu initialisieren, da auf der Login-Seite noch keiner 
-	// eingeloggt sein kann.
-	loginUser = new User();
+    private void init() {
+        // Session neu initialisieren, da auf der Login-Seite noch keiner
+        // eingeloggt sein kann.
+        loginUser = new User();
     }
-    
+
     /**
      * Returns the link to the <code>myCourses</code> page if the entered
-     * username and the respective password are valid.<p>
+     * username and the respective password are valid.
+     * <p>
      * It is checked whether the entered username and the respective password
      * belong to a user that is registered in the system. If this is true, the
      * log in action is successful and the user is directed to his
@@ -95,89 +97,90 @@ public class AuthenticateUserBean {
      * Otherwise there's displayed an error message an the user stays on this
      * page.
      * 
-     * @return link to the next page 
+     * @return link to the next page
      */
     public String login() {
-	
-	int id = -3;
-	// Eingegebenes Passwort hashen
-	String salt = "";
-	String passwordHash = PasswordHash.hash(this.loginPassword, salt);
-	
-	// Neues Transaction Objekt erstellen für die Datenbankverbindung
-	this.transaction = Connection.create();
-	this.transaction.start();
-	try {
-        	// Überprüfen, ob Benutzername und Passwort gültig sind   passwordHash   oder this.loginPassword
-        	id = UserDAO.proveLogin(this.transaction, this.getLoginUser().getUsername(), passwordHash);
-			
-    	// Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das 
-    	// Passwort falsch sind
-    	// -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht aktiviert
-    	// wurde.
-    	// Ansonsten wird die ID des Benutzers zurückgegeben
-    	if(id == -1) {
-    	    // Fehlermeldung in den FacesContext werfen.
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                FacesMessage msg = new FacesMessage("Benutzername oder Passwort falsch!");
-                msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                facesContext.addMessage(null, msg);
-                facesContext.renderResponse();
-    
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+
+        final int usernameOrPasswordWrong = -1;
+        final int accountNotActivated = -2;
+        final int dbErrorOccured = -3;
+
+        int id = dbErrorOccured;
+        // Eingegebenes Passwort hashen
+        String salt = "";
+        String passwordHash = PasswordHash.hash(this.loginPassword, salt);
+
+        // Neues Transaction Objekt erstellen für die Datenbankverbindung
+        this.transaction = Connection.create();
+        this.transaction.start();
+        try {
+            // Überprüfen, ob Benutzername und Passwort gültig sind passwordHash
+            // oder this.loginPassword
+            id = UserDAO.proveLogin(this.transaction, this.getLoginUser()
+                    .getUsername(), passwordHash);
+
+            // Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das
+            // Passwort falsch sind
+            // -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht
+            // aktiviert
+            // wurde.
+            // Ansonsten wird die ID des Benutzers zurückgegeben
+            if (id == usernameOrPasswordWrong) {
+                // Fehlermeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Benutzername oder Passwort falsch!");
+
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
                 // fehlgeschlagen ist.
                 this.transaction.rollback();
                 return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-    	} else if(id == -2) {
-    	    // Fehlermeldung in den FacesContext werfen.
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                FacesMessage msg = new FacesMessage("Benutzerkonto nicht aktiv!");
-                msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                facesContext.addMessage(null, msg);
-                facesContext.renderResponse();
-    
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+            } else if (id == accountNotActivated) {
+                // Fehlermeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Benutzerkonto nicht aktiv!");
+
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
                 // fehlgeschlagen ist.
                 this.transaction.rollback();
                 return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-    	} else if(id == -3) {
-    	    // Fehlermeldung in den FacesContext werfen.
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                FacesMessage msg = new FacesMessage("Interner Datenbankfehler!");
-                msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                facesContext.addMessage(null, msg);
-                facesContext.renderResponse();
-    
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja 
+            } else if (id == dbErrorOccured) {
+                // Fehlermeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Benutzerkonto nicht aktiv!");
+
+                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
                 // fehlgeschlagen ist.
                 this.transaction.rollback();
                 return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-    	} else {
-    	    // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
-    	    // Daten mittels Benutzerid von der Datenbank abfragen.
-    	    sessionUser.setLanguage(Language.DE);
-    	    sessionUser.setUserID(id);
-    	    sessionUser.setUserRole(UserDAO.getUserRole(this.transaction, id));
-    	    sessionUser.setUserStatus(UserDAO.getUserStatus(this.transaction, id));
-    
-    	    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
-                HttpSession session = (HttpSession) FacesContext.getCurrentInstance().
-            	    getExternalContext().getSession(true);
+            } else {
+                // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
+                // Daten mittels Benutzerid von der Datenbank abfragen.
+                sessionUser.setLanguage(Language.DE);
+                sessionUser.setUserID(id);
+                sessionUser.setUserRole(UserDAO.getUserRole(this.transaction,
+                        id));
+                sessionUser.setUserStatus(UserDAO.getUserStatus(
+                        this.transaction, id));
+
+                // HTTP-Session mit Benutzerdaten füllen für PhaseListener
+                HttpSession session = (HttpSession) FacesContext
+                        .getCurrentInstance().getExternalContext()
+                        .getSession(true);
                 session.setAttribute("loggedin", true);
                 session.setAttribute("userID", id);
                 session.setAttribute("userRole", sessionUser.getUserRole());
-                
+
                 // Auf myCourses Seite weiterleiten, da der Login-Vorgang
                 // erfolgreich war.
                 this.transaction.commit();
                 return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
-    	   }
-    	
-	} catch(InvalidDBTransferException e) {
-	    this.transaction.rollback();
-	}
-	
-	return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+            }
+
+        } catch (InvalidDBTransferException e) {
+            this.transaction.rollback();
+        }
+
+        return "/facelets/open/authenticate.xhtml?faces-redirect=false";
     }
 
     /**
@@ -186,7 +189,7 @@ public class AuthenticateUserBean {
      * @return the user who wants to log in
      */
     public User getLoginUser() {
-	return loginUser;
+        return loginUser;
     }
 
     /**
@@ -196,10 +199,8 @@ public class AuthenticateUserBean {
      *            the users who wants to log in
      */
     public void setLoginUser(User loginUser) {
-	this.loginUser= loginUser;
+        this.loginUser = loginUser;
     }
-    
-    
 
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
@@ -207,7 +208,7 @@ public class AuthenticateUserBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -217,7 +218,7 @@ public class AuthenticateUserBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean sessionUser) {
-	this.sessionUser = sessionUser;
+        this.sessionUser = sessionUser;
     }
 
     /**
@@ -233,7 +234,7 @@ public class AuthenticateUserBean {
      * Sets the value of the attribute <code>loginPassword</code>.
      * 
      * @param loginPassword
-     * 		inserted Password
+     *            inserted Password
      */
     public void setLoginPassword(String loginPassword) {
         this.loginPassword = loginPassword;

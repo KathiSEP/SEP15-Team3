@@ -1,4 +1,3 @@
-
 /**
  * This package represents the business logic of the ofCourse system.
  */
@@ -46,32 +45,34 @@ public class RegisterUserBean {
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
-    
+
     private boolean testing = false;
-    
+
     /**
      * Represents a user object. It stores the data which is entered by the user
      * who wants to register.
      */
     private User userToRegistrate;
-    
+
     private String saluString;
-    
+
     /**
-     * @param userToRegistrate the userToRegistrate to set
+     * @param userToRegistrate
+     *            the userToRegistrate to set
      */
     public void setUserToRegistrate(User userToRegistrate) {
         this.userToRegistrate = userToRegistrate;
     }
+
     /**
      * Sets a flag so that the database query won't be executed
      */
     public void activateTesting() {
-	this.testing = true;
+        this.testing = true;
     }
 
     private String registerPassword;
-    
+
     private String registerConfirmPassword;
 
     /**
@@ -81,10 +82,10 @@ public class RegisterUserBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
+
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
-    
+
     /**
      * @return the mail
      */
@@ -93,42 +94,35 @@ public class RegisterUserBean {
     }
 
     /**
-     * @param mail the mail to set
+     * @param mail
+     *            the mail to set
      */
     public void setMailBean(MailBean mailBean) {
         this.mailBean = mailBean;
     }
 
     @PostConstruct
-    private void init(){
-	 HttpServletRequest request = (HttpServletRequest) FacesContext
-	      .getCurrentInstance().getExternalContext().getRequest();
-	 String veriString = request.getParameter("veri");
-	 
-	 mailBean = new MailBean();
-		
-	 if(veriString != null && veriString.length() > 0) {
-	     this.transaction = Connection.create();
-	     transaction.start();
-	     if(UserDAO.verifyUser(this.transaction, veriString)) {
-		// Erfolgsmeldung in den FacesContext werfen.
-                 FacesContext facesContext = FacesContext.getCurrentInstance();
-                 FacesMessage msg = new FacesMessage("Ihr Konto wurde aktiviert.");
-                 msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                 facesContext.addMessage(null, msg);
-                 facesContext.renderResponse();
-	     } else {
-		// Fehlermeldung in den FacesContext werfen.
-                 FacesContext facesContext = FacesContext.getCurrentInstance();
-                 FacesMessage msg = new FacesMessage("Bitte überprüfen Sie den Aktivierungslink.");
-                 msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                 facesContext.addMessage(null, msg);
-                 facesContext.renderResponse();
-	     }
-	     this.transaction.commit();
-	 }
-	 this.userToRegistrate = new User();
-	 this.userToRegistrate.setAddress(new Address());
+    private void init() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext
+                .getCurrentInstance().getExternalContext().getRequest();
+        String veriString = request.getParameter("veri");
+
+        if (veriString != null && veriString.length() > 0) {
+            this.transaction = Connection.create();
+            transaction.start();
+            if (UserDAO.verifyUser(this.transaction, veriString)) {
+                // Erfolgsmeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Ihr Konto wurde aktiviert.");
+            } else {
+                // Fehlermeldung in den FacesContext werfen.
+                FacesMessageCreator.createFacesMessage(null,
+                        "Bitte überprüfen Sie den Aktivierungslink.");
+            }
+            this.transaction.commit();
+        }
+        this.userToRegistrate = new User();
+        this.userToRegistrate.setAddress(new Address());
     }
 
     /**
@@ -140,79 +134,82 @@ public class RegisterUserBean {
      * username is already in use, a error message is displayed.
      */
     public String registerUser() {
-	
-	if(this.saluString.equals("mr.")) {
-	    this.getUserToRegistrate().setSalutation(Salutation.MR);
-	} else if(this.saluString.equals("ms.")) {
-	    this.getUserToRegistrate().setSalutation(Salutation.MS);
-	} else {
-	    this.getUserToRegistrate().setSalutation(null);
-	}
-	
-	String veriString = "";
-	
-	// Eingegebenes Passwort hashen
-	String salt = "";
-	String passwordHash = PasswordHash.hash(this.getRegisterPassword(), salt);
-	
-	if(testing) {
-	    return "/facelets/open/index.xhtml?faces-redirect=false";
-	} else {
-	    
-	// Datenbankverbindung initialisieren
-	this.transaction = Connection.create();
-	transaction.start();
-	try {
-            	// Überprüfen, ob die eingegebene E-Mail-Adresse im System bereits existiert.
-            	if(UserDAO.emailExists(transaction, this.getUserToRegistrate().getEmail())) {
-            	    
-            	    // Fehlermeldung in den FacesContext werfen, wenn die Mail schon existiert.
-                        FacesContext facesContext = FacesContext.getCurrentInstance();
-                        FacesMessage msg = new FacesMessage("E-Mail existiert bereits!");
-                        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                        facesContext.addMessage(null, msg);
-                        facesContext.renderResponse();
-                        
-                        this.transaction.rollback();
-                        return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-            	} else {	
-            	    
-            	    // Gibt es die angegebene E-Mail-Adresse noch nicht, erstelle einen
-            	    // neuen Benutzer.
-            	    veriString = UserDAO.createUser(this.transaction, this.getUserToRegistrate(), passwordHash);
-            
-            	    int userID = UserDAO.getUserID(this.transaction, this.getUserToRegistrate().getUsername());
-                    
-            	               	    
-            	    this.transaction.commit(); 
-            	    mailBean.sendAuthentificationMessage(userID, veriString);
-            	    
-            	}
-	} catch (InvalidDBTransferException e) {
-	    this.transaction.rollback();
-	}
-	}
-	
-	
-	// Erfolgsmeldung in den FacesContext werfen.
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        FacesMessage msg = new FacesMessage("Sie haben sich erfolgreich im System registriert. Bitte bestätigen Sie den Aktivierungslink aus der Verifizierungsmail");
-        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-        facesContext.addMessage(null, msg);
-        facesContext.renderResponse();
-	return "/facelets/open/index.xhtml?faces-redirect=false";
-	
-	
+
+        if (this.saluString.equals("mr.")) {
+            this.getUserToRegistrate().setSalutation(Salutation.MR);
+        } else if (this.saluString.equals("ms.")) {
+            this.getUserToRegistrate().setSalutation(Salutation.MS);
+        } else {
+            this.getUserToRegistrate().setSalutation(null);
+        }
+
+        String veriString = "";
+
+        // Eingegebenes Passwort hashen
+        String salt = "";
+        String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
+                salt);
+
+        if (testing) {
+            return "/facelets/open/index.xhtml?faces-redirect=false";
+        } else {
+
+            // Datenbankverbindung initialisieren
+            this.transaction = Connection.create();
+            transaction.start();
+            try {
+                // Überprüfen, ob die eingegebene E-Mail-Adresse im System
+                // bereits existiert.
+                if (UserDAO.emailExists(transaction, this.getUserToRegistrate()
+                        .getEmail())) {
+
+                    // Fehlermeldung in den FacesContext werfen, wenn die Mail
+                    // schon existiert.
+                    FacesMessageCreator.createFacesMessage(null,
+                            "E-Mail existiert bereits!");
+
+                    this.transaction.rollback();
+                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                } else {
+
+                    // Gibt es die angegebene E-Mail-Adresse noch nicht,
+                    // erstelle einen
+                    // neuen Benutzer.
+                    veriString = UserDAO.createUser(this.transaction,
+                            this.getUserToRegistrate(), passwordHash);
+
+                    int userID = UserDAO.getUserID(this.transaction, this
+                            .getUserToRegistrate().getUsername());
+
+                    this.transaction.commit();
+
+                    mailBean = new MailBean();
+                    mailBean.sendAuthentificationMessage(userID, veriString);
+
+                }
+            } catch (InvalidDBTransferException e) {
+                this.transaction.rollback();
+            }
+        }
+
+        // Erfolgsmeldung in den FacesContext werfen.
+        FacesMessageCreator
+                .createFacesMessage(
+                        null,
+                        "Sie haben sich erfolgreich im System registriert. "
+                        + "Bitte bestätigen Sie den Aktivierungslink aus der "
+                        + "Verifizierungsmail!");
+        return "/facelets/open/index.xhtml?faces-redirect=false";
+
     }
-    
-    
+
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -237,7 +234,7 @@ public class RegisterUserBean {
      * Sets the value of the attribute <code>registerPassword</code>.
      * 
      * @param registerPassword
-     * 			inserted password
+     *            inserted password
      */
     public void setRegisterPassword(String registerPassword) {
         this.registerPassword = registerPassword;
@@ -254,8 +251,9 @@ public class RegisterUserBean {
 
     /**
      * Sets the value of the attribute <code>registerConfirmPassword</code>.
+     * 
      * @param registerConfirmPassword
-     * 			inserted Password to confirm
+     *            inserted Password to confirm
      */
     public void setRegisterConfirmPassword(String registerConfirmPassword) {
         this.registerConfirmPassword = registerConfirmPassword;
@@ -263,6 +261,7 @@ public class RegisterUserBean {
 
     /**
      * Returns the value of the attribute <code>userToRegistrate</code>.
+     * 
      * @return the user to registrate
      */
     public User getUserToRegistrate() {
@@ -271,19 +270,21 @@ public class RegisterUserBean {
 
     /**
      * Returns the value of the attribute <code>SaluString</code>.
+     * 
      * @return the verification string
      */
     public String getSaluString() {
-	return saluString;
+        return saluString;
     }
 
     /**
      * Sets the value of the attribute <code>SaluString</code>.
+     * 
      * @param saluString
-     * 			String to verify
-     */			
+     *            String to verify
+     */
     public void setSaluString(String saluString) {
-	this.saluString = saluString;
+        this.saluString = saluString;
     }
 
 }
