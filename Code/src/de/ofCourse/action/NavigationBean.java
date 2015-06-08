@@ -7,11 +7,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
-import javax.annotation.PostConstruct;
-
-import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
-import de.ofCourse.system.Transaction;
 
 /**
  * Provides the services of directing to the login page, selecting the displayed
