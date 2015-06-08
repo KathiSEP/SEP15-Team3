@@ -58,25 +58,27 @@ public class DatabaseTableCreator {
 				"nickname VARCHAR(100) NOT NULL UNIQUE," +
 				"email VARCHAR(319) NOT NULL UNIQUE," +
 				"pw_hash VARCHAR(256) NOT NULL," +
+				"pw_salt VARCHAR(256) NOT NULL," +
 				"date_of_birth DATE," +
 				"form_of_address FORM_OF_ADDRESS," +
 				"credit_balance DECIMAL(10, 2) NOT NULL," +
 				"email_verification BOOLEAN NOT NULL," +
 				"admin_verification BOOLEAN NOT NULL," +
+				"veri_string VARCHAR(130) NOT NULL UNIQUE," +
 				"profile_image BYTEA," +
 				"role ROLE NOT NULL," +
-				"status STATUS NOT NULL,veri_string VARCHAR(130) UNIQUE NOT NULL" +
+				"status STATUS NOT NULL" +
 			");" +
 			"ALTER SEQUENCE users_id_seq RESTART WITH 10000";
     
     private static final String CREATE_COURSES =
     		"CREATE TABLE courses (" +
     			"id SERIAL PRIMARY KEY," +
-    			"titel TEXT[150]," +
+    			"titel TEXT," +
     			"max_participants INTEGER CHECK (max_participants > 0)," +
     			"start_date DATE NOT NULL," +
     			"end_date DATE NOT NULL," +
-    			"description TEXT[1000]," +
+    			"description TEXT," +
     			"image BYTEA" +
     		");" +
     		"ALTER SEQUENCE courses_id_seq RESTART WITH 10000";
@@ -85,34 +87,45 @@ public class DatabaseTableCreator {
     		"CREATE TABLE course_units (" +
     			"id SERIAL PRIMARY KEY," +
     			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE," +
+    			"cycle_id INTEGER REFERENCES \"cycles\"(id)," +
     			"max_participants INTEGER NOT NULL " +
     			"CHECK (max_participants > 0)," +
-    			"titel TEXT[150]," +
+    			"titel TEXT," +
     			"min_participants INTEGER CHECK (min_participants > 0)," +
     			"fee DECIMAL(6,2) CHECK (fee >= 0)," +
-    			"location TEXT[100]," +
     			"start_time TIMESTAMP NOT NULL," +
     			"end_time TIMESTAMP NOT NULL," +
-    			"description TEXT[1000]" +
+    			"description TEXT" +
     		");" +
     		"ALTER SEQUENCE course_units_id_seq RESTART WITH 10000";
     
-    private static final String CREATE_ADDRESSES =
-    		"CREATE TABLE addresses (" +
+    private static final String CREATE_USER_ADDRESSES =
+    		"CREATE TABLE user_addresses (" +
     			"id SERIAL PRIMARY KEY," +
-    			"user_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE UNIQUE," +
-    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) " +
-    			"ON DELETE CASCADE UNIQUE," +
+    			"user_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE NOT NULL," +
     			"country VARCHAR(100) NOT NULL," +
     			"city VARCHAR(100) NOT NULL," +
     			"zip_code VARCHAR(10) NOT NULL," +
-    			"street VARCHAR(100), house_nr INTEGER" +
+    			"street VARCHAR(100)," +
+    			"house_nr INTEGER" +
+    		")";
+    
+    private static final String CREATE_COURSE_UNIT_ADDRESSES =
+    		"CREATE TABLE course_unit_addresses (" +
+    			"id SERIAL PRIMARY KEY," +
+    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) ON DELETE CASCADE NOT NULL," +
+    			"country VARCHAR(100) NOT NULL," +
+    			"city VARCHAR(100) NOT NULL," +
+    			"zip_code VARCHAR(10) NOT NULL," +
+    			"street VARCHAR(100)," +
+    			"house_nr INTEGER," +
+    			"location TEXT" +
     		")";
 
     private static final String CREATE_CYCLES =
     		"CREATE TABLE cycles (" +
     			"id SERIAL PRIMARY KEY," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE UNIQUE," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
     			"period PERIOD," +
     			"cycle_end INTEGER NOT NULL" +
     		")";
@@ -186,7 +199,8 @@ public class DatabaseTableCreator {
     	Statement users = null;
     	Statement courses = null;
     	Statement courseUnits = null;
-    	Statement addresses = null;
+    	Statement userAddresses = null;
+    	Statement courseUnitAddresses = null;
     	Statement cycles = null;
     	Statement informUsers = null;
     	Statement courseInstructors = null;
@@ -202,12 +216,7 @@ public class DatabaseTableCreator {
 			count.next();
 			Long numTables = (Long) count.getObject(1);
 			
-			System.out.println("im try-Block");
-			
 			if (numTables == 0) {
-				
-				System.out.println("in if-abfrage");
-				
 				formOfAddress = conn.createStatement();
 				formOfAddress.execute(CREATE_FORM_OF_ADDRESS);
 				conn.commit();
@@ -236,16 +245,20 @@ public class DatabaseTableCreator {
 				courses.execute(CREATE_COURSES);
 				conn.commit();
 				
+				cycles = conn.createStatement();
+				cycles.execute(CREATE_CYCLES);
+				conn.commit();
+				
 				courseUnits = conn.createStatement();
 				courseUnits.execute(CREATE_COURSE_UNITS);
 				conn.commit();
 
-				addresses = conn.createStatement();
-				addresses.execute(CREATE_ADDRESSES);
+				userAddresses = conn.createStatement();
+				userAddresses.execute(CREATE_USER_ADDRESSES);
 				conn.commit();
 				
-				cycles = conn.createStatement();
-				cycles.execute(CREATE_CYCLES);
+				courseUnitAddresses = conn.createStatement();
+				courseUnitAddresses.execute(CREATE_COURSE_UNIT_ADDRESSES);
 				conn.commit();
 				
 				informUsers = conn.createStatement();
@@ -359,9 +372,17 @@ public class DatabaseTableCreator {
 				}
 			}
 			
-			if (addresses != null) {
+			if (userAddresses != null) {
 				try {
-					addresses.close();
+					userAddresses.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (courseUnitAddresses != null) {
+				try {
+					courseUnitAddresses.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

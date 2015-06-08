@@ -17,7 +17,8 @@ public class DatabaseTableDestroyer {
 	private static final String DROP_USERS = "DROP TABLE users";
 	private static final String DROP_COURSES = "DROP TABLE courses";
 	private static final String DROP_COURSE_UNITS = "DROP TABLE course_units";
-	private static final String DROP_ADDRESSES = "DROP TABLE addresses";
+	private static final String DROP_USER_ADDRESSES = "DROP TABLE user_addresses";
+	private static final String DROP_COURSE_UNIT_ADDRESSES = "DROP TABLE course_unit_addresses";
 	private static final String DROP_CYCLES = "DROP TABLE cycles";
 	private static final String DROP_INFORM_USERS = "DROP TABLE inform_users";
 	private static final String DROP_COURSE_INSTRUCTORS =
@@ -41,11 +42,12 @@ public class DatabaseTableDestroyer {
     	Statement role = null;
     	Statement status = null;
     	Statement period = null;
-    	Statement activation_type = null;
+    	Statement activation = null;
     	Statement users = null;
     	Statement courses = null;
     	Statement courseUnits = null;
-    	Statement addresses = null;
+    	Statement userAddresses = null;
+    	Statement courseUnitAddresses = null;
     	Statement cycles = null;
     	Statement informUsers = null;
     	Statement courseInstructors = null;
@@ -56,12 +58,12 @@ public class DatabaseTableDestroyer {
     	
     	try {
 			
-			addresses = conn.createStatement();
-			addresses.execute(DROP_ADDRESSES);
+			userAddresses = conn.createStatement();
+			userAddresses.execute(DROP_USER_ADDRESSES);
 			conn.commit();
 			
-			cycles = conn.createStatement();
-			cycles.execute(DROP_CYCLES);
+			courseUnitAddresses = conn.createStatement();
+			courseUnitAddresses.execute(DROP_COURSE_UNIT_ADDRESSES);
 			conn.commit();
 			
 			informUsers = conn.createStatement();
@@ -92,6 +94,10 @@ public class DatabaseTableDestroyer {
 			courseUnits.execute(DROP_COURSE_UNITS);
 			conn.commit();
 			
+			cycles = conn.createStatement();
+			cycles.execute(DROP_CYCLES);
+			conn.commit();
+			
 			users = conn.createStatement();
 			users.execute(DROP_USERS);
 			conn.commit();
@@ -116,8 +122,8 @@ public class DatabaseTableDestroyer {
 			period.execute(DROP_PERIOD);
 			conn.commit();
 			
-			activation_type = conn.createStatement();
-			activation_type.execute(DROP_ACTIVATION);
+			activation = conn.createStatement();
+			activation.execute(DROP_ACTIVATION);
 			trans.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -146,9 +152,17 @@ public class DatabaseTableDestroyer {
 				}
 			}
 			
-			if (addresses != null) {
+			if (userAddresses != null) {
 				try {
-					addresses.close();
+					userAddresses.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (courseUnitAddresses != null) {
+				try {
+					courseUnitAddresses.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -205,6 +219,46 @@ public class DatabaseTableDestroyer {
 			if (customizationData != null) {
 				try {
 					customizationData.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (formOfAddress != null) {
+				try {
+					formOfAddress.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (role != null) {
+				try {
+					role.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (status != null) {
+				try {
+					status.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (period != null) {
+				try {
+					period.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (activation != null) {
+				try {
+					activation.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
