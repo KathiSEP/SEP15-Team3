@@ -78,6 +78,11 @@ public class Connection implements Transaction {
         DatabaseConnectionManager.getInstance().releaseConnection(conn);
         conn = null;
     }
+    
+    public static Connection create(){
+        return new Connection();
+        
+    }
 
   
     
