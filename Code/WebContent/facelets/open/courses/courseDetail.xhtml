@@ -7,7 +7,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Kursangebot</ui:define>
+		<ui:define name="title"><h:outputText value="#{courseDetailBean.course.title}"/></ui:define>
 		<ui:define name="content">
 			<body>
 				<h1>Kursdetails</h1>
@@ -23,19 +23,19 @@
 							<div class="panel-body">
 								<div class="input-group">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Kurs-ID:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="idCourse" readonly="true" value="1432"></h:inputText>
+									<h:inputText class="form-control" style="width:260px;" id="idCourse" readonly="#{!courseDetailBean.editMode}" value="1432"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Min. Teilnehmer:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="minPersonsCourse" readonly="true"></h:inputText>
+									<h:inputText class="form-control" style="width:260px;" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Startdatum:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="startDateCourse" readonly="true"></h:inputText>
+									<h:inputText class="form-control" style="width:260px;" id="startDateCourse" readonly="#{!courseDetailBean.editMode}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Enddatum:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="endDateCourse" readonly="true"></h:inputText>
+									<h:inputText class="form-control" style="width:260px;" id="endDateCourse" readonly="#{!courseDetailBean.editMode}"></h:inputText>
 								</div>
 							</div>
 						</div>
@@ -67,12 +67,16 @@
 								</div>
 							</div>
 						</div>
-						<h:panelGroup rendered="true">
+						<h:panelGroup rendered="#{(navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 							<div class="panel panel-info">
 								<div class="panel-heading"><strong>Verwaltung</strong></div>
 								<div class="panel-body">
-									<h:button class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}"/>
-									<h:button class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}"/>
+									<h:form>
+										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
+										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
+										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="true" action="#{courseDetailBean.signUpForCourse}"/>
+										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="true" action="#{courseDetailBean.signOffFromCourse}"/>
+									</h:form>
 								</div>
 							</div>
 						</h:panelGroup>

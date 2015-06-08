@@ -75,7 +75,7 @@ public class LostPasswordBean {
         String newPassword = generateNewPassword();
     	String newHashedPassword = PasswordHash.hash(newPassword, salt);
     	UserDAO.overridePassword(transaction, email, newHashedPassword);
-        mailBean.sendMailForLostPassword(newPassword, email);
+        //mailBean.sendMailForLostPassword(newPassword, email);
     }
 
     /**

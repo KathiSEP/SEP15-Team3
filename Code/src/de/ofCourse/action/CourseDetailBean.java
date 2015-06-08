@@ -107,8 +107,11 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String saveCourse() {
-    	editMode = false;
-	return null;
+    	if (getEditMode()) {    	    
+    	    //CourseDAO.updateCourse(transaction, course);
+            setEditMode(false);
+    	}
+	return "#";
     }
 
     /**
@@ -119,6 +122,11 @@ public class CourseDetailBean implements Pagination {
     	if (courseID > 0) {
     		course = CourseDAO.getCourse(transaction, courseID);    		
     	}
+    }
+
+    public String enableEditMode() {
+        setEditMode(true);
+        return "#";
     }
 
     /**
@@ -199,7 +207,7 @@ public class CourseDetailBean implements Pagination {
         
         
         
-	return null;
+	return "#";
     }
 
 
@@ -220,7 +228,7 @@ public class CourseDetailBean implements Pagination {
      *             if a exception occours during the sign off process
      */
     public String signOffFromCourse() throws CourseRegistrationException {
-	return null;
+	return "#";
     }
 
     /**
