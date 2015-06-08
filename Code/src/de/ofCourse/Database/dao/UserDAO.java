@@ -751,6 +751,7 @@ public class UserDAO {
      *            the user to be updated
      * @throws InvalidDBTransferException if any error occurred during the
      * execution of the method
+     * @author Ricky Strohmeier
      */
     public static void updateUser(Transaction trans, User user, String pwHash)
     		throws InvalidDBTransferException {
@@ -794,6 +795,7 @@ public class UserDAO {
             statement.setString(7, user.getUsername());
             statement.setInt(8, user.getUserID());
             statement.executeUpdate();
+            statement.close();
         } catch (SQLException e) {
         	LogHandler.getInstance().error("SQL Exception occoured during executing updateUser(Transaction trans, User user, String pwHash)");
             throw new InvalidDBTransferException();
@@ -806,6 +808,7 @@ public class UserDAO {
      * @param trans the transaction object which contains the database connection
      * @param mail the mail address of the user to be updated
      * @throws InvalidDBTransferException
+     * @author Ricky Strohmeier
      */
     public static void overridePassword(Transaction trans, String mail, String password)
     		throws InvalidDBTransferException {
@@ -822,6 +825,7 @@ public class UserDAO {
             statement.setString(1, password);
             statement.setString(2, mail);
             statement.executeUpdate();
+            statement.close();
         } catch (SQLException e) {
         	LogHandler.getInstance().error("SQL Exception occoured during executing overridePassword(Transaction trans, String mail, String password");
             throw new InvalidDBTransferException();

@@ -61,7 +61,7 @@ public class NavigationBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -71,6 +71,6 @@ public class NavigationBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
-	this.sessionUser = userSession;
+		this.sessionUser = userSession;
     }
 }

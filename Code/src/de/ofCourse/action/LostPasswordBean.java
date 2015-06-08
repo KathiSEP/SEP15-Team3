@@ -41,11 +41,14 @@ public class LostPasswordBean {
 	private static final String SPECIAL = "!@#$%^&*_=+-/";
 	private static final int passwordLength = 8;
 
+    @ManagedProperty("#{mailBean}")
+    private MailBean mailBean;
+
     /**
      * Stores the entered e-mail address to which the new password should be
      * sent.
      */
-    private String emailAddressToResetPassword;
+    private String email;
     
     /**
      * Stores the transaction that is used for database interaction.
@@ -68,9 +71,11 @@ public class LostPasswordBean {
      * database.
      */
     public void resetPassword() {
-    	String salt = "";
-    	String newHashedPassword = PasswordHash.hash(generateNewPassword(), salt);
-    	UserDAO.overridePassword(transaction, emailAddressToResetPassword, newHashedPassword);
+        String salt = "";
+        String newPassword = generateNewPassword();
+    	String newHashedPassword = PasswordHash.hash(newPassword, salt);
+    	UserDAO.overridePassword(transaction, email, newHashedPassword);
+        mailBean.sendMailForLostPassword(newPassword, email);
     }
 
     /**
@@ -79,8 +84,8 @@ public class LostPasswordBean {
      * 
      * @return the entered email address of the user who forgot his password
      */
-    public String getEmailAddressToResetPassword() {
-	return emailAddressToResetPassword;
+    public String getEmail() {
+        return email;
     }
 
     /**
@@ -90,7 +95,8 @@ public class LostPasswordBean {
      *            the new entered email address of the user who forgot his
      *            password
      */
-    public void setEmailAddressToResetPassword(String emailToResetPassword) {
+    public void setEmail(String email) {
+        this.email = email;
     }
     
     /**
@@ -99,7 +105,7 @@ public class LostPasswordBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -109,6 +115,7 @@ public class LostPasswordBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
     private String generateNewPassword() {
@@ -144,5 +151,13 @@ public class LostPasswordBean {
 
     	while(password[iterator = random.nextInt(length)] != 0);
     	return iterator;
+    }
+    
+    public MailBean getMailBean() {
+        return mailBean;
+    }
+    
+    public void setMailBean(MailBean mailBean) {
+        this.mailBean = mailBean;
     }
 }
