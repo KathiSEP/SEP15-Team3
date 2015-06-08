@@ -67,7 +67,7 @@ public class CourseDAO {
 		
 		    String sql = "Insert into \"courses\" (titel, max_participants, "
 		    	+ "start_date, end_date, description, image) "
-				+ "values (?, ?, ?, ?, ?, ?)";
+				+ "values ({?}, ?, ?, ?, {?}, ?)";
 		
 		//mögliche SQL-Injektion abfangen
 		try {

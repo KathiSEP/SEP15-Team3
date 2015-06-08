@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="title">Neuen Benutzer anlegen</ui:define>
+	<ui:define name="content">
+		<body>
+			<h1>Neuen Benutzer anlegen</h1>
+			<div class="row">
+				<div class="col-lg-12">
+					<p style="font-size: 16px;">Bitte tragen Sie die Daten des
+						neuen Benutzers ein.</p>
+				</div>
+			</div>
+			<div class="row" style="padding-top: 20px;">
+				<div class="col-lg-6">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<strong>Benutzerdaten</strong>
+						</div>
+						<div class="panel-body">
+							<h:form class="form-horizontal" id="formCreateUser">
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;"><strong>Benutzer-ID:</strong></span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="idRegister" readonly="true" value="0815"></h:inputText>
+								</div>
+								<br />
+								<div class="input-group">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Anrede:</span>
+									<h:selectOneMenu class="form-control" value="Herr"
+										id="titleRegister">
+										<f:selectItem itemValue="Herr" itemLabel="Herr" />
+										<f:selectItem itemValue="Frau" itemLabel="Frau" />
+									</h:selectOneMenu>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Vorname:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="firstnameRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Name:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="lastnameRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Geburtstag:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="birthdateRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Straße:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="streetRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+                                    <span class="input-group-addon"
+                                        style="width: 160px; text-align: right;">Hausnummer:</span>
+                                    <h:inputText class="form-control" style="width:340px;"
+                                        id="housenumberRegister"></h:inputText>
+                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Ort:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="locationRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Postleitzahl:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="zipcodeRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">E-Mail-Adresse:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="emailRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 25px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Benutzername:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										id="usernameRegister"></h:inputText>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Passwort:</span>
+									<h:inputSecret class="form-control" style="width:340px;"
+										id="passwordRegister"></h:inputSecret>
+								</div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Passwort
+										bestätigen:</span>
+									<h:inputSecret class="form-control" style="width:340px;"
+										id="passwordConfirmRegister"></h:inputSecret>
+								</div>
+								<br />
+								<div class="input-group">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Benutzerrolle:</span>
+									<div>
+										<h:selectOneMenu class="form-control" value="Benutzer"
+											id="userRoleSelection">
+											<f:selectItem itemValue="Benutzer" itemLabel="Benutzer" />
+											<f:selectItem itemValue="Kursleiter" itemLabel="Kursleiter" />
+											<f:selectItem itemValue="Administrator"
+												itemLabel="Administrator" />
+										</h:selectOneMenu>
+									</div>
+								</div>
+								<br />
+								<h:commandButton id="createNewUser"
+									class="btn btn-info pull-right" value="Benutzer anlegen" />
+							</h:form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<strong>Profilbild</strong>
+						</div>
+						<div class="panel-body">
+							<div class="input-group">
+								<h:inputText class="form-control" id="profileImage"></h:inputText>
+								<span class="input-group-btn"><button
+										class="btn btn-default" type="button">Bild auswählen</button>
+								</span>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</body>
+	</ui:define>
+</ui:composition>
+</html>
