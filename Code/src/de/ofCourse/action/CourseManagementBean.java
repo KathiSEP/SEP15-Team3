@@ -86,7 +86,7 @@ public class CourseManagementBean {
             // Überprüfen, ob die eingegebene E-Mail-Adresse im System
             // bereits existiert.
             
-            createdCourseID = CourseDAO.createCourse(transaction, this.getCourse());
+            createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
             
             if (createdCourseID < 0) {
 
@@ -112,6 +112,7 @@ public class CourseManagementBean {
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
         }
+        return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
     }
 
     /**

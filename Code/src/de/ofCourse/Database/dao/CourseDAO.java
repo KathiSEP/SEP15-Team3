@@ -43,7 +43,7 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseDAO {
 
-    public boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
+    public static boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
             throws InvalidDBTransferException {
         
         boolean courseLeaderExists = false;
