@@ -9,6 +9,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.annotation.PostConstruct;
 
 import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
@@ -118,9 +120,10 @@ public class CourseDetailBean implements Pagination {
      * Initializes the course details page with the details of the course that
      * is to display.
      */
-    public void initializeCourseDetails() {
-    	if (courseID > 0) {
-    		course = CourseDAO.getCourse(transaction, courseID);    		
+    @PostConstruct
+    public void init() {
+        if (courseID > 0) {
+    		course = CourseDAO.getCourse(transaction, courseID);
     	}
     }
 
