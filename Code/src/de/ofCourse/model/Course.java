@@ -57,28 +57,7 @@ public class Course implements Serializable {
      * Stores the Logo of the Course
      */
     private String courseImage;
-    /**
-     * Stores, a List of the CourseUnits which the Course provides
-     * 
-     */
-    private List<CourseUnit> courseUnits;
-    /**
-     * Stores a list of courseAdmins who can hold and create CourseUnits
-     * of the Course
-     * 
-     */
-    private List<User> courseAdmins;
-    /**
-     * Stores a list of users who participate in the course
-     * 
-     */
-    private List<User> users;
-    /**
-     * Stores list of users who wanted to be inform about changes in the
-     * course
-     * 
-     */
-    private List<User> usersToInform;
+   
 
     /**
      * Returns the value of the attribute <code>title</code>.
@@ -143,41 +122,6 @@ public class Course implements Serializable {
 	return courseImage;
     }
 
-    /**
-     * Returns the value of the attribute <code>courseUnits</code>.
-     *
-     * @return list of all courseUnits which belongs to the Course
-     */
-    public List<CourseUnit> getCourseUnits() {
-	return courseUnits;
-    }
-
-    /**
-     * Returns the value of the attribute <code>courseAdmins</code>.
-     * 
-     * @return list of all courseAdmins of the Course
-     */
-    public List<User> getCourseAdmins() {
-	return courseAdmins;
-    }
-
-    /**
-     * Returns the value of the attribute <code>users</code>.
-     * 
-     * @return list of users who are in the course
-     */
-    public List<User> getUsers() {
-	return users;
-    }
-
-    /**
-     * Returns the value of the attribute <code>usersToInform</code>.
-     * 
-     * @return list of users who want to be informed about course changes
-     */
-    public List<User> getUsersToInform() {
-	return usersToInform;
-    }
 
     /**
      * Sets the value of the attribute <code>title</code>.
@@ -239,45 +183,7 @@ public class Course implements Serializable {
 	this.maxUsers = maxUsers;
     }
 
-    /**
-     * Sets the value of the attribute <code>courseUnits</code>.
-     * 
-     * @param courseUnits
-     *          new list of courseUnits to set
-     */
-    public void setCourseUnits(List<CourseUnit> courseUnits) {
-	this.courseUnits = courseUnits;
-    }
-
-    /**
-     * Sets the value of the attribute <code>coursAdmins</code>.
-     * 
-     * @param coursAdmins
-     *          new list of users who are admins to set
-     */
-    public void setCourseAdmins(List<User> coursAdmins) {
-	this.courseAdmins = coursAdmins;
-    }
-
-    /**
-     * Sets the value of the attribute <code>users</code>.
-     * 
-     * @param users
-     *          new list of users who take part at the course to set
-     */
-    public void setUsers(List<User> users) {
-	this.users = users;
-    }
-
-    /**
-     * Sets the value of the attribute <code>usersToInform</code>.
-     * 
-     * @param usersToInform
-     *          new list of users who want to be informed about changes in the course to set
-     */
-    public void setUsersToInform(List<User> usersToInform) {
-	this.usersToInform = usersToInform;
-    }
+    
 
     /**
      * Sets the value of the attribute <code>image</code>.

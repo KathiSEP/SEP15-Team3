@@ -64,11 +64,7 @@ public class CourseUnit implements Serializable {
      * place(only if the CourseUnit take place with regularity)
      */
     private Cycle cycle;
-    /**
-     * stores a list of users who take part in the CourseUnit
-     * 
-     */
-    private List<User> users;
+   
     
     /**
      * stores the room description where the CourseUnit will be hold (Is
@@ -167,15 +163,7 @@ public class CourseUnit implements Serializable {
 	return this.cycle;
     }
 
-    /**
-     * Returns the value of the attribute <code>users</code>.
-     * 
-     * @return the users who are in the courseUnit
-     *      
-     */
-    public List<User> getUsers() {
-	return this.users;
-    }
+    
 
 
     /**
@@ -287,15 +275,7 @@ public class CourseUnit implements Serializable {
 	this.courseAdmin = courseAdmin;
     }
 
-    /**
-     * Sets the value of the attribute <code>users</code>.
-     * 
-     * @param users
-     *         new list of users to set
-     */
-    public void setUsers(List<User> users) {
-	this.users = users;
-    }
+   
 
 
 
