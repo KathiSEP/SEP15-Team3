@@ -127,12 +127,21 @@ public class CourseDetailBean implements Pagination {
      */
     @PostConstruct
     public void init() {
-        if (courseID > 0) {
-            course = CourseDAO.getCourse(transaction, courseID);
+        transaction = Connection.create();
+        try {
+            if (courseID > 0) {
+                course = CourseDAO.getCourse(transaction, courseID);
+                if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
+                    isRegistered = true;
+                }
+            }
+        } catch(InvalidDBTransferException e) {
+            transaction.rollback();
+            LogHandler.getInstance().error("Error occured in init method of CourseDetailBean");
+            courseID = 0;
+            isRegistered = false;
         }
-        if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
-            isRegistered = true;
-        }
+        transaction.commit();
     }
 
     /**
