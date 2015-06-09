@@ -144,13 +144,7 @@ public class RegisterUserBean {
         }
 
         String veriString = "";
-
-        // Eingegebenes Passwort hashen
-        String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
-                .getUsername());;
-        String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
-                salt);
-
+        
         if (testing) {
             return "/facelets/open/index.xhtml?faces-redirect=false";
         } else {
@@ -159,6 +153,11 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             try {
+                // Eingegebenes Passwort hashen
+                String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
+                        .getUsername());;
+                String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
+                        salt);
                 // Überprüfen, ob die eingegebene E-Mail-Adresse im System
                 // bereits existiert.
                 if (UserDAO.emailExists(transaction, this.getUserToRegistrate()

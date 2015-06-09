@@ -106,15 +106,15 @@ public class AuthenticateUserBean {
         final int dbErrorOccured = -3;
 
         int id = dbErrorOccured;
-        // Eingegebenes Passwort hashen
-        String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
-                    .getUsername());
-        String passwordHash = PasswordHash.hash(this.loginPassword, salt);
 
         // Neues Transaction Objekt erstellen für die Datenbankverbindung
         this.transaction = Connection.create();
         this.transaction.start();
         try {
+            // Eingegebenes Passwort hashen
+            String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
+                        .getUsername());
+            String passwordHash = PasswordHash.hash(this.loginPassword, salt);
             // Überprüfen, ob Benutzername und Passwort gültig sind passwordHash
             // oder this.loginPassword
             id = UserDAO.proveLogin(this.transaction, this.getLoginUser()

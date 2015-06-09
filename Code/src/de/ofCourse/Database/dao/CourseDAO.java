@@ -38,11 +38,26 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  * 
- * @author Patrick Cretu
+ * @author Patrick Cretu, Katharina Hölzl
  *
  */
 public class CourseDAO {
 
+    
+    /**
+     * Checks, whether the inserted id of the course leader exists in the 
+     * system or not.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseLeaderID
+     *                 ID of the course leader 
+     * @return true if the id of the course leader exists in the system, 
+     *         else false
+     * @throws InvalidDBTransferException
+     *                  if any error occurred during the execution of the method
+     */
     public static boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
             throws InvalidDBTransferException {
         
