@@ -277,15 +277,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * 
 	 * @return link to the courseDetails page
 	 */
-	@SuppressWarnings("deprecation")
 	public String createCourseUnit() {
 		transaction.start();
 		try {
-
 			courseUnit.getCycle().setCycleID(
 					CycleDAO.createCycle(transaction, courseID,
 							cycleOfCourseUnit));
-
 			calculateStartAndEndTime(this.courseUnit);
 
 			if (this.regularCourseUnit) {
@@ -318,7 +315,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 						courseID, false);
 			}
 			this.transaction.commit();
-
 		} catch (InvalidDBTransferException e) {
 			LogHandler.getInstance()
 					.error("Error occured during creating the"

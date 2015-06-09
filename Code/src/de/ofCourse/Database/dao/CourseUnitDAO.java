@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
-import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
@@ -111,11 +110,14 @@ public class CourseUnitDAO {
 					"Error occured during creating a new course unit");
 			e.printStackTrace();
 			throw new InvalidDBTransferException();
-
 		}
-
 	}
 
+	/**
+	 * @param trans
+	 * @param unit
+	 * @throws SQLException
+	 */
 	private static void createCourseUnitAddress(Transaction trans,
 			CourseUnit unit) throws SQLException {
 		String queryAddress = "INSERT INTO \"course_unit_addresses\""
@@ -247,6 +249,46 @@ public class CourseUnitDAO {
 	}
 
 	/**
+	 * @param trans
+	 * @param courseUnitId
+	 * @return
+	 */
+	public List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
+			int courseUnitId) {
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		// The queries to execute
+		String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
+		String queryUnitIds = "SELECT id FROM \"course_units\" WHERE cycle_id=?";
+
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		PreparedStatement stmt = null;
+		ResultSet res = null;
+		int cycle_id;
+		try {
+			stmt = conn.prepareStatement(queryCycleId);
+			stmt.setInt(1, courseUnitId);
+			res = stmt.executeQuery();
+			res.next();
+			cycle_id = res.getInt("cycle_id");
+
+			stmt = conn.prepareStatement(queryUnitIds);
+			stmt.setInt(1, cycle_id);
+			res = stmt.executeQuery();
+			while (res.next()) {
+				ids.add(res.getInt("id"));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			LogHandler.getInstance().error(
+					"Error occured during fetching the id of "
+							+ "course units which belong to the same cycle.");
+			throw new InvalidDBTransferException();
+		}
+		return ids;
+	}
+
+	/**
 	 * Adds a user to a course unit's list of participants.
 	 * <p>
 	 * A tuple of the user's ID and the course unit's ID is added to the table
@@ -268,7 +310,8 @@ public class CourseUnitDAO {
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
 
-		String addUserToCourseUnit = "INSERT INTO \"course_unit_participants\" (participant_id,course_unit_id) VALUES (?,?)";
+		String addUserToCourseUnit = "INSERT INTO \"course_unit_participants\""
+				+ " (participant_id,course_unit_id) VALUES (?,?)";
 
 		try {
 			CourseDAO.setRelationMethode(userID, courseUnitID, conn,
