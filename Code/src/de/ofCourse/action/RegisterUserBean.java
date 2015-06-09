@@ -3,6 +3,8 @@
  */
 package de.ofCourse.action;
 
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -155,9 +157,9 @@ public class RegisterUserBean {
             try {
                 // Eingegebenes Passwort hashen
                 //TODO generate Salt methode fehlt, hier nur username als salt übergeben
-                String salt = this.getUserToRegistrate().getUsername();
-                //String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
-                //        .getUsername());;
+                //String salt = this.getUserToRegistrate().getUsername();
+                Date currentTime = new Date();
+                String salt = currentTime.getTime() * Math.random() + "";
                 String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
                         salt);
                 // Überprüfen, ob die eingegebene E-Mail-Adresse im System

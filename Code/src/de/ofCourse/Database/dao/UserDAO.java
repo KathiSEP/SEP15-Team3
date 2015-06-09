@@ -194,6 +194,7 @@ public class UserDAO {
 		pS.setString(1, veriString);
 		res = pS.executeQuery();
 	    } while (res.next());
+	   
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
 		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
@@ -255,7 +256,6 @@ public class UserDAO {
 	    pS.executeUpdate();
 
 	    pS.close();
-	    res.close();
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
@@ -731,7 +731,7 @@ public class UserDAO {
 
 		conn.commit();
 		// neue Datenbankabfrage für die Adresse des Benutzers
-		sql = "SELECT * FROM \"addresses\" WHERE user_id=?";
+		sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
 		PreparedStatement pr = null;
 		pr = conn.prepareStatement(sql);
 		pr.setInt(1, user.getUserID());
@@ -1085,6 +1085,9 @@ public class UserDAO {
             throw new InvalidDBTransferException();
         }
     }
+
+
+   
 
 
 }
