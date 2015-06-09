@@ -58,6 +58,7 @@ public class CycleDAO {
 
 	    res.next();
 	    cycleID = res.getInt("id");
+	    System.out.println("Cycle id: " + cycleID);
 	    stmt.close();
 	    
 	} catch (SQLException e) {

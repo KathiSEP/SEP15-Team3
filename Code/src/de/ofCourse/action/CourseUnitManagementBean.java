@@ -238,7 +238,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		courseUnit.setCourseAdmin(courseAdmin);
 
 		this.cycleOfCourseUnit = new Cycle();
-
+        courseUnit.setCycle(cycleOfCourseUnit);
 		// ///////////////////////////////////////////
 		// TESTING
 
@@ -312,18 +312,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		// TODO: Testen
 		try {
 
-			int cycleId = CycleDAO.createCycle(transaction, courseID,
-					cycleOfCourseUnit);
+			courseUnit.getCycle().setCycleID(CycleDAO.createCycle(transaction, courseID,
+					cycleOfCourseUnit));
 
 			date.setHours(start.getHours());
 			date.setMinutes(start.getMinutes());
 			courseUnit.setStartime(new Date(date.getTime()));
-			
+
 			date.setHours(end.getHours());
 			date.setMinutes(end.getMinutes());
 			courseUnit.setEndtime(new Date(date.getTime()));
 
-			
 			if (this.regularCourseUnit) {
 				Date actualStartDate = this.courseUnit.getStartime();
 				Date actualEndDate = this.courseUnit.getEndtime();
@@ -346,12 +345,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					this.courseUnit.setStartime(new Date(nextStartDate
 							.getTime()));
 					this.courseUnit.setEndtime(new Date(nextEndDate.getTime()));
+					System.out.println("True");
 					CourseUnitDAO.createCourseUnit(transaction,
-							this.courseUnit, this.courseID);
+							this.courseUnit, this.courseID, true);
 				}
 			} else {
+				System.out.println("False");
 				CourseUnitDAO.createCourseUnit(transaction, courseUnit,
-						courseID);
+						courseID, false);
 			}
 			this.transaction.commit();
 

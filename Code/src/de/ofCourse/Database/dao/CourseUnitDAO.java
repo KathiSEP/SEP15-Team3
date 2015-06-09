@@ -54,7 +54,7 @@ public class CourseUnitDAO {
 	 *             if any error occurred during the execution of the method
 	 */
 	public static void createCourseUnit(Transaction trans,
-			CourseUnit courseUnit, int courseID)
+			CourseUnit courseUnit, int courseID, boolean regular)
 			throws InvalidDBTransferException {
 		String query;
 
@@ -68,16 +68,14 @@ public class CourseUnitDAO {
 		ResultSet res = null;
 		try {
 
-			if (courseUnit.getCycle() != null) {
+			if (regular) {
 
-				int cycle_id = CycleDAO.createCycle(trans, courseID,
-						courseUnit.getCycle());
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description, cycle_id)"
 						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?)";
 				stmt = conn.prepareStatement(query);
-				stmt.setInt(9, cycle_id);
+				stmt.setInt(9, courseUnit.getCycle().getCycleID());
 			} else {
 
 				query = "INSERT INTO \"course_units\""
@@ -418,7 +416,7 @@ public class CourseUnitDAO {
 
 			stmt = conn.prepareStatement(query);
 			stmt.setInt(1, courseUnitId);
-			stmt.setString(2, "'name'");
+			stmt.setString(2, "name");
 			stmt.setInt(3, pagination.getElementsPerPage());
 			stmt.setInt(4, offset);
 			ResultSet fetchedParticipants = stmt.executeQuery();

@@ -13,6 +13,9 @@ import java.util.Date;
  *
  */
 public class Cycle {
+	
+	
+	private int cycleID;
 
     /**
      * stores the Date and time when the first courseUnit will take place
@@ -83,4 +86,12 @@ public class Cycle {
     public void setNumberOfUnits(int numberOfUnits) {
 	this.numberOfUnits = numberOfUnits;
     }
+
+	public int getCycleID() {
+		return cycleID;
+	}
+
+	public void setCycleID(int cycleID) {
+		this.cycleID = cycleID;
+	}
 }
