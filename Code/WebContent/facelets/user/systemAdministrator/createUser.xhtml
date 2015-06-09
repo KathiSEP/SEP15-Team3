@@ -25,125 +25,116 @@
 						</div>
 						<div class="panel-body">
 							<h:form class="form-horizontal" id="formCreateUser">
-								<div class="input-group" style="padding-top: 5px;">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;"><strong>Benutzer-ID:</strong></span>
-									<h:inputText class="form-control" style="width:340px;"
-										id="idRegister" readonly="true" value="0815"></h:inputText>
-								</div>
-								<br />
 								<div class="input-group">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Anrede:</span>
-									<h:selectOneMenu class="form-control" value="Herr"
-										id="titleRegister">
-										<f:selectItem itemValue="Herr" itemLabel="Herr" />
-										<f:selectItem itemValue="Frau" itemLabel="Frau" />
+									<h:selectOneMenu class="form-control" id="titleRegister" value="#{userManagementBeanuser.user.salutation}">
+										<f:selectItem itemValue="Salutation.MR" itemLabel="Herr" />
+										<f:selectItem itemValue="Salutation.MS" itemLabel="Frau" />
 									</h:selectOneMenu>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Vorname:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="firstnameRegister"></h:inputText>
+										id="firstnameRegister" value="#{userManagementBeanuser.user.firstname}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Name:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="lastnameRegister"></h:inputText>
+										id="lastnameRegister" value="#{userManagementBeanuser.user.lastname}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Geburtstag:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="birthdateRegister"></h:inputText>
+										id="birthdateRegister" value="#{userManagementBeanuser.user.dateOfBirth}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Straße:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="streetRegister"></h:inputText>
+										id="streetRegister" value="#{userManagementBeanuser.user.address.street}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Hausnummer:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="housenumberRegister"></h:inputText>
+                                        id="housenumberRegister" value="#{userManagementBeanuser.user.address.houseNumber}"></h:inputText>
                                 </div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Ort:</span>
+										style="width: 160px; text-align: right;">Stadt</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="locationRegister"></h:inputText>
+										id="locationRegister" value="#{userManagementBeanuser.user.address.city}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Postleitzahl:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="zipcodeRegister"></h:inputText>
+										id="zipcodeRegister" value="#{userManagementBeanuser.user.address.zipCode}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">E-Mail-Adresse:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="emailRegister"></h:inputText>
+										id="emailRegister" value="#{userManagementBeanuser.user.email}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 25px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Benutzername:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="usernameRegister"></h:inputText>
+										id="usernameRegister" value="#{userManagementBeanuser.user.username}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Passwort:</span>
 									<h:inputSecret class="form-control" style="width:340px;"
-										id="passwordRegister"></h:inputSecret>
+										id="passwordRegister" value="#{userManagementBeanuser.password}"></h:inputSecret>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Passwort
 										bestätigen:</span>
 									<h:inputSecret class="form-control" style="width:340px;"
-										id="passwordConfirmRegister"></h:inputSecret>
+										id="passwordConfirmRegister" value="#{userManagementBeanuser.confirmPassword}"></h:inputSecret>
 								</div>
 								<br />
 								<div class="input-group">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Benutzerrolle:</span>
 									<div>
-										<h:selectOneMenu class="form-control" value="Benutzer"
-											id="userRoleSelection">
-											<f:selectItem itemValue="Benutzer" itemLabel="Benutzer" />
-											<f:selectItem itemValue="Kursleiter" itemLabel="Kursleiter" />
-											<f:selectItem itemValue="Administrator"
+										<h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userManagementBean.user.userRole}">
+											<f:selectItem itemValue="UserRole.REGISTERED_USER" itemLabel="Benutzer" />
+											<f:selectItem itemValue="UserRole.COURSE_LEADER" itemLabel="Kursleiter" />
+											<f:selectItem itemValue="UserRole.SYSTEM_ADMINISTRATOR"
 												itemLabel="Administrator" />
 										</h:selectOneMenu>
 									</div>
 								</div>
-								<br />
+								<br/>
+								
+								<div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <strong>Profilbild</strong>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="input-group">
+                                            <h:inputFile value="#{userManagementBean.image}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+								
 								<h:commandButton id="createNewUser"
-									class="btn btn-info pull-right" value="Benutzer anlegen" />
+                                    class="btn btn-info pull-right" value="Benutzer anlegen" action="#{userManagementBean.createUser()}"/>
 							</h:form>
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<strong>Profilbild</strong>
-						</div>
-						<div class="panel-body">
-							<div class="input-group">
-								<h:inputText class="form-control" id="profileImage"></h:inputText>
-								<span class="input-group-btn"><button
-										class="btn btn-default" type="button">Bild auswählen</button>
-								</span>
-							</div>
-							
-						</div>
-					</div>
+					
 				</div>
 			</div>
 		</body>

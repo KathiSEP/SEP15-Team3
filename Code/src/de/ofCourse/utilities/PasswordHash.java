@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
  * Provides the services of hashing a given plaintext password concatenated with
  * a salt by using a SHA hash algorithm.
  * 
- * @author Tobias Fuchs
+ * @author Patrick Cretu
  *
  */
 public class PasswordHash {

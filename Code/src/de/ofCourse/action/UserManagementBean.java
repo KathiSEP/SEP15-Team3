@@ -3,10 +3,17 @@
  */
 package de.ofCourse.action;
 
+import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.servlet.http.Part;
 
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.model.Address;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Provides functionality for administrators to create and delete users.
@@ -20,9 +27,11 @@ import de.ofCourse.system.Transaction;
  * administrator has the right to decide whether he deletes the user and abates
  * possible depts.
  * 
- * @author Tobias Fuchs
+ * @author Patrick Cretu
  *
  */
+@ManagedBean
+@RequestScoped
 public class UserManagementBean {
     
     /**
@@ -35,7 +44,13 @@ public class UserManagementBean {
      * Stores the entered or displayed data of the user.
      */
     private User user;
-
+    
+    private String password;
+    
+    private String confirmPassword;
+    
+    private Part image;
+    
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
@@ -43,7 +58,13 @@ public class UserManagementBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-
+    
+    public void init() {
+    	image = null;
+    	this.user = new User();
+        this.user.setAddress(new Address());
+    }
+    
     /**
      * Creates a new user with the entered data and returns the profile page of
      * the new created user.<br>
@@ -53,7 +74,31 @@ public class UserManagementBean {
      * @return link to the next page
      */
     public String createUser() {
-	return null;
+    	transaction = Connection.create();
+    	transaction.start();
+    	String salt = generateSalt();
+        String pwHash = PasswordHash.hash(password, salt);
+        
+        if (UserDAO.emailExists(transaction, user.getEmail())) {
+            FacesMessageCreator.createFacesMessage(null, "E-Mail bereits vergeben");
+            this.transaction.rollback();
+        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
+        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
+            this.transaction.rollback();
+        } else {
+        	String veriString = UserDAO.createUser(this.transaction, user, pwHash);
+        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
+        	UserDAO.verifyUser(transaction, veriString);
+        	if (image != null) {
+        		UserDAO.uploadImage(transaction, userID, image);
+        	}
+        	transaction.commit();
+        }
+    	return "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=false";
+    }
+    
+    private String generateSalt() {
+    	return String.valueOf(System.currentTimeMillis() * Math.random());
     }
 
     /**
@@ -94,7 +139,31 @@ public class UserManagementBean {
     public void setUser(User user) {
     }
 
-    /**
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
+	public Part getImage() {
+		return image;
+	}
+
+	public void setImage(Part image) {
+		this.image = image;
+	}
+
+	/**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
      * @return the session of the user

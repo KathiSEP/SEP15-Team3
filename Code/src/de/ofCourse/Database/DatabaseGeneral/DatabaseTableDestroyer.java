@@ -7,6 +7,11 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
+/**
+ * 
+ * @author Patrick Cretu
+ *
+ */
 public class DatabaseTableDestroyer {
 	
 	private static final String DROP_FORM_OF_ADDRESS = "DROP TYPE form_of_address";
