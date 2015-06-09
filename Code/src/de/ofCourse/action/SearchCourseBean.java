@@ -30,7 +30,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet <code>search</code>.
  * </p>
  * 
- * @author Patrick Cretu
+ * @author Tobias Fuchs
  *
  */
 @ManagedBean
@@ -103,10 +103,8 @@ public class SearchCourseBean implements Pagination {
     public void init() {
     	displayPeriod = "total";
     	searchParam = "title";
-    	pagination = new PaginationData();
-    	pagination.setCurrentPageNumber(0);
-    	pagination.setElementsPerPage(10);
-    	pagination.setSortAsc(true);
+    	pagination = new PaginationData(10, 0,"courseID", true);
+    
     }
 
     /**
@@ -118,12 +116,9 @@ public class SearchCourseBean implements Pagination {
      * 
      */
     public void displayCoursesInPeriod() {
-    	transaction = Connection.create();
+    	transaction = new Connection();
     	transaction.start();
     	pagination.setSortColumn("courseID");
-    	
-    	//Hier try-catch-Block
-    	
     	pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
     	List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			displayPeriod);
@@ -172,14 +167,11 @@ public class SearchCourseBean implements Pagination {
      * in the facelet.
      */
     public void search() {
-    	transaction = Connection.create();
+    	transaction = new Connection();
     	transaction.start();
     	
     	if (!searchString.isEmpty()) {
     		pagination.setSortColumn(searchParam);
-    		
-    		//Hier try-catch-Block
-    		
     		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
@@ -307,7 +299,7 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-    	transaction = Connection.create();
+    	transaction = new Connection();
 	    transaction.start();
     	pagination.setSortColumn(orderParam);
     	columnSort = true;
@@ -340,7 +332,7 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-    	transaction = Connection.create();
+    	transaction = new Connection();
 	    transaction.start();
     	this.pagination.actualizeCurrentPageNumber(FacesContext
 				.getCurrentInstance().getExternalContext()
