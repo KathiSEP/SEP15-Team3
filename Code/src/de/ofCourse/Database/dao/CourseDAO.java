@@ -57,6 +57,8 @@ public class CourseDAO {
      *         else false
      * @throws InvalidDBTransferException
      *                  if any error occurred during the execution of the method
+     *                  
+     * @author Katharina Hölzl
      */
     public static boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
             throws InvalidDBTransferException {
@@ -105,6 +107,8 @@ public class CourseDAO {
      *            the course to be added
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static int createCourse(Transaction trans, Course course)
             throws InvalidDBTransferException {
@@ -724,6 +728,8 @@ public class CourseDAO {
      *            the ID of the course to be deleted
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void deleteCourse(Transaction trans, int courseID)
             throws InvalidDBTransferException {
@@ -847,6 +853,8 @@ public class CourseDAO {
      *            the course's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void addLeaderToCourse(Transaction trans, int userID,
             int courseID) throws InvalidDBTransferException {
@@ -888,6 +896,8 @@ public class CourseDAO {
      *            the course's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void removeLeaderFromCourse(Transaction trans, int userID,
             int courseID) throws InvalidDBTransferException {

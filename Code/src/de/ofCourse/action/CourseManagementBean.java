@@ -32,7 +32,7 @@ import de.ofCourse.system.Transaction;
  * leader to delete. He has the possibility to remove more than one leader from
  * a course at once.
  * 
- * @author Tobias Fuchs
+ * @author Katharina Hölzl
  *
  */
 @ManagedBean
@@ -131,6 +131,7 @@ public class CourseManagementBean {
      *            the new value of the attribute course
      */
     public void setCourse(Course course) {
+        this.course = course;
     }
 
     
@@ -151,12 +152,24 @@ public class CourseManagementBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
+    /**
+     * Returns the value of the attribute <code>courseLeaderID</code>.
+     * 
+     * @return the id of the course leader
+     */
     public int getCourseLeaderID() {
         return courseLeaderID;
     }
 
+    /**
+     * Sets the value of the attribute <code>courseLeaderID</code>.
+     * 
+     * @param courseLeaderID
+     *                  id of the course leader
+     */
     public void setCourseLeaderID(int courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
     }
