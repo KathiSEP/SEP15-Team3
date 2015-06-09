@@ -62,7 +62,8 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Startdatum:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.startdate}"
-		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
+		                                        required="true" requiredMessage="Bitte Startdatum angeben">
                                                 <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
 		                                        </h:inputText>
 		                                    <h:message for="courseStartDate" style="color:red" />
@@ -71,7 +72,8 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Enddatum:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.enddate}"
-		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
+		                                        required="true" requiredMessage="Bitte Enddatum angeben">
 		                                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
 		                                        </h:inputText>
 		                                    <h:message for="courseEndDate" style="color:red" />
@@ -79,9 +81,8 @@
 				                        <div class="input-group" style="padding-top: 5px; width:500px;">
 				                            <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">Kursbild:</span>
-				                            <h:inputFile class="form-control" id="courseImage" dir ="RTL">
-				                                    <f:validator validatorId="imageValidator"/>
-				                            </h:inputFile>
+				                            <h:inputText class="form-control" id="courseImage">
+				                            </h:inputText>
 				                           
 				                            <h:message for="courseImage" style="color:red" />
 				                        </div>

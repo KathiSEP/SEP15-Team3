@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
@@ -57,6 +58,8 @@ public class CourseManagementBean {
      */
     private Course course;
     
+    private Part courseImage;
+    
     /**
      * Stores the ID of the course leader.
      */
@@ -87,6 +90,7 @@ public class CourseManagementBean {
             // bereits existiert.
             
             createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
+            this.transaction.commit();
             
             if (createdCourseID < 0) {
 
@@ -95,7 +99,6 @@ public class CourseManagementBean {
                 FacesMessageCreator.createFacesMessage(null,
                         "Beim Erstellen des Kurses trat ein Fehler auf!");
 
-                this.transaction.rollback();
                 return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
             } else {
 
@@ -104,13 +107,12 @@ public class CourseManagementBean {
                 // neuen Benutzer.
                 
                 // Erfolgsmeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");
-                
-                this.transaction.commit();
-                return "/facelets/open/courses/courseDetail.xhtml?id=" + createdCourseID;
+                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
+                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
             }
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
+            FacesMessageCreator.createFacesMessage(null, "Problem beim Anlegen des Kurses!");
         }
         return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
     }
@@ -161,6 +163,14 @@ public class CourseManagementBean {
 
     public void setCourseLeaderID(Integer courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
+    }
+
+    public Part getCourseImage() {
+        return courseImage;
+    }
+
+    public void setCourseImage(Part courseImage) {
+        this.courseImage = courseImage;
     }
 
    

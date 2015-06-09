@@ -113,16 +113,20 @@ public class CourseDAO {
     public static int createCourse(Transaction trans, Course course)
             throws InvalidDBTransferException {
 
-        int generatedCourseID = -1;
+        final int errorGeneratingCourse = -1;
+        
+        int generatedCourseID = errorGeneratingCourse;
         
         // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
 
+        //TODO image Spalte hinzufügen, Typ: bytea (kein STRING!!!!!!!)
+        
         String sql = "Insert into \"courses\" (titel, max_participants, "
-                + "start_date, end_date, description, image) "
-                + "values ({?}, ?, ?, ?, {?}, ?) RETURNING id";
+                + "start_date, end_date, description) "
+                + "values (?, ?, ?, ?, ?) RETURNING id";
 
         // mögliche SQL-Injektion abfangen
         try {
@@ -136,7 +140,11 @@ public class CourseDAO {
             } else {
                 pS.setString(1, course.getTitle());
             }
-            pS.setInt(2, course.getMaxUsers());
+            if(course.getMaxUsers() == null) {
+                pS.setInt(2, 1);
+            } else {
+                pS.setInt(2, course.getMaxUsers());
+            }
             pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
             pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
             if (course.getDescription() == null
@@ -145,12 +153,8 @@ public class CourseDAO {
             } else {
                 pS.setString(5, course.getDescription());
             }
-            if (course.getCourseImage() == null
-                    || course.getCourseImage().length() < 1) {
-                pS.setString(6, null);
-            } else {
-                pS.setString(6, course.getCourseImage());
-            }
+            
+            System.out.println(pS.toString());
 
             ResultSet res = pS.executeQuery();
             res.next();
@@ -158,6 +162,7 @@ public class CourseDAO {
             pS.close();
             res.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             LogHandler
                     .getInstance()
                     .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
