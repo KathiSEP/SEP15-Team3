@@ -78,8 +78,8 @@
 									<h:form>
 										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
 										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
-										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="true" action="#{courseDetailBean.signUpForCourse}"/>
-										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="true" action="#{courseDetailBean.signOffFromCourse}"/>
+										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 									</h:form>
 								</div>
 							</div>

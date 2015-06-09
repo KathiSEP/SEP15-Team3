@@ -100,6 +100,7 @@ public class CourseDetailBean implements Pagination {
     private SessionUserBean sessionUser;
 
     private boolean editMode;
+    private boolean isRegistered;
     private int courseID;
 
     /**
@@ -121,15 +122,25 @@ public class CourseDetailBean implements Pagination {
     /**
      * Initializes the course details page with the details of the course that
      * is to display.
+     * 
+     * @author Ricky Strohmeier
      */
     @PostConstruct
     public void init() {
         if (courseID > 0) {
             course = CourseDAO.getCourse(transaction, courseID);
         }
-        System.out.println(sessionUser.getUserID());
+        if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
+            isRegistered = true;
+        }
     }
 
+    /**
+     * Enables the edit mode of the facelet.
+     * 
+     * @return the same page
+     * @author Ricky Strohmeier
+     */
     public String enableEditMode() {
         setEditMode(true);
         return "#";
@@ -151,6 +162,7 @@ public class CourseDetailBean implements Pagination {
      *            the new course
      */
     public void setCourse(Course course) {
+        this.course = course;
     }
 
     /**
@@ -158,8 +170,18 @@ public class CourseDetailBean implements Pagination {
      * 
      * @return whether the user has registered for course news
      */
-    public boolean registeredForCourseNews() {
+    public boolean getRegisteredForCourseNews() {
         return registeredForCourseNews;
+    }
+
+    /**
+     * Set-method for the registered for course news attribute.
+     * 
+     * @param registeredForCourseNews true if registered, false if not
+     * @author Ricky Strohmeier
+     */
+    public void setRegisteredForCourseNews(boolean registeredForCourseNews) {
+        this.registeredForCourseNews = registeredForCourseNews;
     }
 
     /**
@@ -481,6 +503,7 @@ public class CourseDetailBean implements Pagination {
      *            the new list of selected course units
      */
     public void setSelectedCourseUnits(List<CourseUnit> selectedCourseUnits) {
+        this.selectedCourseUnits = selectedCourseUnits;
     }
 
     /**
@@ -499,6 +522,7 @@ public class CourseDetailBean implements Pagination {
      *            the new list of leaders
      */
     public void setLeadersOfCourse(List<User> leaders) {
+        this.leadersOfCourse = leaders;
     }
 
     /**
@@ -517,6 +541,7 @@ public class CourseDetailBean implements Pagination {
      *            the new list of course units
      */
     public void setCourseUnitsOfCourse(List<CourseUnit> courseUnits) {
+        this.courseUnitsOfCourse = courseUnits;
     }
 
     /**
@@ -575,6 +600,7 @@ public class CourseDetailBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+        this.pagination = pagination;
     }
 
     /**
@@ -669,6 +695,26 @@ public class CourseDetailBean implements Pagination {
 
         }
 
+    }
+
+    /**
+     * Get method to see if the user is registered to this course.
+     * 
+     * @return the isRegistered
+     * @author Ricky Strohmeier
+     */
+    public boolean getIsRegistered() {
+        return isRegistered;
+    }
+
+    /**
+     * Set method for the is registered boolean.
+     * 
+     * @param isRegistered the isRegistered to set
+     * @author Ricky Strohmeier
+     */
+    public void setIsRegistered(boolean isRegistered) {
+        this.isRegistered = isRegistered;
     }
 
 }
