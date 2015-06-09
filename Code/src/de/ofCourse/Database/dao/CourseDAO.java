@@ -554,10 +554,11 @@ public class CourseDAO {
                 + "WHERE participant_id = ?) ORDER BY ? "
                 + getSortDirection(pagination.isSortAsc())
                 + " LIMIT ? OFFSET ?";
-        String getNextCourseUnitQuery = "SELECT start_time, location "
-                + "FROM \"course_units\" WHERE course_units.course_id = ? "
-                + "AND course_units.start_time >= CURRENT_DATE "
+        String getNextCourseUnitQuery = "SELECT course_units.start_time, course_unit_addresses.location "
+                + "FROM \"course_units\",\"course_unit_addresses\" WHERE course_units.course_id = ? "
+                + "AND course_units.start_time >= CURRENT_DATE AND course_unit_addresses.course_unit_id = course_units.id "
                 + "ORDER BY course_units.start_time ASC LIMIT 1";
+        
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
@@ -600,6 +601,7 @@ public class CourseDAO {
                     stmt = conn.prepareStatement(getNextCourseUnitQuery);
                     stmt.setInt(1, coursesOf.get(i).getCourseID());
                     fetchedNextUnit = stmt.executeQuery();
+                    System.out.println("hier");
                     while (fetchedNextUnit.next()) {
                         courseUnit = new CourseUnit();
                         stamp = fetchedNextUnit.getTimestamp("start_time");
@@ -681,7 +683,6 @@ public class CourseDAO {
         }
         return numberOfCourses;
     }
-
     /**
      * Updates a course stored in the database. The course's attributes are
      * replaced by the ones of the passed course.

@@ -57,8 +57,15 @@ public class CourseUnitDAO {
 	    throws InvalidDBTransferException {
 	String query = "INSERT INTO \"course_units\""
 		+ " (course_id, max_participants, titel,"
-		+ " min_participants, fee, location, start_time, end_time, description)"
-		+ " VALUES (?, ?, ?::TEXT[], ?, ?, ?::TEXT[], ?, ?, ?::TEXT[])";
+		+ " min_participants, fee, start_time, end_time, description)"
+		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT)";
+	
+	String queryID="Select id FROM course_units WHERE max_participants=? AND start_time=? AND end_time=?";
+	
+	String queryAddress =  "INSERT INTO \"course_units\""
+			+ " (course_id, max_participants, titel,"
+			+ " min_participants, fee, location, start_time, end_time, description)"
+			+ " VALUES (?, ?, ?::TEXT[], ?, ?, ?::TEXT[], ?, ?, ?::TEXT[])";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
