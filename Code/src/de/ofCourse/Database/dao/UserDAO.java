@@ -64,7 +64,6 @@ public class UserDAO {
             throws InvalidDBTransferException {
 
         String pwSalt = "";
-        final int userDoesNotExist = -1;
 
         // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
         PreparedStatement pS = null;
@@ -89,7 +88,7 @@ public class UserDAO {
                 // id mit zugehörigem Wert aus der Datenbank füllen.
                 pwSalt = res.getString("pw_salt");
             } else {
-                int id = userDoesNotExist;
+                pwSalt = null;
             }
             pS.close();
             res.close();
@@ -176,7 +175,7 @@ public class UserDAO {
     public static String createUser(Transaction trans, User user, String pwHash)
 	    throws InvalidDBTransferException {
 
-	String veriString = UserDAO.getPWSalt(trans, user.getUsername());
+	String veriString = "";
 
 	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;

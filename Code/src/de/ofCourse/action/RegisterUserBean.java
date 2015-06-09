@@ -146,7 +146,8 @@ public class RegisterUserBean {
         String veriString = "";
 
         // Eingegebenes Passwort hashen
-        String salt = "";
+        String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
+                .getUsername());;
         String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
                 salt);
 
