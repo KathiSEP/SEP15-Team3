@@ -39,4 +39,8 @@
         <validator-id>imageValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.ImageValidator</validator-class>
     </validator>   
+    <validator>
+        <validator-id>courseDateValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.CourseDateValidator</validator-class>
+    </validator> 
 </faces-config>

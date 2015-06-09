@@ -58,10 +58,6 @@ public class CourseUnitDAO {
 			throws InvalidDBTransferException {
 		String query;
 
-		String queryID = "SELECT id FROM course_units WHERE"
-				+ " max_participants=? AND start_time=? AND"
-				+ " end_time=? AND course_id=?";
-
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
 		PreparedStatement stmt = null;
@@ -73,7 +69,7 @@ public class CourseUnitDAO {
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description, cycle_id)"
-						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?)";
+						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
 				stmt = conn.prepareStatement(query);
 				stmt.setInt(9, courseUnit.getCycle().getCycleID());
 			} else {
@@ -81,11 +77,12 @@ public class CourseUnitDAO {
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description)"
-						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT)";
+						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT) RETURNING id";
 
 				stmt = conn.prepareStatement(query);
 
 			}
+			
 			stmt.setInt(1, courseID);
 			stmt.setInt(2, courseUnit.getMaxUsers());
 			if (courseUnit.getTitle().length() < 1
@@ -106,16 +103,6 @@ public class CourseUnitDAO {
 			} else {
 				stmt.setString(8, courseUnit.getDescription());
 			}
-			stmt.executeUpdate();
-
-			// Fetch the id
-			stmt = conn.prepareStatement(queryID);
-			stmt.setInt(1, courseUnit.getMaxUsers());
-			stmt.setTimestamp(2, new java.sql.Timestamp(courseUnit
-					.getStartime().getTime()));
-			stmt.setTimestamp(3, new java.sql.Timestamp(courseUnit.getEndtime()
-					.getTime()));
-			stmt.setInt(4, courseID);
 
 			res = stmt.executeQuery();
 			res.next();

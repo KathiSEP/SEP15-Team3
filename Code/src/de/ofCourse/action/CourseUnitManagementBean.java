@@ -20,6 +20,7 @@ import javax.faces.model.ListDataModel;
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.CycleDAO;
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
@@ -172,6 +173,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 */
 	private boolean editMode;
 
+	private boolean deleteAll;
+
+	private boolean saveAll;
+
 	private int courseUnitId = 0;
 
 	private int courseID;
@@ -209,25 +214,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		// ///////////////////////////////////////////////
 		// Mit Werten von CourseDetails füllen
 		// ////////////////////////////////////////////////
-		if(editMode){
-			
-		}else{
-			
-			
+		if (editMode) {
+
+		} else {
+
 		}
-		
-	
-		
-		
+
 		this.courseID = 10000;
-		 this.courseUnitId = 10000;
+		this.courseUnitId = 10000;
 		this.editMode = false;
 
 		transaction = Connection.create();
 		transaction.start();
-		
-		
-		
+
 		try {
 
 			this.pagination.actualizeNumberOfPages(CourseUnitDAO
@@ -251,7 +250,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		courseUnit.setDescription("Das ist eine Beschreibung");
 		courseUnit.getCourseAdmin().setUsername("Sepp");
 
-		
 	}
 
 	/**
@@ -385,6 +383,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 */
 	public String deleteCourseUnit() {
 		transaction.start();
+		// TODO: Not YET Done
 		try {
 			ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
 					.getParticipiantsOfCourseUnit(transaction, null,
@@ -393,10 +392,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				CourseUnitDAO.removeUserFromCourseUnit(transaction,
 						sessionUser.getUserID(), courseUnit.getCourseUnitID());
 				float newAccountBalance = calculateNewAccountBalance(
-						courseUnit, user);
+						courseUnit, user, false);
 				UserDAO.updateAccountBalance(transaction, user.getUserID(),
 						newAccountBalance);
-				CourseUnitDAO.deleteCourseUnit(transaction, courseUnitId);
+				CourseUnitDAO.deleteCourseUnit(transaction,
+						courseUnit.getCourseID());
 			}
 			transaction.commit();
 		} catch (InvalidDBTransferException e) {
@@ -413,8 +413,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * @param user
 	 * @return
 	 */
-	private float calculateNewAccountBalance(CourseUnit courseUnit, User user) {
-		return user.getAccountBalance() + courseUnit.getPrice();
+	private float calculateNewAccountBalance(CourseUnit courseUnit, User user,
+			boolean signUp) {
+		if (!signUp) {
+			if (user.getAccountBalance() >= courseUnit.getPrice()) {
+				return user.getAccountBalance() - courseUnit.getPrice();
+			} else {
+				LogHandler.getInstance().debug(
+						"Not enough money to sign in course unit");
+				throw new CourseRegistrationException();
+			}
+		} else {
+			return user.getAccountBalance() + courseUnit.getPrice();
+		}
 	}
 
 	/**
@@ -423,9 +434,25 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * updated. In this case the user need not to pay for the course unit.
 	 */
 	public void addUserToCourseUnit() {
-		System.out.println("Add user: " + this.userToAdd.getFirstname() + " "
-				+ this.userToAdd.getLastname() + " with ID "
-				+ this.userToAdd.getUserID() + " to the course unit");
+		transaction.start();
+		try {
+			float newAccountBalance = this.calculateNewAccountBalance(
+					courseUnit, this.userToAdd, true);
+			CourseUnitDAO.addUserToCourseUnit(transaction,
+					userToAdd.getUserID(), courseUnit.getCourseUnitID());
+			UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
+					newAccountBalance);
+			transaction.commit();
+		} catch (InvalidDBTransferException e) {
+			transaction.rollback();
+			LogHandler.getInstance().error(
+					"Error during adding user manually to course unit.");
+		} catch (CourseRegistrationException e) {
+			LogHandler
+					.getInstance()
+					.error("Error during adding user manually to course unit. "
+							+ "User has not enough money to participate the course unit");
+		}
 	}
 
 	/**
@@ -634,5 +661,21 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		calculated = new Date(miliseconds);
 
 		return calculated;
+	}
+
+	public boolean isDeleteAll() {
+		return deleteAll;
+	}
+
+	public void setDeleteAll(boolean deleteAll) {
+		this.deleteAll = deleteAll;
+	}
+
+	public boolean isSaveAll() {
+		return saveAll;
+	}
+
+	public void setSaveAll(boolean saveAll) {
+		this.saveAll = saveAll;
 	}
 }

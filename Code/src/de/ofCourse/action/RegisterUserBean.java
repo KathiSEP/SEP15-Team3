@@ -3,13 +3,17 @@
  */
 package de.ofCourse.action;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -113,26 +117,16 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             if (UserDAO.verifyUser(this.transaction, veriString)) {
-                // Erfolgsmeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Ihr Konto wurde aktiviert.");
+                FacesMessageCreator.createFacesMessage(null, "Ihr Account wurde erfolgreich freigeschaltet!");
             } else {
-                System.out.println("Veri not found!");
-                // Fehlermeldung in den FacesContext werfen.
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                FacesMessage msg = new FacesMessage("Bitte überprüfen Sie den Aktivierungslink.");
-                msg.setSeverity(FacesMessage.SEVERITY_INFO);
-                facesContext.addMessage(null, msg);
-                facesContext.renderResponse();
-//                FacesMessageCreator.createFacesMessage(null,
-//                        "Bitte überprüfen Sie den Aktivierungslink.");
+                FacesMessageCreator.createFacesMessage(null, "Der Verifizierungsstring existiert nicht!");
             }
             this.transaction.commit();
         }
         this.userToRegistrate = new User();
         this.userToRegistrate.setAddress(new Address());
     }
-
+    
     /**
      * Registers a new user with the entered user data in the system.<br>
      * It creates with the entered data a new database entry and sends a mail
