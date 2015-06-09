@@ -196,7 +196,7 @@ public class UserDAO {
 	   
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
-		    + "pw_hash, date_of_birth, form_oSf_address, credit_balance, "
+		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
 		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
 		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
 
@@ -236,7 +236,7 @@ public class UserDAO {
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
 	    pS.setString(14, salt);
-
+	    
 	    pS.executeUpdate();
 
 	    sql = "Insert into \"user_addresses\" (user_id, country, "
@@ -249,7 +249,7 @@ public class UserDAO {
 	    pS.setInt(4, user.getAddress().getZipCode());
 	    pS.setString(5, user.getAddress().getStreet());
 	    pS.setInt(6, user.getAddress().getHouseNumber());
-
+	    
 	    pS.executeUpdate();
 
 	    pS.close();
