@@ -268,15 +268,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
 
 	/**
-	 * Returns
-	 * 
-	 * @return the usersToDelete
-	 */
-	public List<User> getUsersToDelete() {
-		return usersToDelete;
-	}
-
-	/**
 	 * Creates a new course unit with the entered data and returns the link to
 	 * the updated course details page. That means that the method creates a new
 	 * database entry for the course unit and stores it in the database.<br>
@@ -295,13 +286,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					CycleDAO.createCycle(transaction, courseID,
 							cycleOfCourseUnit));
 
-			date.setHours(start.getHours());
-			date.setMinutes(start.getMinutes());
-			courseUnit.setStartime(new Date(date.getTime()));
-
-			date.setHours(end.getHours());
-			date.setMinutes(end.getMinutes());
-			courseUnit.setEndtime(new Date(date.getTime()));
+			calculateStartAndEndTime(this.courseUnit);
 
 			if (this.regularCourseUnit) {
 				Date actualStartDate = this.courseUnit.getStartime();
@@ -482,8 +467,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * database entry of the course unit is updated.
 	 */
 	public void deleteUsersFromCourseUnit() {
+		@SuppressWarnings("unchecked")
 		List<User> items = (List<User>) this.participants.getWrappedData();
 		usersToDelete = new ArrayList<User>();
+		// Fetches the selected user that are to delete
 		for (User item : items) {
 			if (item.isSelected()
 					&& !(this.usersToDelete.contains(item.getUserID()))) {
@@ -491,15 +478,30 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			}
 		}
 
-		System.out.println("Delete users:");
-		for (int i = 0; i < this.usersToDelete.size(); ++i) {
-			System.out.println("BenutzerID: "
-					+ this.usersToDelete.get(i).getUserID());
+		// Delete the users from course unit
+		transaction.start();
+		try {
+			for (int i = 0; i < usersToDelete.size(); ++i) {
+				CourseUnitDAO.removeUserFromCourseUnit(transaction,
+						sessionUser.getUserID(), courseUnit.getCourseUnitID());
+				float newAccountBalance = calculateNewAccountBalance(
+						courseUnit, usersToDelete.get(i), false);
+				UserDAO.updateAccountBalance(transaction, usersToDelete.get(i)
+						.getUserID(), newAccountBalance);
+			}
 
+			// Updates the shown list with the actual data
+			this.participants.setWrappedData(CourseUnitDAO
+					.getParticipiantsOfCourseUnit(transaction, pagination,
+							courseUnitId, false));
+			this.transaction.commit();
+		} catch (InvalidDBTransferException e) {
+			LogHandler.getInstance().error(
+					"Error occured during deleting users"
+							+ " form course unit or while fetching"
+							+ " participants to display.");
+			this.transaction.rollback();
 		}
-
-		// Aktualisierte Liste aus der Datenbank
-		this.participants.setWrappedData(Arrays.asList());
 	}
 
 	/**
@@ -508,6 +510,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * 
 	 * @return list of users to delete from the course unit
 	 */
+	public List<User> getUsersToDelete() {
+		return usersToDelete;
+	}
 
 	/**
 	 * Sets the value of the attribute <code>usersToDelete</code> that stores
@@ -663,19 +668,46 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		return calculated;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isDeleteAll() {
 		return deleteAll;
 	}
 
+	/**
+	 * @param deleteAll
+	 */
 	public void setDeleteAll(boolean deleteAll) {
 		this.deleteAll = deleteAll;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isSaveAll() {
 		return saveAll;
 	}
 
+	/**
+	 * @param saveAll
+	 */
 	public void setSaveAll(boolean saveAll) {
 		this.saveAll = saveAll;
+	}
+
+	/**
+	 * @param courseUnit
+	 * 
+	 */
+	@SuppressWarnings("deprecation")
+	private void calculateStartAndEndTime(CourseUnit courseUnit) {
+		date.setHours(start.getHours());
+		date.setMinutes(start.getMinutes());
+		courseUnit.setStartime(new Date(date.getTime()));
+
+		date.setHours(end.getHours());
+		date.setMinutes(end.getMinutes());
+		courseUnit.setEndtime(new Date(date.getTime()));
 	}
 }

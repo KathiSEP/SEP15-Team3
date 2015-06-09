@@ -63,9 +63,7 @@ public class CourseUnitDAO {
 		PreparedStatement stmt = null;
 		ResultSet res = null;
 		try {
-
 			if (regular) {
-
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description, cycle_id)"
@@ -73,16 +71,14 @@ public class CourseUnitDAO {
 				stmt = conn.prepareStatement(query);
 				stmt.setInt(9, courseUnit.getCycle().getCycleID());
 			} else {
-
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description)"
 						+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT) RETURNING id";
 
 				stmt = conn.prepareStatement(query);
-
 			}
-			
+
 			stmt.setInt(1, courseID);
 			stmt.setInt(2, courseUnit.getMaxUsers());
 			if (courseUnit.getTitle().length() < 1
@@ -103,14 +99,12 @@ public class CourseUnitDAO {
 			} else {
 				stmt.setString(8, courseUnit.getDescription());
 			}
-
 			res = stmt.executeQuery();
 			res.next();
 			courseUnit.setCourseUnitID(res.getInt("id"));
 			res.close();
 			// Create the corresponding course unit address
-            createCourseUnitAddress(trans, courseUnit);
-			
+			createCourseUnitAddress(trans, courseUnit);
 			stmt.close();
 		} catch (SQLException e) {
 			LogHandler.getInstance().error(
@@ -122,16 +116,16 @@ public class CourseUnitDAO {
 
 	}
 
-	private static void createCourseUnitAddress(Transaction trans, CourseUnit unit)
-			throws SQLException {
+	private static void createCourseUnitAddress(Transaction trans,
+			CourseUnit unit) throws SQLException {
 		String queryAddress = "INSERT INTO \"course_unit_addresses\""
 				+ " (course_unit_id, country, city, zip_code, street, house_nr, location)"
 				+ " VALUES (?, ?, ?, ?, ?, ?, ?::TEXT)";
 
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
+		PreparedStatement stmt = null;
 		try {
-			PreparedStatement stmt = null;
 			stmt = conn.prepareStatement(queryAddress);
 			stmt.setInt(1, unit.getCourseUnitID());
 			stmt.setString(2, unit.getAddress().getCountry());
@@ -228,6 +222,28 @@ public class CourseUnitDAO {
 	 */
 	public static void deleteCourseUnit(Transaction trans, int courseUnitID)
 			throws InvalidDBTransferException {
+		String queryUnit = "DELETE FROM \"course_units\" WHERE course_units.id=?";
+		String queryAddress = "DELETE FROM \"course_unit_addresses\" WHERE course_unit_id=?";
+
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		PreparedStatement stmt = null;
+
+		try {
+			stmt = conn.prepareStatement(queryUnit);
+			stmt.setInt(1, courseUnitID);
+			stmt.executeUpdate();
+
+			stmt = conn.prepareStatement(queryAddress);
+			stmt.setInt(1, courseUnitID);
+			stmt.executeUpdate();
+
+			stmt.close();
+		} catch (SQLException e) {
+			LogHandler.getInstance().error(
+					"Error occoured during deleting a course unit.");
+			throw new InvalidDBTransferException();
+		}
 	}
 
 	/**
@@ -395,15 +411,15 @@ public class CourseUnitDAO {
 
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
-		
-        int limit;
+
+		int limit;
 		int offset;
-		
-		if(all){
+
+		if (all) {
 			limit = CourseUnitDAO.getNumberOfParticipants(trans, courseUnitId);
-			offset = 0;		
-		}else{
-		    limit = pagination.getElementsPerPage();
+			offset = 0;
+		} else {
+			limit = pagination.getElementsPerPage();
 			offset = calculateOffset(pagination);
 		}
 		PreparedStatement stmt = null;
