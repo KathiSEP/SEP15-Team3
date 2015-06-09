@@ -24,10 +24,8 @@ public class CycleDAO {
 	int cycleID = 0;
 
 	String queryCreate = "INSERT INTO \"cycles\""
-		+ " (course_id, period, cycle_end)" + " VALUES (?, ?::period, ?)";
+		+ " (course_id, period, cycle_end)" + " VALUES (?, ?::period, ?) RETURNING id";
 
-	String querySelect = "SELECT id FROM \"cycles\" WHERE"
-		+ " course_id=? AND period=?::period AND cycle_end=?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -43,17 +41,6 @@ public class CycleDAO {
 		stmt.setString(2, "WEEKS");
 	    }
 	    stmt.setInt(3, cycle.getNumberOfUnits());
-	    stmt.executeUpdate();
-
-	    stmt = conn.prepareStatement(querySelect);
-	    stmt.setInt(1, courseID);
-	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "DAYS");
-	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "WEEKS");
-	    }
-	    stmt.setInt(3, cycle.getNumberOfUnits());
-
 	    res = stmt.executeQuery();
 
 	    res.next();
