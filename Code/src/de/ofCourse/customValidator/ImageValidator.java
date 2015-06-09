@@ -3,6 +3,10 @@
  */
 package de.ofCourse.customValidator;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
@@ -26,11 +30,27 @@ public class ImageValidator implements Validator {
      * file and permitted resolution of the image are kept.
      *  
      */
+    
+    private Pattern pattern;
+    private Matcher matcher;
+
+    private static final String ImagePattern = "([^\\s]+(\\.(?i)(jpg))$)";
+
+    public ImageValidator() {
+        pattern = Pattern.compile(ImagePattern);
+    }
+    
     @Override
     public void validate(FacesContext fc, UIComponent component, Object value)
 	    throws ValidatorException {
-	
+        
+    
+        String image = value.toString();
 
+        matcher = pattern.matcher(image);
+        
+        if (!matcher.matches()) {
+            throw new ValidatorException(new FacesMessage("Kein gültiges Bildformat."));
     }
-
+    }
 }
