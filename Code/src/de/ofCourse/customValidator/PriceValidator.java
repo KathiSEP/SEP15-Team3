@@ -22,7 +22,7 @@ public class PriceValidator implements Validator {
      * not negative and it needs 2 decimal places.
      */
     @Override
-    public void validate(FacesContext arg0, UIComponent arg1, Object arg2)
+    public void validate(FacesContext fc, UIComponent component, Object value)
 	    throws ValidatorException {
 	// TODO Auto-generated method stub
 
