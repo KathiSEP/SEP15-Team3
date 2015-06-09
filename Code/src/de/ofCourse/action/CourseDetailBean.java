@@ -248,6 +248,14 @@ public class CourseDetailBean implements Pagination {
         
         ArrayList<Integer> courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);
         
+        if(!courseUnitsToSignOff.isEmpty()){
+            for(int i = 0; i < courseUnitsToSignOff.size(); i++){
+                signOffFromSpecificCourseUnit(trans, courseUnitsToSignOff.get(i));
+            }
+        }else{
+            CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(), courseID);
+        }
+        
 
         return "#";
     }
@@ -316,48 +324,64 @@ public class CourseDetailBean implements Pagination {
                 .getExternalContext().getRequestParameterMap()
                 .get("CourseUNitID"));
         try {
-            // Instanziere alle Models aus der Datenbank die gebraucht werden
-            CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(trans,
-                    courseUnitID);
-            User userWhoTryToSignUp = UserDAO.getUser(trans,
-                    sessionUser.getUserID());
-            int currentAmountOfParticipants = CourseUnitDAO
-                    .getNumberOfParticipants(trans, courseUnitID);
-
-            if (courseUnitIsFull(courseUnitToSign, currentAmountOfParticipants)) {
-
-                // Methode berechnet neuen Kontostand
-                float newAccountBalance = signingUpForUser(courseUnitToSign,
-                        userWhoTryToSignUp);
-
-                // Kontostand wird geupdatet und der User in die CourseUnit
-                // eingetragen
-                CourseUnitDAO.addUserToCourseUnit(trans,
-                        sessionUser.getUserID(), courseUnitID);
-                UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
-                        newAccountBalance);
-                LogHandler.getInstance().debug(
-                        "User succesfully added to CourseUnit");
-                trans.commit();
-                return "x";
-            } else {
-                LogHandler
-                        .getInstance()
-                        .debug("The courseUnit:"
-                                + courseUnitID
-                                + "has reached maximal amount of Particpants. User:"
-                                + userWhoTryToSignUp.getUserID()
-                                + "cant sign up");
-                trans.rollback();
-                throw new CourseRegistrationException();
-
-            }
+            return signOffFromSpecificCourseUnit(trans, courseUnitID);
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error("Database Transfare not working");
             trans.rollback();
             throw new CourseRegistrationException();
         }
 
+    }
+
+    /**
+     * @param trans
+     * @param courseUnitID
+     * @return
+     * @throws InvalidDBTransferException
+     * @throws CourseRegistrationException
+     */
+    private String signOffFromSpecificCourseUnit(Transaction trans,
+            int courseUnitID) throws InvalidDBTransferException,
+            CourseRegistrationException {
+        
+        // Instanziere alle Models aus der Datenbank die gebraucht werden
+        CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(trans,
+                courseUnitID);
+        User userWhoTryToSignUp = UserDAO.getUser(trans,
+                sessionUser.getUserID());
+        int currentAmountOfParticipants = CourseUnitDAO
+                .getNumberOfParticipants(trans, courseUnitID);
+
+        if (courseUnitIsFull(courseUnitToSign, currentAmountOfParticipants)) {
+
+            // Methode berechnet neuen Kontostand
+            float newAccountBalance = signingUpForUser(courseUnitToSign,
+                    userWhoTryToSignUp);
+
+            // Kontostand wird geupdatet und der User in die CourseUnit
+            // eingetragen
+            CourseUnitDAO.addUserToCourseUnit(trans,
+                    sessionUser.getUserID(), courseUnitID);
+            UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
+                    newAccountBalance);
+            LogHandler.getInstance().debug(
+                    "User succesfully added to CourseUnit");
+            trans.commit();
+            
+            //TODO richtige weiterleitung fehlt noch
+            return "x";
+        } else {
+            LogHandler
+                    .getInstance()
+                    .debug("The courseUnit:"
+                            + courseUnitID
+                            + "has reached maximal amount of Particpants. User:"
+                            + userWhoTryToSignUp.getUserID()
+                            + "cant sign up");
+            trans.rollback();
+            throw new CourseRegistrationException();
+
+        }
     }
 
     /**
