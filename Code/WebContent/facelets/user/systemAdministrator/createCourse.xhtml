@@ -76,11 +76,11 @@
 		                                        </h:inputText>
 		                                    <h:message for="courseEndDate" style="color:red" />
 		                                </div>
-				                        <div class="input-group" style="padding-top: 5px; width:550px;">
+				                        <div class="input-group" style="padding-top: 5px; width:500px;">
 				                            <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">Kursbild:</span>
-				                            <h:inputFile class="form-control" id="courseImage">
-				                            <f:validator validatorId="imageValidator"/>
+				                            <h:inputFile class="form-control" id="courseImage" dir ="RTL">
+				                                    <f:validator validatorId="imageValidator"/>
 				                            </h:inputFile>
 				                           
 				                            <h:message for="courseImage" style="color:red" />
