@@ -55,7 +55,10 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">max. Teilnehmerzahl:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.maxUsers}"
-		                                        id="courseParticipants"></h:inputText>
+		                                        id="courseParticipants" converterMessage="Bitte positive Zahl eingeben.">
+		                                        <f:convertNumber longOnly="true"/>
+		                                        <f:validator validatorId="courseParticipantsValidator" />
+		                                        </h:inputText>
 		                                    <h:message for="courseParticipants" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
