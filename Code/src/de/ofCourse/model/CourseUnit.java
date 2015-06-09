@@ -126,14 +126,6 @@ public class CourseUnit implements Serializable {
 	return this.description;
     }
 
-    /**
-     * Returns the value of the attribute <code>startTime</code>.
-     * 
-     * @return the Date and the time when the courseUnit starts
-     */
-    public Date getStarttime() {
-	return this.startime;
-    }
 
     /**
      * Returns the value of the attribute <code>endTime</code>.
@@ -227,15 +219,6 @@ public class CourseUnit implements Serializable {
 	this.description = discription;
     }
 
-    /**
-     * Sets the value of the attribute <code>startingTime</code>.
-     * 
-     * @param startingTime
-     *          the new startingTime to set
-     */
-    public void setStarttime(Date startingTime) {
-	this.startime = startingTime;
-    }
 
     /**
      * Sets the value of the attribute <code>endTime</code>.

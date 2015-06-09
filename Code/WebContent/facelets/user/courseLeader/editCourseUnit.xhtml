@@ -60,7 +60,7 @@
                                         style="width: 160px; text-align: right;">Termin:</span>
                                     <h:inputText class="form-control" style="width:300px;"
                                         id="dateCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.starttime}"
+                                        value="#{courseUnitManagementBean.courseUnit.startime}"
                                         required="true"
                                         requiredMessage="Bitte geben Sie einen Termin ein. "
                                         converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
@@ -74,7 +74,7 @@
                                         style="width: 160px; text-align: right;">Beginn:</span>
                                     <h:inputText class="form-control" style="width:300px;"
                                         id="startTimeCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.starttime}"
+                                        value="#{courseUnitManagementBean.start}"
                                         required="true"
                                         requiredMessage="Bitte geben Sie einen Beginn ein. "
                                         converterMessage="Datum existiert nicht oder Format (HH:mm) ist falsch. ">
@@ -87,7 +87,7 @@
                                         style="width: 160px; text-align: right;">Ende:</span>
                                     <h:inputText class="form-control" style="width:300px;"
                                         id="endTimeCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.endtime}"
+                                        value="#{courseUnitManagementBean.end}"
                                         required="true"
                                         requiredMessage="Bitte geben Sie ein Ende ein. "
                                         converterMessage="Datum existiert nicht oder Format (HH:mm) ist falsch. ">

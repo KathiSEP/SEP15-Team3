@@ -608,7 +608,7 @@ public class CourseDAO {
                         date = new Date(stamp.getYear(), stamp.getMonth(),
                                 stamp.getDate(), stamp.getHours(),
                                 stamp.getMinutes());
-                        courseUnit.setStarttime(date);
+                        courseUnit.setStartime(date);
                         if (fetchedNextUnit.getString("location") != null) {
                             courseUnit.setLocation(fetchedNextUnit
                                     .getString("location"));

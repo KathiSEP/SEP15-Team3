@@ -87,9 +87,9 @@ public class CycleDAO {
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, cycle.getCourseID());
 	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "days");
+		stmt.setString(2, "DAYS");
 	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "weeks");
+		stmt.setString(2, "WEEKS");
 	    }
 	    stmt.setInt(3, cycle.getNumberOfUnits());
 	    stmt.executeUpdate();

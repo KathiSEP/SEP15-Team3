@@ -94,19 +94,19 @@ public class CourseUnitDAO {
 					|| courseUnit.getTitle() == null) {
 				stmt.setString(3, null);
 			} else {
-				stmt.setString(3, "{" + courseUnit.getTitle() + "}");
+				stmt.setString(3, courseUnit.getTitle());
 			}
 			stmt.setInt(4, courseUnit.getMinUsers());
 			stmt.setFloat(5, courseUnit.getPrice());
 			stmt.setTimestamp(6, new java.sql.Timestamp(courseUnit
-					.getStarttime().getTime()));
+					.getStartime().getTime()));
 			stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getEndtime()
 					.getTime()));
 			if (courseUnit.getDescription().length() < 1
 					|| courseUnit.getDescription() == null) {
 				stmt.setString(8, null);
 			} else {
-				stmt.setString(8, "{" + courseUnit.getDescription() + "}");
+				stmt.setString(8, courseUnit.getDescription());
 			}
 			stmt.executeUpdate();
 
@@ -114,7 +114,7 @@ public class CourseUnitDAO {
 			stmt = conn.prepareStatement(queryID);
 			stmt.setInt(1, courseUnit.getMaxUsers());
 			stmt.setTimestamp(2, new java.sql.Timestamp(courseUnit
-					.getStarttime().getTime()));
+					.getStartime().getTime()));
 			stmt.setTimestamp(3, new java.sql.Timestamp(courseUnit.getEndtime()
 					.getTime()));
 			stmt.setInt(4, courseID);
@@ -162,8 +162,9 @@ public class CourseUnitDAO {
 			if (unit.getLocation().length() < 1 || unit.getLocation() == null) {
 				stmt.setString(7, null);
 			} else {
-				stmt.setString(7, "{" + unit.getLocation() + "}");
+				stmt.setString(7, unit.getLocation());
 			}
+			stmt.executeUpdate();
 		} catch (SQLException e) {
 			LogHandler.getInstance().error(
 					"Error occured during creating a new course unit address.");
