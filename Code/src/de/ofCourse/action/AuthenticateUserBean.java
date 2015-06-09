@@ -114,67 +114,72 @@ public class AuthenticateUserBean {
             // Eingegebenes Passwort hashen
             String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
                         .getUsername());
-            String passwordHash = PasswordHash.hash(this.loginPassword, salt);
-            // Überprüfen, ob Benutzername und Passwort gültig sind passwordHash
-            // oder this.loginPassword
-            id = UserDAO.proveLogin(this.transaction, this.getLoginUser()
-                    .getUsername(), passwordHash);
-
-            // Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das
-            // Passwort falsch sind
-            // -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht
-            // aktiviert
-            // wurde.
-            // Ansonsten wird die ID des Benutzers zurückgegeben
-            if (id == usernameOrPasswordWrong) {
-                // Fehlermeldung in den FacesContext werfen.
+            if(salt == null) {
                 FacesMessageCreator.createFacesMessage(null,
                         "Benutzername oder Passwort falsch!");
-
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                // fehlgeschlagen ist.
-                this.transaction.rollback();
-                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-            } else if (id == accountNotActivated) {
-                // Fehlermeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Benutzerkonto nicht aktiv!");
-
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                // fehlgeschlagen ist.
-                this.transaction.rollback();
-                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
-            } else if (id == dbErrorOccured) {
-                // Fehlermeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Benutzerkonto nicht aktiv!");
-
-                // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                // fehlgeschlagen ist.
-                this.transaction.rollback();
-                return "/facelets/open/authenticate.xhtml?faces-redirect=false";
             } else {
-                // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
-                // Daten mittels Benutzerid von der Datenbank abfragen.
-                sessionUser.setLanguage(Language.DE);
-                sessionUser.setUserID(id);
-                sessionUser.setUserRole(UserDAO.getUserRole(this.transaction,
-                        id));
-                sessionUser.setUserStatus(UserDAO.getUserStatus(
-                        this.transaction, id));
-
-                // HTTP-Session mit Benutzerdaten füllen für PhaseListener
-                HttpSession session = (HttpSession) FacesContext
-                        .getCurrentInstance().getExternalContext()
-                        .getSession(true);
-                session.setAttribute("loggedin", true);
-                session.setAttribute("userID", id);
-                session.setAttribute("userRole", sessionUser.getUserRole());
-
-                // Auf myCourses Seite weiterleiten, da der Login-Vorgang
-                // erfolgreich war.
-                this.transaction.commit();
-                return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
+                String passwordHash = PasswordHash.hash(this.loginPassword, salt);
+                // Überprüfen, ob Benutzername und Passwort gültig sind passwordHash
+                // oder this.loginPassword
+                id = UserDAO.proveLogin(this.transaction, this.getLoginUser()
+                        .getUsername(), passwordHash);
+    
+                // Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das
+                // Passwort falsch sind
+                // -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht
+                // aktiviert
+                // wurde.
+                // Ansonsten wird die ID des Benutzers zurückgegeben
+                if (id == usernameOrPasswordWrong) {
+                    // Fehlermeldung in den FacesContext werfen.
+                    FacesMessageCreator.createFacesMessage(null,
+                            "Benutzername oder Passwort falsch!");
+    
+                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
+                    // fehlgeschlagen ist.
+                    this.transaction.rollback();
+                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                } else if (id == accountNotActivated) {
+                    // Fehlermeldung in den FacesContext werfen.
+                    FacesMessageCreator.createFacesMessage(null,
+                            "Benutzerkonto nicht aktiv!");
+    
+                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
+                    // fehlgeschlagen ist.
+                    this.transaction.rollback();
+                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                } else if (id == dbErrorOccured) {
+                    // Fehlermeldung in den FacesContext werfen.
+                    FacesMessageCreator.createFacesMessage(null,
+                            "Benutzerkonto nicht aktiv!");
+    
+                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
+                    // fehlgeschlagen ist.
+                    this.transaction.rollback();
+                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                } else {
+                    // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
+                    // Daten mittels Benutzerid von der Datenbank abfragen.
+                    sessionUser.setLanguage(Language.DE);
+                    sessionUser.setUserID(id);
+                    sessionUser.setUserRole(UserDAO.getUserRole(this.transaction,
+                            id));
+                    sessionUser.setUserStatus(UserDAO.getUserStatus(
+                            this.transaction, id));
+    
+                    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
+                    HttpSession session = (HttpSession) FacesContext
+                            .getCurrentInstance().getExternalContext()
+                            .getSession(true);
+                    session.setAttribute("loggedin", true);
+                    session.setAttribute("userID", id);
+                    session.setAttribute("userRole", sessionUser.getUserRole());
+    
+                    // Auf myCourses Seite weiterleiten, da der Login-Vorgang
+                    // erfolgreich war.
+                    this.transaction.commit();
+                    return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
+                }
             }
 
         } catch (InvalidDBTransferException e) {

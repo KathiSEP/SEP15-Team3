@@ -6,6 +6,7 @@ package de.ofCourse.action;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -116,9 +117,15 @@ public class RegisterUserBean {
                 FacesMessageCreator.createFacesMessage(null,
                         "Ihr Konto wurde aktiviert.");
             } else {
+                System.out.println("Veri not found!");
                 // Fehlermeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Bitte überprüfen Sie den Aktivierungslink.");
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                FacesMessage msg = new FacesMessage("Bitte überprüfen Sie den Aktivierungslink.");
+                msg.setSeverity(FacesMessage.SEVERITY_INFO);
+                facesContext.addMessage(null, msg);
+                facesContext.renderResponse();
+//                FacesMessageCreator.createFacesMessage(null,
+//                        "Bitte überprüfen Sie den Aktivierungslink.");
             }
             this.transaction.commit();
         }
