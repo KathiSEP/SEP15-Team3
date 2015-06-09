@@ -238,7 +238,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		courseUnit.setCourseAdmin(courseAdmin);
 
 		this.cycleOfCourseUnit = new Cycle();
-        courseUnit.setCycle(cycleOfCourseUnit);
+		courseUnit.setCycle(cycleOfCourseUnit);
 		// ///////////////////////////////////////////
 		// TESTING
 
@@ -312,8 +312,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		// TODO: Testen
 		try {
 
-			courseUnit.getCycle().setCycleID(CycleDAO.createCycle(transaction, courseID,
-					cycleOfCourseUnit));
+			courseUnit.getCycle().setCycleID(
+					CycleDAO.createCycle(transaction, courseID,
+							cycleOfCourseUnit));
 
 			date.setHours(start.getHours());
 			date.setMinutes(start.getMinutes());
@@ -404,6 +405,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * @return link to the course details page
 	 */
 	public String deleteCourseUnit() {
+		transaction.start();
+		try {
+			ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+					.getParticipiantsOfCourseUnit(transaction, null,
+							courseUnitId);
+
+			transaction.commit();
+		} catch (InvalidDBTransferException e) {
+			transaction.rollback();
+			LogHandler.getInstance().error(
+					"Error occured during deleting" + " a course unit.");
+		}
 		System.out.println("Delete Course Unit");
 		return null;
 	}

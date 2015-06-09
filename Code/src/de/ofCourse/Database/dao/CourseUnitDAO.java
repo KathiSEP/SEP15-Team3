@@ -360,7 +360,6 @@ public class CourseUnitDAO {
 							+ courseUnitId + ".");
 			throw new InvalidDBTransferException();
 		}
-		System.out.println(numberParticipants);
 		return numberParticipants;
 	}
 
@@ -409,15 +408,24 @@ public class CourseUnitDAO {
 
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
-
-		int offset = calculateOffset(pagination);
+		
+        int limit;
+		int offset;
+		
+		if(pagination == null){
+			limit = CourseUnitDAO.getNumberOfParticipants(trans, courseUnitId);
+			offset = 0;		
+		}else{
+		    limit = pagination.getElementsPerPage();
+			offset = calculateOffset(pagination);
+		}
 		PreparedStatement stmt = null;
 		try {
 
 			stmt = conn.prepareStatement(query);
 			stmt.setInt(1, courseUnitId);
 			stmt.setString(2, "name");
-			stmt.setInt(3, pagination.getElementsPerPage());
+			stmt.setInt(3, limit);
 			stmt.setInt(4, offset);
 			ResultSet fetchedParticipants = stmt.executeQuery();
 

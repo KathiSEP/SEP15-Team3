@@ -40,334 +40,344 @@ import de.ofCourse.utilities.PropertyManager;
  */
 public class DatabaseConnectionManager {
 
-    /**
-     * List of free connections
-     */
-    private final List<Connection> freeConnections;
-
-    /**
-     * Stores the number of connections that are currently in use
-     */
-    private int numberOfConnectionsInUse = 0;
-
-    /**
-     * Singleton-object of the DatabaseConnectionManager class
-     */
-    private static DatabaseConnectionManager databaseConnectionManager;
-
-    /**
-     * JDBC-Driver
-     */
-    public static final String dbDriver = "org.postgresql.Driver";
-
-    /**
-     * Flag that is used for debugging with JUnit.<br>
-     * If this flag is true, the DatabaseConnectionManager is sealed off from
-     * all other classes like for e.g. the PropertyManager.
-     */
-    private static boolean debug = false;
-
-    /**
-     * Enables or disables the debugging mode.
-     * 
-     * @param debugging
-     *            whether the debug mode is set
-     */
-    protected static void debugMode(boolean debugging) {
-	debug = debugging;
-    }
-
-    /**
-     * Constructor of the class DatabaseConnectionManager
-     */
-    private DatabaseConnectionManager() {
-	freeConnections = Collections
-		.synchronizedList(new LinkedList<Connection>());
-	loadDBDriver();
-    }
-
-    /**
-     * Returns the connection you need for database access.
-     * 
-     * @return connection for database access
-     */
-    public synchronized Connection getConnection() {
-	Connection connection = null;
-	int numberOfConnections;
-
-	// Tries 5 times to get a connection
-	int counter = 0;
-	int indexLastElement;
-
-	do {
-	    // There's a free connection
-	    if (!this.freeConnections.isEmpty()) {
-		indexLastElement = freeConnections.size() - 1;
-		connection = freeConnections.get(indexLastElement);
-		freeConnections.remove(indexLastElement);
-	    } else {
-		// There's no free connection
-		try {
-		    wait(20);
-		} catch (InterruptedException e) {
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Error occured during "
-				+ "waiting for a connection.");
-		    } else {
-			LogHandler.getInstance().error(
-				"Error occured during waiting"
-					+ " for a connection.");
-		    }
-		}
-
-	    }
-	    counter--;
-	} while ((!this.isConnectionActive(connection))
-		&& (counter <= 5 || freeConnections.size() > 0));
-
-	// Fetches the actual number of granted connections
-	if (debug) {
-	    numberOfConnections = 3;
-	} else {
-	    numberOfConnections = Integer.parseInt(PropertyManager
-		    .getInstance().getPropertyConfig("dbconnections"));
-	}
-	/*
-	 * Calculates if there are as much as connections in use as granted by
-	 * the configuration
+	/**
+	 * List of free connections
 	 */
-	int difference = numberOfConnections
-		- (freeConnections.size() + numberOfConnectionsInUse);
+	private final List<Connection> freeConnections;
 
-	/*
-	 * If there's no active connection in <code>the freeConnections<\code>
-	 * list and not the full number of connections are active
+	/**
+	 * Stores the number of connections that are currently in use
 	 */
-	if (!this.isConnectionActive(connection) && difference > 0) {
-	    connection = establishConnection();
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "New Connection established.");
-	    } else {
-		LogHandler.getInstance().debug("New Connection established.");
-	    }
+	private int numberOfConnectionsInUse = 0;
+
+	/**
+	 * Singleton-object of the DatabaseConnectionManager class
+	 */
+	private static DatabaseConnectionManager databaseConnectionManager;
+
+	/**
+	 * JDBC-Driver
+	 */
+	public static final String dbDriver = "org.postgresql.Driver";
+
+	/**
+	 * Flag that is used for debugging with JUnit.<br>
+	 * If this flag is true, the DatabaseConnectionManager is sealed off from
+	 * all other classes like for e.g. the PropertyManager.
+	 */
+	private static boolean debug = false;
+
+	/**
+	 * Enables or disables the debugging mode.
+	 * 
+	 * @param debugging
+	 *            whether the debug mode is set
+	 */
+	protected static void debugMode(boolean debugging) {
+		debug = debugging;
 	}
 
-	// Check the connection again
-	if (!this.isConnectionActive(connection)) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Not able to get a active "
-			+ "connection to the database.");
-	    } else {
-		LogHandler.getInstance().error(
-			"Not able to get a active connection to the database.");
-	    }
-	    throw new InvalidDBTransferException();
+	/**
+	 * Constructor of the class DatabaseConnectionManager
+	 */
+	private DatabaseConnectionManager() {
+		freeConnections = Collections
+				.synchronizedList(new LinkedList<Connection>());
+		loadDBDriver();
 	}
 
-	++numberOfConnectionsInUse;
-	if (debug) {
-	    System.out.println("LOGGING MESSAGE:   " + "Connection returned.");
-	} else {
-	    LogHandler.getInstance().debug("Connection returned.");
-	}
+	/**
+	 * Returns the connection you need for database access.
+	 * 
+	 * @return connection for database access
+	 */
+	public synchronized Connection getConnection() {
+		Connection connection = null;
+		int numberOfConnections;
 
-	return connection;
-    }
+		// Tries 5 times to get a connection
+		int counter = 0;
+		int indexLastElement;
 
-    /**
-     * Releases the connection after it has been used.
-     */
-    public synchronized void releaseConnection(Connection connection) {
-	try {
-	    if (!connection.isClosed() && connection != null) {
-		--numberOfConnectionsInUse;
-		freeConnections.add(connection);
+		do {
+			// There's a free connection
+			if (!this.freeConnections.isEmpty()) {
+				indexLastElement = freeConnections.size() - 1;
+				connection = freeConnections.get(indexLastElement);
+				freeConnections.remove(indexLastElement);
+			} else {
+				// There's no free connection
+				try {
+					wait(20);
+				} catch (InterruptedException e) {
+					if (debug) {
+						System.out.println("LOGGING MESSAGE:   "
+								+ "Error occured during "
+								+ "waiting for a connection.");
+					} else {
+						LogHandler.getInstance().error(
+								"Error occured during waiting"
+										+ " for a connection.");
+					}
+				}
+
+			}
+			counter--;
+		} while ((!this.isConnectionActive(connection))
+				&& (counter <= 5 || freeConnections.size() > 0));
+
+		// Fetches the actual number of granted connections
 		if (debug) {
-		    System.out.println("LOGGING MESSAGE:   "
-			    + "Connection released.");
+			numberOfConnections = 3;
 		} else {
-		    LogHandler.getInstance().debug("Connection released.");
+			numberOfConnections = Integer.parseInt(PropertyManager
+					.getInstance().getPropertyConfig("dbconnections"));
 		}
-	    }
-	} catch (SQLException e) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occured during releasing the connection.");
-	    } else {
-		LogHandler.getInstance().error(
-			"Error occured during releasing the connection.");
-	    }
-	}
-	// Notifies all waiting threads that there's a free connection
-	notifyAll();
-    }
+		/*
+		 * Calculates if there are as much as connections in use as granted by
+		 * the configuration
+		 */
+		int difference = numberOfConnections
+				- (freeConnections.size() + numberOfConnectionsInUse);
 
-    /**
-     * Returns an instance of the DatabaseConnectionManager class.
-     * 
-     * @return instance of the DatabaseConnectionManager
-     */
-    public static DatabaseConnectionManager getInstance() {
-	if (databaseConnectionManager == null) {
-	    databaseConnectionManager = new DatabaseConnectionManager();
-	    int numberOfConnections;
-
-	    if (debug) {
-		numberOfConnections = 3;
-	    } else {
-		numberOfConnections = Integer.parseInt(PropertyManager
-			.getInstance().getPropertyConfig("dbconnections"));
-	    }
-
-	    for (int i = 0; i < numberOfConnections; ++i) {
-		Connection conn = establishConnection();
-		if (conn != null) {
-		    databaseConnectionManager.freeConnections.add(conn);
+		/*
+		 * If there's no active connection in <code>the freeConnections<\code>
+		 * list and not the full number of connections are active
+		 */
+		if (!this.isConnectionActive(connection) && difference > 0) {
+			connection = establishConnection();
+			if (debug) {
+				System.out.println("LOGGING MESSAGE:   "
+						+ "New Connection established.");
+			} else {
+				LogHandler.getInstance().debug("New Connection established.");
+			}
 		}
-	    }
+
+		// Check the connection again
+		if (!this.isConnectionActive(connection)) {
+			if (debug) {
+				System.out.println("LOGGING MESSAGE:   "
+						+ "Not able to get a active "
+						+ "connection to the database.");
+			} else {
+				LogHandler.getInstance().error(
+						"Not able to get a active connection to the database.");
+			}
+			throw new InvalidDBTransferException();
+		}
+
+		++numberOfConnectionsInUse;
+		if (debug) {
+			System.out.println("LOGGING MESSAGE:   " + "Connection returned.");
+		} else {
+			LogHandler.getInstance().debug("Connection returned.");
+		}
+
+		return connection;
 	}
 
-	return databaseConnectionManager;
-    }
-
-    /**
-     * Returns a established connection to the database.
-     * 
-     * @return if the connection was established correctly, the connection to
-     *         the database
-     * @throws SQLException
-     *             if an exception occurs during establishing the database
-     *             connection
-     */
-    private static Connection establishConnection() {
-	Connection connection = null;
-
-	if (debug) {
-	    try {
-		connection = DriverManager.getConnection(
-			"jdbc:postgresql://localhost:12345/fuchstob",
-			"fuchstob", "eX4Cooth");
-		connection.setAutoCommit(false);
-	    } catch (SQLException e) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occured during establishing a database"
-			+ "connection. Please check whether the login"
-			+ " credentials are set correctly and the"
-			+ " connection to the database is alive.");
-	    }
-	} else {
-	    try {
-		connection = DriverManager.getConnection(
-			"jdbc:postgresql://"
-				+ PropertyManager.getInstance()
-					.getPropertyConfig("dbhost")
-				+ ":"
-				+ PropertyManager.getInstance()
-					.getPropertyConfig("dbport")
-				+ "/"
-				+ PropertyManager.getInstance()
-					.getPropertyConfig("dbname"),
-			PropertyManager.getInstance().getPropertyConfig(
-				"dbuser"), PropertyManager.getInstance()
-				.getPropertyConfig("dbpassword"));
-		connection.setAutoCommit(false);
-	    } catch (SQLException e) {
-		LogHandler.getInstance().error(
-			"Error occured during establishing a database"
-				+ "connection. Please check whether the login"
-				+ " credentials are set correctly  and the"
-				+ " connection to the database is alive.");
-
-	    }
-	}
-	return connection;
-    }
-
-    /**
-     * If the JVM will crash, this method executes last statements and closes
-     * all connections.
-     */
-    public void shutDown() {
-	ListIterator<Connection> it = freeConnections.listIterator(0);
-
-	while (it.hasNext()) {
-	    Connection connection = it.next();
-	    if (connection != null) {
+	/**
+	 * Releases the connection after it has been used.
+	 */
+	public synchronized void releaseConnection(Connection connection) {
 		try {
-		    connection.close();
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Connection closed.");
-		    } else {
-			LogHandler.getInstance().error("Connection closed.");
-		    }
+			if (!connection.isClosed() && connection != null) {
+				--numberOfConnectionsInUse;
+				freeConnections.add(connection);
+				if (debug) {
+					System.out.println("LOGGING MESSAGE:   "
+							+ "Connection released.");
+				} else {
+					LogHandler.getInstance().debug("Connection released.");
+				}
+			}
 		} catch (SQLException e) {
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Error occured during closing"
-				+ " the connections to the database.");
-		    } else {
-			LogHandler.getInstance().error(
-				"Error occured during closing"
-					+ " the connections to the database.");
-		    }
+			if (debug) {
+				System.out.println("LOGGING MESSAGE:   "
+						+ "Error occured during releasing the connection.");
+			} else {
+				LogHandler.getInstance().error(
+						"Error occured during releasing the connection.");
+			}
 		}
-	    }
+		// Notifies all waiting threads that there's a free connection
+		notifyAll();
 	}
 
-	freeConnections.clear();
-    }
+	/**
+	 * Returns an instance of the DatabaseConnectionManager class.
+	 * 
+	 * @return instance of the DatabaseConnectionManager
+	 */
+	public static DatabaseConnectionManager getInstance() {
+		if (databaseConnectionManager == null) {
+			databaseConnectionManager = new DatabaseConnectionManager();
+			int numberOfConnections;
 
-    /**
-     * Checks whether the connection to the database is active.
-     * 
-     * @param connection
-     *            connection to the database
-     * @return true, if the connection is active<br>
-     *         false, otherwise
-     */
-    private boolean isConnectionActive(Connection connection) {
-	boolean active = false;
+			if (debug) {
+				numberOfConnections = 3;
+			} else {
+				numberOfConnections = Integer.parseInt(PropertyManager
+						.getInstance().getPropertyConfig("dbconnections"));
+			}
 
-	if (connection != null) {
-	    PreparedStatement stmt = null;
-	    String query = "SELECT 0;";
+			for (int i = 0; i < numberOfConnections; ++i) {
+				Connection conn = establishConnection();
+				if (conn != null) {
+					databaseConnectionManager.freeConnections.add(conn);
+				}
+			}
+		}
 
-	    try {
-		stmt = connection.prepareStatement(query);
-		stmt.execute();
-
-		stmt.close();
-		active = true;
-	    } catch (SQLException e) {
-		this.freeConnections.remove(connection);
-		System.out.println("Not active");
-		active = false;
-	    }
-
+		return databaseConnectionManager;
 	}
-	return active;
-    }
 
-    /**
-     * Loads the database driver.
-     */
-    private static void loadDBDriver() {
-	try {
-	    Class.forName(dbDriver);
-	} catch (ClassNotFoundException e) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occoured during"
-			+ " loading the database driver!");
-	    } else {
-		LogHandler.getInstance().error(
-			"Error occoured during"
-				+ " loading the database driver!");
-	    }
+	/**
+	 * Returns a established connection to the database.
+	 * 
+	 * @return if the connection was established correctly, the connection to
+	 *         the database
+	 * @throws SQLException
+	 *             if an exception occurs during establishing the database
+	 *             connection
+	 */
+	private static Connection establishConnection() {
+		Connection connection = null;
+
+		if (debug) {
+			try {
+				connection = DriverManager.getConnection(
+						"jdbc:postgresql://localhost:12345/fuchstob",
+						"fuchstob", "eX4Cooth");
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				System.out.println("LOGGING MESSAGE:   "
+						+ "Error occured during establishing a database"
+						+ "connection. Please check whether the login"
+						+ " credentials are set correctly and the"
+						+ " connection to the database is alive.");
+			}
+		} else {
+			try {
+				connection = DriverManager.getConnection(
+						"jdbc:postgresql://"
+								+ PropertyManager.getInstance()
+										.getPropertyConfig("dbhost")
+								+ ":"
+								+ PropertyManager.getInstance()
+										.getPropertyConfig("dbport")
+								+ "/"
+								+ PropertyManager.getInstance()
+										.getPropertyConfig("dbname"),
+						PropertyManager.getInstance().getPropertyConfig(
+								"dbuser"), PropertyManager.getInstance()
+								.getPropertyConfig("dbpassword"));
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				LogHandler.getInstance().error(
+						"Error occured during establishing a database"
+								+ "connection. Please check whether the login"
+								+ " credentials are set correctly  and the"
+								+ " connection to the database is alive.");
+
+			}
+		}
+		return connection;
 	}
-    }
+
+	/**
+	 * If the JVM will crash, this method executes last statements and closes
+	 * all connections.
+	 */
+	public void shutDown() {
+		ListIterator<Connection> it = freeConnections.listIterator(0);
+
+		while (it.hasNext()) {
+			Connection connection = it.next();
+			if (connection != null) {
+				try {
+					connection.close();
+					if (debug) {
+						System.out.println("LOGGING MESSAGE:   "
+								+ "Connection closed.");
+					} else {
+						LogHandler.getInstance().error("Connection closed.");
+					}
+				} catch (SQLException e) {
+					if (debug) {
+						System.out.println("LOGGING MESSAGE:   "
+								+ "Error occured during closing"
+								+ " the connections to the database.");
+					} else {
+						LogHandler.getInstance().error(
+								"Error occured during closing"
+										+ " the connections to the database.");
+					}
+				}
+			}
+		}
+
+		freeConnections.clear();
+	}
+
+	/**
+	 * Checks whether the connection to the database is active.
+	 * 
+	 * @param connection
+	 *            connection to the database
+	 * @return true, if the connection is active<br>
+	 *         false, otherwise
+	 */
+	private boolean isConnectionActive(Connection connection) {
+		boolean active = false;
+
+		if (connection != null) {
+			PreparedStatement stmt = null;
+			String query = "SELECT 0;";
+
+			try {
+				stmt = connection.prepareStatement(query);
+				stmt.execute();
+
+				connection.commit();
+				stmt.close();
+				active = true;
+			} catch (SQLException e) {
+				this.freeConnections.remove(connection);
+				System.out.println("Not active");
+				active = false;
+				try {
+					connection.rollback();
+				} catch (SQLException eCreate) {
+					System.err.println("Exception while creating table: ");
+					e.printStackTrace();
+				}
+
+			} finally {
+				DatabaseConnectionManager.getInstance().releaseConnection(connection);
+			}
+
+		}
+		return active;
+	}
+
+	/**
+	 * Loads the database driver.
+	 */
+	private static void loadDBDriver() {
+		try {
+			Class.forName(dbDriver);
+		} catch (ClassNotFoundException e) {
+			if (debug) {
+				System.out.println("LOGGING MESSAGE:   "
+						+ "Error occoured during"
+						+ " loading the database driver!");
+			} else {
+				LogHandler.getInstance().error(
+						"Error occoured during"
+								+ " loading the database driver!");
+			}
+		}
+	}
 }
