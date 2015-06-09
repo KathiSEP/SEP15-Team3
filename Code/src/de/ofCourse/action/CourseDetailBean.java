@@ -126,6 +126,7 @@ public class CourseDetailBean implements Pagination {
         if (courseID > 0) {
             course = CourseDAO.getCourse(transaction, courseID);
         }
+        System.out.println(sessionUser.getUserID());
     }
 
     public String enableEditMode() {
@@ -185,10 +186,11 @@ public class CourseDetailBean implements Pagination {
             // Course can handle
             int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans,
                     courseID);
-            Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
-
-            if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
-
+            //Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
+            
+            //TODO Methode noch nicht implementiert feste zahl zum testen benutzt courseToSignUp.getMaxUsers()
+            if (10 > numberOfParticipants) {
+                System.out.println(sessionUser.getUserID());
                 // Add user to course_participant list on the database server
                 CourseDAO.addUserToCourse(trans, sessionUser.getUserID(),
                         courseID);
@@ -527,6 +529,7 @@ public class CourseDetailBean implements Pagination {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
     /**

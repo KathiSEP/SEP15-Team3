@@ -917,11 +917,14 @@ public class CourseDAO {
             pS.setInt(1, courseID);
 
             resultSet = pS.executeQuery();
-            pS.close();
+            
+            resultSet.next();
+            int numberOfParticipants = resultSet.getInt(1);
             resultSet.close();
+            pS.close();
             LogHandler.getInstance().debug(
                     "Methode getNumberOfParticipants was succesfull");
-            return resultSet.getInt(1);
+            return numberOfParticipants;
 
         } catch (SQLException e) {
             // TODO Error Handling
