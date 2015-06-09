@@ -127,6 +127,8 @@ public class CourseDetailBean implements Pagination {
      */
     @PostConstruct
     public void init() {
+        courseID = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().
+                                                            getRequestParameterMap().get("courseID"));
         transaction = Connection.create();
         transaction.start();
         try {
