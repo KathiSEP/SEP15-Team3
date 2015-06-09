@@ -37,6 +37,8 @@ public class SystemDAO {
     /**
      * Returns the value of the overdraft credit stored in the database.
      * 
+     * @author Sebastian
+     * 
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
@@ -46,6 +48,12 @@ public class SystemDAO {
      */
     public static int getOverdraftCredit(Transaction trans)
 	    throws InvalidDBTransferException {
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String sql = "";
+        
 	return 0;
 
     }
