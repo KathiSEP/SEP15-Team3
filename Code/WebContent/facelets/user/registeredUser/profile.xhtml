@@ -25,51 +25,53 @@
 							<div class="panel-body">
 								<h:form class="form-horizontal" id="formRegister">
 									<div class="input-group" style="padding-top:5px;">
-										<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Benutzer-ID:</strong></span>
-										<h:inputText class="form-control" style="width:340px;" id="idRegister" readonly="true" value="1432"></h:inputText>
-									</div>
-									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
-										<h:inputText class="form-control" style="width:340px;" id="firstnameRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="firstnameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.firstname}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
-										<h:inputText class="form-control" style="width:340px;" id="lastnameRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="lastnameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.lastname}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
-										<h:inputText class="form-control" style="width:340px;" id="birthdateRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="birthdateRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.dateOfBirth}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
-										<span class="input-group-addon" style="width:160px; text-align:right;">Straße/Hausnummer:</span>
-										<h:inputText class="form-control" style="width:340px;" id="streetRegister"></h:inputText>
+										<span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+										<h:inputText class="form-control" style="width:340px;" id="streetRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.street}"></h:inputText>
 									</div>
+									<div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.houseNumber}"></h:inputText>
+                                    </div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Ort:</span>
-										<h:inputText class="form-control" style="width:340px;" id="locationRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="locationRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.city}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
-										<h:inputText class="form-control" style="width:340px;" id="zipcodeRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="zipcodeRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.zipCode}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
-										<h:inputText class="form-control" style="width:340px;" id="emailRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="emailRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.email}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:25px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
-										<h:inputText class="form-control" style="width:340px;" id="usernameRegister"></h:inputText>
+										<h:inputText class="form-control" style="width:340px;" id="usernameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.username}"></h:inputText>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
-										<h:inputSecret class="form-control" style="width:340px;" id="passwordRegister"></h:inputSecret>
+										<h:inputSecret class="form-control" style="width:340px;" id="passwordRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.password}"></h:inputSecret>
 									</div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
-										<h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"></h:inputSecret>
+										<h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.confirmPassword}"></h:inputSecret>
 									</div>
-									<br />
-									<h:commandButton id="editUserdata" class="btn btn-info" value="Benutzerdaten ändern" />
+									<br/>
+									<h:commandButton id="save" class="btn btn-info" value="Speichern" rendered="#{userProfileBean.renderSettings == false}"/>
+									<br/>
+									<h:commandButton value="Save settings" action="#{profile.save()}" rendered="#{userProfileBean.renderSettings}"/>
 								</h:form><br />	
 								Sie befinden Sich in der Rolle eines <input type="text" width="200" disabled="disabled" value="Kursleiters"></input>.
 							</div>
@@ -106,7 +108,7 @@
 									</div>
 									<div class="panel-body">
 										Ihr aktueller Kontostand beträgt <input type="text" width="50" disabled="disabled" value="13,56€"></input>.<br />
-										<h:commandButton id="spendMoney" class="btn btn-success" value="Konto aufladen" />
+										<h:commandButton id="chargeAccount" class="btn btn-success" value="Konto aufladen" />
 									</div>
 								</div>										
 							</div>
