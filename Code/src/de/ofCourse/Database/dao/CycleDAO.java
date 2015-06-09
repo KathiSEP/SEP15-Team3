@@ -40,7 +40,7 @@ public class CycleDAO {
 	    if (cycle.getTurnus() == 1) {
 		stmt.setString(2, "DAYS");
 	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "WEEKS'");
+		stmt.setString(2, "WEEKS");
 	    }
 	    stmt.setInt(3, cycle.getNumberOfUnits());
 	    stmt.executeUpdate();

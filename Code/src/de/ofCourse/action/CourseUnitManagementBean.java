@@ -114,6 +114,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	private Date end = new Date();
 
+	private Date date = new Date();
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
 	/**
 	 * @param participants
 	 *            the participants to set
@@ -296,58 +306,63 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * 
 	 * @return link to the courseDetails page
 	 */
+	@SuppressWarnings("deprecation")
 	public String createCourseUnit() {
-	transaction.start();
-	// TODO: Testen
-	try {
+		transaction.start();
+		// TODO: Testen
+		try {
 
-	    int cycleId = CycleDAO.createCycle(transaction, courseID,
-		    cycleOfCourseUnit);
-	    
-	    long millisecondsStart = this.courseUnit.getStartime().getTime() + this.start.getTime();
-	    this.courseUnit.setStartime(new Date(millisecondsStart));
-	    long millisecondsEnd = millisecondsStart +this.end.getTime();
-	    this.courseUnit.setEndtime(new Date(millisecondsEnd));
-	    
-	    if (this.regularCourseUnit) {
-		Date actualStartDate = this.courseUnit.getStartime();
-		Date actualEndDate = this.courseUnit.getEndtime();
-		
-		Date nextStartDate = null;
-		Date nextEndDate = null;
-		for (int i = 0; i < this.cycleOfCourseUnit.getNumberOfUnits(); ++i) {
+			int cycleId = CycleDAO.createCycle(transaction, courseID,
+					cycleOfCourseUnit);
 
-		    if (this.cycleOfCourseUnit.getTurnus() == day) {
-			nextStartDate = this.calculateDate(actualStartDate, i
-				* day);
-			nextEndDate = this
-				.calculateDate(actualEndDate, i * day);
-		    } else if (this.cycleOfCourseUnit.getTurnus() == week) {
-			nextStartDate = this.calculateDate(actualStartDate, i
-				* week);
-			nextEndDate = this.calculateDate(actualEndDate, i
-				* week);
-		    }
-		    this.courseUnit.setStartime(new Date(nextStartDate
-			    .getTime()));
-		    this.courseUnit.setEndtime(new Date(nextEndDate.getTime()));
-		    CourseUnitDAO.createCourseUnit(transaction,
-			    this.courseUnit, this.courseID);
+			date.setHours(start.getHours());
+			date.setMinutes(start.getMinutes());
+			courseUnit.setStartime(new Date(date.getTime()));
+			
+			date.setHours(end.getHours());
+			date.setMinutes(end.getMinutes());
+			courseUnit.setEndtime(new Date(date.getTime()));
+
+			
+			if (this.regularCourseUnit) {
+				Date actualStartDate = this.courseUnit.getStartime();
+				Date actualEndDate = this.courseUnit.getEndtime();
+
+				Date nextStartDate = null;
+				Date nextEndDate = null;
+				for (int i = 0; i < this.cycleOfCourseUnit.getNumberOfUnits(); ++i) {
+
+					if (this.cycleOfCourseUnit.getTurnus() == day) {
+						nextStartDate = this.calculateDate(actualStartDate, i
+								* day);
+						nextEndDate = this
+								.calculateDate(actualEndDate, i * day);
+					} else if (this.cycleOfCourseUnit.getTurnus() == week) {
+						nextStartDate = this.calculateDate(actualStartDate, i
+								* week);
+						nextEndDate = this.calculateDate(actualEndDate, i
+								* week);
+					}
+					this.courseUnit.setStartime(new Date(nextStartDate
+							.getTime()));
+					this.courseUnit.setEndtime(new Date(nextEndDate.getTime()));
+					CourseUnitDAO.createCourseUnit(transaction,
+							this.courseUnit, this.courseID);
+				}
+			} else {
+				CourseUnitDAO.createCourseUnit(transaction, courseUnit,
+						courseID);
+			}
+			this.transaction.commit();
+
+		} catch (InvalidDBTransferException e) {
+			LogHandler.getInstance()
+					.error("Error occured during creating the"
+							+ " a new course unit.");
+			this.transaction.rollback();
 		}
-	    } else {
-		CourseUnitDAO.createCourseUnit(transaction, courseUnit,
-			courseID);
-	    }
-	    this.transaction.commit();
-
-	} catch (InvalidDBTransferException e) {
-	    LogHandler.getInstance()
-		    .error("Error occured during creating the"
-			    + " a new course unit.");
-	    this.transaction.rollback();
+		return null;
 	}
-	return null;
-    }
 
 	/**
 	 * Initializes the course unit page with the details of the course unit that
