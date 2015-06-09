@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -186,9 +187,10 @@ public class CourseDetailBean implements Pagination {
             // Course can handle
             int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans,
                     courseID);
-            //Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
-            
-            //TODO Methode noch nicht implementiert feste zahl zum testen benutzt courseToSignUp.getMaxUsers()
+            // Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
+
+            // TODO Methode noch nicht implementiert feste zahl zum testen
+            // benutzt courseToSignUp.getMaxUsers()
             if (10 > numberOfParticipants) {
                 System.out.println(sessionUser.getUserID());
                 // Add user to course_participant list on the database server
@@ -218,7 +220,6 @@ public class CourseDetailBean implements Pagination {
             throw new CourseRegistrationException();
         }
 
-        
     }
 
     /**
@@ -240,19 +241,67 @@ public class CourseDetailBean implements Pagination {
         Transaction trans = Connection.create();
         trans.start();
 
-        int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap()
-                .get("CourseUNitID"));
+        try {
+            User userWhoTryToSignOff = UserDAO.getUser(trans,
+                    sessionUser.getUserID());
 
-        // Instanziere alle Models aus der Datenbank die gebraucht werden
-        CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(trans,
-                courseUnitID);
-        User userWhoTryToSignOff = UserDAO.getUser(trans,
-                sessionUser.getUserID());
+            // Fetching a List of all CourseUnits the User takes part in
+            List<CourseUnit> signedCourseUnits = CourseUnitDAO
+                    .getCourseUnitsOf(trans, userWhoTryToSignOff.getUserID());
 
-        // Kann hier auch noch abfragen ob User wirklich in Kurs
+            // Getting a List of Courses which only belongs to the Course and
+            // the User is signed Up
+            ArrayList<CourseUnit> courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);
 
-        return "#";
+            // If the list is not empty the users gets signed Off from every
+            // CourseUnit which belongs to the Course and he is signedUp to
+            if (!courseUnitsToSignOff.isEmpty()) {
+                for (int i = 0; i < courseUnitsToSignOff.size(); i++) {
+                    signOffFromSpecificCourseUnit(trans,
+                            courseUnitsToSignOff.get(i), userWhoTryToSignOff);
+                }
+            } else {
+                CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
+                        courseID);
+            }
+            trans.commit();
+            return "#";
+        } catch (InvalidDBTransferException e) {
+            trans.rollback();
+            LogHandler.getInstance().error(
+                    "Error occured while trying to sign off from course");
+            throw new CourseRegistrationException();
+        }
+
+    }
+
+    /**
+     * @param signedCourseUnits
+     * @return
+     */
+    private ArrayList<CourseUnit> findCourseUnitsOfThisCourse(
+            List<CourseUnit> signedCourseUnits) {
+
+        // This array stores the CourseUnitIDs which belong to the course the
+        // user wants to sign off
+        ArrayList<CourseUnit> courseUnitsOfThatCourse = new ArrayList<CourseUnit>();
+
+        // If the user has not signed up to any courseUnits the Methode returns
+        // a empty list
+        if (!signedCourseUnits.isEmpty()) {
+
+            // If the user is in no courseUnit which belongs to the course he
+            // wants to leave the methode returns a empty list
+            for (int i = 0; i < signedCourseUnits.size(); i++) {
+                if (signedCourseUnits.get(i).getCourseID() == courseID) {
+                    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));
+                }
+            }
+            return courseUnitsOfThatCourse;
+        } else {
+            return courseUnitsOfThatCourse;
+        }
+
     }
 
     /**
@@ -359,11 +408,11 @@ public class CourseDetailBean implements Pagination {
     public String signOffFromCourseUnits() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
-
+        // TODO noch angleichen zum FACLET
+        int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap()
+                .get("CourseUNitID"));
         try {
-            int courseUnitID = Integer.parseInt(FacesContext
-                    .getCurrentInstance().getExternalContext()
-                    .getRequestParameterMap().get("CourseUNitID"));
 
             // Instanziere alle Models aus der Datenbank die gebraucht werden
             CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(trans,
@@ -372,22 +421,37 @@ public class CourseDetailBean implements Pagination {
                     sessionUser.getUserID());
 
             // Kann hier auch noch abfragen ob User wirklich in Kurseinheit
-            CourseUnitDAO.removeUserFromCourseUnit(trans,
-                    sessionUser.getUserID(), courseUnitID);
-            float newAccountBalance = signingOffFromCourseUnit(
-                    courseUnitToSignOff, userWhoTryToSignOff);
-            UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
-                    newAccountBalance);
+            signOffFromSpecificCourseUnit(trans, courseUnitToSignOff,
+                    userWhoTryToSignOff);
             LogHandler.getInstance().debug(
-                    "User sucessfully signed of from course");
+                    "User sucessfully signed of from courseUnit");
             trans.commit();
             return "x";
         } catch (InvalidDBTransferException e) {
-            LogHandler.getInstance().debug("User not signed off from course");
+            LogHandler.getInstance().debug(
+                    "User not signed off from courseUnit");
             trans.rollback();
         }
 
         return null;
+    }
+
+    /**
+     * @param trans
+     *
+     * @param courseUnitToSignOff
+     * @param userWhoTryToSignOff
+     * @throws InvalidDBTransferException
+     */
+    private void signOffFromSpecificCourseUnit(Transaction trans,
+            CourseUnit courseUnitToSignOff, User userWhoTryToSignOff)
+            throws InvalidDBTransferException {
+        CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),
+                courseUnitToSignOff.getCourseUnitID());
+        float newAccountBalance = signingOffFromCourseUnit(courseUnitToSignOff,
+                userWhoTryToSignOff);
+        UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
+                newAccountBalance);
     }
 
     /**
