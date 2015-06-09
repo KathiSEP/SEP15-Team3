@@ -154,8 +154,10 @@ public class RegisterUserBean {
             transaction.start();
             try {
                 // Eingegebenes Passwort hashen
-                String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
-                        .getUsername());;
+                //TODO generate Salt methode fehlt, hier nur username als salt übergeben
+                String salt = this.getUserToRegistrate().getUsername();
+                //String salt = UserDAO.getPWSalt(this.transaction, this.getUserToRegistrate()
+                //        .getUsername());;
                 String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
                         salt);
                 // Überprüfen, ob die eingegebene E-Mail-Adresse im System
