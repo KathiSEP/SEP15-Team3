@@ -60,7 +60,7 @@ public class CourseUnitDAO {
 
 		String queryID = "SELECT id FROM course_units WHERE"
 				+ " max_participants=? AND start_time=? AND"
-				+ " end_time=? AND courseID=?";
+				+ " end_time=? AND course_id=?";
 
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
@@ -80,8 +80,6 @@ public class CourseUnitDAO {
 				stmt.setInt(9, cycle_id);
 			} else {
 
-				int cycle_id = CycleDAO.createCycle(trans, courseID,
-						courseUnit.getCycle());
 				query = "INSERT INTO \"course_units\""
 						+ " (course_id, max_participants, titel,"
 						+ " min_participants, fee, start_time, end_time, description)"
