@@ -6,7 +6,6 @@ package de.ofCourse.action;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -180,7 +179,7 @@ public class RegisterUserBean {
                     // erstelle einen
                     // neuen Benutzer.
                     veriString = UserDAO.createUser(this.transaction,
-                            this.getUserToRegistrate(), passwordHash);
+                            this.getUserToRegistrate(), passwordHash, salt);
 
                     int userID = UserDAO.getUserID(this.transaction, this
                             .getUserToRegistrate().getUsername());

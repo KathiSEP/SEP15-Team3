@@ -23,7 +23,6 @@ import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
-import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Provides methods for transactions with the users stored in the database such
@@ -172,7 +171,7 @@ public class UserDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static String createUser(Transaction trans, User user, String pwHash)
+    public static String createUser(Transaction trans, User user, String pwHash, String salt)
 	    throws InvalidDBTransferException {
 
 	String veriString = "";
@@ -197,7 +196,7 @@ public class UserDAO {
 	   
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
-		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
+		    + "pw_hash, date_of_birth, form_oSf_address, credit_balance, "
 		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
 		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
 
@@ -236,9 +235,7 @@ public class UserDAO {
 	    pS.setString(11, UserRole.REGISTERED_USER.toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
-	    
-	    //TODO Salt Methode noch einfügen statt dem username
-	    pS.setString(14, user.getUsername());
+	    pS.setString(14, salt);
 
 	    pS.executeUpdate();
 
@@ -540,7 +537,7 @@ public class UserDAO {
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setBoolean(1, true);
-	    pS.setString(2, "0");
+	    pS.setString(2, null);
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
 
