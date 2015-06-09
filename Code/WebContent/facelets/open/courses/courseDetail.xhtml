@@ -5,7 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html">
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:composition template="/WEB-INF/template.xhtml">
 		<ui:define name="title"><h:outputText value="#{courseDetailBean.course.title}"/></ui:define>
 		<ui:define name="content">
@@ -38,7 +39,7 @@
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Enddatum:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="endDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().endDate}"></h:inputText>
+									<h:inputText p:type="date" class="form-control" style="width:260px;" id="endDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().endDate}"></h:inputText>
 								</div>
 							</div>
 						</div>
@@ -77,8 +78,10 @@
 									<h:form>
 										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
 										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
-										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="true" action="#{courseDetailBean.signUpForCourse}"/>
-										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="true" action="#{courseDetailBean.signOffFromCourse}"/>
+										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
+										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
+															action="#{courseDetailBean.loadCreateCourseUnitPage}"/>
 									</h:form>
 								</div>
 							</div>

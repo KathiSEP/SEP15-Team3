@@ -38,11 +38,28 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  * 
- * @author Patrick Cretu
+ * @author Patrick Cretu, Katharina Hölzl
  *
  */
 public class CourseDAO {
 
+    
+    /**
+     * Checks, whether the inserted id of the course leader exists in the 
+     * system or not.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseLeaderID
+     *                 ID of the course leader 
+     * @return true if the id of the course leader exists in the system, 
+     *         else false
+     * @throws InvalidDBTransferException
+     *                  if any error occurred during the execution of the method
+     *                  
+     * @author Katharina Hölzl
+     */
     public static boolean courseLeaderExists(Transaction trans, int courseLeaderID) 
             throws InvalidDBTransferException {
         
@@ -90,20 +107,26 @@ public class CourseDAO {
      *            the course to be added
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina Hölzl
      */
     public static int createCourse(Transaction trans, Course course)
             throws InvalidDBTransferException {
 
-        int generatedCourseID = -1;
+        final int errorGeneratingCourse = -1;
+        
+        int generatedCourseID = errorGeneratingCourse;
         
         // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-
+        
+        //TODO image Spalte hinzufügen, Typ: bytea (kein STRING!!!!!!!)
+        
         String sql = "Insert into \"courses\" (titel, max_participants, "
-                + "start_date, end_date, description, image) "
-                + "values ({?}, ?, ?, ?, {?}, ?) RETURNING id";
+                + "start_date, end_date, description) "
+                + "values (?, ?, ?, ?, ?) RETURNING id";
 
         // mögliche SQL-Injektion abfangen
         try {
@@ -117,7 +140,11 @@ public class CourseDAO {
             } else {
                 pS.setString(1, course.getTitle());
             }
-            pS.setInt(2, course.getMaxUsers());
+            if(course.getMaxUsers() == null) {
+                pS.setInt(2, 1);
+            } else {
+                pS.setInt(2, course.getMaxUsers());
+            }
             pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
             pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
             if (course.getDescription() == null
@@ -125,12 +152,6 @@ public class CourseDAO {
                 pS.setString(5, null);
             } else {
                 pS.setString(5, course.getDescription());
-            }
-            if (course.getCourseImage() == null
-                    || course.getCourseImage().length() < 1) {
-                pS.setString(6, null);
-            } else {
-                pS.setString(6, course.getCourseImage());
             }
 
             ResultSet res = pS.executeQuery();
@@ -554,10 +575,11 @@ public class CourseDAO {
                 + "WHERE participant_id = ?) ORDER BY ? "
                 + getSortDirection(pagination.isSortAsc())
                 + " LIMIT ? OFFSET ?";
-        String getNextCourseUnitQuery = "SELECT start_time, location "
-                + "FROM \"course_units\" WHERE course_units.course_id = ? "
-                + "AND course_units.start_time >= CURRENT_DATE "
+        String getNextCourseUnitQuery = "SELECT course_units.start_time, course_unit_addresses.location "
+                + "FROM \"course_units\",\"course_unit_addresses\" WHERE course_units.course_id = ? "
+                + "AND course_units.start_time >= CURRENT_DATE AND course_unit_addresses.course_unit_id = course_units.id "
                 + "ORDER BY course_units.start_time ASC LIMIT 1";
+        
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
@@ -600,13 +622,14 @@ public class CourseDAO {
                     stmt = conn.prepareStatement(getNextCourseUnitQuery);
                     stmt.setInt(1, coursesOf.get(i).getCourseID());
                     fetchedNextUnit = stmt.executeQuery();
+                    System.out.println("hier");
                     while (fetchedNextUnit.next()) {
                         courseUnit = new CourseUnit();
                         stamp = fetchedNextUnit.getTimestamp("start_time");
                         date = new Date(stamp.getYear(), stamp.getMonth(),
                                 stamp.getDate(), stamp.getHours(),
                                 stamp.getMinutes());
-                        courseUnit.setStarttime(date);
+                        courseUnit.setStartime(date);
                         if (fetchedNextUnit.getString("location") != null) {
                             courseUnit.setLocation(fetchedNextUnit
                                     .getString("location"));
@@ -681,7 +704,6 @@ public class CourseDAO {
         }
         return numberOfCourses;
     }
-
     /**
      * Updates a course stored in the database. The course's attributes are
      * replaced by the ones of the passed course.
@@ -708,6 +730,8 @@ public class CourseDAO {
      *            the ID of the course to be deleted
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void deleteCourse(Transaction trans, int courseID)
             throws InvalidDBTransferException {
@@ -831,6 +855,8 @@ public class CourseDAO {
      *            the course's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void addLeaderToCourse(Transaction trans, int userID,
             int courseID) throws InvalidDBTransferException {
@@ -872,6 +898,8 @@ public class CourseDAO {
      *            the course's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Katharina Hölzl
      */
     public static void removeLeaderFromCourse(Transaction trans, int userID,
             int courseID) throws InvalidDBTransferException {
@@ -917,11 +945,14 @@ public class CourseDAO {
             pS.setInt(1, courseID);
 
             resultSet = pS.executeQuery();
-            pS.close();
+            
+            resultSet.next();
+            int numberOfParticipants = resultSet.getInt(1);
             resultSet.close();
+            pS.close();
             LogHandler.getInstance().debug(
                     "Methode getNumberOfParticipants was succesfull");
-            return resultSet.getInt(1);
+            return numberOfParticipants;
 
         } catch (SQLException e) {
             // TODO Error Handling

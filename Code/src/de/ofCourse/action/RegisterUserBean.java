@@ -3,11 +3,17 @@
  */
 package de.ofCourse.action;
 
+import java.io.IOException;
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -111,20 +117,16 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             if (UserDAO.verifyUser(this.transaction, veriString)) {
-                // Erfolgsmeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Ihr Konto wurde aktiviert.");
+                FacesMessageCreator.createFacesMessage(null, "Ihr Account wurde erfolgreich freigeschaltet!");
             } else {
-                // Fehlermeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Bitte überprüfen Sie den Aktivierungslink.");
+                FacesMessageCreator.createFacesMessage(null, "Der Verifizierungsstring existiert nicht!");
             }
             this.transaction.commit();
         }
         this.userToRegistrate = new User();
         this.userToRegistrate.setAddress(new Address());
     }
-
+    
     /**
      * Registers a new user with the entered user data in the system.<br>
      * It creates with the entered data a new database entry and sends a mail
@@ -144,12 +146,7 @@ public class RegisterUserBean {
         }
 
         String veriString = "";
-
-        // Eingegebenes Passwort hashen
-        String salt = "";
-        String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
-                salt);
-
+        
         if (testing) {
             return "/facelets/open/index.xhtml?faces-redirect=false";
         } else {
@@ -158,6 +155,13 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             try {
+                // Eingegebenes Passwort hashen
+                //TODO generate Salt methode fehlt, hier nur username als salt übergeben
+                //String salt = this.getUserToRegistrate().getUsername();
+                Date currentTime = new Date();
+                String salt = currentTime.getTime() * Math.random() + "";
+                String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
+                        salt);
                 // Überprüfen, ob die eingegebene E-Mail-Adresse im System
                 // bereits existiert.
                 if (UserDAO.emailExists(transaction, this.getUserToRegistrate()
@@ -176,7 +180,7 @@ public class RegisterUserBean {
                     // erstelle einen
                     // neuen Benutzer.
                     veriString = UserDAO.createUser(this.transaction,
-                            this.getUserToRegistrate(), passwordHash);
+                            this.getUserToRegistrate(), passwordHash, salt);
 
                     int userID = UserDAO.getUserID(this.transaction, this
                             .getUserToRegistrate().getUsername());

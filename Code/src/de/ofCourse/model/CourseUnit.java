@@ -64,8 +64,43 @@ public class CourseUnit implements Serializable {
      * place(only if the CourseUnit take place with regularity)
      */
     private Cycle cycle;
+    
+    
+    /**
+     * 
+     * Stores the CourseID, this CourseUnit belongs to
+     */
+    private int courseID;
    
     
+    /**
+     * @return the startime
+     */
+    public Date getStartime() {
+        return startime;
+    }
+
+    /**
+     * @param startime the startime to set
+     */
+    public void setStartime(Date startime) {
+        this.startime = startime;
+    }
+
+    /**
+     * @return the courseID
+     */
+    public int getCourseID() {
+        return courseID;
+    }
+
+    /**
+     * @param courseID the courseID to set
+     */
+    public void setCourseID(int courseID) {
+        this.courseID = courseID;
+    }
+
     /**
      * stores the room description where the CourseUnit will be hold (Is
      * needed besides the Address for example if the CourseUnit is hold in
@@ -91,14 +126,6 @@ public class CourseUnit implements Serializable {
 	return this.description;
     }
 
-    /**
-     * Returns the value of the attribute <code>startTime</code>.
-     * 
-     * @return the Date and the time when the courseUnit starts
-     */
-    public Date getStarttime() {
-	return this.startime;
-    }
 
     /**
      * Returns the value of the attribute <code>endTime</code>.
@@ -192,15 +219,6 @@ public class CourseUnit implements Serializable {
 	this.description = discription;
     }
 
-    /**
-     * Sets the value of the attribute <code>startingTime</code>.
-     * 
-     * @param startingTime
-     *          the new startingTime to set
-     */
-    public void setStarttime(Date startingTime) {
-	this.startime = startingTime;
-    }
 
     /**
      * Sets the value of the attribute <code>endTime</code>.

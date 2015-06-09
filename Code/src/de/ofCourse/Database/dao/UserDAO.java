@@ -4,8 +4,6 @@
  */
 package de.ofCourse.Database.dao;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -13,8 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import javax.servlet.http.Part;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
@@ -27,7 +23,6 @@ import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
-import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Provides methods for transactions with the users stored in the database such
@@ -50,6 +45,63 @@ import de.ofCourse.utilities.PasswordHash;
  */
 public class UserDAO {
 
+    /**
+     * Returns the password salt of a user assigned to the passed user name.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param username
+     *            the user's name
+     * @return the user's password salt
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina Hölzl
+     */
+    public static String getPWSalt(Transaction trans, String username)
+            throws InvalidDBTransferException {
+
+        String pwSalt = "";
+
+        // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        // Datenbankabfrage
+        String sql = "SELECT pw_salt FROM \"users\" WHERE nickname=?";
+
+        // mögliche SQL-Injektion abfangen
+        try {
+            pS = conn.prepareStatement(sql);
+            pS.setString(1, username);
+            // preparedStatement ausführen, gibt resultSet als Liste zurück
+            // (hier
+            // ein Eintrag in der Liste, da Benutzername einzigartig).
+            ResultSet res = pS.executeQuery();
+
+            // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
+            // Eintrag gibt, ansonsten 0.
+            if (res.next()) {
+                // id mit zugehörigem Wert aus der Datenbank füllen.
+                pwSalt = res.getString("pw_salt");
+            } else {
+                pwSalt = null;
+            }
+            pS.close();
+            res.close();
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
+            throw new InvalidDBTransferException();
+        }
+
+        return pwSalt;
+    }
+    
+    
     /**
      * Checks if the inserted mail address already exists in the database.
      * 
@@ -119,7 +171,7 @@ public class UserDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static String createUser(Transaction trans, User user, String pwHash)
+    public static String createUser(Transaction trans, User user, String pwHash, String salt)
 	    throws InvalidDBTransferException {
 
 	String veriString = "";
@@ -141,11 +193,12 @@ public class UserDAO {
 		pS.setString(1, veriString);
 		res = pS.executeQuery();
 	    } while (res.next());
+	   
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
 		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-		    + "email_verification, admin_verification, role, status, veri_string) "
-		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?)";
+		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
+		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
 
 	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
 	    // ob der Benutzer die Daten angegeben hat oder ob in die
@@ -182,10 +235,11 @@ public class UserDAO {
 	    pS.setString(11, UserRole.REGISTERED_USER.toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
-
+	    pS.setString(14, salt);
 	    pS.executeUpdate();
+	    System.out.println("geht");
 
-	    sql = "Insert into \"addresses\" (user_id, country, "
+	    sql = "Insert into \"user_addresses\" (user_id, country, "
 		    + "city, zip_code, street, house_nr) "
 		    + "values (?, ?, ?, ?, ?, ?)";
 	    pS = conn.prepareStatement(sql);
@@ -195,11 +249,11 @@ public class UserDAO {
 	    pS.setInt(4, user.getAddress().getZipCode());
 	    pS.setString(5, user.getAddress().getStreet());
 	    pS.setInt(6, user.getAddress().getHouseNumber());
-
+	    
 	    pS.executeUpdate();
+        System.out.println("geht 2");
 
 	    pS.close();
-	    res.close();
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
@@ -209,99 +263,6 @@ public class UserDAO {
 
 	return veriString;
     }
-    
-    /**
-     * 
-     * @param trans
-     * @param nickName
-     * @return
-     * 
-     * @author Patrick Cretu
-     */
-    public static boolean nickTaken(Transaction trans, String nickname) throws InvalidDBTransferException {
-    	boolean exists = true;
-    	Connection connection = (Connection) trans;
-    	java.sql.Connection conn = connection.getConn();
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	int check;
-    	String query = "SELECT COUNT(*) FROM \"users\" WHERE nickname = ?";
-    	
-    	try {
-			stmt = conn.prepareStatement(query);
-			stmt.setString(1, nickname);
-			rst = stmt.executeQuery();
-			rst.next();
-			check = rst.getInt(1);
-			
-			if (check == 0) {
-				exists = false;
-			}
-		} catch (SQLException e) {
-			LogHandler.getInstance().
-				error("SQL Exception occoured during executing existingNick(Transaction trans, String nickname)");
-			throw new InvalidDBTransferException();
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					LogHandler.getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in nickTaken(Transaction trans, String nickname)");
-					throw new InvalidDBTransferException();
-				}
-			}
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					LogHandler.getInstance()
-				    .error("SQL Exception occoured during closing ResultSet in nickTaken(Transaction trans, String nickname)");
-					throw new InvalidDBTransferException();
-				}
-			}
-		}
-    	return exists;
-    }
-    
-    /**
-     * 
-     * @param trans
-     * @param userID
-     * @param image
-     * @throws InvalidDBTransferException
-     * 
-     * @author Patrick Cretu
-     */
-    public static void uploadImage(Transaction trans, int userID, Part image) throws InvalidDBTransferException {
-    	Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement stmt = null;
-		try {
-			InputStream inputStream = image.getInputStream();
-			String query = "UPDATE \"users\" SET profile_image = ? WHERE id = ?";  
-            stmt = conn.prepareStatement(query);
-            stmt.setBinaryStream(1, inputStream, image.getSize());
-            stmt.setInt(2, userID);
-            
-            stmt.executeUpdate();
-		} catch (SQLException e) {
-			LogHandler.getInstance().error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-			throw new InvalidDBTransferException();
-		} catch (IOException e) {
-			LogHandler.getInstance().error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-			throw new InvalidDBTransferException();
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					LogHandler.getInstance().error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-					throw new InvalidDBTransferException();
-				}
-			}
-		}
-	}
 
     /**
      * Returns a list containing all users stored in the database.
@@ -577,7 +538,7 @@ public class UserDAO {
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setBoolean(1, true);
-	    pS.setString(2, "0");
+	    pS.setString(2, null);
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
 
@@ -768,7 +729,7 @@ public class UserDAO {
 
 		conn.commit();
 		// neue Datenbankabfrage für die Adresse des Benutzers
-		sql = "SELECT * FROM \"addresses\" WHERE user_id=?";
+		sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
 		PreparedStatement pr = null;
 		pr = conn.prepareStatement(sql);
 		pr.setInt(1, user.getUserID());
@@ -1122,4 +1083,5 @@ public class UserDAO {
             throw new InvalidDBTransferException();
         }
     }
+
 }

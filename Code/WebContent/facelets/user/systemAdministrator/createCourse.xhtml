@@ -45,24 +45,30 @@
                                         <div class="input-group" style="padding-top: 5px;">
                                             <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">Kursleiter-ID:</span>
-                                            <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}"
-                                                id="courseLeaderID">
+                                            <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}" 
+                                                id="IdOfCourseLeader">
                                                 <f:validator validatorId="courseInstructorValidator"/>
                                                 </h:inputText>
-                                            <h:message for="courseLeaderID" style="color:red" />
+                                            <h:message for="IdOfCourseLeader" style="color:red" />
                                         </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">max. Teilnehmerzahl:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.maxUsers}"
-		                                        id="courseParticipants"></h:inputText>
+		                                        id="courseParticipants" converterMessage="Bitte positive Zahl eingeben.">
+		                                        <f:convertNumber longOnly="true"/>
+		                                        <f:validator validatorId="courseParticipantsValidator" />
+		                                        </h:inputText>
 		                                    <h:message for="courseParticipants" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Startdatum:</span>
-		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
-		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.startdate}"
+		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
+		                                        required="true" requiredMessage="Bitte Startdatum angeben">
+		                                        <f:attribute name="courseEndDate" value="#{courseEndDate}" />
+		                                        <f:validator validatorId="courseDateValidator" />
                                                 <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
 		                                        </h:inputText>
 		                                    <h:message for="courseStartDate" style="color:red" />
@@ -70,8 +76,9 @@
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">Enddatum:</span>
-		                                    <h:inputText class="form-control" style="width:340px;"
-		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ">
+		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.enddate}"
+		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
+		                                        required="true" requiredMessage="Bitte Enddatum angeben" binding="#{courseEndDate}">
 		                                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
 		                                        </h:inputText>
 		                                    <h:message for="courseEndDate" style="color:red" />
@@ -80,11 +87,8 @@
 				                            <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">Kursbild:</span>
 				                            <h:inputText class="form-control" id="courseImage">
-				                            <f:validator validatorId="imageValidator"/>
 				                            </h:inputText>
-				                            <span class="input-group-btn"><button
-				                                    class="btn btn-default" type="button">Bild auswählen</button>
-				                            </span>
+				                           
 				                            <h:message for="courseImage" style="color:red" />
 				                        </div>
                                         <br />

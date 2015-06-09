@@ -3,18 +3,15 @@
  */
 package de.ofCourse.action;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
-import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
@@ -32,7 +29,7 @@ import de.ofCourse.system.Transaction;
  * leader to delete. He has the possibility to remove more than one leader from
  * a course at once.
  * 
- * @author Tobias Fuchs
+ * @author Katharina Hölzl
  *
  */
 @ManagedBean
@@ -57,6 +54,8 @@ public class CourseManagementBean {
      */
     private Course course;
     
+    private Part courseImage;
+    
     /**
      * Stores the ID of the course leader.
      */
@@ -65,7 +64,7 @@ public class CourseManagementBean {
     @PostConstruct
     private void init() {
         this.course = new Course();
-        this.courseLeaderID = null;
+        this.setCourseLeaderID(null);
     }
 
     /**
@@ -87,6 +86,7 @@ public class CourseManagementBean {
             // bereits existiert.
             
             createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
+            this.transaction.commit();
             
             if (createdCourseID < 0) {
 
@@ -95,7 +95,6 @@ public class CourseManagementBean {
                 FacesMessageCreator.createFacesMessage(null,
                         "Beim Erstellen des Kurses trat ein Fehler auf!");
 
-                this.transaction.rollback();
                 return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
             } else {
 
@@ -104,13 +103,12 @@ public class CourseManagementBean {
                 // neuen Benutzer.
                 
                 // Erfolgsmeldung in den FacesContext werfen.
-                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");
-                
-                this.transaction.commit();
-                return "/facelets/open/courses/courseDetail.xhtml?id=" + createdCourseID;
+                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
+                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
             }
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
+            FacesMessageCreator.createFacesMessage(null, "Problem beim Anlegen des Kurses!");
         }
         return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
     }
@@ -131,6 +129,7 @@ public class CourseManagementBean {
      *            the new value of the attribute course
      */
     public void setCourse(Course course) {
+        this.course = course;
     }
 
     
@@ -151,13 +150,31 @@ public class CourseManagementBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
-    public int getCourseLeaderID() {
+    public Part getCourseImage() {
+        return courseImage;
+    }
+
+    public void setCourseImage(Part courseImage) {
+        this.courseImage = courseImage;
+    }
+
+    /**
+     * @return the courseLeaderID
+     */
+    public Integer getCourseLeaderID() {
         return courseLeaderID;
     }
 
-    public void setCourseLeaderID(int courseLeaderID) {
+    /**
+     * @param courseLeaderID the courseLeaderID to set
+     */
+    public void setCourseLeaderID(Integer courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
     }
+
+
+   
 }

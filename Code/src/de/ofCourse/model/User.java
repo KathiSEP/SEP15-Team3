@@ -22,6 +22,12 @@ public class User implements Serializable {
      *stores the E-Mailaddress of the user
      */
     private String email;
+    
+    /**
+     * stores the password Salt
+     */
+    private String pwSalt;
+    
     /**
      *stores the gender of the user
      */
@@ -364,6 +370,20 @@ public class User implements Serializable {
      */
     public void setSelected(boolean selected) {
 	this.selected = selected;
+    }
+
+    /**
+     * @return the password salt
+     */
+    public String getPwSalt() {
+        return pwSalt;
+    }
+
+    /**
+     * @param pwSalt password salt
+     */
+    public void setPwSalt(String pwSalt) {
+        this.pwSalt = pwSalt;
     }
 
 }
