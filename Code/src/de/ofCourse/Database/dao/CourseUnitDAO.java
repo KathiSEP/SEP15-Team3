@@ -396,7 +396,7 @@ public class CourseUnitDAO {
 	 * @author Tobias Fuchs
 	 */
 	public static List<User> getParticipiantsOfCourseUnit(Transaction trans,
-			PaginationData pagination, int courseUnitId)
+			PaginationData pagination, int courseUnitId, boolean all)
 			throws InvalidDBTransferException {
 		ArrayList<User> participants = new ArrayList<User>();
 		String query = "SELECT id, name, first_name FROM"
@@ -412,7 +412,7 @@ public class CourseUnitDAO {
         int limit;
 		int offset;
 		
-		if(pagination == null){
+		if(all){
 			limit = CourseUnitDAO.getNumberOfParticipants(trans, courseUnitId);
 			offset = 0;		
 		}else{
