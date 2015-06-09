@@ -64,7 +64,7 @@ public class DatabaseTableCreator {
 				"credit_balance DECIMAL(10, 2) NOT NULL," +
 				"email_verification BOOLEAN NOT NULL," +
 				"admin_verification BOOLEAN NOT NULL," +
-				"veri_string VARCHAR(130) NOT NULL UNIQUE," +
+				"veri_string VARCHAR(130) UNIQUE," +
 				"profile_image BYTEA," +
 				"role ROLE NOT NULL," +
 				"status STATUS NOT NULL" +
@@ -164,10 +164,9 @@ public class DatabaseTableCreator {
     			"activation_type ACTIVATION NOT NULL," +
     			"withdrawal_hours INTEGER NOT NULL," +
     			"application_hours INTEGER NOT NULL," +
-    			"verifiation_key VARCHAR(100) NOT NULL," +
-    			"storage_interval INTEGER NOT NULL" +
+    			"overdraft INTEGER NOT NULL" +
     		")";
-
+    
     private static final String CREATE_CUSTOMIZATION_DATA =
     		"CREATE TABLE customization_data (" +
     			"row_lock CHAR(1) PRIMARY KEY DEFAULT 'X' CHECK (row_lock = 'X')," +
@@ -287,6 +286,8 @@ public class DatabaseTableCreator {
 				trans.commit();
 				
 				System.out.println("Erstellen der Datenbank fertig");
+			} else {
+				trans.rollback();
 			}
 			
 		} catch (SQLException e) {

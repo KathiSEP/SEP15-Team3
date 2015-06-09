@@ -169,8 +169,18 @@ public class CourseDAO {
         return generatedCourseID;
     }
 
+    /**
+     * 
+     * @param trans
+     * @param param
+     * @param searchString
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
     public static int getNumberOfCourses(Transaction trans, String param,
-            String searchString) {
+            String searchString) throws InvalidDBTransferException {
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         String query = null;
@@ -205,7 +215,17 @@ public class CourseDAO {
         return 0;
     }
 
-    private static int countCourses(java.sql.Connection conn, String query) {
+    /**
+     * 
+     * @param conn
+     * @param query
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
+    private static int countCourses(java.sql.Connection conn, String query)
+    		throws InvalidDBTransferException {
         Statement stmt = null;
         ResultSet rst = null;
         int numCourses = 0;
@@ -216,28 +236,41 @@ public class CourseDAO {
             rst.next();
             numCourses = rst.getInt(1);
         } catch (SQLException e) {
-            e.printStackTrace();
+        	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
+        	throw new InvalidDBTransferException();
         } finally {
             if (rst != null) {
                 try {
                     rst.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
         }
         return numCourses;
     }
 
+    /**
+     * 
+     * @param conn
+     * @param query
+     * @param searchString
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
     private static int countCourses(java.sql.Connection conn, String query,
-            String searchString) {
+            String searchString) throws InvalidDBTransferException {
         PreparedStatement stmt = null;
         ResultSet rst = null;
         int numCourses = 0;
@@ -249,26 +282,39 @@ public class CourseDAO {
             rst.next();
             numCourses = rst.getInt(1);
         } catch (SQLException e) {
-            e.printStackTrace();
+        	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
+        	throw new InvalidDBTransferException();
         } finally {
             if (rst != null) {
                 try {
                     rst.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
+                	throw new InvalidDBTransferException();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
+                	throw new InvalidDBTransferException();
                 }
             }
         }
         return numCourses;
     }
 
+    /**
+     * 
+     * @param trans
+     * @param pagination
+     * @param period
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
     public static List<Course> getCourses(Transaction trans,
             PaginationData pagination, String period)
             throws InvalidDBTransferException {
@@ -310,8 +356,20 @@ public class CourseDAO {
         return result;
     }
 
+    /**
+     * 
+     * @param conn
+     * @param limit
+     * @param offset
+     * @param orderParam
+     * @param query
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
     private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
-            int limit, int offset, String orderParam, String query) {
+            int limit, int offset, String orderParam, String query) throws InvalidDBTransferException {
         PreparedStatement stmt = null;
         ResultSet rst = null;
         List<Course> result = null;
@@ -324,20 +382,23 @@ public class CourseDAO {
             rst = stmt.executeQuery();
             result = getResult(rst);
         } catch (SQLException e) {
-            e.printStackTrace();
+        	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+        	throw new InvalidDBTransferException();
         } finally {
             if (rst != null) {
                 try {
                     rst.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
         }
@@ -359,6 +420,8 @@ public class CourseDAO {
      * @return the list of courses, or null if no courses were retrieved
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Patrick Cretu
      */
     public static List<Course> getCourses(Transaction trans,
             PaginationData pagination, String searchParam, String searchString)
@@ -403,6 +466,13 @@ public class CourseDAO {
         return result;
     }
 
+    /**
+     * 
+     * @param orderParam
+     * @return
+     * 
+     * @author Patrick Cretu
+     */
     private static String getOrderParam(String orderParam) {
         switch (orderParam) {
         case "title":
@@ -418,8 +488,20 @@ public class CourseDAO {
         }
     }
 
+    /**
+     * 
+     * @param conn
+     * @param limit
+     * @param offset
+     * @param searchString
+     * @param query
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
     private static List<Course> getCourses(java.sql.Connection conn, int limit,
-            int offset, String searchString, String query) {
+            int offset, String searchString, String query) throws InvalidDBTransferException {
         PreparedStatement stmt = null;
         ResultSet rst = null;
         List<Course> result = null;
@@ -434,27 +516,38 @@ public class CourseDAO {
             rst = stmt.executeQuery();
             result = getResult(rst);
         } catch (SQLException e) {
-            e.printStackTrace();
+        	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+        	throw new InvalidDBTransferException();
         } finally {
             if (rst != null) {
                 try {
                     rst.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+                	throw new InvalidDBTransferException();
                 }
             }
         }
         return result;
     }
 
-    private static List<Course> getResult(ResultSet rst) {
+    /**
+     * 
+     * @param rst
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
+    private static List<Course> getResult(ResultSet rst) throws InvalidDBTransferException {
         List<Course> result = new ArrayList<Course>();
         try {
             int cols = rst.getMetaData().getColumnCount();
@@ -475,11 +568,19 @@ public class CourseDAO {
                 return result;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	LogHandler.getInstance().error("SQL Exception occoured during getResult(ResultSet rst)");
+        	throw new InvalidDBTransferException();
         }
         return null;
     }
 
+    /**
+     * 
+     * @param course
+     * @param tuple
+     * 
+     * @author Patrick Cretu
+     */
     private static void setProperties(Course course, List<Object> tuple) {
         course.setCourseID((Integer) tuple.get(0));
         course.setTitle((String) tuple.get(1));
@@ -487,6 +588,7 @@ public class CourseDAO {
         course.setStartdate((Date) tuple.get(3));
         course.setEnddate((Date) tuple.get(4));
     }
+
 
     /**
      * Returns a list of courses which titles contain the search term the user
