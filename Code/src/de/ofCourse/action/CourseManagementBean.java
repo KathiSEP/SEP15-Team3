@@ -155,22 +155,13 @@ public class CourseManagementBean {
         this.sessionUser = userSession;
     }
 
-    /**
-     * Returns the value of the attribute <code>courseLeaderID</code>.
-     * 
-     * @return the id of the course leader
-     */
-    public int getCourseLeaderID() {
+    public Integer getCourseLeaderID() {
         return courseLeaderID;
     }
 
-    /**
-     * Sets the value of the attribute <code>courseLeaderID</code>.
-     * 
-     * @param courseLeaderID
-     *                  id of the course leader
-     */
-    public void setCourseLeaderID(int courseLeaderID) {
+    public void setCourseLeaderID(Integer courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
     }
+
+   
 }
