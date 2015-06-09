@@ -128,6 +128,7 @@ public class CourseDetailBean implements Pagination {
     @PostConstruct
     public void init() {
         transaction = Connection.create();
+        transaction.start();
         try {
             if (courseID > 0) {
                 course = CourseDAO.getCourse(transaction, courseID);
