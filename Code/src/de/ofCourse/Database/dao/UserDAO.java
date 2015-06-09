@@ -47,6 +47,64 @@ import de.ofCourse.utilities.PasswordHash;
 public class UserDAO {
 
     /**
+     * Returns the password salt of a user assigned to the passed user name.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param username
+     *            the user's name
+     * @return the user's password salt
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina Hölzl
+     */
+    public static String getPWSalt(Transaction trans, String username)
+            throws InvalidDBTransferException {
+
+        String pwSalt = "";
+        final int userDoesNotExist = -1;
+
+        // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        // Datenbankabfrage
+        String sql = "SELECT pw_salt FROM \"users\" WHERE nickname=?";
+
+        // mögliche SQL-Injektion abfangen
+        try {
+            pS = conn.prepareStatement(sql);
+            pS.setString(1, username);
+            // preparedStatement ausführen, gibt resultSet als Liste zurück
+            // (hier
+            // ein Eintrag in der Liste, da Benutzername einzigartig).
+            ResultSet res = pS.executeQuery();
+
+            // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
+            // Eintrag gibt, ansonsten 0.
+            if (res.next()) {
+                // id mit zugehörigem Wert aus der Datenbank füllen.
+                pwSalt = res.getString("pw_salt");
+            } else {
+                int id = userDoesNotExist;
+            }
+            pS.close();
+            res.close();
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
+            throw new InvalidDBTransferException();
+        }
+
+        return pwSalt;
+    }
+    
+    
+    /**
      * Checks if the inserted mail address already exists in the database.
      * 
      * @param trans
@@ -118,7 +176,7 @@ public class UserDAO {
     public static String createUser(Transaction trans, User user, String pwHash)
 	    throws InvalidDBTransferException {
 
-	String veriString = "";
+	String veriString = UserDAO.getPWSalt(trans, user.getUsername());
 
 	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;
@@ -140,8 +198,8 @@ public class UserDAO {
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
 		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-		    + "email_verification, admin_verification, role, status, veri_string) "
-		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?)";
+		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
+		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
 
 	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
 	    // ob der Benutzer die Daten angegeben hat oder ob in die
@@ -178,10 +236,13 @@ public class UserDAO {
 	    pS.setString(11, UserRole.REGISTERED_USER.toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
+	    
+	    //TODO Salt Methode noch einfügen statt dem username
+	    pS.setString(14, user.getUsername());
 
 	    pS.executeUpdate();
 
-	    sql = "Insert into \"addresses\" (user_id, country, "
+	    sql = "Insert into \"user_addresses\" (user_id, country, "
 		    + "city, zip_code, street, house_nr) "
 		    + "values (?, ?, ?, ?, ?, ?)";
 	    pS = conn.prepareStatement(sql);
