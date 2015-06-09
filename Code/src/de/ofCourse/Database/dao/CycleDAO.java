@@ -24,10 +24,10 @@ public class CycleDAO {
 	int cycleID = 0;
 
 	String queryCreate = "INSERT INTO \"cycles\""
-		+ " (course, period, cycle_end)" + " VALUES (?, ?, ?)";
+		+ " (course_id, period, cycle_end)" + " VALUES (?, ?::period, ?)";
 
 	String querySelect = "SELECT id FROM \"cycles\" WHERE"
-		+ " course_id=? AND cycle_end=? AND period=?";
+		+ " course_id=? AND period=?::period AND cycle_end=?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -38,9 +38,9 @@ public class CycleDAO {
 	    stmt = conn.prepareStatement(queryCreate);
 	    stmt.setInt(1, courseID);
 	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "days");
+		stmt.setString(2, "DAYS");
 	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "weeks");
+		stmt.setString(2, "WEEKS'");
 	    }
 	    stmt.setInt(3, cycle.getNumberOfUnits());
 	    stmt.executeUpdate();
@@ -48,9 +48,9 @@ public class CycleDAO {
 	    stmt = conn.prepareStatement(querySelect);
 	    stmt.setInt(1, courseID);
 	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "days");
+		stmt.setString(2, "DAYS");
 	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "weeks");
+		stmt.setString(2, "WEEKS");
 	    }
 	    stmt.setInt(3, cycle.getNumberOfUnits());
 
@@ -59,7 +59,7 @@ public class CycleDAO {
 
 	    res.next();
 	    cycleID = res.getInt("id");
-	    res.close();
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during creating a new cycle.");
@@ -126,7 +126,7 @@ public class CycleDAO {
 
 	    res.next();
 	    cycleID = res.getInt("id");
-	    res.close();
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during fetching the cycle id.");

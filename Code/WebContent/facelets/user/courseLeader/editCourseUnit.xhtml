@@ -30,6 +30,7 @@
                     <h:message for="idUser" style="color:red" />
                     <h:message for="nameUser" style="color:red" />
                     <h:message for="firstNameUser" style="color:red" />
+                    <h:message for="countryCourseUnit" style="color:red" />
                     <h:messages globalOnly="true" layout="table"
                         class="alert alert-danger" />
                 </div>
@@ -148,8 +149,23 @@
                                     <h:inputText class="form-control" style="width:300px;"
                                         id="zipcodeCourseUnit"
                                         value="#{courseUnitManagementBean.courseUnit.address.zipCode}"
+                                        required="true"
+                                        requiredMessage="Bitte geben Sie eine Postleitzahl ein. "
                                         validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein. ">
                                         <f:validateLength minimum="1" maximum="10" />
+                                    </h:inputText>
+                                </div>
+                                
+                                 <div class="input-group" style="padding-top: 5px;">
+                                    <span class="input-group-addon"
+                                        style="width: 160px; text-align: right;">Land:</span>
+                                    <h:inputText class="form-control" style="width:300px;"
+                                        id="countryCourseUnit"
+                                        value="#{courseUnitManagementBean.courseUnit.address.country}"
+                                        required="true"
+                                        requiredMessage="Bitte geben Sie ein Land ein. "
+                                        validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein. ">
+                                        <f:validateLength minimum="1" maximum="100" />
                                     </h:inputText>
                                 </div>
 
