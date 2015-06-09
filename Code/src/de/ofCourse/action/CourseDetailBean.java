@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -240,19 +241,41 @@ public class CourseDetailBean implements Pagination {
         Transaction trans = Connection.create();
         trans.start();
 
-        int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap()
-                .get("CourseUNitID"));
-
-        // Instanziere alle Models aus der Datenbank die gebraucht werden
-        CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(trans,
-                courseUnitID);
         User userWhoTryToSignOff = UserDAO.getUser(trans,
                 sessionUser.getUserID());
-
-        // Kann hier auch noch abfragen ob User wirklich in Kurs
+        
+        List<CourseUnit> signedCourseUnits = CourseUnitDAO.getCourseUnitsOf(trans, userWhoTryToSignOff.getUserID());
+        
+        ArrayList<Integer> courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);
+        
 
         return "#";
+    }
+
+    /**
+     * @param signedCourseUnits
+     * @return
+     */
+    private ArrayList<Integer> findCourseUnitsOfThisCourse(
+            List<CourseUnit> signedCourseUnits) {
+        
+        //This array stores the CourseUnitIDs which belong to the course the user wants to sign off
+        ArrayList<Integer> courseUnitsOfThatCourse = new ArrayList<Integer>();
+        
+        //If the user has not signed up to any courseUnits the Methode returns a empty list  
+        if(!signedCourseUnits.isEmpty()){
+            
+            //If the user is in no courseUnit which belongs to the course he wants to leave the methode returns a empty list
+            for(int i = 0; i < signedCourseUnits.size(); i++){
+                if(signedCourseUnits.get(i).getCourseID() == courseID){
+                    courseUnitsOfThatCourse.add(signedCourseUnits.get(i).getCourseUnitID());
+                }
+            }
+            return courseUnitsOfThatCourse;
+        } else {
+            return courseUnitsOfThatCourse;
+        }
+        
     }
 
     /**
@@ -361,6 +384,8 @@ public class CourseDetailBean implements Pagination {
         trans.start();
 
         try {
+            
+            //TODO noch angleichen zum FACLET
             int courseUnitID = Integer.parseInt(FacesContext
                     .getCurrentInstance().getExternalContext()
                     .getRequestParameterMap().get("CourseUNitID"));

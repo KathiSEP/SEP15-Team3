@@ -64,8 +64,43 @@ public class CourseUnit implements Serializable {
      * place(only if the CourseUnit take place with regularity)
      */
     private Cycle cycle;
+    
+    
+    /**
+     * 
+     * Stores the CourseID, this CourseUnit belongs to
+     */
+    private int courseID;
    
     
+    /**
+     * @return the startime
+     */
+    public Date getStartime() {
+        return startime;
+    }
+
+    /**
+     * @param startime the startime to set
+     */
+    public void setStartime(Date startime) {
+        this.startime = startime;
+    }
+
+    /**
+     * @return the courseID
+     */
+    public int getCourseID() {
+        return courseID;
+    }
+
+    /**
+     * @param courseID the courseID to set
+     */
+    public void setCourseID(int courseID) {
+        this.courseID = courseID;
+    }
+
     /**
      * stores the room description where the CourseUnit will be hold (Is
      * needed besides the Address for example if the CourseUnit is hold in
