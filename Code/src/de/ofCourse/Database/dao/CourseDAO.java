@@ -121,7 +121,7 @@ public class CourseDAO {
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-
+        
         //TODO image Spalte hinzufügen, Typ: bytea (kein STRING!!!!!!!)
         
         String sql = "Insert into \"courses\" (titel, max_participants, "
@@ -153,8 +153,6 @@ public class CourseDAO {
             } else {
                 pS.setString(5, course.getDescription());
             }
-            
-            System.out.println(pS.toString());
 
             ResultSet res = pS.executeQuery();
             res.next();
@@ -162,7 +160,6 @@ public class CourseDAO {
             pS.close();
             res.close();
         } catch (SQLException e) {
-            e.printStackTrace();
             LogHandler
                     .getInstance()
                     .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");

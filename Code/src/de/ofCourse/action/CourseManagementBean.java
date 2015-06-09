@@ -3,8 +3,6 @@
  */
 package de.ofCourse.action;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -12,10 +10,8 @@ import javax.faces.bean.RequestScoped;
 import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
-import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
@@ -68,7 +64,7 @@ public class CourseManagementBean {
     @PostConstruct
     private void init() {
         this.course = new Course();
-        this.courseLeaderID = null;
+        this.setCourseLeaderID(null);
     }
 
     /**
@@ -157,20 +153,20 @@ public class CourseManagementBean {
         this.sessionUser = userSession;
     }
 
-    public Integer getCourseLeaderID() {
-        return courseLeaderID;
-    }
-
-    public void setCourseLeaderID(Integer courseLeaderID) {
-        this.courseLeaderID = courseLeaderID;
-    }
-
     public Part getCourseImage() {
         return courseImage;
     }
 
     public void setCourseImage(Part courseImage) {
         this.courseImage = courseImage;
+    }
+
+    public Integer getCourseLeaderID() {
+        return courseLeaderID;
+    }
+
+    public void setCourseLeaderID(Integer courseLeaderID) {
+        this.courseLeaderID = courseLeaderID;
     }
 
    
