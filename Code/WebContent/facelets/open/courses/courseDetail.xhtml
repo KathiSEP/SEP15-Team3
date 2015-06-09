@@ -10,9 +10,6 @@
 	<ui:composition template="/WEB-INF/template.xhtml">
 		<ui:define name="title"><h:outputText value="#{courseDetailBean.course.title}"/></ui:define>
 		<ui:define name="content">
-			<f:metadata>
-	    		<f:viewParam name="courseID" value="#{courseDetailBean.courseID}"/>
-			</f:metadata>
 			<body>
 				<h1>Kursdetails</h1>
 				<div class="row">
@@ -71,17 +68,19 @@
 								</div>
 							</div>
 						</div>
-						<h:panelGroup rendered="#{(navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+						<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'REGISTERED_USER' || courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 							<div class="panel panel-info">
 								<div class="panel-heading"><strong>Verwaltung</strong></div>
 								<div class="panel-body">
 									<h:form>
+										<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
 										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
-										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
 															action="#{courseDetailBean.loadCreateCourseUnitPage}"/>
+										</h:panelGroup>
+										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 									</h:form>
 								</div>
 							</div>
@@ -91,6 +90,49 @@
 				<div class="panel panel-info">
 					<div class="panel-heading"><strong>Kurseinheiten</strong></div>
 					<div class="panel-body">
+						<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" class="table table-hover">
+							<h:column>
+                            	<f:facet name="header">Startdatum</f:facet>
+                                <h:outputText value="#{courseUnit.startime}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy"/>
+                                </h:outputText> 
+                            </h:column>
+                            <h:column>
+                           		<f:facet name="header">Uhrzet</f:facet>
+                                <h:outputText value="#{courseUnit.startime}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                            	<f:facet name="header">Endzeitpunkt</f:facet>
+                            	<h:outputText value="#{courseUnit.endtime}"/>
+                            </h:column>
+                            <h:column>
+                            	<f:facet name="header">Beschreibung</f:facet>
+                            	<h:outputText value="#{courseUnit.description}"/>
+                            </h:column>
+                            <h:column>
+                            	<f:facet name="header">Status</f:facet>
+                            	<!--<h:outputText value="#{}"/> aus dao abfragen-->
+                            	<h:outputText value="/"/>
+                            	<h:outputText value="#{courseUnit.maxUsers}"/>
+                            </h:column>
+                            <h:column>
+                            	<f:facet name="header">Ort</f:facet>
+                            	<h:outputText value="#{courseUnit.location}"/>
+                            </h:column>
+                            <h:column>
+                            	<f:facet name="header">Preis</f:facet>
+                            	<h:outputText value="#{courseUnit.price}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header" />
+                                <h:commandButton id="details" class="btn btn-info" value="Details" 
+                                					action="">
+                                    <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+                                </h:commandButton>
+                            </h:column>
+						</h:dataTable>
 						<div class="row" style="font-weight:bold;">
 							<div class="col-lg-2"><a href="#">Termin</a></div>
 							<div class="col-lg-4"><a href="#">Beschreibung</a></div>
