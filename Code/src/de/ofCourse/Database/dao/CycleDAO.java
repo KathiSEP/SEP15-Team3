@@ -55,10 +55,10 @@ public class CycleDAO {
 	    stmt.setInt(3, cycle.getNumberOfUnits());
 
 	    res = stmt.executeQuery();
-	    stmt.close();
 
 	    res.next();
 	    cycleID = res.getInt("id");
+	    stmt.close();
 	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
