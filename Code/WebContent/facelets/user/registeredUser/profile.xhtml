@@ -24,56 +24,69 @@
                             </div>
                             <div class="panel-body">
                                 <h:form class="form-horizontal" id="formSettings">
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="firstnameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.firstname}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="lastnameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.lastname}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="birthdateRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.dateOfBirth}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.street}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.houseNumber}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Ort:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="locationRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.city}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.zipCode}"></h:inputText>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.email}"></h:inputText>
-                                    </div>
                                     <div class="input-group" style="padding-top:25px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.username}"></h:inputText>
+                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.username}"></h:inputText>
                                     </div>
+                                
                                     <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="firstnameRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.firstname}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="lastnameRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.lastname}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="birthdateRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.dateOfBirth}">
+                                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+                                        </h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.street}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.houseNumber}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Ort:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="locationRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.city}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.zipCode}"></h:inputText>
+                                    </div>
+                                    
+                                    <div class="input-group" style="padding-top:5px;">
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
+                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister" readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.email}"></h:inputText>
+                                    </div>
+                                    
+                                    <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
+                                        <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
-                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.password}"></h:inputSecret>
-                                    </div>
-                                    <div class="input-group" style="padding-top:5px;">
+                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister" value="#{userProfileBean.password}"></h:inputSecret>
+                                        </div>
+                                        <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
-                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.confirmPassword}"></h:inputSecret>
-                                    </div>
+                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister" value="#{userProfileBean.confirmPassword}"></h:inputSecret>
+                                        </div>
+                                    </h:panelGroup>
+                                    
                                     <br/>
-                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setRenderSettings(true)}" rendered="#{userProfileBean.renderSettings == false}"/>
+                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" rendered="#{userProfileBean.readOnly}"/>
                                     <br/>
-                                    <h:commandButton value="Speichern" action="#{profile.save()}" rendered="#{userProfileBean.renderSettings}"/>
+                                    <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" rendered="#{userProfileBean.readOnly == false}"/>
                                 </h:form><br /> 
-                                Sie befinden Sich in der Rolle eines <input type="text" width="200" disabled="disabled" value="Kursleiters"></input>.
                             </div>
                         </div>                  
                     </div>
@@ -87,14 +100,19 @@
                                     <div class="panel-heading">
                                         <strong>Profilbild</strong>
                                     </div>
-                                    <h:inputFile value="#{userProfileBean.image}" />
-                                    <br/>
+                                    
                                     <div class="panel-body">
                                         
                                         <div class="row" style="padding-top:10px;">
+                                        
                                             <div class="col-lg-8">
                                                 <img src="#{request.contextPath}/resources/img/userdata/userphoto.jpg" width="200" alt="Profilbild"></img>                                          
                                             </div>
+                                            <br/>
+                                            
+                                            <h:inputFile class="btn btn-default" value="#{userProfileBean.image}" />
+                                            <br/>
+                                            
                                             <div class="col-lg-4" style="text-align:right;">
                                                 <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild speichern" action="#{userProfileBean.uploadProfilePic()}"/>
                                             </div>
@@ -108,8 +126,8 @@
                                         <strong>Kontostand</strong>
                                     </div>
                                     <div class="panel-body">
-                                        Ihr aktueller Kontostand beträgt <input type="text" width="50" disabled="disabled" value="13,56€"></input>.<br />
-                                        <h:commandButton id="chargeAccount" class="btn btn-success" value="Konto aufladen" />
+                                        Ihr aktueller Kontostand beträgt:
+                                        <h:outputLabel value="#{userProfileBean.user.accountBalance}"/>
                                     </div>
                                 </div>                                      
                             </div>

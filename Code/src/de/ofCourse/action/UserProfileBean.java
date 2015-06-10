@@ -36,7 +36,7 @@ import de.ofCourse.system.Transaction;
  * <p>
  * This class is ManagedBean and controller of the facelet <code>userProfil</code>.
  * 
- * @author Tobias Fuchs
+ * @author Patrick Cretu
  *
  */
 @ManagedBean
@@ -59,7 +59,7 @@ public class UserProfileBean implements Pagination {
      */
     private List<Course> managedCourses;
     
-    private boolean renderSettings;
+    private boolean readOnly;
     
     private String password;
     
@@ -84,7 +84,7 @@ public class UserProfileBean implements Pagination {
     
     @PostConstruct
     public void init() {
-    	renderSettings = false;
+    	readOnly = true;
     	
     	transaction = Connection.create();
     	transaction.start();
@@ -109,8 +109,9 @@ public class UserProfileBean implements Pagination {
      * 
      * @return link to the next page
      */
-    public String saveUserdata() {
-	return null;
+    public void saveSettings() {
+    	
+    	readOnly = true;
     }
 
     /**
@@ -190,12 +191,12 @@ public class UserProfileBean implements Pagination {
     public void setManagedCourses(List<Course> managedCourses) {
     }
 
-    public boolean isRenderSettings() {
-		return renderSettings;
+	public boolean isReadOnly() {
+		return readOnly;
 	}
 
-	public void setRenderSettings(boolean renderSettings) {
-		this.renderSettings = renderSettings;
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 
 	public String getPassword() {
