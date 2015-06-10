@@ -86,8 +86,9 @@ public class DatabaseTableCreator {
     private static final String CREATE_COURSE_UNITS =
     		"CREATE TABLE course_units (" +
     			"id SERIAL PRIMARY KEY," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE," +
-    			"cycle_id INTEGER REFERENCES \"cycles\"(id)," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
+    			"cycle_id INTEGER REFERENCES \"cycles\"(id) ON DELETE SET NULL," +
+    			"course_instructor_id INTEGER REFERENCES \"course_instructors\"(id) ON DELETE CASCADE NOT NULL," +
     			"max_participants INTEGER NOT NULL " +
     			"CHECK (max_participants > 0)," +
     			"titel TEXT," +

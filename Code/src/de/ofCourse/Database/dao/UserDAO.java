@@ -12,7 +12,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Part;
@@ -45,7 +44,7 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  * 
- * @author Patrick Cretu 
+ * @author Patrick Cretu
  *
  */
 public class UserDAO {
@@ -270,95 +269,94 @@ public class UserDAO {
      * @author Katharina Hölzl
      */
     public static String createUser(Transaction trans, User user, String pwHash, String salt)
-            throws InvalidDBTransferException {
+	    throws InvalidDBTransferException {
 
-        String veriString = "";
+	String veriString = "";
 
-        // SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
-        PreparedStatement pS = null;
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
+	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+	PreparedStatement pS = null;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-        // mögliche SQL-Injektion abfangen
-        try {
-            ResultSet res = null;
+	// mögliche SQL-Injektion abfangen
+	try {
+	    ResultSet res = null;
 
-            String sql = "SELECT id FROM \"users\" WHERE veri_string = ?";
-            do {
-                SecureRandom random = new SecureRandom();
-                veriString = new BigInteger(130, random).toString();
-                pS = conn.prepareStatement(sql);
-                pS.setString(1, veriString);
-                res = pS.executeQuery();
-            } while (res.next());
-           
+	    String sql = "SELECT id FROM \"users\" WHERE veri_string = ?";
+	    do {
+		SecureRandom random = new SecureRandom();
+		veriString = new BigInteger(130, random).toString();
+		pS = conn.prepareStatement(sql);
+		pS.setString(1, veriString);
+		res = pS.executeQuery();
+	    } while (res.next());
+	   
 
-            sql = "Insert into \"users\" (first_name, name, nickname, email, "
-                    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-                    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
-                    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
+	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
+		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
+		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
+		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
 
-            // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
-            // ob der Benutzer die Daten angegeben hat oder ob in die
-            // Datenbank null-Werte geschrieben werden müssen.
-            pS = conn.prepareStatement(sql);
-            if (user.getFirstname() == null || user.getFirstname().length() < 1) {
-                pS.setString(1, null);
-            } else {
-                pS.setString(1, user.getFirstname());
-            }
-            if (user.getLastname() == null || user.getLastname().length() < 1) {
-                pS.setString(2, null);
-            } else {
-                pS.setString(2, user.getLastname());
-            }
-            pS.setString(3, user.getUsername());
-            pS.setString(4, user.getEmail());
-            pS.setString(5, pwHash);
-            if (user.getDateOfBirth() == null) {
-                pS.setDate(6, null);
-            } else {
-                java.sql.Date sqlDate = new java.sql.Date(user.getDateOfBirth()
-                        .getTime());
-                pS.setDate(6, sqlDate);
-            }
-            if (user.getSalutation() == null) {
-                pS.setString(7, null);
-            } else {
-                pS.setString(7, user.getSalutation().toString());
-            }
-            pS.setDouble(8, user.getAccountBalance());
-            pS.setBoolean(9, false);
-            pS.setBoolean(10, false);
-            pS.setString(11, UserRole.REGISTERED_USER.toString());
-            pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
-            pS.setString(13, veriString);
-            pS.setString(14, salt);
-            
-            pS.executeUpdate();
+	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
+	    // ob der Benutzer die Daten angegeben hat oder ob in die
+	    // Datenbank null-Werte geschrieben werden müssen.
+	    pS = conn.prepareStatement(sql);
+	    if (user.getFirstname() == null || user.getFirstname().length() < 1) {
+		pS.setString(1, null);
+	    } else {
+		pS.setString(1, user.getFirstname());
+	    }
+	    if (user.getLastname() == null || user.getLastname().length() < 1) {
+		pS.setString(2, null);
+	    } else {
+		pS.setString(2, user.getLastname());
+	    }
+	    pS.setString(3, user.getUsername());
+	    pS.setString(4, user.getEmail());
+	    pS.setString(5, pwHash);
+	    if (user.getDateOfBirth() == null) {
+		pS.setDate(6, null);
+	    } else {
+		java.sql.Date sqlDate = new java.sql.Date(user.getDateOfBirth()
+			.getTime());
+		pS.setDate(6, sqlDate);
+	    }
+	    if (user.getSalutation() == null) {
+		pS.setString(7, null);
+	    } else {
+		pS.setString(7, user.getSalutation().toString());
+	    }
+	    pS.setDouble(8, user.getAccountBalance());
+	    pS.setBoolean(9, false);
+	    pS.setBoolean(10, false);
+	    pS.setString(11, UserRole.REGISTERED_USER.toString());
+	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
+	    pS.setString(13, veriString);
+	    pS.setString(14, salt);
+	    pS.executeUpdate();
 
-            sql = "Insert into \"user_addresses\" (user_id, country, "
-                    + "city, zip_code, street, house_nr) "
-                    + "values (?, ?, ?, ?, ?, ?)";
-            pS = conn.prepareStatement(sql);
-            pS.setInt(1, UserDAO.getUserID(trans, user.getUsername()));
-            pS.setString(2, user.getAddress().getCountry());
-            pS.setString(3, user.getAddress().getCity());
-            pS.setInt(4, user.getAddress().getZipCode());
-            pS.setString(5, user.getAddress().getStreet());
-            pS.setInt(6, user.getAddress().getHouseNumber());
-            
-            pS.executeUpdate();
+	    sql = "Insert into \"user_addresses\" (user_id, country, "
+		    + "city, zip_code, street, house_nr) "
+		    + "values (?, ?, ?, ?, ?, ?)";
+	    pS = conn.prepareStatement(sql);
+	    pS.setInt(1, UserDAO.getUserID(trans, user.getUsername()));
+	    pS.setString(2, user.getAddress().getCountry());
+	    pS.setString(3, user.getAddress().getCity());
+	    pS.setInt(4, user.getAddress().getZipCode());
+	    pS.setString(5, user.getAddress().getStreet());
+	    pS.setInt(6, user.getAddress().getHouseNumber());
+	    
+	    pS.executeUpdate();
 
-            pS.close();
-        } catch (SQLException e) {
-            LogHandler
-                    .getInstance()
-                    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
-            throw new InvalidDBTransferException();
-        }
+	    pS.close();
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+	    throw new InvalidDBTransferException();
+	}
 
-        return veriString;
+	return veriString;
     }
 
     /**
@@ -425,7 +423,7 @@ public class UserDAO {
 	    String orderParam) throws InvalidDBTransferException {
 	return null;
     }
-
+    
     /**
      * Returns a user assigned to the specified ID.
      * 
@@ -443,56 +441,30 @@ public class UserDAO {
      */
     public static User getUser(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-	    User user = null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	User user = null;
 		PreparedStatement stmt = null;
 		ResultSet rst = null;
-		String sql = "SELECT * FROM \"users\" WHERE id = ?";
+		String query = "SELECT * FROM \"users\" WHERE id=?";
 	
 		try {
-		    stmt = conn.prepareStatement(sql);
+		    stmt = conn.prepareStatement(query);
 		    stmt.setInt(1, userID);
 		    
 		    rst = stmt.executeQuery();
-		    user = getResult(rst);
+		    if (rst.next()) {
+				String username = rst.getString("nickname");
+				user = getUser(trans, username);
+		    }
 		} catch (SQLException e) {
-		    // TODO logger und Fehlermeldung
+			LogHandler.getInstance()
+		        .error("SQL Exception occoured during executing getUser(Transaction trans, int userID)");
 		    throw new InvalidDBTransferException();
 		}
 		return user;
     }
     
-    private static User getResult(ResultSet rst) throws InvalidDBTransferException {
-    	User user = new User();
-        try {
-            int cols = rst.getMetaData().getColumnCount();
-
-            if (rst.next()) {
-                int i = 1;
-                List<Object> tuple = new ArrayList<Object>();
-                while (i <= cols) {
-                    Object o = rst.getObject(i);
-                    tuple.add(o);
-                    i++;
-                }
-                //setProperties(user, tuple);
-            }
-            /*if (!result.isEmpty()) {
-                return result;
-            }*/
-        } catch (SQLException e) {
-        	LogHandler.getInstance().error("SQL Exception occoured during getResult(ResultSet rst)");
-        	throw new InvalidDBTransferException();
-        }
-        return null;
-    }
-    
-    private static Address getAddress() {
-    	
-    	return null;
-    }
-
     /**
      * Returns the status of the user to a specified ID
      * 
@@ -1105,7 +1077,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String searchUserInUserToInform = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+	String searchUserInUserToInform = "SELECT FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatment = isInTable(userID, courseID, conn,
@@ -1161,7 +1133,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
-	String searchUserCourse = "SELECT * FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
+	String searchUserCourse = "SELECT FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatement = isInTable(userID, courseID, conn,
@@ -1170,7 +1142,7 @@ public class UserDAO {
 		    "UserIsParticipant methode was succesfull");
 	    return returnStatement;
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
+	    LogHandler.getInstance().debug(
 		    "Error occured during UserIsParticipant methode ");
 	    throw new InvalidDBTransferException();
 	}
