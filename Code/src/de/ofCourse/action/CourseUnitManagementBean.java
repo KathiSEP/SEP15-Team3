@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,11 +160,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private PaginationData pagination;
 
     public MailBean getMailBean() {
-        return mailBean;
+	return mailBean;
     }
 
     public void setMailBean(MailBean mailBean) {
-        this.mailBean = mailBean;
+	this.mailBean = mailBean;
     }
 
     @ManagedProperty("#{mailBean}")
@@ -322,22 +323,66 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return the link to this page
      */
     public String saveCourseUnit() {
+	CourseUnit tempUnit = null;
+	long startdate_initial = courseUnit.getStartime().getTime();
+	long enddate_initial = courseUnit.getEndtime().getTime();
 
-	
-	
-	
-	
-	
-	
+	// Update local course unit attribute with entered data
+	this.calculateStartAndEndTime(courseUnit);
+	long startdate_new = courseUnit.getStartime().getTime();
+	long enddate_new = courseUnit.getEndtime().getTime();
+
+	long difference_start_time = startdate_new - startdate_initial;
+	long difference_end_time = enddate_new - enddate_initial;
+
+	transaction.start();
+	// TODO: Not YET Tested
+	try {
+	    if (editAll && this.courseUnit.getCycle() != null) {
+		ArrayList<Integer> idsToEdit = (ArrayList<Integer>) CourseUnitDAO
+			.getIdsCourseUnitsOfCycle(transaction,
+				courseUnit.getCourseUnitID());
+		for (int id : idsToEdit) {
+		    // Fetch course unit in cycle
+		    tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);
+
+		    // Add calculated time differences
+		    tempUnit.setStartime(new Date(tempUnit.getStartime()
+			    .getTime() + difference_start_time));
+		    tempUnit.setEndtime(new Date(tempUnit.getEndtime()
+			    .getTime() + difference_end_time));
+		    
+		    // Update tempUnit with other entered values
+		    tempUnit.setTitle(courseUnit.getTitle());
+		    tempUnit.setMinUsers(courseUnit.getMinUsers());
+		    tempUnit.setMaxUsers(courseUnit.getMaxUsers());
+		    
+		    
+		    
+		    
+		    // update tempUnit
+		    CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
+
+		}
+	    } else {
+		// New dates are already calculated
+		CourseUnitDAO.updateCourseUnit(transaction, getCourseUnit());
+	    }
+	    transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    transaction.rollback();
+	    e.printStackTrace();
+	    LogHandler.getInstance().error(
+		    "Error occured during deleting" + " a course unit.");
+	}
+
 	System.out.println("Save Course Unit");
 	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
-    
-    private void editSingleUnit(){}
-    
-    
-    
+    private void editSingleUnit() {
+    }
+
     /**
      * Deletes the course unit from the course and returns the link to the
      * course details page.<br>
@@ -406,7 +451,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			user.getUserID())) {
 		    tempUser = UserDAO.getUser(trans, user.getUserID());
 		    recipients.add(tempUser.getEmail());
-		    //TODO: SEND MAIL
+		    // TODO: SEND MAIL
 		}
 	    }
 	}
