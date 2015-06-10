@@ -71,6 +71,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private static final int elementsPerPage = 10;
 
+    private static final int informNobody = 0;
+
+    private static final int informParticipantsOfUnit = 1;
+
+    private static final int informAll = 2;
+    
+    private int selectedToInform;
+
     /**
      * Constant that represents the days of a day
      */
@@ -137,9 +145,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private boolean deleteAll;
 
     /**
-     * Stores whether all course units of the corresponding cycle are to delete.
+     * Stores whether all course units of the corresponding cycle are to edit.
      */
-    private boolean saveAll;
+    private boolean editAll;
 
     private int courseUnitID = 0;
 
@@ -151,6 +159,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * per page.
      */
     private PaginationData pagination;
+
+    @ManagedProperty("#{mailBean}")
+    private MailBean mailBean;
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -292,13 +303,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
-     * Initializes the course unit page with the details of the course unit that
-     * is to display.
-     */
-    public void initializeCourseUnit() {
-    }
-
-    /**
      * Realizes the editing of a course unit that takes place regularly.<br>
      * If <code>editAllIfRegular</code> is <code>true</code>, all course units
      * in the cycle of this course unit are edited.<br>
@@ -357,7 +361,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     private void deleteSingleUnit(Transaction trans, int unitId) {
- 
+
 	try {
 	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
@@ -377,7 +381,31 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    "Error during deleting a single course unit.");
 	    throw new InvalidDBTransferException();
 	}
-
+    }
+    
+    private void sendMailToSelected(int userId){
+	int recipientsGroup = this.getSelectedToInform();
+	
+	switch(recipientsGroup){
+	
+	case informAll:
+	    
+	    break;
+	case informParticipantsOfUnit:
+	    
+	    
+	    break;
+	    
+	case informNobody:
+	    
+	    
+	    break;
+	   
+	}
+	
+	
+	
+	
     }
 
     /**
@@ -736,20 +764,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
-     * @return
-     */
-    public boolean isSaveAll() {
-	return saveAll;
-    }
-
-    /**
-     * @param saveAll
-     */
-    public void setSaveAll(boolean saveAll) {
-	this.saveAll = saveAll;
-    }
-
-    /**
      * Calculates the <code>starttime</code> and the <code>endtime</code> of a
      * course unit fetched from the inserted values to be displayed properly.
      * 
@@ -767,5 +781,21 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	date.setHours(end.getHours());
 	date.setMinutes(end.getMinutes());
 	courseUnit.setEndtime(new Date(date.getTime()));
+    }
+
+    public boolean isEditAll() {
+	return editAll;
+    }
+
+    public void setEditAll(boolean editAll) {
+	this.editAll = editAll;
+    }
+
+    public int getSelectedToInform() {
+	return selectedToInform;
+    }
+
+    public void setSelectedToInform(int selectedToInform) {
+	this.selectedToInform = selectedToInform;
     }
 }

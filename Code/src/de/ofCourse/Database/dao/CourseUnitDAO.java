@@ -166,6 +166,35 @@ public class CourseUnitDAO {
 
     }
 
+    public static boolean userWantsToBeInformed(Transaction trans, int userId) {
+	boolean wantsToBeInformed = false;
+
+	String query = "SELECT COUNT(*) FROM \"inform_users\" WHERE user_id=?";
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+	ResultSet res = null;
+
+	try {
+	    stmt = conn.prepareStatement(query);
+	    stmt.setInt(1, userId);
+	    ResultSet resultSet = stmt.executeQuery();
+	    res.next();
+	    if (res.getInt(1) > 0) {
+		wantsToBeInformed = true;
+	    }
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occoured during checking whether"
+			    + " a user wants to be informed in case"
+			    + " of changes of the course unit.");
+	    e.printStackTrace();
+	    throw new InvalidDBTransferException();
+	}
+	return wantsToBeInformed;
+    }
+
     /**
      * Returns a course unit assigned to the specified ID.
      * 
@@ -181,112 +210,112 @@ public class CourseUnitDAO {
      */
     public static CourseUnit getCourseUnit(Transaction trans, int courseUnitID)
 	    throws InvalidDBTransferException {
-        CourseUnit requestedCourseUnit = new CourseUnit();
-        Address courseUnitAddress = new Address();
-        Cycle courseCycle = new Cycle();
+	CourseUnit requestedCourseUnit = new CourseUnit();
+	Address courseUnitAddress = new Address();
+	Cycle courseCycle = new Cycle();
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-        String courseUnitRequest = "SELECT * FROM \"course_units\" WHERE id=?";
+	String courseUnitRequest = "SELECT * FROM \"course_units\" WHERE id=?";
 
-        try {
-            PreparedStatement pS = conn.prepareStatement(courseUnitRequest);
-            pS.setInt(1, courseUnitID);
-            ResultSet resultSet = pS.executeQuery();
-            if (resultSet.next()) {
+	try {
+	    PreparedStatement pS = conn.prepareStatement(courseUnitRequest);
+	    pS.setInt(1, courseUnitID);
+	    ResultSet resultSet = pS.executeQuery();
+	    if (resultSet.next()) {
 
-                // Setting attributs of courseUnit
-                requestedCourseUnit.setCourseID(resultSet.getInt("course_ID"));
-                requestedCourseUnit.setCourseUnitID(courseUnitID);
-                requestedCourseUnit.setDescription(resultSet
-                        .getString("description"));
-                requestedCourseUnit.setEndtime(new java.util.Date(resultSet
-                        .getDate("end_time").getTime()));
-                requestedCourseUnit.setStartime(new java.util.Date(resultSet
-                        .getDate("start_time").getTime()));
-                requestedCourseUnit.setMaxUsers(resultSet
-                        .getInt("max_participants"));
-                requestedCourseUnit.setMinUsers(resultSet
-                        .getInt("min_participants"));
-                requestedCourseUnit.setPrice(resultSet.getInt("fee"));
-                requestedCourseUnit.setTitle(resultSet.getString("titel"));
-                LogHandler.getInstance().debug(
-                        "Initialisieren von Kurseinheiten abgeschlossen");
+		// Setting attributs of courseUnit
+		requestedCourseUnit.setCourseID(resultSet.getInt("course_ID"));
+		requestedCourseUnit.setCourseUnitID(courseUnitID);
+		requestedCourseUnit.setDescription(resultSet
+			.getString("description"));
+		requestedCourseUnit.setEndtime(new java.util.Date(resultSet
+			.getDate("end_time").getTime()));
+		requestedCourseUnit.setStartime(new java.util.Date(resultSet
+			.getDate("start_time").getTime()));
+		requestedCourseUnit.setMaxUsers(resultSet
+			.getInt("max_participants"));
+		requestedCourseUnit.setMinUsers(resultSet
+			.getInt("min_participants"));
+		requestedCourseUnit.setPrice(resultSet.getInt("fee"));
+		requestedCourseUnit.setTitle(resultSet.getString("titel"));
+		LogHandler.getInstance().debug(
+			"Initialisieren von Kurseinheiten abgeschlossen");
 
-                // This is needed because the Database can return a Object null
-                Integer cycleIDexists = (Integer) resultSet
-                        .getObject("cycle_id");
-                if (cycleIDexists != null) {
-                    int cycleID = resultSet.getInt("cycle_id");
-                    pS.close();
-                    // resultSet.close();
+		// This is needed because the Database can return a Object null
+		Integer cycleIDexists = (Integer) resultSet
+			.getObject("cycle_id");
+		if (cycleIDexists != null) {
+		    int cycleID = resultSet.getInt("cycle_id");
+		    pS.close();
+		    // resultSet.close();
 
-                    String cycleRequest = "SELECT * FROM \"cycles\" WHERE id=?";
-                    PreparedStatement pSCycle = conn
-                            .prepareStatement(cycleRequest);
-                    pSCycle.setInt(1, cycleID);
-                    ResultSet resultSetCycle = pSCycle.executeQuery();
-                    if (resultSetCycle.next()) {
-                        courseCycle.setCourseID(resultSetCycle
-                                .getInt("course_id"));
-                        courseCycle.setCycleID(cycleID);
-                        courseCycle.setNumberOfUnits(resultSetCycle
-                                .getInt("cycle_end"));
+		    String cycleRequest = "SELECT * FROM \"cycles\" WHERE id=?";
+		    PreparedStatement pSCycle = conn
+			    .prepareStatement(cycleRequest);
+		    pSCycle.setInt(1, cycleID);
+		    ResultSet resultSetCycle = pSCycle.executeQuery();
+		    if (resultSetCycle.next()) {
+			courseCycle.setCourseID(resultSetCycle
+				.getInt("course_id"));
+			courseCycle.setCycleID(cycleID);
+			courseCycle.setNumberOfUnits(resultSetCycle
+				.getInt("cycle_end"));
 
-                        // TODO EMUMS anpassen EVTL
-                        String period = resultSetCycle.getString("period");
-                        switch (period) {
-                        case "DAYS":
-                            courseCycle.setTurnus(1);
-                            break;
-                        case "WEEKS":
-                            courseCycle.setTurnus(7);
-                            break;
-                        }
-                    }
-                    pSCycle.close();
-                    // resultSetCycle.close();
-                    requestedCourseUnit.setCycle(courseCycle);
-                    LogHandler.getInstance().debug(
-                            "Initialisieren von Cycle abgeschlossen");
-                } // TODO evtl ein else fall mit cycle -1 init
+			// TODO EMUMS anpassen EVTL
+			String period = resultSetCycle.getString("period");
+			switch (period) {
+			case "DAYS":
+			    courseCycle.setTurnus(1);
+			    break;
+			case "WEEKS":
+			    courseCycle.setTurnus(7);
+			    break;
+			}
+		    }
+		    pSCycle.close();
+		    // resultSetCycle.close();
+		    requestedCourseUnit.setCycle(courseCycle);
+		    LogHandler.getInstance().debug(
+			    "Initialisieren von Cycle abgeschlossen");
+		} // TODO evtl ein else fall mit cycle -1 init
 
-                String addressRequest = "SELECT * FROM \"course_unit_addresses\" WHERE course_unit_id=?";
+		String addressRequest = "SELECT * FROM \"course_unit_addresses\" WHERE course_unit_id=?";
 
-                PreparedStatement pSAddress = conn
-                        .prepareStatement(addressRequest);
-                pSAddress.setInt(1, courseUnitID);
-                ResultSet resultSetAddress = pSAddress.executeQuery();
+		PreparedStatement pSAddress = conn
+			.prepareStatement(addressRequest);
+		pSAddress.setInt(1, courseUnitID);
+		ResultSet resultSetAddress = pSAddress.executeQuery();
 
-                if (resultSetAddress.next()) {
-                    courseUnitAddress.setCity(resultSetAddress
-                            .getString("city"));
-                    courseUnitAddress.setCountry(resultSetAddress
-                            .getString("country"));
-                    courseUnitAddress.setHouseNumber(resultSetAddress
-                            .getInt("house_nr)"));
-                    courseUnitAddress.setId(resultSetAddress.getInt("id"));
-                    courseUnitAddress.setStreet(resultSetAddress
-                            .getString("street"));
-                    courseUnitAddress.setZipCode(Integer
-                            .parseInt(resultSetAddress.getString("zip_code")));
+		if (resultSetAddress.next()) {
+		    courseUnitAddress.setCity(resultSetAddress
+			    .getString("city"));
+		    courseUnitAddress.setCountry(resultSetAddress
+			    .getString("country"));
+		    courseUnitAddress.setHouseNumber(resultSetAddress
+			    .getInt("house_nr)"));
+		    courseUnitAddress.setId(resultSetAddress.getInt("id"));
+		    courseUnitAddress.setStreet(resultSetAddress
+			    .getString("street"));
+		    courseUnitAddress.setZipCode(Integer
+			    .parseInt(resultSetAddress.getString("zip_code")));
 
-                    LogHandler.getInstance().debug(
-                            "Initialisieren von Addresse abgeschlossen");
+		    LogHandler.getInstance().debug(
+			    "Initialisieren von Addresse abgeschlossen");
 
-                    requestedCourseUnit.setAddress(courseUnitAddress);
-                    LogHandler.getInstance().debug(
-                            "Initialisieren von Addresse abgeschlossen");
-                }
+		    requestedCourseUnit.setAddress(courseUnitAddress);
+		    LogHandler.getInstance().debug(
+			    "Initialisieren von Addresse abgeschlossen");
+		}
 
-            }
-            return requestedCourseUnit;
-        } catch (SQLException e) {
-            LogHandler.getInstance()
-                    .error("Error occured during getCourseUnit");
-            throw new InvalidDBTransferException();
-        }
+	    }
+	    return requestedCourseUnit;
+	} catch (SQLException e) {
+	    LogHandler.getInstance()
+		    .error("Error occured during getCourseUnit");
+	    throw new InvalidDBTransferException();
+	}
 
     }
 
@@ -340,7 +369,7 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(updateUnitQuery);
-	   
+
 	    stmt.executeUpdate();
 
 	    stmt = conn.prepareStatement(updateUnitAddressQuery);
@@ -473,7 +502,7 @@ public class CourseUnitDAO {
 	return price;
 
     }
-    
+
     /**
      * Adds a user to a course unit's list of participants.
      * <p>
