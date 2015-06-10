@@ -28,25 +28,25 @@
                             var="course" id="courseTable" class=" table table-hover"
                             cellspacing="0" width="100%">
                            <h:column>
-                                <f:facet name="columnheader">
+                                <f:facet name="header">
                                                ID
                                 </f:facet>
                                 <h:outputText value="#{course.courseID}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="columnheader">
+                                <f:facet name="header">
                                                Titel
                                 </f:facet>
                                 <h:outputText value="#{course.title}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="columnheader">
+                                <f:facet name="header">
                                                Ort
                                 </f:facet>
                                 <h:outputText value="#{course.nextCourseUnit.location}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="columnheader">
+                                <f:facet name="header">
                                                Beginn
                                 </f:facet>
                                 <h:outputText class="nowrap"
@@ -55,7 +55,7 @@
                                 </h:outputText>
                             </h:column>
                             <h:column>
-                                <f:facet name="columnheader">
+                                <f:facet name="header">
                                                Datum
                                 </f:facet>
                                 <h:outputText class="nowrap"
@@ -64,14 +64,14 @@
                                 </h:outputText>
                             </h:column>
                             <h:column>
-                                <f:facet name="columnheader" />
+                                <f:facet name="header" />
                                 <h:commandButton id="details" class="btn btn-info"
                                     value="Details"
                                     action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
                                     <f:param name="courseID" value="#{course.courseID}" />
                                 </h:commandButton>
                             </h:column>
-                            <f:facet name="pagination-navbar">
+                            <f:facet name="footer">
                                 <div class="row" style="text-align: center;">
                                     <ul class="pagination">
                                         <li><h:commandButton class="btn btn-info" value="Zurueck"

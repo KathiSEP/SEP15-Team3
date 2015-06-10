@@ -294,34 +294,34 @@
 									class=" table table-hover" cellspacing="0" width="100%">
 
 									<h:column>
-										<f:facet name="columnheader">
+										<f:facet name="header">
                                                BenutzerID
                                         </f:facet>
 										<h:outputText value="#{user.userID}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="columnheader">
+										<f:facet name="header">
                                                Name
                                         </f:facet>
 										<h:outputText value="#{user.lastname}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="columnheader">
+										<f:facet name="header">
                                                Vorname
                                         </f:facet>
 										<h:outputText value="#{user.firstname}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="columnheader">
+										<f:facet name="header">
                                         Auswählen
                                         </f:facet>
 										<h:selectBooleanCheckbox id="checked" value="#{user.selected}" />
 									</h:column>
 
-									<f:facet name="pagination-navbar">
+									<f:facet name="footer">
 										<div class="row" style="text-align: center;">
 											<ul class="pagination">
 												<li><h:commandButton class="btn btn-info"
