@@ -401,6 +401,23 @@ public class CourseUnitDAO {
      */
     public static void removeUserFromCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String removeUserFromCourse = "DELETE FROM \"course_unit_participants\" WHERE participant_id = ? AND course_unit_id = ?";
+
+        try {
+            CourseDAO.setRelationMethode(userID, courseUnitID, conn, removeUserFromCourse);
+            LogHandler.getInstance().error(
+                    "Deleting User:" + userID + " from course:" + courseUnitID
+                            + "was succesfull");
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "Error occured while trying to delete User:" + userID
+                            + " from course:" + courseUnitID);
+            throw new InvalidDBTransferException();
+        }
     }
 
     /**
