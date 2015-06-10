@@ -193,12 +193,17 @@
 
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Kursleiter:</span>
+										style="width: 160px; text-align: right;">ID Kursleiter:</span>
 									<h:inputText class="form-control" style="width:300px;"
 										id="leaderCourseUnit"
-										value="#{courseUnitManagementBean.courseUnit.courseAdmin.username}"
+										value="#{courseUnitManagementBean.courseUnit.courseAdmin.userID}"
 										required="true"
-										requiredMessage="Bitte geben Sie einen aktiven Kursleiter an. ">
+										requiredMessage="Bitte geben Sie die Id eines aktiven Kursleiters an. "
+										converterMessage="Die eingegebene ID ist keine Zahl. "
+										validatorMessage="Die eingegebene Zahl darf höchstens 10 Zeichen lang sein. ">
+										<f:convertNumber integerOnly="true" type="number"
+											maxIntegerDigits="10" />
+										<f:validateLength minimum="0" maximum="10" />
 									</h:inputText>
 								</div>
 

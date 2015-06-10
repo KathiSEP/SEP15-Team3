@@ -158,6 +158,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private PaginationData pagination;
 
+    public MailBean getMailBean() {
+        return mailBean;
+    }
+
+    public void setMailBean(MailBean mailBean) {
+        this.mailBean = mailBean;
+    }
+
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
 
@@ -311,16 +319,25 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * After the edit, the participants receive a message to inform about the
      * changes.
      * 
-     * @param editAllIfRegular
-     *            whether all course units of the cycle are to be edited
      * @return the link to this page
      */
     public String saveCourseUnit() {
 
+	
+	
+	
+	
+	
+	
 	System.out.println("Save Course Unit");
 	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
+    
+    private void editSingleUnit(){}
+    
+    
+    
     /**
      * Deletes the course unit from the course and returns the link to the
      * course details page.<br>
@@ -328,15 +345,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * money that the participants have paid for the course units is
      * automatically transfered back to their accounts.
      * 
-     * @param deleteAllIfRegular
-     *            whether the course unit takes place regularly or not
      * @return link to the course details page
      */
     public String deleteCourseUnit() {
 	transaction.start();
 	// TODO: Not YET Tested
 	try {
-
 	    if (this.courseUnit.getCycle() != null && deleteAll) {
 		ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
 			.getIdsCourseUnitsOfCycle(transaction,
