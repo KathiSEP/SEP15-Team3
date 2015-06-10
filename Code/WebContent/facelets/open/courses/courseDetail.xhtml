@@ -9,8 +9,8 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:composition template="/WEB-INF/template.xhtml">
 		<ui:define name="title"><h:outputText value="#{courseDetailBean.course.title}"/></ui:define>
-		<ui:define name="content">
-			<body>
+		<body>
+			<ui:define name="content">
 				<h1>Kursdetails</h1>
 				<div class="row">
 					<div class="col-lg-12">
@@ -98,7 +98,7 @@
                                 </h:outputText> 
                             </h:column>
                             <h:column>
-                           		<f:facet name="header">Uhrzet</f:facet>
+                           		<f:facet name="header">Uhrzeit</f:facet>
                                 <h:outputText value="#{courseUnit.startime}">
                                     <f:convertDateTime pattern="HH:mm"/>
                                 </h:outputText>
@@ -113,8 +113,8 @@
                             </h:column>
                             <h:column>
                             	<f:facet name="header">Status</f:facet>
-                            	<!--<h:outputText value="#{}"/> aus dao abfragen-->
-                            	<h:outputText value="/"/>
+                            	<!-- <h:outputText value=""/> aus dao abfragen -->
+                            	<h:outputText value=""/>
                             	<h:outputText value="#{courseUnit.maxUsers}"/>
                             </h:column>
                             <h:column>
@@ -128,7 +128,7 @@
                             <h:column>
                                 <f:facet name="header" />
                                 <h:commandButton id="details" class="btn btn-info" value="Details" 
-                                					action="">
+                                					action="#">
                                     <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
                                 </h:commandButton>
                             </h:column>
@@ -163,7 +163,7 @@
 						</div>
 					</div>
 				</div>
-			</body>
-		</ui:define>
+			</ui:define>
+		</body>
 	</ui:composition>
 </html>

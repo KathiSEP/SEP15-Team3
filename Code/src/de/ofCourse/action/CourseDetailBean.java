@@ -130,13 +130,14 @@ public class CourseDetailBean implements Pagination {
         courseID = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().
                                                             getRequestParameterMap().get("courseID"));
         transaction = Connection.create();
-        transaction.start();
         try {
             if (courseID > 0) {
+                transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
                 if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
                     isRegistered = true;
                 }
+                transaction.commit();
             }
         } catch(InvalidDBTransferException e) {
             transaction.rollback();
@@ -144,7 +145,6 @@ public class CourseDetailBean implements Pagination {
             courseID = 0;
             isRegistered = false;
         }
-        transaction.commit();
     }
 
     /**
