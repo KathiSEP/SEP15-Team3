@@ -446,7 +446,7 @@ public class UserDAO {
     	User user = null;
 		PreparedStatement stmt = null;
 		ResultSet rst = null;
-		String query = "SELECT * FROM \"users\" WHERE id=?";
+		String query = "SELECT nickname FROM \"users\" WHERE id=?";
 	
 		try {
 		    stmt = conn.prepareStatement(query);
@@ -454,8 +454,7 @@ public class UserDAO {
 		    
 		    rst = stmt.executeQuery();
 		    if (rst.next()) {
-				String username = rst.getString("nickname");
-				user = getUser(trans, username);
+				user = getUser(trans, rst.getString(1));
 		    }
 		} catch (SQLException e) {
 			LogHandler.getInstance()
