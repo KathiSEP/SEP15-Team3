@@ -47,6 +47,9 @@ public class RegisterUserBean {
      */
     private Transaction transaction;
 
+    /**
+     * 
+     */
     private boolean testing = false;
 
     /**
@@ -55,9 +58,14 @@ public class RegisterUserBean {
      */
     private User userToRegistrate;
 
+    /**
+     * The Salutation which was selected by the user.
+     */
     private String saluString;
 
     /**
+     * Sets the value of the attribute <code>userToRegistrate</code>.
+     * 
      * @param userToRegistrate
      *            the userToRegistrate to set
      */
@@ -72,8 +80,15 @@ public class RegisterUserBean {
         this.testing = true;
     }
 
+    /**
+     * The password which was inserted by the user.
+     */
     private String registerPassword;
 
+    /**
+     * The password which was inserted by the user to confirm the first 
+     * inserted password.
+     */
     private String registerConfirmPassword;
 
     /**
@@ -84,10 +99,15 @@ public class RegisterUserBean {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    /**
+     * This ManagedProperty
+     */
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
 
     /**
+     * Returns the ManagedProperty <code>MailBean</code>.
+     * 
      * @return the mail
      */
     public MailBean getMailBean() {
@@ -95,6 +115,8 @@ public class RegisterUserBean {
     }
 
     /**
+     * Sets the ManagedProperty <code>MailBean</code>.
+     * 
      * @param mail
      *            the mail to set
      */
@@ -102,6 +124,9 @@ public class RegisterUserBean {
         this.mailBean = mailBean;
     }
 
+    /**
+     * Checks if the URL of the index page contains the parameter 'veri'.
+     */
     @PostConstruct
     private void init() {
         HttpServletRequest request = (HttpServletRequest) FacesContext
@@ -128,7 +153,7 @@ public class RegisterUserBean {
      * with a verification link to the entered email address which is used to
      * ensure that the entered email address really exists.<br>
      * If there goes something wrong during registration, e.g. the chosen
-     * username is already in use, a error message is displayed.
+     * user name is already in use, a error message is displayed.
      */
     public String registerUser() {
 
@@ -146,24 +171,22 @@ public class RegisterUserBean {
             return "/facelets/open/index.xhtml?faces-redirect=false";
         } else {
 
-            // Datenbankverbindung initialisieren
+            // Initialize database connection
             this.transaction = Connection.create();
             transaction.start();
             try {
-                // Eingegebenes Passwort hashen
-                //TODO generate Salt methode fehlt, hier nur username als salt übergeben
-                //String salt = this.getUserToRegistrate().getUsername();
+                // Hash the inserted password.
+                // Generate the salt.
                 Date currentTime = new Date();
                 String salt = currentTime.getTime() * Math.random() + "";
                 String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
                         salt);
-                // Überprüfen, ob die eingegebene E-Mail-Adresse im System
-                // bereits existiert.
+                // Check if the inserted mail already exists in the system.
                 if (UserDAO.emailExists(transaction, this.getUserToRegistrate()
                         .getEmail())) {
 
-                    // Fehlermeldung in den FacesContext werfen, wenn die Mail
-                    // schon existiert.
+                    // Throwing error message into the faces context if the 
+                    // mail already exists.
                     FacesMessageCreator.createFacesMessage(null,
                             "E-Mail existiert bereits!");
 
@@ -171,9 +194,8 @@ public class RegisterUserBean {
                     return "/facelets/open/authenticate.xhtml?faces-redirect=false";
                 } else {
 
-                    // Gibt es die angegebene E-Mail-Adresse noch nicht,
-                    // erstelle einen
-                    // neuen Benutzer.
+                    // If the inserted mail doesn't already exist, create a 
+                    //new user.
                     veriString = UserDAO.createUser(this.transaction,
                             this.getUserToRegistrate(), passwordHash, salt);
 
@@ -191,7 +213,7 @@ public class RegisterUserBean {
             }
         }
 
-        // Erfolgsmeldung in den FacesContext werfen.
+        // Throwing success message into the faces context.
         FacesMessageCreator
                 .createFacesMessage(
                         null,

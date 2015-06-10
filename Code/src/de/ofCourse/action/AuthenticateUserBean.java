@@ -20,7 +20,7 @@ import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Provides the function that a user can log in the system by entering his
- * username and his password.<br>
+ * user name and his password.<br>
  * <p>
  * It is checked whether the user is registered in the system.<br>
  * In case of this is true, the user is logged in the system. Otherwise the
@@ -42,10 +42,15 @@ public class AuthenticateUserBean {
      */
     private User loginUser;
 
+    /**
+     * This managed Property 
+     */
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
 
     /**
+     * Returns the ManagedProperty <code>MailBean</code>.
+     * 
      * @return the mailBean
      */
     public MailBean getMailBean() {
@@ -53,6 +58,8 @@ public class AuthenticateUserBean {
     }
 
     /**
+     * Sets the ManagedProperty <code>MailBean</code>.
+     * 
      * @param mailBean
      *            the mailBean to set
      */
@@ -78,18 +85,21 @@ public class AuthenticateUserBean {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    /**
+     * 
+     */
     @PostConstruct
     private void init() {
-        // Session neu initialisieren, da auf der Login-Seite noch keiner
-        // eingeloggt sein kann.
+        // Initialize new session, because nothing could be logged in at 
+        // the login page yet..
         loginUser = new User();
     }
 
     /**
      * Returns the link to the <code>myCourses</code> page if the entered
-     * username and the respective password are valid.
+     * user name and the respective password are valid.
      * <p>
-     * It is checked whether the entered username and the respective password
+     * It is checked whether the entered user name and the respective password
      * belong to a user that is registered in the system. If this is true, the
      * log in action is successful and the user is directed to his
      * <code>myCourses</code> page.<br>
@@ -106,11 +116,11 @@ public class AuthenticateUserBean {
 
         int id = dbErrorOccured;
 
-        // Neues Transaction Objekt erstellen für die Datenbankverbindung
+        // Create a new transaction object for the database connection. 
         this.transaction = Connection.create();
         this.transaction.start();
         try {
-            // Eingegebenes Passwort hashen
+            // hash inserted password
             String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
                         .getUsername());
             if(salt == null) {
@@ -118,47 +128,45 @@ public class AuthenticateUserBean {
                         "Benutzername oder Passwort falsch!");
             } else {
                 String passwordHash = PasswordHash.hash(this.loginPassword, salt);
-                // Überprüfen, ob Benutzername und Passwort gültig sind passwordHash
-                // oder this.loginPassword
+                // Checks if the username and the password are valid.
                 id = UserDAO.proveLogin(this.transaction, this.getLoginUser()
                         .getUsername(), passwordHash);
     
-                // Methode proveLogin gibt -1 zurück, wenn der Benutzername oder das
-                // Passwort falsch sind
-                // -2 wird zurückgegeben, wenn das Benutzerkonto noch nicht
-                // aktiviert
-                // wurde.
-                // Ansonsten wird die ID des Benutzers zurückgegeben
+                // Method proveLogin returns -1, if user name ore password are 
+                // wrong.
+                // Returns -2 if the user account is not activated yet.
+                // Else it returns the id of the user.
                 if (id == usernameOrPasswordWrong) {
-                    // Fehlermeldung in den FacesContext werfen.
+                    // Throwing error message into the faces context.
                     FacesMessageCreator.createFacesMessage(null,
                             "Benutzername oder Passwort falsch!");
     
-                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                    // fehlgeschlagen ist.
+                    // Return to the login page again, because the login went 
+                    // wrong.
                     this.transaction.rollback();
                     return "/facelets/open/authenticate.xhtml?faces-redirect=false";
                 } else if (id == accountNotActivated) {
-                    // Fehlermeldung in den FacesContext werfen.
+                    // Throwing error message into the faces context
                     FacesMessageCreator.createFacesMessage(null,
                             "Benutzerkonto nicht aktiv!");
     
-                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                    // fehlgeschlagen ist.
+                    // Return to the login page again, because the login went 
+                    // wrong.
                     this.transaction.rollback();
                     return "/facelets/open/authenticate.xhtml?faces-redirect=false";
                 } else if (id == dbErrorOccured) {
-                    // Fehlermeldung in den FacesContext werfen.
+                    // Throwing error message into the faces context.
                     FacesMessageCreator.createFacesMessage(null,
                             "Benutzerkonto nicht aktiv!");
     
-                    // Wieder auf die Loginseite leiten, da der Login-Vorgang ja
-                    // fehlgeschlagen ist.
+                    // Return to the login page again, because the login went 
+                    // wrong.
                     this.transaction.rollback();
                     return "/facelets/open/authenticate.xhtml?faces-redirect=false";
                 } else {
-                    // Sessionobjekt mit Benutzerdaten füllen, noch nicht vorhandene
-                    // Daten mittels Benutzerid von der Datenbank abfragen.
+                    // Filling the session object with the user data, 
+                    // interrogate not yet available data from the database 
+                    // by using the user id.
                     sessionUser.setLanguage(Language.DE);
                     sessionUser.setUserID(id);
                     sessionUser.setUserRole(UserDAO.getUserRole(this.transaction,
@@ -166,7 +174,8 @@ public class AuthenticateUserBean {
                     sessionUser.setUserStatus(UserDAO.getUserStatus(
                             this.transaction, id));
     
-                    // HTTP-Session mit Benutzerdaten füllen für PhaseListener
+                    // Filling the HTTP-Session with the user data for the 
+                    // PhaseListener.
                     HttpSession session = (HttpSession) FacesContext
                             .getCurrentInstance().getExternalContext()
                             .getSession(true);
@@ -174,8 +183,8 @@ public class AuthenticateUserBean {
                     session.setAttribute("userID", id);
                     session.setAttribute("userRole", sessionUser.getUserRole());
     
-                    // Auf myCourses Seite weiterleiten, da der Login-Vorgang
-                    // erfolgreich war.
+                    // Forwarding to the page myCourses, because the login was 
+                    // successful.
                     this.transaction.commit();
                     return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
                 }
