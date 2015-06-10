@@ -139,14 +139,25 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private boolean editMode;
 
     /**
-     * Stores whether all course units of the corresponding cycle are to delete.
+     * Stores whether all course units of the corresponding cycle are affected.
      */
-    private boolean deleteAll;
+    private boolean completeCycle;
+
+   
 
     /**
-     * Stores whether all course units of the corresponding cycle are to edit.
+     * @return the completeCycle
      */
-    private boolean editAll;
+    public boolean isCompleteCycle() {
+        return completeCycle;
+    }
+
+    /**
+     * @param completeCycle the completeCycle to set
+     */
+    public void setCompleteCycle(boolean completeCycle) {
+        this.completeCycle = completeCycle;
+    }
 
     private int courseUnitID = 0;
 
@@ -182,6 +193,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private void init() {
 	pagination = new PaginationData(elementsPerPage, 0, "title", true);
 	this.participants = new ListDataModel<User>();
+	this.userToAdd = new User();
 	this.usersToDelete = new ArrayList<User>();
 	courseUnit = new CourseUnit();
 	courseUnit.setAddress(new Address());
@@ -223,7 +235,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	   this.courseUnit = CourseUnitDAO.getCourseUnit(transaction, courseUnitID);
+	  this.courseUnit = CourseUnitDAO.getCourseUnit(transaction, courseUnitID);
 	   if(courseUnit.getCycle() == null){
 	       courseUnit.setCycle(new Cycle());
 	   }
@@ -240,7 +252,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    + " page with elements from database.");
 	    this.transaction.rollback();
 	}
-
+       System.out.println("CycleId fetched: " + courseUnit.getCycle().getCycleID());
 
     }
 
@@ -255,6 +267,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return link to the courseDetails page
      */
     public String createCourseUnit() {
+	System.out.println("Drinnen");
 	transaction.start();
 	try {
 
@@ -335,7 +348,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	// TODO: Not YET Tested
 	try {
-	    if (editAll && this.courseUnit.getCycle() != null) {
+	    if (completeCycle && this.courseUnit.getCycle() != null) {
 		ArrayList<Integer> idsToEdit = (ArrayList<Integer>) CourseUnitDAO
 			.getIdsCourseUnitsOfCycle(transaction,
 				courseUnit.getCourseUnitID());
@@ -395,7 +408,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	// TODO: Not YET Tested
 	try {
-	    if (this.courseUnit.getCycle() != null && deleteAll) {
+	    if (this.courseUnit.getCycle() != null && completeCycle) {
 		ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
 			.getIdsCourseUnitsOfCycle(transaction,
 				courseUnit.getCourseUnitID());
@@ -798,19 +811,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	return calculated;
     }
 
-    /**
-     * @return
-     */
-    public boolean isDeleteAll() {
-	return deleteAll;
-    }
-
-    /**
-     * @param deleteAll
-     */
-    public void setDeleteAll(boolean deleteAll) {
-	this.deleteAll = deleteAll;
-    }
+   
 
     /**
      * Calculates the <code>starttime</code> and the <code>endtime</code> of a
@@ -832,13 +833,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	courseUnit.setEndtime(new Date(date.getTime()));
     }
 
-    public boolean isEditAll() {
-	return editAll;
-    }
-
-    public void setEditAll(boolean editAll) {
-	this.editAll = editAll;
-    }
+   
 
     public int getSelectedToInform() {
 	return selectedToInform;

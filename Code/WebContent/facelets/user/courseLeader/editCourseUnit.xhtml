@@ -10,7 +10,12 @@
 	<ui:define name="title">Kurseinheit anlegen/bearbeiten</ui:define>
 	<ui:define name="content">
 		<body>
-			<h1>Kurseinheit anlegen/bearbeiten</h1>
+			<h:form rendered="#{!courseUnitManagementBean.editMode}">
+				<h1>Kurseinheit anlegen</h1>
+			</h:form>
+			<h:form rendered="#{courseUnitManagementBean.editMode}">
+				<h1>Kurseinheit bearbeiten</h1>
+			</h:form>
 			<div class="row">
 				<div class="col-lg-12">
 					<h:message for="titleCourseUnit" style="color:red" />
@@ -76,7 +81,8 @@
 										value="#{courseUnitManagementBean.start}" required="true"
 										requiredMessage="Bitte geben Sie einen Beginn ein. "
 										converterMessage="Datum existiert nicht oder Format (HH:mm) ist falsch. ">
-										<f:convertDateTime pattern="HH:mm" timeZone="Europe/Berlin" />
+										<f:convertDateTime pattern="HH:mm" type="time"
+											timeZone="Europe/Berlin" />
 									</h:inputText>
 								</div>
 
@@ -88,7 +94,8 @@
 										required="true"
 										requiredMessage="Bitte geben Sie ein Ende ein. "
 										converterMessage="Datum existiert nicht oder Format (HH:mm) ist falsch. ">
-										<f:convertDateTime pattern="HH:mm" timeZone="Europe/Berlin" />
+										<f:convertDateTime pattern="HH:mm" type="time"
+											timeZone="Europe/Berlin" />
 									</h:inputText>
 								</div>
 
@@ -201,8 +208,8 @@
 										requiredMessage="Bitte geben Sie die Id eines aktiven Kursleiters an. "
 										converterMessage="Die eingegebene ID ist keine Zahl. "
 										validatorMessage="Die eingegebene Zahl darf höchstens 10 Zeichen lang sein. ">
-										<f:convertNumber integerOnly="true" type="number"
-											maxIntegerDigits="10" />
+										<f:convertNumber integerOnly="true" pattern="#000000000"
+											type="number" />
 										<f:validateLength minimum="0" maximum="10" />
 									</h:inputText>
 								</div>
@@ -237,52 +244,89 @@
 
 								<br />
 								<br />
-								<div>
-									<h:selectBooleanCheckbox
-										value="#{courseUnitManagementBean.regularCourseUnit}" />
-									Regelmäßige Kurseinheit
-								</div>
+								<h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
+									<div class="checkbox">
+										<label> <h:selectBooleanCheckbox
+												value="#{courseUnitManagementBean.regularCourseUnit}" />
+											Regelmäßige Kurseinheit
+										</label>
+									</div>
+									<br />
+									<div class="input-group">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Turnus:</span>
+										<h:selectOneMenu class="form-control" id="turnusCourseUnit"
+											value="#{courseUnitManagementBean.courseUnit.cycle.turnus}">
+											<f:selectItem itemValue="1" itemLabel="Täglich" />
+											<f:selectItem itemValue="7" itemLabel="Wöchentlich" />
+										</h:selectOneMenu>
+									</div>
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Anzahl
+											Einheiten:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="numberOfCourseUnits"
+											value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
+											converterMessage="Die eingegebene Anzahl ist keine Zahl. "
+											validatorMessage="Die eingegebene Anzahl an Einheiten darf höchstens 3 Zeichen lang sein. ">
+											<f:convertNumber integerOnly="true" maxIntegerDigits="3"
+												type="number" />
+											<f:validateLength minimum="0" maximum="3" />
+										</h:inputText>
+									</div>
+								</h:panelGroup>
 								<br />
-								<div class="input-group">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Turnus:</span>
-									<h:selectOneMenu class="form-control" id="turnusCourseUnit"
-										value="#{courseUnitManagementBean.courseUnit.cycle.turnus}">
-										<f:selectItem itemValue="1" itemLabel="Täglich" />
-										<f:selectItem itemValue="7" itemLabel="Wöchentlich" />
-									</h:selectOneMenu>
-								</div>
-								<div class="input-group" style="padding-top: 5px;">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Anzahl
-										Einheiten:</span>
-									<h:inputText class="form-control" style="width:300px;"
-										id="numberOfCourseUnits"
-										value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
-										converterMessage="Die eingegebene Anzahl ist keine Zahl. "
-										validatorMessage="Die eingegebene Anzahl an Einheiten darf höchstens 3 Zeichen lang sein. ">
-										<f:convertNumber integerOnly="true" maxIntegerDigits="3"
-											type="number" />
-										<f:validateLength minimum="0" maximum="3" />
-									</h:inputText>
-								</div>
+								<br />
+								<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+									<div class="input-group">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Benachrichtigungen
+											senden an:</span>
+										<h:selectOneMenu class="form-control" id="messageCourseUnit"
+											width="100%"
+											value="#{courseUnitManagementBean.selectedToInform}">
+											<f:selectItem itemValue="0" itemLabel="Niemanden" />
+											<f:selectItem itemValue="1"
+												itemLabel="Teilnehmer der Kurseinheit" />
+										</h:selectOneMenu>
+									</div>
+								</h:panelGroup>
 								<br />
 								<br />
 								<h:commandButton id="createCourseUnit"
 									rendered="#{!courseUnitManagementBean.editMode}"
 									action="#{courseUnitManagementBean.createCourseUnit}"
-									class="btn btn-info" value="Kurseinheit anlegen" />
-
-								<h:commandButton id="saveCourseUnit"
-									rendered="#{courseUnitManagementBean.editMode}"
-									action="#{courseUnitManagementBean.saveCourseUnit}"
-									class="btn btn-info" value="Speichern" />
-
-								<h:commandButton id="deleteCourseUnit"
-									rendered="#{courseUnitManagementBean.editMode}"
-									action="#{courseUnitManagementBean.deleteCourseUnit}"
-									class="btn btn-info pull-right" value="Löschen" />
-
+									class="btn btn-info" value="Kurseinheit anlegen">
+									<f:param name="courseID"
+										value="#{courseUnitManagementBean.courseUnit.courseID}" />
+								</h:commandButton>
+								<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+									<div class="input-group" style="padding-top: 5px;">
+										<div class="checkbox">
+											<h:panelGroup
+												rendered="#{!(courseUnitManagementBean.courseUnit.cycle.cycleID==0)}">
+												<label> <h:selectBooleanCheckbox
+														value="#{courseUnitManagementBean.completeCycle}" /> Alle
+													Einheiten des Zyklus miteinbeziehen
+												</label>
+											</h:panelGroup>
+										</div>
+									</div>
+									<br />
+									<h:commandButton id="saveCourseUnit"
+										action="#{courseUnitManagementBean.saveCourseUnit}"
+										class="btn btn-info" value="Speichern">
+										<f:param name="courseID"
+											value="#{courseUnitManagementBean.courseUnit.courseID}" />
+									</h:commandButton>
+									<h:commandButton id="deleteCourseUnit"
+										action="#{courseUnitManagementBean.deleteCourseUnit}"
+										class="btn btn-info pull-right" value="Löschen">
+										<f:param name="courseID"
+											value="#{courseUnitManagementBean.courseUnit.courseID}" />
+									</h:commandButton>
+								</h:panelGroup>
 							</h:form>
 						</div>
 					</div>
