@@ -351,18 +351,23 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    .getTime() + difference_start_time));
 		    tempUnit.setEndtime(new Date(tempUnit.getEndtime()
 			    .getTime() + difference_end_time));
-		    
+
 		    // Update tempUnit with other entered values
 		    tempUnit.setTitle(courseUnit.getTitle());
 		    tempUnit.setMinUsers(courseUnit.getMinUsers());
 		    tempUnit.setMaxUsers(courseUnit.getMaxUsers());
 		    tempUnit.setPrice(courseUnit.getPrice());
 		    tempUnit.setDescription(courseUnit.getDescription());
-		    tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());	    
-		    
+		    tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
+
 		    // update tempUnit
 		    CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
 
+		    // Send info mail
+		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+			    .getParticipiantsOfCourseUnit(transaction,
+				    pagination, id, true);
+		    this.sendMailToSelected(transaction, participants);
 		}
 	    } else {
 		// New dates are already calculated
@@ -378,9 +383,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	System.out.println("Save Course Unit");
 	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
-    }
-
-    private void editSingleUnit() {
     }
 
     /**

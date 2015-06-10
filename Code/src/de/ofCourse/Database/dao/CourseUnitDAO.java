@@ -477,8 +477,9 @@ public class CourseUnitDAO {
 	    int courseUnitId) {
 	ArrayList<Integer> ids = new ArrayList<Integer>();
 	// The queries to execute
-	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
-	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE cycle_id=?";
+	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE"
+		+ " id=?";
+	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE cycle_id=? AND course_units.start_time >= CURRENT_DATE";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
