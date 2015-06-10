@@ -147,7 +147,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private boolean saveAll;
 
-    private int courseUnitId = 0;
+    private int courseUnitID = 0;
 
     private int courseID;
 
@@ -192,26 +192,34 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    editMode = false;
 	}
 
+	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+		.getExternalContext().getRequestParameterMap().get("courseID"));
 	if (editMode) {
-
+	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+		    .getExternalContext().getRequestParameterMap()
+		    .get("courseUnitID"));
 	} else {
-
+	    courseUnitID = 0;
 	}
 
 	this.courseID = 10000;
-	this.courseUnitId = 10000;
+	this.courseUnitID = 10000;
 	this.editMode = false;
 
 	transaction = Connection.create();
 	transaction.start();
 
+	// Initializes the pagination and if in edit mode the displayed course
+	// unit
 	try {
 
+	    this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+		    courseUnitID);
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
-		    .getNumberOfParticipants(transaction, courseUnitId));
+		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitId, false));
+			    courseUnitID, false));
 
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
@@ -221,12 +229,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.transaction.rollback();
 	}
 
+	// ///////////////////////////////////////////////////
 	courseUnit.getAddress().setHouseNumber(6);
 	courseUnit.getAddress().setStreet("Roehrn");
 	courseUnit.getAddress().setCity("Ortenburg");
 	courseUnit.getAddress().setZipCode(94496);
 	courseUnit.setDescription("Das ist eine Beschreibung");
 	courseUnit.getCourseAdmin().setUsername("Sepp");
+	// ///////////////////////////////////////
 
     }
 
@@ -350,7 +360,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	try {
 	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, null,
-			    courseUnitId, true);
+			    courseUnitID, true);
 	    for (User user : participants) {
 		CourseUnitDAO.removeUserFromCourseUnit(transaction,
 			sessionUser.getUserID(), courseUnit.getCourseUnitID());
@@ -471,7 +481,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    // Updates the shown list with the actual data
 	    this.participants.setWrappedData(CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitId, false));
+			    courseUnitID, false));
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
@@ -620,7 +630,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	try {
 	    this.participants.setWrappedData(CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitId, false));
+			    courseUnitID, false));
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
@@ -679,7 +689,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return the id of the initialized course unit
      */
     public int getCourseUnitId() {
-	return courseUnitId;
+	return courseUnitID;
     }
 
     /**
@@ -689,7 +699,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      *            the courseUnitId of the course unit to initialize
      */
     public void setCourseUnitId(int courseUnitId) {
-	this.courseUnitId = courseUnitId;
+	this.courseUnitID = courseUnitId;
     }
 
     /**

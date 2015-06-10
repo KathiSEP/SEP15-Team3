@@ -242,7 +242,7 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Turnus:</span>
 									<h:selectOneMenu class="form-control" id="turnusCourseUnit"
-										value="#{courseUnitManagementBean.cycleOfCourseUnit.turnus}">
+										value="#{courseUnitManagementBean.courseUnit.cycle.turnus}">
 										<f:selectItem itemValue="1" itemLabel="Täglich" />
 										<f:selectItem itemValue="7" itemLabel="Wöchentlich" />
 									</h:selectOneMenu>
@@ -253,7 +253,7 @@
 										Einheiten:</span>
 									<h:inputText class="form-control" style="width:300px;"
 										id="numberOfCourseUnits"
-										value="#{courseUnitManagementBean.cycleOfCourseUnit.numberOfUnits}"
+										value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
 										converterMessage="Die eingegebene Anzahl ist keine Zahl. "
 										validatorMessage="Die eingegebene Anzahl an Einheiten darf höchstens 3 Zeichen lang sein. ">
 										<f:convertNumber integerOnly="true" maxIntegerDigits="3"

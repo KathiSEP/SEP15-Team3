@@ -67,7 +67,6 @@ public class CourseUnit implements Serializable {
     
     
     /**
-     * 
      * Stores the CourseID, this CourseUnit belongs to
      */
     private int courseID;

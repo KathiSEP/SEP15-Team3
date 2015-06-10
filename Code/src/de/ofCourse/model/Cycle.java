@@ -13,9 +13,11 @@ import java.util.Date;
  *
  */
 public class Cycle {
-	
-	
-	private int cycleID;
+
+    /**
+     * stores the id of the cycle
+     */
+    private int cycleID;
 
     /**
      * stores the Date and time when the first courseUnit will take place
@@ -33,7 +35,7 @@ public class Cycle {
     /**
      * Returns the value of the attribute <code>courseID</code>.
      * 
-     * @return the id of the associated course 
+     * @return the id of the associated course
      */
     public int getCourseID() {
 	return this.courseID;
@@ -61,7 +63,7 @@ public class Cycle {
      * Sets the value of the attribute <code>courseId</code>.
      * 
      * @param courseID
-     *          the associated courseID
+     *            the associated courseID
      */
     public void setCourseID(int courseID) {
 	this.courseID = courseID;
@@ -71,7 +73,7 @@ public class Cycle {
      * Sets the value of the attribute <code>turnus</code>.
      * 
      * @param turnus
-     *          new turnus to set
+     *            new turnus to set
      */
     public void setTurnus(int turnus) {
 	this.turnus = turnus;
@@ -81,17 +83,28 @@ public class Cycle {
      * Sets the value of the attribute <code>numberOfUnits</code>.
      * 
      * @param numberOfUnits
-     *          new amount of Units to set
+     *            new amount of Units to set
      */
     public void setNumberOfUnits(int numberOfUnits) {
 	this.numberOfUnits = numberOfUnits;
     }
 
-	public int getCycleID() {
-		return cycleID;
-	}
+    /**
+     * Returns the id of the cycle.
+     * 
+     * @return the id of the cycle
+     */
+    public int getCycleID() {
+	return cycleID;
+    }
 
-	public void setCycleID(int cycleID) {
-		this.cycleID = cycleID;
-	}
+    /**
+     * Sets the id of the cycle to the given value.
+     * 
+     * @param cycleID
+     *            the given cycle id
+     */
+    public void setCycleID(int cycleID) {
+	this.cycleID = cycleID;
+    }
 }

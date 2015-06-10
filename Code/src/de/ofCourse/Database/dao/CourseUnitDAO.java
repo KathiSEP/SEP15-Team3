@@ -212,6 +212,9 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
+	
+	
+	
     }
 
     /**
