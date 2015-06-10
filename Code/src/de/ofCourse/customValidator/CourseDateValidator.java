@@ -16,6 +16,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
+ * Checks if the inserted start date is before the inserted end date.
  * 
  * @author Katharina Hölzl
  *
@@ -24,6 +25,10 @@ import javax.faces.validator.ValidatorException;
 @FacesValidator("courseDateValidator")
 public class CourseDateValidator implements Validator {
 
+    /**
+     * Gets called for example when a new course is created and checks if the 
+     * inserted start date is before the inserted end date.
+     */
     @Override
     public void validate(FacesContext fc, UIComponent component, Object value)
             throws ValidatorException {
