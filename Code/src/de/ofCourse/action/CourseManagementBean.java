@@ -54,6 +54,9 @@ public class CourseManagementBean {
      */
     private Course course;
     
+    /**
+     * Stores the image of the course.
+     */
     private Part courseImage;
     
     /**
@@ -61,6 +64,9 @@ public class CourseManagementBean {
      */
     private Integer courseLeaderID;
     
+    /**
+     * Initialization of objects.
+     */
     @PostConstruct
     private void init() {
         this.course = new Course();
@@ -82,27 +88,20 @@ public class CourseManagementBean {
         this.transaction = Connection.create();
         transaction.start();
         try {
-            // Überprüfen, ob die eingegebene E-Mail-Adresse im System
-            // bereits existiert.
-            
+            // Create course.
             createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
             this.transaction.commit();
             
             if (createdCourseID < 0) {
 
-                // Fehlermeldung in den FacesContext werfen, wenn die Mail
-                // schon existiert.
+                //Throwing error message into the faces context.
                 FacesMessageCreator.createFacesMessage(null,
                         "Beim Erstellen des Kurses trat ein Fehler auf!");
 
                 return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
             } else {
 
-                // Gibt es die angegebene E-Mail-Adresse noch nicht,
-                // erstelle einen
-                // neuen Benutzer.
-                
-                // Erfolgsmeldung in den FacesContext werfen.
+                // Throwing success message into the faces context..
                 FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
                 return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
             }
@@ -153,15 +152,28 @@ public class CourseManagementBean {
         this.sessionUser = userSession;
     }
 
+    /**
+     * Returns the value of the attribute <code>courseImage</code>.
+     * 
+     * @return the image of he course
+     */
     public Part getCourseImage() {
         return courseImage;
     }
 
+    /**
+     * Sets the value of the attribute <code>courseImage</code>.
+     * 
+     * @param courseImage
+     *                  image of the course
+     */
     public void setCourseImage(Part courseImage) {
         this.courseImage = courseImage;
     }
 
     /**
+     * Returns the value of the attribute <code>courseLeaderID</code>.
+     * 
      * @return the courseLeaderID
      */
     public Integer getCourseLeaderID() {
@@ -169,6 +181,8 @@ public class CourseManagementBean {
     }
 
     /**
+     * Sets the value of the attribute <code>courseLeaderID</code>.
+     * 
      * @param courseLeaderID the courseLeaderID to set
      */
     public void setCourseLeaderID(Integer courseLeaderID) {
