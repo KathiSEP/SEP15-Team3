@@ -334,7 +334,7 @@ public class CourseDAO {
                 + "courses.end_date FROM \"courses\", \"course_units\" "
                 + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' ORDER BY ? "
                 + dir + " LIMIT ? OFFSET ?";
-        String getAllCourses = "SELECT * FROM \"courses\" ORDER BY ? " + dir
+        String getAllCourses = "SELECT * FROM \"courses\" ORDER BY %s %s"
                 + " LIMIT ? OFFSET ?";
 
         switch (period) {
@@ -348,7 +348,7 @@ public class CourseDAO {
             break;
         case "total":
             result = getCoursesInPeriod(conn, limit, offset, orderParam,
-                    getAllCourses);
+                    String.format(getAllCourses, orderParam, dir));
             break;
         default:
             ;
@@ -376,10 +376,13 @@ public class CourseDAO {
 
         try {
             stmt = conn.prepareStatement(query);
-            stmt.setString(1, orderParam);
-            stmt.setInt(2, limit);
-            stmt.setInt(3, offset);
+            //stmt.setString(1, orderParam);
+            stmt.setInt(1, limit);
+            stmt.setInt(2, offset);
             rst = stmt.executeQuery();
+            
+            System.out.println(stmt.toString());
+            
             result = getResult(rst);
         } catch (SQLException e) {
         	LogHandler.getInstance().error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
