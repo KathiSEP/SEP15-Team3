@@ -18,6 +18,15 @@
   <welcome-file-list>
     <welcome-file>facelets/open/index.xhtml</welcome-file>
   </welcome-file-list>
+
+    <servlet>
+    <servlet-name>UserPictureHandler</servlet-name> 
+    <servlet-class>de.ofCourse.utilities.UserPictureHandler</servlet-class> 
+    </servlet>
+ <servlet-mapping>
+    <servlet-name>UserPictureHandler</servlet-name>   
+    <url-pattern>/userImage/*</url-pattern>  
+</servlet-mapping>
   
   <filter>
 

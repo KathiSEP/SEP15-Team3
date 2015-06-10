@@ -56,7 +56,7 @@ public class Course implements Serializable {
     /**
      * Stores the Logo of the Course
      */
-    private String courseImage;
+    private byte[] courseImage;
    
 
     /**
@@ -118,7 +118,7 @@ public class Course implements Serializable {
      * 
      * @return the logo of the Course
      */
-    public String getCourseImage() {
+    public byte[] getCourseImage() {
 	return courseImage;
     }
 
@@ -191,7 +191,7 @@ public class Course implements Serializable {
      * @param image
      *          new course logo to set
      */
-    public void setCourseImage(String image) {
+    public void setCourseImage(byte[] image) {
 	this.courseImage = image;
     }
 

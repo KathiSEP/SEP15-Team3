@@ -52,7 +52,7 @@ public class User implements Serializable {
     /**
      * stores the profil image of the user
      */
-    private String profilImage;
+    private byte[] profilImage;
     /**
      * stores the role which the user has in the System
      */
@@ -170,7 +170,7 @@ public class User implements Serializable {
      * 
      * @return the profilImage of the user
      */
-    public String getProfilImage() {
+    public byte[] getProfilImage() {
 	return this.profilImage;
     }
 
@@ -334,7 +334,7 @@ public class User implements Serializable {
      * @param profilImage
      *          new profil Image to set
      */
-    public void setProfilImage(String profilImage) {
+    public void setProfilImage(byte[] profilImage) {
 	this.profilImage = profilImage;
     }
 
