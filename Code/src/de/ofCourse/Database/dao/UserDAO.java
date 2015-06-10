@@ -785,7 +785,7 @@ public class UserDAO {
 		    break;
 		}
 
-		user.setProfilImage(res.getString("profile_image"));
+		user.setProfilImage(res.getBytes("profile_image"));
 
 		String userRole = res.getString("role");
 		switch (userRole) {
