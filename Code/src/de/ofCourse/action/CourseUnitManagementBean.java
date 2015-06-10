@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -201,8 +202,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	    //this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
-		//    courseUnitID);
+	    // this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+	    // courseUnitID);
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
 		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
@@ -241,16 +242,15 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     public String createCourseUnit() {
 	transaction.start();
 	try {
-	  
+
 	    calculateStartAndEndTime(this.courseUnit);
 
 	    if (this.regularCourseUnit) {
-		
+
 		courseUnit.getCycle().setCycleID(
-			    CycleDAO.createCycle(transaction, courseID,
-				    courseUnit.getCycle()));
-		
-		
+			CycleDAO.createCycle(transaction, courseID,
+				courseUnit.getCycle()));
+
 		Date actualStartDate = this.courseUnit.getStartime();
 		Date actualEndDate = this.courseUnit.getEndtime();
 
@@ -288,7 +288,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    + " a new course unit.");
 	    this.transaction.rollback();
 	}
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
     /**
@@ -314,8 +314,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return the link to this page
      */
     public String saveCourseUnit() {
+
 	System.out.println("Save Course Unit");
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
     /**
@@ -331,29 +332,52 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public String deleteCourseUnit() {
 	transaction.start();
-	// TODO: Not YET Done
+	// TODO: Not YET Tested
 	try {
-	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, null,
-			    courseUnitID, true);
-	    for (User user : participants) {
-		CourseUnitDAO.removeUserFromCourseUnit(transaction,
-			sessionUser.getUserID(), courseUnit.getCourseUnitID());
-		float newAccountBalance = calculateNewAccountBalance(
-			courseUnit, user, false);
-		UserDAO.updateAccountBalance(transaction, user.getUserID(),
-			newAccountBalance);
-		CourseUnitDAO.deleteCourseUnit(transaction,
-			courseUnit.getCourseID());
+
+	    if (this.courseUnit.getCycle() != null && deleteAll) {
+		ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
+			.getIdsCourseUnitsOfCycle(transaction,
+				courseUnit.getCourseUnitID());
+		for (int id : idsToDelete) {
+		    this.deleteSingleUnit(transaction, id);
+		}
+	    } else {
+		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 	    }
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
+	    e.printStackTrace();
 	    LogHandler.getInstance().error(
 		    "Error occured during deleting" + " a course unit.");
 	}
 	System.out.println("Delete Course Unit");
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
+    }
+
+    private void deleteSingleUnit(Transaction trans, int unitId) {
+ 
+	try {
+	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+		    .getParticipiantsOfCourseUnit(transaction, pagination,
+			    unitId, true);
+	    for (User user : participants) {
+		CourseUnitDAO.removeUserFromCourseUnit(transaction,
+			user.getUserID(), unitId);
+		float newAccountBalance = calculateNewAccountBalance(
+			(CourseUnitDAO.getPriceOfUnit(transaction, unitId)),
+			user, false);
+		UserDAO.updateAccountBalance(transaction, user.getUserID(),
+			newAccountBalance);
+	    }
+	    CourseUnitDAO.deleteCourseUnit(transaction, unitId);
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error during deleting a single course unit.");
+	    throw new InvalidDBTransferException();
+	}
+
     }
 
     /**
@@ -361,18 +385,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @param user
      * @return
      */
-    private float calculateNewAccountBalance(CourseUnit courseUnit, User user,
+    private float calculateNewAccountBalance(float price, User user,
 	    boolean signUp) {
 	if (!signUp) {
-	    if (user.getAccountBalance() >= courseUnit.getPrice()) {
-		return user.getAccountBalance() - courseUnit.getPrice();
+	    if (user.getAccountBalance() >= price) {
+		return user.getAccountBalance() - price;
 	    } else {
 		LogHandler.getInstance().debug(
 			"Not enough money to sign in course unit");
 		throw new CourseRegistrationException();
 	    }
 	} else {
-	    return user.getAccountBalance() + courseUnit.getPrice();
+	    return user.getAccountBalance() + price;
 	}
     }
 
@@ -385,7 +409,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	try {
 	    float newAccountBalance = this.calculateNewAccountBalance(
-		    courseUnit, this.userToAdd, true);
+		    courseUnit.getPrice(), this.userToAdd, true);
 	    CourseUnitDAO.addUserToCourseUnit(transaction,
 		    userToAdd.getUserID(), courseUnit.getCourseUnitID());
 	    UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
@@ -448,7 +472,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		CourseUnitDAO.removeUserFromCourseUnit(transaction,
 			sessionUser.getUserID(), courseUnit.getCourseUnitID());
 		float newAccountBalance = calculateNewAccountBalance(
-			courseUnit, usersToDelete.get(i), false);
+			courseUnit.getPrice(), usersToDelete.get(i), false);
 		UserDAO.updateAccountBalance(transaction, usersToDelete.get(i)
 			.getUserID(), newAccountBalance);
 	    }

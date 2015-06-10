@@ -22,7 +22,7 @@ import de.ofCourse.system.Transaction;
 /**
  * Provides methods for transactions with the course units stored in the
  * database such as creating, retrieving, updating or deleting course units.
- * Also adds or removes users to a course unit.
+ * Also adds or removes users to a course unit .
  * 
  * <p>
  * Each method has a Transaction parameter, which contains the SQL connection to
@@ -410,7 +410,7 @@ public class CourseUnitDAO {
      *             if any error occurred during the execution of the method
      * @author Tobias Fuchs
      */
-    public List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
+    public static List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
 	    int courseUnitId) {
 	ArrayList<Integer> ids = new ArrayList<Integer>();
 	// The queries to execute
@@ -450,6 +450,30 @@ public class CourseUnitDAO {
 	return ids;
     }
 
+    public static float getPriceOfUnit(Transaction trans, int unitId) {
+	String query = "SELECT fee \"course_units\" WHERE id=?";
+	float price = -1;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+	ResultSet res = null;
+	try {
+	    stmt = conn.prepareStatement(query);
+	    stmt.setInt(1, unitId);
+	    res = stmt.executeQuery();
+
+	    res.next();
+	    price = res.getFloat("fee");
+	    stmt.close();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error during fetching " + "the price of course unit.");
+	    throw new InvalidDBTransferException();
+	}
+	return price;
+
+    }
+    
     /**
      * Adds a user to a course unit's list of participants.
      * <p>
