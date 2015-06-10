@@ -23,7 +23,7 @@
                                 <strong>Benutzerdaten</strong>
                             </div>
                             <div class="panel-body">
-                                <h:form class="form-horizontal" id="formRegister">
+                                <h:form class="form-horizontal" id="formSettings">
                                     <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
                                         <h:inputText class="form-control" style="width:340px;" id="firstnameRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.firstname}"></h:inputText>
@@ -77,6 +77,9 @@
                             </div>
                         </div>                  
                     </div>
+                    
+                    <h:form enctype="multipart/form-data" class="form-horizontal" id="formUpload">
+                    
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-lg-12">
@@ -112,6 +115,9 @@
                             </div>
                         </div>          
                     </div>
+                    
+                    </h:form>
+                    
                 </div>
             </body>
         </ui:define>
