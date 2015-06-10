@@ -218,8 +218,8 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	String updateUnitQuery = "UPDATE \"course_units\" course_id=?, "
-		+ "cycle_id=?, max_participants=?, titel=?::TEXT,"
+	String updateUnitQuery = "UPDATE \"course_units\" course_id=?,"
+		+ " max_participants=?, titel=?::TEXT,"
 		+ " min_participants=?, fee=?, start_time=?,"
 		+ " end_time=?, description=?::TEXT WHERE id=?";
 	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" "
@@ -232,7 +232,22 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(updateUnitQuery);
-
+	    stmt.setInt(1, courseUnit.getCourseID());
+	    stmt.setInt(2, courseUnit.getMaxUsers());
+	    stmt.setString(3, courseUnit.getTitle());
+	    stmt.setInt(4, courseUnit.getMinUsers());
+            stmt.setFloat(5, courseUnit.getPrice());
+            stmt.setTimestamp(6, new java.sql.Timestamp(courseUnit
+		    .getStartime().getTime()));
+	    stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getEndtime()
+		    .getTime()));
+	    if (courseUnit.getDescription().length() < 1
+		    || courseUnit.getDescription() == null) {
+		stmt.setString(8, null);
+	    } else {
+		stmt.setString(8, courseUnit.getDescription());
+	    }
+	    
 	    stmt.executeUpdate();
 
 	    stmt = conn.prepareStatement(updateUnitAddressQuery);

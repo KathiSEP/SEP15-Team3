@@ -193,7 +193,7 @@
 
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Kursleiter:</span>
+										style="width: 160px; text-align: right;">Benutzername Leiter:</span>
 									<h:inputText class="form-control" style="width:300px;"
 										id="leaderCourseUnit"
 										value="#{courseUnitManagementBean.courseUnit.courseAdmin.username}"
@@ -266,18 +266,26 @@
 								<h:commandButton id="createCourseUnit"
 									rendered="#{!courseUnitManagementBean.editMode}"
 									action="#{courseUnitManagementBean.createCourseUnit}"
-									class="btn btn-info" value="Kurseinheit anlegen" />
+									class="btn btn-info" value="Kurseinheit anlegen">
+									<f:param name="courseID"
+										value="#{courseUnitManagement.courseUnit.getCourseID}" />
+								</h:commandButton>
 
 								<h:commandButton id="saveCourseUnit"
 									rendered="#{courseUnitManagementBean.editMode}"
 									action="#{courseUnitManagementBean.saveCourseUnit}"
-									class="btn btn-info" value="Speichern" />
+									class="btn btn-info" value="Speichern">
+									<f:param name="courseID"
+										value="#{courseUnitManagement.courseUnit.getCourseID}" />
+								</h:commandButton>
 
 								<h:commandButton id="deleteCourseUnit"
 									rendered="#{courseUnitManagementBean.editMode}"
 									action="#{courseUnitManagementBean.deleteCourseUnit}"
-									class="btn btn-info pull-right" value="Löschen" />
-
+									class="btn btn-info pull-right" value="Löschen">
+									<f:param name="courseID"
+										value="#{courseUnitManagement.courseUnit.getCourseID}" />
+								</h:commandButton>
 							</h:form>
 						</div>
 					</div>

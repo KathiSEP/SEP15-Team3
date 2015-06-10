@@ -287,7 +287,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    + " a new course unit.");
 	    this.transaction.rollback();
 	}
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
     /**
@@ -314,7 +314,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public String saveCourseUnit() {
 	System.out.println("Save Course Unit");
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
     /**
@@ -355,11 +355,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
+	    e.printStackTrace();
 	    LogHandler.getInstance().error(
 		    "Error occured during deleting" + " a course unit.");
 	}
 	System.out.println("Delete Course Unit");
-	return null;
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
     /**
