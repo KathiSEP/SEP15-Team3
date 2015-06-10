@@ -11,11 +11,11 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import de.ofCourse.Database.dao.UserDAO;
-import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserStatus;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -80,7 +80,12 @@ public class UserProfileBean implements Pagination {
     
     @PostConstruct
     public void init() {
+    	renderSettings = false;
+    	
+    	transaction = Connection.create();
+    	transaction.start();
     	user = UserDAO.getUser(transaction, sessionUser.getUserID());
+    	transaction.commit();
     }
 
     /**
@@ -220,7 +225,7 @@ public class UserProfileBean implements Pagination {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -229,7 +234,8 @@ public class UserProfileBean implements Pagination {
      * @param userSession
      *            session of the user
      */
-    public void setSessionUser(SessionUserBean userSession) {
+    public void setSessionUser(SessionUserBean sessionUser) {
+    	this.sessionUser = sessionUser;
     }
     
     /**
