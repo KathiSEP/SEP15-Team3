@@ -8,13 +8,13 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title"><h:outputText value="#{courseDetailBean.course.title}"/></ui:define>
+		<ui:define name="title"><h:outputText value="#{courseDetailBean.getCourse().title}"/></ui:define>
 		<body>
 			<ui:define name="content">
 				<h1>Kursdetails</h1>
 				<div class="row">
 					<div class="col-lg-12">
-						<p style="font-size:16px;">Hier werden Ihnen alle verfügbaren Details zu einem Kurs angezeigt.</p>
+						<p style="font-size:16px;">Hier finden Sie alle Informationen zum Kurs #{courseDetailBean.getCourse().title}:</p>
 					</div>
 				</div>
 				<div class="row" style="padding-top:20px;">
@@ -22,27 +22,54 @@
 						<div class="panel panel-info">
 							<div class="panel-heading"><strong>Details</strong></div>
 							<div class="panel-body">
+								<h:form id="courseDetails">
 								<div class="input-group">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Kurs-ID:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="idCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.courseID}"></h:inputText>
+									<h:outputText class="form-control" style="width:170px;" id="idCourse" value="#{courseDetailBean.courseID}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Max. Teilnehmer:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().maxUsers}"></h:inputText>
+									<h:inputText class="form-control" id="minPersonsCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().maxUsers}"/>
+									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().maxUsers}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Startdatum:</strong></span>
-									<h:inputText class="form-control" style="width:260px;" id="startDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().startDate}"></h:inputText>
+									<h:inputText class="form-control" id="startDateCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().startdate}">
+                                    	<f:convertDateTime pattern="dd.MM.yyyy"/>
+									</h:inputText>
+									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().startdate}">
+										<f:convertDateTime pattern="dd.MM.yyyy"/>
+									</h:outputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Enddatum:</strong></span>
-									<h:inputText p:type="date" class="form-control" style="width:260px;" id="endDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().endDate}"></h:inputText>
+									<h:inputText class="form-control" id="endDateCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().enddate}">
+                                    	<f:convertDateTime pattern="dd.MM.yyyy"/>
+                                    </h:inputText>
+   									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().enddate}">
+										<f:convertDateTime pattern="dd.MM.yyyy"/>
+									</h:outputText>
 								</div>
+								</h:form>
 							</div>
 						</div>
 						<div class="panel panel-info">
 							<div class="panel-heading"><strong>Kursleiter</strong></div>
 							<div class="panel-body">
+								<h:dataTable value="#{courseDetailBean.leadersOfCourse}" class="table table-hover">
+									<h:column>
+		                            	<f:facet name="header">Name</f:facet>
+		                                <h:outputText value="#{user.lastname}"/>
+		                            </h:column>
+		                            <h:column>
+		                            	<f:facet name="header">Vorname</f:facet>
+		                            	<h:outputText value="#{user.firstname}"/>
+		                            </h:column>
+           							<h:column>
+                		            	<f:facet name="header">E-Mail</f:facet>
+                        		        <h:outputText value="#{user.email}"/>
+                            		</h:column>
+								</h:dataTable>
 								<div class="row" style="font-weight:bold;">
 									<div class="col-lg-6"><a href="#">Name</a></div>
 									<div class="col-lg-6"><a href="#">E-Mail</a></div>
@@ -64,7 +91,10 @@
 							<div class="panel-body">
 								<div class="row" style="text-align:center;"></div>
 								<div class="row" style="padding-top:12px;">
-									<div class="col-lg-12">Hier folgt die Beschreibung des Kurses...</div>
+									<div class="col-lg-12">
+										<h:inputText class="form-control" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().description}"/>
+										<h:outputText rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().description}"/>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -679,35 +679,37 @@ public class CourseDAO {
      *         was found
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
      */
     public static Course getCourse(Transaction trans, int courseID)
-	    throws InvalidDBTransferException {
-	Course course = new Course();
-	String courseQuery = "SELECT * FROM \"courses\" WHERE id = ?";
+            throws InvalidDBTransferException {
+        Course course = new Course();
+        String courseQuery = "SELECT * FROM \"courses\" WHERE id = ?";
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement statement = null;
-	ResultSet resultSet = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-	try {
-	    statement = conn.prepareStatement(courseQuery);
-	    statement.setInt(1, courseID);
-	    resultSet = statement.executeQuery();
-	    resultSet.next();
-	    course.setTitle(resultSet.getString("titel"));
-	    course.setMaxUsers(resultSet.getInt("max_participants"));
-	    course.setStartdate(resultSet.getDate("start_date"));
-	    course.setEnddate(resultSet.getDate("end_date"));
-	    course.setDescription(resultSet.getString("description"));
-	    course.setCourseImage(resultSet.getString("image"));
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occoured in getCourse from CourseDAO");
-	    System.out.println("fehler");
-	    throw new InvalidDBTransferException();
-	}
-	return course;
+        try {
+            statement = conn.prepareStatement(courseQuery);
+            statement.setInt(1, courseID);
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            course.setTitle(resultSet.getString("titel"));
+            course.setMaxUsers(resultSet.getInt("max_participants"));
+            course.setStartdate(resultSet.getDate("start_date"));
+            course.setEnddate(resultSet.getDate("end_date"));
+            course.setDescription(resultSet.getString("description"));
+            course.setCourseID(resultSet.getInt("id"));
+            course.setCourseImage(resultSet.getBytes("image"));
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured in getCourse from CourseDAO");
+            throw new InvalidDBTransferException();
+        }
+        return course;
     }
 
     /**
@@ -878,9 +880,33 @@ public class CourseDAO {
      *            the course to be updated
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
      */
     public static void updateCourse(Transaction trans, Course course)
-	    throws InvalidDBTransferException {
+            throws InvalidDBTransferException {
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        
+        String courseQuery = "UPDATE \"courses\" "
+                + "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
+                + "WHERE id = ?";
+        try {
+            statement = conn.prepareStatement(courseQuery);
+            statement.setString(1, course.getDescription());
+            statement.setInt(2, course.getMaxUsers());
+            java.sql.Date startDate = new java.sql.Date(course.getStartdate().getTime());
+            statement.setDate(3, startDate);
+            java.sql.Date endDate = new java.sql.Date(course.getEnddate().getTime());
+            statement.setDate(4, endDate);
+            statement.setInt(5, course.getCourseID());
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("SQL Exception occoured in updateCourse of CourseDAO");
+            throw new InvalidDBTransferException();
+        }
     }
 
     /**

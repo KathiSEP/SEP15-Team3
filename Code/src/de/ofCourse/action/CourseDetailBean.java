@@ -110,10 +110,20 @@ public class CourseDetailBean implements Pagination {
      * <code>courseDetails</code> page is returned.
      * 
      * @return link to the next page
+     * @author Ricky Strohmeier
      */
     public String saveCourse() {
         if (getEditMode()) {
-            // CourseDAO.updateCourse(transaction, course);
+            transaction = Connection.create();
+            try {
+                transaction.start();
+                CourseDAO.updateCourse(transaction, course);
+                transaction.commit();
+            } catch (InvalidDBTransferException e) {
+                transaction.rollback();
+            LogHandler.getInstance().error("Error occured in saveCourse method of CourseDetailBean");
+                System.out.println("fehler");
+            }
             setEditMode(false);
         }
         return "#";
@@ -134,9 +144,9 @@ public class CourseDetailBean implements Pagination {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
-                if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
+                /*if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
                     isRegistered = true;
-                }
+                }*/
                 transaction.commit();
             }
         } catch(InvalidDBTransferException e) {
@@ -144,6 +154,7 @@ public class CourseDetailBean implements Pagination {
             LogHandler.getInstance().error("Error occured in init method of CourseDetailBean");
             courseID = 0;
             isRegistered = false;
+            course = new Course();
         }
     }
 
