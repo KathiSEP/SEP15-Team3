@@ -9,8 +9,10 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
@@ -62,6 +64,8 @@ public class UserProfileBean implements Pagination {
     private String password;
     
     private String confirmPassword;
+    
+    private Part image;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -120,9 +124,22 @@ public class UserProfileBean implements Pagination {
      * Uploads a selected picture file from the local system to the server. The
      * picture needs to be a .jpg <br>
      */
-    public void uploadProfilPic() {
+    public void uploadProfilePic() {
+    	
+    	System.out.println("in upload methode");
+    	System.out.println("user id: " + user.getUserID());
+    	System.out.println("image size: " + image.getSize());
+    	
+    	transaction = Connection.create();
+    	transaction.start();
+    	try {
+    		UserDAO.uploadImage(transaction, user.getUserID(), image);
+    		transaction.commit();
+    	} catch (InvalidDBTransferException e) {
+            this.transaction.rollback();
+        }
     }
-
+    
     /**
      * Sets the <code>userRole</code> of the actual user to
      * <code>INACTIVE</code>.<br>
@@ -195,6 +212,14 @@ public class UserProfileBean implements Pagination {
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
+	}
+
+	public Part getImage() {
+		return image;
+	}
+
+	public void setImage(Part image) {
+		this.image = image;
 	}
 
 	/**

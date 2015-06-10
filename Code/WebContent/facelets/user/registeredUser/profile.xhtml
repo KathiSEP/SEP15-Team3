@@ -84,18 +84,16 @@
                                     <div class="panel-heading">
                                         <strong>Profilbild</strong>
                                     </div>
+                                    <h:inputFile value="#{userProfileBean.image}" />
+                                    <br/>
                                     <div class="panel-body">
-                                        <div class="input-group">
-                                            <h:inputText class="form-control" id="profileImage"></h:inputText>
-                                            <span class="input-group-btn"><button class="btn btn-default" type="button">Bild auswählen</button>
-                                          </span>
-                                        </div>
+                                        
                                         <div class="row" style="padding-top:10px;">
                                             <div class="col-lg-8">
                                                 <img src="#{request.contextPath}/resources/img/userdata/userphoto.jpg" width="200" alt="Profilbild"></img>                                          
                                             </div>
                                             <div class="col-lg-4" style="text-align:right;">
-                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild ändern" />
+                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild speichern" action="#{userProfileBean.uploadProfilePic()}"/>
                                             </div>
                                         </div>
                                     </div>
