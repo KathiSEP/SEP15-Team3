@@ -89,7 +89,7 @@ public class CourseManagementBean {
         transaction.start();
         try {
             // Create course.
-            createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
+            createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
             this.transaction.commit();
             
             if (createdCourseID < 0) {
