@@ -101,9 +101,9 @@ public class MailBean {
       
         // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
         prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
-        prop.put("mail.smtph.port", smtpServer.getPort());
-        prop.put("mail.smtp.starttls.enable", "true");
-        //prop.put("mail.smtp.ssl.enable", "true");
+        prop.put("mail.smtph.port", "465");
+        //prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.ssl.enable", "true");
         prop.put("mail.smtp.auth", "true");
         
         
