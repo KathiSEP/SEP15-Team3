@@ -68,15 +68,15 @@ public class CourseUnitDAO {
 	    if (regular) {
 		query = "INSERT INTO \"course_units\""
 			+ " (course_id, max_participants, titel,"
-			+ " min_participants, fee, start_time, end_time, description, cycle_id, course_instructor_id=?)"
+			+ " min_participants, fee, start_time, end_time, description, course_instructor_id, cycle_id)"
 			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
 		stmt = conn.prepareStatement(query);
-		stmt.setInt(9, courseUnit.getCycle().getCycleID());
+		stmt.setInt(10, courseUnit.getCycle().getCycleID());
 	    } else {
 		query = "INSERT INTO \"course_units\""
 			+ " (course_id, max_participants, titel,"
-			+ " min_participants, fee, start_time, end_time, description)"
-			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT) RETURNING id";
+			+ " min_participants, fee, start_time, end_time, description, course_instructor_id)"
+			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
 
 		stmt = conn.prepareStatement(query);
 	    }
@@ -152,10 +152,10 @@ public class CourseUnitDAO {
 		stmt.setString(5, unit.getAddress().getStreet());
 	    }
 	    stmt.setInt(6, unit.getAddress().getHouseNumber());
-	    if (unit.getLocation().length() < 1 || unit.getLocation() == null) {
+	    if (unit.getAddress().getLocation().length() < 1 || unit.getAddress().getLocation() == null) {
 		stmt.setString(7, null);
 	    } else {
-		stmt.setString(7, unit.getLocation());
+		stmt.setString(7, unit.getAddress().getLocation());
 	    }
 	    stmt.executeUpdate();
 	} catch (SQLException e) {
@@ -214,7 +214,11 @@ public class CourseUnitDAO {
 	CourseUnit requestedCourseUnit = new CourseUnit();
 	Address courseUnitAddress = new Address();
 	Cycle courseCycle = new Cycle();
-
+	User admin = new User();
+	
+	int adminID;
+	
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -241,6 +245,7 @@ public class CourseUnitDAO {
 			.getInt("min_participants"));
 		requestedCourseUnit.setPrice(resultSet.getInt("fee"));
 		requestedCourseUnit.setTitle(resultSet.getString("titel"));
+		adminID = resultSet.getInt("course_instructor_id");
 		LogHandler.getInstance().debug(
 			"Initialisieren von Kurseinheiten abgeschlossen");
 
@@ -263,7 +268,7 @@ public class CourseUnitDAO {
 			courseCycle.setCycleID(cycleID);
 			courseCycle.setNumberOfUnits(resultSetCycle
 				.getInt("cycle_end"));
-
+			
 			// TODO EMUMS anpassen EVTL
 			String period = resultSetCycle.getString("period");
 			switch (period) {
@@ -295,13 +300,13 @@ public class CourseUnitDAO {
 		    courseUnitAddress.setCountry(resultSetAddress
 			    .getString("country"));
 		    courseUnitAddress.setHouseNumber(resultSetAddress
-			    .getInt("house_nr)"));
+			    .getInt("house_nr"));
 		    courseUnitAddress.setId(resultSetAddress.getInt("id"));
 		    courseUnitAddress.setStreet(resultSetAddress
 			    .getString("street"));
 		    courseUnitAddress.setZipCode(Integer
 			    .parseInt(resultSetAddress.getString("zip_code")));
-
+		    courseUnitAddress.setLocation(resultSetAddress.getString("location"));
 		    LogHandler.getInstance().debug(
 			    "Initialisieren von Addresse abgeschlossen");
 
@@ -309,7 +314,8 @@ public class CourseUnitDAO {
 		    LogHandler.getInstance().debug(
 			    "Initialisieren von Addresse abgeschlossen");
 		}
-
+		admin = UserDAO.getUser(trans, adminID);
+		requestedCourseUnit.setCourseAdmin(admin);
 	    }
 	    return requestedCourseUnit;
 	} catch (SQLException e) {
@@ -356,13 +362,13 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	String updateUnitQuery = "UPDATE \"course_units\" course_id=?,"
+	String updateUnitQuery = "UPDATE \"course_units\" SET course_id=?,"
 		+ " max_participants=?, titel=?::TEXT,"
 		+ " min_participants=?, fee=?, start_time=?,"
 		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
 		+ " WHERE id=?";
-	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" "
-		+ "country=?, city_?, zip_code=?,"
+	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" SET "
+		+ "country=?, city=?, zip_code=?,"
 		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
 
 	Connection connection = (Connection) trans;
@@ -401,11 +407,11 @@ public class CourseUnitDAO {
 		stmt.setString(4, courseUnit.getAddress().getStreet());
 	    }
 	    stmt.setInt(5, courseUnit.getAddress().getHouseNumber());
-	    if (courseUnit.getLocation().length() < 1
-		    || courseUnit.getLocation() == null) {
+	    if (courseUnit.getAddress().getLocation().length() < 1
+		    || courseUnit.getAddress().getLocation() == null) {
 		stmt.setString(6, null);
 	    } else {
-		stmt.setString(6, courseUnit.getLocation());
+		stmt.setString(6, courseUnit.getAddress().getLocation());
 	    }
 	    stmt.setInt(7, courseUnit.getCourseUnitID());
 	    stmt.executeUpdate();
