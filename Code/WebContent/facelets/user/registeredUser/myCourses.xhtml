@@ -28,25 +28,25 @@
                             var="course" id="courseTable" class=" table table-hover"
                             cellspacing="0" width="100%">
                            <h:column>
-                                <f:facet name="header">
+                                <f:facet name="columnheader">
                                                ID
                                 </f:facet>
                                 <h:outputText value="#{course.courseID}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="header">
+                                <f:facet name="columnheader">
                                                Titel
                                 </f:facet>
                                 <h:outputText value="#{course.title}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="header">
+                                <f:facet name="columnheader">
                                                Ort
                                 </f:facet>
                                 <h:outputText value="#{course.nextCourseUnit.location}" />
                             </h:column>
                             <h:column>
-                                <f:facet name="header">
+                                <f:facet name="columnheader">
                                                Beginn
                                 </f:facet>
                                 <h:outputText class="nowrap"
@@ -55,7 +55,7 @@
                                 </h:outputText>
                             </h:column>
                             <h:column>
-                                <f:facet name="header">
+                                <f:facet name="columnheader">
                                                Datum
                                 </f:facet>
                                 <h:outputText class="nowrap"
@@ -64,26 +64,19 @@
                                 </h:outputText>
                             </h:column>
                             <h:column>
-                                <f:facet name="header" />
+                                <f:facet name="columnheader" />
                                 <h:commandButton id="details" class="btn btn-info"
                                     value="Details"
                                     action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
                                     <f:param name="courseID" value="#{course.courseID}" />
                                 </h:commandButton>
                             </h:column>
-                            <f:facet name="footer">
+                            <f:facet name="pagination-navbar">
                                 <div class="row" style="text-align: center;">
                                     <ul class="pagination">
                                         <li><h:commandButton class="btn btn-info" value="Zurueck"
                                                 action="#{myCoursesBean.goToSpecificPage}">
                                                 <f:param name="site" value="back" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber-1}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=2}">
-                                                <f:param name="site"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber-2}" />
                                             </h:commandButton></li>
                                         <li><h:commandButton class="btn btn-default"
                                                 value="#{myCoursesBean.pagination.currentPageNumber}"
@@ -105,13 +98,6 @@
                                                 rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}">
                                                 <f:param name="site"
                                                     value="#{myCoursesBean.pagination.currentPageNumber+1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber+3}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+2}">
-                                                <f:param name="site"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber+2}" />
                                             </h:commandButton></li>
                                         <li><h:commandButton class="btn btn-info" value="Weiter"
                                                 action="#{myCoursesBean.goToSpecificPage}">

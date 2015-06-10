@@ -294,47 +294,40 @@
 									class=" table table-hover" cellspacing="0" width="100%">
 
 									<h:column>
-										<f:facet name="header">
+										<f:facet name="columnheader">
                                                BenutzerID
                                         </f:facet>
 										<h:outputText value="#{user.userID}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="header">
+										<f:facet name="columnheader">
                                                Name
                                         </f:facet>
 										<h:outputText value="#{user.lastname}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="header">
+										<f:facet name="columnheader">
                                                Vorname
                                         </f:facet>
 										<h:outputText value="#{user.firstname}" />
 									</h:column>
 
 									<h:column>
-										<f:facet name="header">
+										<f:facet name="columnheader">
                                         Auswählen
                                         </f:facet>
 										<h:selectBooleanCheckbox id="checked" value="#{user.selected}" />
 									</h:column>
 
-									<f:facet name="footer">
+									<f:facet name="pagination-navbar">
 										<div class="row" style="text-align: center;">
 											<ul class="pagination">
 												<li><h:commandButton class="btn btn-info"
 														value="Zurueck"
 														action="#{courseUnitManagementBean.goToSpecificPage}">
 														<f:param name="site" value="back" />
-													</h:commandButton></li>
-												<li><h:commandButton class="btn btn-default"
-														value="#{courseUnitManagementBean.pagination.currentPageNumber-1}"
-														action="#{courseUnitManagementBean.goToSpecificPage}"
-														rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=2}">
-														<f:param name="site"
-															value="#{courseUnitManagementBean.pagination.currentPageNumber-2}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-default"
 														value="#{courseUnitManagementBean.pagination.currentPageNumber}"
@@ -356,13 +349,6 @@
 														rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}">
 														<f:param name="site"
 															value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
-													</h:commandButton></li>
-												<li><h:commandButton class="btn btn-default"
-														value="#{courseUnitManagementBean.pagination.currentPageNumber+3}"
-														action="#{courseUnitManagementBean.goToSpecificPage}"
-														rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+2}">
-														<f:param name="site"
-															value="#{courseUnitManagementBean.pagination.currentPageNumber+2}" />
 													</h:commandButton></li>
 												<li><h:commandButton class="btn btn-info"
 														value="Weiter"
