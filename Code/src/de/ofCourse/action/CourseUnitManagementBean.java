@@ -335,7 +335,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	    ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
 		    .getIdsCourseUnitsOfCycle(transaction,
-			    courseUnit.getCourseUnitID(), courseUnit.getStartime());
+			    courseUnit.getCourseUnitID());
 
 	    for (Integer id : idsToDelete) {
 		ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
