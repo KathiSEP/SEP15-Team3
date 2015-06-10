@@ -210,9 +210,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 */
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
-	this.courseUnitID = 10000;
-	this.editMode = false;
+	this.courseUnitID = 10065;
+	this.editMode = true;
 
+	courseUnit.setCourseID(courseID);
+	courseUnit.setCourseUnitID(courseUnitID);
+	
 	transaction = Connection.create();
 	transaction.start();
 
@@ -220,8 +223,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	    // this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
-	    // courseUnitID);
+	     this.courseUnit = CourseUnitDAO.getCourseUnit(transaction, courseUnitID);
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
 		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
@@ -236,14 +238,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.transaction.rollback();
 	}
 
-	// ///////////////////////////////////////////////////
-	courseUnit.getAddress().setHouseNumber(6);
-	courseUnit.getAddress().setStreet("Roehrn");
-	courseUnit.getAddress().setCity("Ortenburg");
-	courseUnit.getAddress().setZipCode(94496);
-	courseUnit.setDescription("Das ist eine Beschreibung");
-	courseUnit.getCourseAdmin().setUsername("Sepp");
-	// ///////////////////////////////////////
 
     }
 
