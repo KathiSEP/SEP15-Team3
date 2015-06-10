@@ -14,6 +14,9 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
+ * Checks if the inserted number of participants is positive 
+ * (0 is also not accepted).
+ * 
  * @author Katharina Hölzl
  *
  */
@@ -21,6 +24,10 @@ import javax.faces.validator.ValidatorException;
 @FacesValidator("courseParticipantsValidator")
 public class CourseParticipantsValidator implements Validator {
 
+    /**
+     * Gets called when the administrator wants to create a new course and 
+     * insert the number of max participants.
+     */
     @Override
     public void validate(FacesContext fc, UIComponent component, Object value)
             throws ValidatorException {
