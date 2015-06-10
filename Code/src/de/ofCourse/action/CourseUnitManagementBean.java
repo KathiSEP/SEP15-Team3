@@ -121,13 +121,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private boolean regularCourseUnit;
 
     /**
-     * Stores the cycle of a course unit. That means if the course unit takes
-     * place regularly, this attribute stores the turnus of repetition and the
-     * number of course units.
-     */
-    private Cycle cycleOfCourseUnit;
-
-    /**
      * Stores the entered or displayed data of the course unit.
      */
     private CourseUnit courseUnit;
@@ -172,10 +165,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	this.participants = new ListDataModel<User>();
 	this.usersToDelete = new ArrayList<User>();
 	courseUnit = new CourseUnit();
-	this.cycleOfCourseUnit = new Cycle();
-	courseUnit.setCycle(cycleOfCourseUnit);
 	courseUnit.setAddress(new Address());
 	courseUnit.setCourseAdmin(new User());
+	courseUnit.setCycle(new Cycle());
 	this.date = new Date();
 	this.start = new Date();
 	this.end = new Date();
@@ -184,24 +176,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// ///////////////////////////////////////////////
 	// Mit Werten von CourseDetails füllen
 	// ////////////////////////////////////////////////
-	String fetchedMode = FacesContext.getCurrentInstance()
-		.getExternalContext().getRequestParameterMap().get("editMode");
-	if (fetchedMode.toLowerCase().equals("true")) {
-	    editMode = true;
-	} else {
-	    editMode = false;
-	}
-
-	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
-		.getExternalContext().getRequestParameterMap().get("courseID"));
-	if (editMode) {
-	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-		    .getExternalContext().getRequestParameterMap()
-		    .get("courseUnitID"));
-	} else {
-	    courseUnitID = 0;
-	}
-
+	/*
+	 * String fetchedMode = FacesContext.getCurrentInstance()
+	 * .getExternalContext().getRequestParameterMap().get("editMode"); if
+	 * (fetchedMode!=null && fetchedMode.toLowerCase().equals("true")) {
+	 * editMode = true; } else { editMode = false; }
+	 * 
+	 * courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+	 * .getExternalContext().getRequestParameterMap().get("courseID")); if
+	 * (editMode) { courseUnitID =
+	 * Integer.parseInt(FacesContext.getCurrentInstance()
+	 * .getExternalContext().getRequestParameterMap() .get("courseUnitID"));
+	 * } else { courseUnitID = 0; }
+	 */
+	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
 	this.courseUnitID = 10000;
 	this.editMode = false;
@@ -213,8 +201,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	    this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
-		    courseUnitID);
+	    //this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+		//    courseUnitID);
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
 		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
@@ -241,25 +229,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
-     * Returns the entered cycle of the course unit.
-     * 
-     * @return the cycleOfCourseUnit the cycle of the actual course unit
-     */
-    public Cycle getCycleOfCourseUnit() {
-	return cycleOfCourseUnit;
-    }
-
-    /**
-     * Sets the entered cycle of the course unit
-     * 
-     * @param cycleOfCourseUnit
-     *            the cycle of the course unit
-     */
-    public void setCycleOfCourseUnit(Cycle cycleOfCourseUnit) {
-	this.cycleOfCourseUnit = cycleOfCourseUnit;
-    }
-
-    /**
      * Creates a new course unit with the entered data and returns the link to
      * the updated course details page. That means that the method creates a new
      * database entry for the course unit and stores it in the database.<br>
@@ -272,25 +241,30 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     public String createCourseUnit() {
 	transaction.start();
 	try {
-	    courseUnit.getCycle().setCycleID(
-		    CycleDAO.createCycle(transaction, courseID,
-			    cycleOfCourseUnit));
+	  
 	    calculateStartAndEndTime(this.courseUnit);
 
 	    if (this.regularCourseUnit) {
+		
+		courseUnit.getCycle().setCycleID(
+			    CycleDAO.createCycle(transaction, courseID,
+				    courseUnit.getCycle()));
+		
+		
 		Date actualStartDate = this.courseUnit.getStartime();
 		Date actualEndDate = this.courseUnit.getEndtime();
 
 		Date nextStartDate = null;
 		Date nextEndDate = null;
-		for (int i = 0; i < this.cycleOfCourseUnit.getNumberOfUnits(); ++i) {
+		for (int i = 0; i < this.courseUnit.getCycle()
+			.getNumberOfUnits(); ++i) {
 
-		    if (this.cycleOfCourseUnit.getTurnus() == day) {
+		    if (this.courseUnit.getCycle().getTurnus() == day) {
 			nextStartDate = this.calculateDate(actualStartDate, i
 				* day);
 			nextEndDate = this
 				.calculateDate(actualEndDate, i * day);
-		    } else if (this.cycleOfCourseUnit.getTurnus() == week) {
+		    } else if (this.courseUnit.getCycle().getTurnus() == week) {
 			nextStartDate = this.calculateDate(actualStartDate, i
 				* week);
 			nextEndDate = this.calculateDate(actualEndDate, i
@@ -303,6 +277,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    this.courseUnit, this.courseID, true);
 		}
 	    } else {
+		this.courseUnit.getCycle().setCycleID(-1);
 		CourseUnitDAO.createCourseUnit(transaction, courseUnit,
 			courseID, false);
 	    }

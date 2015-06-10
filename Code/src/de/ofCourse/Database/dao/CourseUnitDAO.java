@@ -56,18 +56,29 @@ public class CourseUnitDAO {
     public static void createCourseUnit(Transaction trans,
 	    CourseUnit courseUnit, int courseID, boolean regular)
 	    throws InvalidDBTransferException {
-	String query = "INSERT INTO \"course_units\""
-		+ " (course_id, max_participants, titel,"
-		+ " min_participants, fee, start_time,"
-		+ " end_time, description, cycle_id)"
-		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
+	String query;
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
 	ResultSet res = null;
 	try {
-	    stmt = conn.prepareStatement(query);
+	    if (regular) {
+		query = "INSERT INTO \"course_units\""
+			+ " (course_id, max_participants, titel,"
+			+ " min_participants, fee, start_time, end_time, description, cycle_id)"
+			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
+		stmt = conn.prepareStatement(query);
+		stmt.setInt(9, courseUnit.getCycle().getCycleID());
+	    } else {
+		query = "INSERT INTO \"course_units\""
+			+ " (course_id, max_participants, titel,"
+			+ " min_participants, fee, start_time, end_time, description)"
+			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT) RETURNING id";
+
+		stmt = conn.prepareStatement(query);
+	    }
+
 	    stmt.setInt(1, courseID);
 	    stmt.setInt(2, courseUnit.getMaxUsers());
 	    if (courseUnit.getTitle().length() < 1
@@ -87,11 +98,6 @@ public class CourseUnitDAO {
 		stmt.setString(8, null);
 	    } else {
 		stmt.setString(8, courseUnit.getDescription());
-	    }
-	    if (regular) {
-		stmt.setInt(9, courseUnit.getCycle().getCycleID());
-	    } else {
-		stmt.setInt(9, -1);
 	    }
 	    res = stmt.executeQuery();
 	    res.next();
@@ -212,9 +218,20 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	
-	
-	
+	String updateUnitQuery = "";
+	String updateUnitAddressQuery = "";
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+
+	try {
+	    stmt = conn.prepareStatement(updateUnitQuery);
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(log);
+
+	}
+
     }
 
     /**
