@@ -334,7 +334,6 @@ public class UserDAO {
 	    pS.setString(13, veriString);
 	    pS.setString(14, salt);
 	    pS.executeUpdate();
-	    System.out.println("geht");
 
 	    sql = "Insert into \"user_addresses\" (user_id, country, "
 		    + "city, zip_code, street, house_nr) "
@@ -348,7 +347,6 @@ public class UserDAO {
 	    pS.setInt(6, user.getAddress().getHouseNumber());
 	    
 	    pS.executeUpdate();
-        System.out.println("geht 2");
 
 	    pS.close();
 	} catch (SQLException e) {
