@@ -464,30 +464,33 @@ public class UserDAO {
     }
     
     private static User getResult(ResultSet rst) throws InvalidDBTransferException {
-    	List<Course> result = new ArrayList<Course>();
+    	User user = new User();
         try {
             int cols = rst.getMetaData().getColumnCount();
 
-            while (rst.next()) {
+            if (rst.next()) {
                 int i = 1;
                 List<Object> tuple = new ArrayList<Object>();
-                Course course = new Course();
                 while (i <= cols) {
                     Object o = rst.getObject(i);
                     tuple.add(o);
                     i++;
                 }
-                setProperties(course, tuple);
-                result.add(course);
+                //setProperties(user, tuple);
             }
-            if (!result.isEmpty()) {
+            /*if (!result.isEmpty()) {
                 return result;
-            }
+            }*/
         } catch (SQLException e) {
         	LogHandler.getInstance().error("SQL Exception occoured during getResult(ResultSet rst)");
         	throw new InvalidDBTransferException();
         }
         return null;
+    }
+    
+    private static Address getAddress() {
+    	
+    	return null;
     }
 
     /**
