@@ -161,20 +161,15 @@ public class CourseManagementBean {
         this.courseImage = courseImage;
     }
 
-    /**
-     * @return the courseLeaderID
-     */
     public Integer getCourseLeaderID() {
         return courseLeaderID;
     }
 
-    /**
-     * @param courseLeaderID the courseLeaderID to set
-     */
     public void setCourseLeaderID(Integer courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
     }
 
+  
 
    
 }
