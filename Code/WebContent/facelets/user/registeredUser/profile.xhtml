@@ -42,7 +42,7 @@
 									</div>
 									<div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.houseNumber}"></h:inputText>
+                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.user.address.houseNumber}"></h:inputText>
                                     </div>
 									<div class="input-group" style="padding-top:5px;">
 										<span class="input-group-addon" style="width:160px; text-align:right;">Ort:</span>
@@ -69,9 +69,9 @@
 										<h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister" readonly="#{userProfileBean.renderSettings}" value="#{userProfileBean.confirmPassword}"></h:inputSecret>
 									</div>
 									<br/>
-									<h:commandButton id="save" class="btn btn-info" value="Speichern" rendered="#{userProfileBean.renderSettings == false}"/>
+									<h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setRenderSettings(true)}" rendered="#{userProfileBean.renderSettings == false}"/>
 									<br/>
-									<h:commandButton value="Save settings" action="#{profile.save()}" rendered="#{userProfileBean.renderSettings}"/>
+									<h:commandButton value="Speichern" action="#{profile.save()}" rendered="#{userProfileBean.renderSettings}"/>
 								</h:form><br />	
 								Sie befinden Sich in der Rolle eines <input type="text" width="200" disabled="disabled" value="Kursleiters"></input>.
 							</div>

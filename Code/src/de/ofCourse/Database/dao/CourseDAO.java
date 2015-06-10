@@ -327,24 +327,27 @@ public class CourseDAO {
         List<Course> result = null;
         String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
                 + "courses.end_date FROM \"courses\", \"course_units\" "
-                + "WHERE \"course_units\".start_time::date = current_date "
-                + "AND \"course_units\".course_id = \"courses\".id ORDER BY ? "
-                + dir + " LIMIT ? OFFSET ?";
+                + "WHERE \"course_units\".start_time = current_date "
+                + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
         String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
                 + "courses.end_date FROM \"courses\", \"course_units\" "
-                + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6' ORDER BY ? "
+                + "WHERE \"course_units\".start_time between current_date AND current_date + integer '6' ORDER BY ? "
                 + dir + " LIMIT ? OFFSET ?";
         String getAllCourses = "SELECT * FROM \"courses\" ORDER BY %s %s"
                 + " LIMIT ? OFFSET ?";
 
         switch (period) {
         case "day":
-            result = getCoursesInPeriod(conn, limit, offset, orderParam,
-                    currentDateCourses);
+            //result = getCoursesInPeriod(conn, limit, offset, orderParam,
+           //         currentDateCourses);
+        	result = getCoursesInPeriod(conn, limit, offset, orderParam,
+                    String.format(currentDateCourses, orderParam, dir));
             break;
         case "week":
-            result = getCoursesInPeriod(conn, limit, offset, orderParam,
-                    currentWeekCourses);
+            //result = getCoursesInPeriod(conn, limit, offset, orderParam,
+            //        currentWeekCourses);
+        	result = getCoursesInPeriod(conn, limit, offset, orderParam,
+                    String.format(currentWeekCourses, orderParam, dir));
             break;
         case "total":
             result = getCoursesInPeriod(conn, limit, offset, orderParam,
@@ -379,9 +382,10 @@ public class CourseDAO {
             //stmt.setString(1, orderParam);
             stmt.setInt(1, limit);
             stmt.setInt(2, offset);
-            rst = stmt.executeQuery();
             
-            System.out.println(stmt.toString());
+             System.out.println(stmt.toString());
+            
+            rst = stmt.executeQuery();
             
             result = getResult(rst);
         } catch (SQLException e) {
