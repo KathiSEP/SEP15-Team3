@@ -5,10 +5,13 @@ package de.ofCourse.action;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
@@ -74,6 +77,11 @@ public class UserProfileBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    @PostConstruct
+    public void init() {
+    	user = UserDAO.getUser(transaction, sessionUser.getUserID());
+    }
 
     /**
      * Returns the user profile page in its editable state.

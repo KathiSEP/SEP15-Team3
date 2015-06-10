@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Part;
@@ -437,43 +438,56 @@ public class UserDAO {
      *         found
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Patrick Cretu
      */
     public static User getUser(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
-
-	User user = new User();
-
-	PreparedStatement prep = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	// Datenbankabfrage
-	String sql = "SELECT * FROM \"users\" WHERE id=?";
-
-	try {
-	    prep = conn.prepareStatement(sql);
-	    prep.setInt(1, userID);
-
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
-	    ResultSet res = prep.executeQuery();
-	    if (res.next()) {
-		String username = res.getString("nickname");
-		user = getUser(trans, username);
-		return user;
-	    } else {
-
-		// kein Benutzer mit der ID;
-		return null;
-	    }
-
-	} catch (SQLException e) {
-	    // TODO logger und Fehlermeldung
-	    throw new InvalidDBTransferException();
-	}
-
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+	    User user = null;
+		PreparedStatement stmt = null;
+		ResultSet rst = null;
+		String sql = "SELECT * FROM \"users\" WHERE id = ?";
 	
+		try {
+		    stmt = conn.prepareStatement(sql);
+		    stmt.setInt(1, userID);
+		    
+		    rst = stmt.executeQuery();
+		    user = getResult(rst);
+		} catch (SQLException e) {
+		    // TODO logger und Fehlermeldung
+		    throw new InvalidDBTransferException();
+		}
+		return user;
+    }
+    
+    private static User getResult(ResultSet rst) throws InvalidDBTransferException {
+    	List<Course> result = new ArrayList<Course>();
+        try {
+            int cols = rst.getMetaData().getColumnCount();
+
+            while (rst.next()) {
+                int i = 1;
+                List<Object> tuple = new ArrayList<Object>();
+                Course course = new Course();
+                while (i <= cols) {
+                    Object o = rst.getObject(i);
+                    tuple.add(o);
+                    i++;
+                }
+                setProperties(course, tuple);
+                result.add(course);
+            }
+            if (!result.isEmpty()) {
+                return result;
+            }
+        } catch (SQLException e) {
+        	LogHandler.getInstance().error("SQL Exception occoured during getResult(ResultSet rst)");
+        	throw new InvalidDBTransferException();
+        }
+        return null;
     }
 
     /**
@@ -1088,7 +1102,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String searchUserInUserToInform = "SELECT FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+	String searchUserInUserToInform = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatment = isInTable(userID, courseID, conn,
@@ -1144,7 +1158,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
-	String searchUserCourse = "SELECT FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
+	String searchUserCourse = "SELECT * FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatement = isInTable(userID, courseID, conn,
@@ -1153,7 +1167,7 @@ public class UserDAO {
 		    "UserIsParticipant methode was succesfull");
 	    return returnStatement;
 	} catch (SQLException e) {
-	    LogHandler.getInstance().debug(
+	    LogHandler.getInstance().error(
 		    "Error occured during UserIsParticipant methode ");
 	    throw new InvalidDBTransferException();
 	}
