@@ -201,8 +201,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	    //this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
-		//    courseUnitID);
+	    // this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+	    // courseUnitID);
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
 		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
@@ -241,16 +241,15 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     public String createCourseUnit() {
 	transaction.start();
 	try {
-	  
+
 	    calculateStartAndEndTime(this.courseUnit);
 
 	    if (this.regularCourseUnit) {
-		
+
 		courseUnit.getCycle().setCycleID(
-			    CycleDAO.createCycle(transaction, courseID,
-				    courseUnit.getCycle()));
-		
-		
+			CycleDAO.createCycle(transaction, courseID,
+				courseUnit.getCycle()));
+
 		Date actualStartDate = this.courseUnit.getStartime();
 		Date actualEndDate = this.courseUnit.getEndtime();
 
@@ -333,18 +332,26 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	// TODO: Not YET Done
 	try {
-	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, null,
-			    courseUnitID, true);
-	    for (User user : participants) {
-		CourseUnitDAO.removeUserFromCourseUnit(transaction,
-			sessionUser.getUserID(), courseUnit.getCourseUnitID());
-		float newAccountBalance = calculateNewAccountBalance(
-			courseUnit, user, false);
-		UserDAO.updateAccountBalance(transaction, user.getUserID(),
-			newAccountBalance);
-		CourseUnitDAO.deleteCourseUnit(transaction,
-			courseUnit.getCourseID());
+
+	    ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
+		    .getIdsCourseUnitsOfCycle(transaction,
+			    courseUnit.getCourseUnitID());
+
+	    for (Integer id : idsToDelete) {
+		ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+			.getParticipiantsOfCourseUnit(transaction, null,
+				id, true);
+		for (User user : participants) {
+		    CourseUnitDAO.removeUserFromCourseUnit(transaction,
+			    user.getUserID(),
+			    id);
+		    float newAccountBalance = calculateNewAccountBalance(
+			    courseUnit, user, false);
+		    UserDAO.updateAccountBalance(transaction, user.getUserID(),
+			    newAccountBalance);
+		    CourseUnitDAO.deleteCourseUnit(transaction,
+			    id);
+		}
 	    }
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {

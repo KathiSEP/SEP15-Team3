@@ -232,7 +232,7 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(updateUnitQuery);
-	   
+
 	    stmt.executeUpdate();
 
 	    stmt = conn.prepareStatement(updateUnitAddressQuery);
@@ -302,7 +302,7 @@ public class CourseUnitDAO {
      *             if any error occurred during the execution of the method
      * @author Tobias Fuchs
      */
-    public List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
+    public static List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
 	    int courseUnitId) {
 	ArrayList<Integer> ids = new ArrayList<Integer>();
 	// The queries to execute
@@ -340,6 +340,30 @@ public class CourseUnitDAO {
 	    ids.add(courseUnitId);
 	}
 	return ids;
+    }
+
+    public static float getPriceOfUnit(Transaction trans, int unitId) {
+	String query = "SELECT fee \"course_units\" WHERE id=?";
+	float price = -1;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+	ResultSet res = null;
+	try {
+	    stmt = conn.prepareStatement(query);
+	    stmt.setInt(1, unitId);
+	    res = stmt.executeQuery();
+
+	    res.next();
+	    price = res.getFloat("fee");
+	    stmt.close();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error during fetching " + "the price of course unit.");
+	    throw new InvalidDBTransferException();
+	}
+	return price;
+
     }
 
     /**
@@ -401,23 +425,24 @@ public class CourseUnitDAO {
      */
     public static void removeUserFromCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
-        
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
 
-        String removeUserFromCourse = "DELETE FROM \"course_unit_participants\" WHERE participant_id = ? AND course_unit_id = ?";
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-        try {
-            CourseDAO.setRelationMethode(userID, courseUnitID, conn, removeUserFromCourse);
-            LogHandler.getInstance().error(
-                    "Deleting User:" + userID + " from course:" + courseUnitID
-                            + "was succesfull");
-        } catch (SQLException e) {
-            LogHandler.getInstance().error(
-                    "Error occured while trying to delete User:" + userID
-                            + " from course:" + courseUnitID);
-            throw new InvalidDBTransferException();
-        }
+	String removeUserFromCourse = "DELETE FROM \"course_unit_participants\" WHERE participant_id = ? AND course_unit_id = ?";
+
+	try {
+	    CourseDAO.setRelationMethode(userID, courseUnitID, conn,
+		    removeUserFromCourse);
+	    LogHandler.getInstance().error(
+		    "Deleting User:" + userID + " from course:" + courseUnitID
+			    + "was succesfull");
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured while trying to delete User:" + userID
+			    + " from course:" + courseUnitID);
+	    throw new InvalidDBTransferException();
+	}
     }
 
     /**
