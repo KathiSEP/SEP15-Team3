@@ -48,7 +48,7 @@ import de.ofCourse.utilities.PasswordHash;
 public class RegisterUserBean {
 
     /**
-     * Stores the transaction that is used for database interaction.
+     * Stores the transaction that is used for database interaction. 
      */
     private Transaction transaction;
 

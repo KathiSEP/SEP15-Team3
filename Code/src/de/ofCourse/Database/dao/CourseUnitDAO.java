@@ -218,8 +218,13 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	String updateUnitQuery = "";
-	String updateUnitAddressQuery = "";
+	String updateUnitQuery = "UPDATE \"course_units\" course_id=?, "
+		+ "cycle_id=?, max_participants=?, titel=?::TEXT,"
+		+ " min_participants=?, fee=?, start_time=?,"
+		+ " end_time=?, description=?::TEXT WHERE id=?";
+	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" "
+		+ "course_unit_id=?, country=?, city_?, zip_code=?,"
+		+ " street=?, house_nr=?, location=?::TEXT";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -227,11 +232,18 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(updateUnitQuery);
+	   
+	    stmt.executeUpdate();
+
+	    stmt = conn.prepareStatement(updateUnitAddressQuery);
+
+	    stmt.executeUpdate();
+	    stmt.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(log);
+	    LogHandler.getInstance().error(
+		    "Error occured during updating a course unit.");
 
 	}
-
     }
 
     /**

@@ -44,7 +44,7 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  * 
- * @author Patrick Cretu
+ * @author Patrick Cretu 
  *
  */
 public class UserDAO {
