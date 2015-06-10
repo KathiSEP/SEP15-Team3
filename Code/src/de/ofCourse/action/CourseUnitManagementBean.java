@@ -75,8 +75,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     private static final int informParticipantsOfUnit = 1;
 
-    private static final int informAll = 2;
-    
     private int selectedToInform;
 
     /**
@@ -361,7 +359,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     private void deleteSingleUnit(Transaction trans, int unitId) {
-
 	try {
 	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
@@ -376,36 +373,29 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			newAccountBalance);
 	    }
 	    CourseUnitDAO.deleteCourseUnit(transaction, unitId);
+	    sendMailToSelected(transaction, participants);
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error during deleting a single course unit.");
 	    throw new InvalidDBTransferException();
 	}
     }
-    
-    private void sendMailToSelected(int userId){
+
+    private void sendMailToSelected(Transaction trans,
+	    ArrayList<User> participants) {
 	int recipientsGroup = this.getSelectedToInform();
-	
-	switch(recipientsGroup){
-	
-	case informAll:
-	    
-	    break;
-	case informParticipantsOfUnit:
-	    
-	    
-	    break;
-	    
-	case informNobody:
-	    
-	    
-	    break;
-	   
+	ArrayList<String> recipients = new ArrayList<String>();
+	User tempUser = new User();
+	for (User user : participants) {
+	    if (recipientsGroup == informParticipantsOfUnit) {
+		if (CourseUnitDAO.userWantsToBeInformed(transaction,
+			user.getUserID())) {
+		    tempUser = UserDAO.getUser(trans, user.getUserID());
+		    recipients.add(tempUser.getEmail());
+		    //TODO: SEND MAIL
+		}
+	    }
 	}
-	
-	
-	
-	
     }
 
     /**
