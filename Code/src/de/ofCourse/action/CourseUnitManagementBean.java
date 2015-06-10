@@ -330,28 +330,27 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public String deleteCourseUnit() {
 	transaction.start();
-	// TODO: Not YET Done
+	// TODO: Not YET Tested
 	try {
 
 	    ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
 		    .getIdsCourseUnitsOfCycle(transaction,
-			    courseUnit.getCourseUnitID());
+			    courseUnit.getCourseUnitID(), courseUnit.getStartime());
 
 	    for (Integer id : idsToDelete) {
 		ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-			.getParticipiantsOfCourseUnit(transaction, null,
-				id, true);
+			.getParticipiantsOfCourseUnit(transaction, pagination, id,
+				true);
 		for (User user : participants) {
 		    CourseUnitDAO.removeUserFromCourseUnit(transaction,
-			    user.getUserID(),
-			    id);
+			    user.getUserID(), id);
 		    float newAccountBalance = calculateNewAccountBalance(
-			    courseUnit, user, false);
+			    (CourseUnitDAO.getPriceOfUnit(transaction, id)),
+			    user, false);
 		    UserDAO.updateAccountBalance(transaction, user.getUserID(),
-			    newAccountBalance);
-		    CourseUnitDAO.deleteCourseUnit(transaction,
-			    id);
+			    newAccountBalance);    
 		}
+		CourseUnitDAO.deleteCourseUnit(transaction, id);
 	    }
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
@@ -368,18 +367,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @param user
      * @return
      */
-    private float calculateNewAccountBalance(CourseUnit courseUnit, User user,
+    private float calculateNewAccountBalance(float price, User user,
 	    boolean signUp) {
 	if (!signUp) {
-	    if (user.getAccountBalance() >= courseUnit.getPrice()) {
-		return user.getAccountBalance() - courseUnit.getPrice();
+	    if (user.getAccountBalance() >= price) {
+		return user.getAccountBalance() - price;
 	    } else {
 		LogHandler.getInstance().debug(
 			"Not enough money to sign in course unit");
 		throw new CourseRegistrationException();
 	    }
 	} else {
-	    return user.getAccountBalance() + courseUnit.getPrice();
+	    return user.getAccountBalance() + price;
 	}
     }
 
@@ -392,7 +391,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	try {
 	    float newAccountBalance = this.calculateNewAccountBalance(
-		    courseUnit, this.userToAdd, true);
+		    courseUnit.getPrice(), this.userToAdd, true);
 	    CourseUnitDAO.addUserToCourseUnit(transaction,
 		    userToAdd.getUserID(), courseUnit.getCourseUnitID());
 	    UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
@@ -455,7 +454,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		CourseUnitDAO.removeUserFromCourseUnit(transaction,
 			sessionUser.getUserID(), courseUnit.getCourseUnitID());
 		float newAccountBalance = calculateNewAccountBalance(
-			courseUnit, usersToDelete.get(i), false);
+			courseUnit.getPrice(), usersToDelete.get(i), false);
 		UserDAO.updateAccountBalance(transaction, usersToDelete.get(i)
 			.getUserID(), newAccountBalance);
 	    }

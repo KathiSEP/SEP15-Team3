@@ -303,10 +303,10 @@ public class CourseUnitDAO {
      * @author Tobias Fuchs
      */
     public static List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
-	    int courseUnitId) {
+	    int courseUnitId, java.util.Date startime) {
 	ArrayList<Integer> ids = new ArrayList<Integer>();
 	// The queries to execute
-	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
+	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE id=? AND course_units.start_time >= CURRENT_DATE";
 	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE cycle_id=?";
 
 	Connection connection = (Connection) trans;
@@ -317,6 +317,7 @@ public class CourseUnitDAO {
 	try {
 	    stmt = conn.prepareStatement(queryCycleId);
 	    stmt.setInt(1, courseUnitId);
+	    stmt.setTimestamp(2, new java.sql.Timestamp(startime.getTime()));
 	    res = stmt.executeQuery();
 	    res.next();
 	    cycle_id = res.getInt("cycle_id");
