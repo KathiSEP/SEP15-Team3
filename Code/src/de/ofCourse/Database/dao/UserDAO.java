@@ -1088,7 +1088,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String searchUserInUserToInform = "SELECT FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+	String searchUserInUserToInform = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatment = isInTable(userID, courseID, conn,
@@ -1144,7 +1144,7 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	
-	String searchUserCourse = "SELECT FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
+	String searchUserCourse = "SELECT * FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
 
 	try {
 	    boolean returnStatement = isInTable(userID, courseID, conn,
@@ -1153,7 +1153,7 @@ public class UserDAO {
 		    "UserIsParticipant methode was succesfull");
 	    return returnStatement;
 	} catch (SQLException e) {
-	    LogHandler.getInstance().debug(
+	    LogHandler.getInstance().error(
 		    "Error occured during UserIsParticipant methode ");
 	    throw new InvalidDBTransferException();
 	}
