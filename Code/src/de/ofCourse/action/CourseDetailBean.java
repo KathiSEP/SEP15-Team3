@@ -134,9 +134,9 @@ public class CourseDetailBean implements Pagination {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
-                if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
+                /*if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
                     isRegistered = true;
-                }
+                }*/
                 transaction.commit();
             }
         } catch(InvalidDBTransferException e) {
