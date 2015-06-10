@@ -68,8 +68,8 @@ public class CourseUnitDAO {
 	    if (regular) {
 		query = "INSERT INTO \"course_units\""
 			+ " (course_id, max_participants, titel,"
-			+ " min_participants, fee, start_time, end_time, description, cycle_id)"
-			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
+			+ " min_participants, fee, start_time, end_time, description, cycle_id, course_instructor_id=?)"
+			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
 		stmt = conn.prepareStatement(query);
 		stmt.setInt(9, courseUnit.getCycle().getCycleID());
 	    } else {
@@ -101,6 +101,7 @@ public class CourseUnitDAO {
 	    } else {
 		stmt.setString(8, courseUnit.getDescription());
 	    }
+	    stmt.setInt(9, courseUnit.getCourseAdmin().getUserID());
 	    res = stmt.executeQuery();
 	    res.next();
 	    courseUnit.setCourseUnitID(res.getInt("id"));
@@ -355,13 +356,14 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	String updateUnitQuery = "UPDATE \"course_units\" course_id=?, "
-		+ "cycle_id=?, max_participants=?, titel=?::TEXT,"
+	String updateUnitQuery = "UPDATE \"course_units\" course_id=?,"
+		+ " max_participants=?, titel=?::TEXT,"
 		+ " min_participants=?, fee=?, start_time=?,"
-		+ " end_time=?, description=?::TEXT WHERE id=?";
+		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
+		+ " WHERE id=?";
 	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" "
-		+ "course_unit_id=?, country=?, city_?, zip_code=?,"
-		+ " street=?, house_nr=?, location=?::TEXT";
+		+ "country=?, city_?, zip_code=?,"
+		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -369,17 +371,49 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(updateUnitQuery);
-
+	    stmt.setInt(1, courseUnit.getCourseID());
+	    stmt.setInt(2, courseUnit.getMaxUsers());
+	    stmt.setString(3, courseUnit.getTitle());
+	    stmt.setInt(4, courseUnit.getMinUsers());
+	    stmt.setFloat(5, courseUnit.getPrice());
+	    stmt.setTimestamp(6, new java.sql.Timestamp(courseUnit
+		    .getStartime().getTime()));
+	    stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getEndtime()
+		    .getTime()));
+	    if (courseUnit.getDescription().length() < 1
+		    || courseUnit.getDescription() == null) {
+		stmt.setString(8, null);
+	    } else {
+		stmt.setString(8, courseUnit.getDescription());
+	    }
+	    stmt.setInt(9, courseUnit.getCourseAdmin().getUserID());
+	    stmt.setInt(10, courseUnit.getCourseUnitID());
 	    stmt.executeUpdate();
 
 	    stmt = conn.prepareStatement(updateUnitAddressQuery);
-
+	    stmt.setString(1, courseUnit.getAddress().getCountry());
+	    stmt.setString(2, courseUnit.getAddress().getCity());
+	    stmt.setString(3, courseUnit.getAddress().getZipCode().toString());
+	    if (courseUnit.getAddress().getStreet().length() < 1
+		    || courseUnit.getAddress().getStreet() == null) {
+		stmt.setString(4, null);
+	    } else {
+		stmt.setString(4, courseUnit.getAddress().getStreet());
+	    }
+	    stmt.setInt(5, courseUnit.getAddress().getHouseNumber());
+	    if (courseUnit.getLocation().length() < 1
+		    || courseUnit.getLocation() == null) {
+		stmt.setString(6, null);
+	    } else {
+		stmt.setString(6, courseUnit.getLocation());
+	    }
+	    stmt.setInt(7, courseUnit.getCourseUnitID());
 	    stmt.executeUpdate();
 	    stmt.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during updating a course unit.");
-
+	    throw new InvalidDBTransferException();
 	}
     }
 

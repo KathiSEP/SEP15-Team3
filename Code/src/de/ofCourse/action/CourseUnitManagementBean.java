@@ -356,9 +356,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    tempUnit.setTitle(courseUnit.getTitle());
 		    tempUnit.setMinUsers(courseUnit.getMinUsers());
 		    tempUnit.setMaxUsers(courseUnit.getMaxUsers());
-		    
-		    
-		    
+		    tempUnit.setPrice(courseUnit.getPrice());
+		    tempUnit.setDescription(courseUnit.getDescription());
+		    tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());	    
 		    
 		    // update tempUnit
 		    CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
