@@ -272,6 +272,7 @@ public class CourseUnitDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during updating a course unit.");
+	    throw new InvalidDBTransferException();
 	}
     }
 
