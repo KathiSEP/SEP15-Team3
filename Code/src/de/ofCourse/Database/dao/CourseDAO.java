@@ -652,7 +652,31 @@ public class CourseDAO {
      */
     public static Course getCourse(Transaction trans, int courseID)
             throws InvalidDBTransferException {
-        return null;
+        Course course = new Course();
+        String courseQuery = "SELECT * FROM \"courses\" WHERE id = ?";
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            statement = conn.prepareStatement(courseQuery);
+            statement.setInt(1, courseID);
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            course.setTitle(resultSet.getString("titel"));
+            course.setMaxUsers(resultSet.getInt("max_participants"));
+            course.setStartdate(resultSet.getDate("start_date"));
+            course.setEnddate(resultSet.getDate("end_date"));
+            course.setDescription(resultSet.getString("description"));
+            course.setCourseImage(resultSet.getString("image"));
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured in getCourse from CourseDAO");
+            System.out.println("fehler");
+            throw new InvalidDBTransferException();
+        }
+        return course;
     }
 
     /**
