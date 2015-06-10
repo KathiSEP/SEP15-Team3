@@ -223,8 +223,8 @@ public class CourseUnitDAO {
 		+ " min_participants=?, fee=?, start_time=?,"
 		+ " end_time=?, description=?::TEXT WHERE id=?";
 	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" "
-		+ "course_unit_id=?, country=?, city_?, zip_code=?,"
-		+ " street=?, house_nr=?, location=?::TEXT";
+		+ "country=?, city_?, zip_code=?,"
+		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -247,17 +247,31 @@ public class CourseUnitDAO {
 	    } else {
 		stmt.setString(8, courseUnit.getDescription());
 	    }
-	    
+	    stmt.setInt(9, courseUnit.getCourseUnitID());
 	    stmt.executeUpdate();
 
 	    stmt = conn.prepareStatement(updateUnitAddressQuery);
-
+	    stmt.setString(1, courseUnit.getAddress().getCountry());
+	    stmt.setString(2, courseUnit.getAddress().getCity());
+	    stmt.setString(3, courseUnit.getAddress().getZipCode().toString());
+	    if (courseUnit.getAddress().getStreet().length() < 1
+		    || courseUnit.getAddress().getStreet() == null) {
+		stmt.setString(4, null);
+	    } else {
+		stmt.setString(4, courseUnit.getAddress().getStreet());
+	    }
+	    stmt.setInt(5, courseUnit.getAddress().getHouseNumber());
+	    if (courseUnit.getLocation().length() < 1 || courseUnit.getLocation() == null) {
+		stmt.setString(6, null);
+	    } else {
+		stmt.setString(6, courseUnit.getLocation());
+	    }
+	    stmt.setInt(7, courseUnit.getCourseUnitID());
 	    stmt.executeUpdate();
 	    stmt.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during updating a course unit.");
-
 	}
     }
 
