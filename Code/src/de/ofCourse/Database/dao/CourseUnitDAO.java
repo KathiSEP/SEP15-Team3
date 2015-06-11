@@ -345,7 +345,50 @@ public class CourseUnitDAO {
     public static List<CourseUnit> getCourseUnitsFromCourse(Transaction trans,
 	    int courseID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-	return null;
+        ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
+
+        String leadersQuery = "SELECT * FROM \"course_units\" WHERE course_id = ?";
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet;
+
+        try {
+            statement = conn.prepareStatement(leadersQuery);
+            statement.setInt(1, courseID);
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+            CourseUnit unit = new CourseUnit();
+
+            unit.setCourseID(resultSet.getInt("courseUnitID"));
+
+            if (resultSet.getString("title") != null) {
+                unit.setTitle(resultSet.getString("title"));
+            } else {
+                unit.setTitle("Ohne Titel");
+            }
+
+            if (resultSet.getString("description") != null) {
+                unit.setDescription(resultSet.getString("description"));
+            } else {
+                unit.setDescription("Ohne Beschreibung");
+            }
+
+            unit.setMaxUsers(resultSet.getInt("max_participants"));
+            unit.setStartime(resultSet.getDate("start_time"));
+            unit.setEndtime(resultSet.getDate("end_date"));
+            courseUnits.add(unit);
+            }
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
+            System.out.println("cUnit");
+            throw new InvalidDBTransferException();
+        }
+        return courseUnits;
     }
 
     /**

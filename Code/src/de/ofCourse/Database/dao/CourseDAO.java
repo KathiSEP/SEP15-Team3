@@ -703,7 +703,6 @@ public class CourseDAO {
             resultSet.close();
         } catch (SQLException e) {
             LogHandler.getInstance().error("Error occoured in getLeaders from CourseDAO");
-            System.out.println("Leader");
             throw new InvalidDBTransferException();
         }
         return leaders;
