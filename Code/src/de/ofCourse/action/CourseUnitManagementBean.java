@@ -239,7 +239,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				courseUnitID, false));
 		this.transaction.commit();
 	    } catch (InvalidDBTransferException e) {
-		System.out.println("Exception");
 		LogHandler.getInstance().error(
 			"Error occured during updating the"
 				+ " page with elements from database.");
@@ -312,9 +311,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    courseID, false);
 		}
 		this.transaction.commit();
-		System.out.println(FacesContext.getCurrentInstance()
-			.getExternalContext().getRequestParameterMap()
-			.get("courseID"));
 		return "/facelets/open/courses/courseDetail.xhtml";
 	    } catch (InvalidDBTransferException e) {
 		LogHandler.getInstance().error(
@@ -503,7 +499,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    }
 	}
 	if (delete) {
-            mailBean.sendCourseDeleteUnitMail(recipients, this.courseUnit.getCourseUnitID());
+            //mailBean.sendCourseDeleteUnitMail(recipients, this.courseUnit.getCourseUnitID());
 	} else {
 	    mailBean.sendCourseEditUnitMail(recipients,
 		    this.courseUnit.getCourseUnitID());

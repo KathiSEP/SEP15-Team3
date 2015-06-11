@@ -86,7 +86,7 @@ public class PaginationData implements Serializable {
 	    }
 	    break;
 	case "forward":
-	    if ((getCurrentPageNumber() + 1) < getNumberOfPages()) {
+	    if (getCurrentPageNumber()  < getNumberOfPages()) {
 		setCurrentPageNumber(getCurrentPageNumber() + 1);
 	    }
 	    break;
@@ -107,12 +107,12 @@ public class PaginationData implements Serializable {
 	if (numberOfAllItems % this.getElementsPerPage() == 0
 		&& numberOfAllItems != 0) {
 	    calculatedNumberOfPages = (numberOfAllItems / this
-		    .getElementsPerPage());
+		    .getElementsPerPage())-1;
 	} else {
 	    calculatedNumberOfPages = (numberOfAllItems / this
-		    .getElementsPerPage())+1;
+		    .getElementsPerPage());
 	}
-	setNumberOfPages(calculatedNumberOfPages-1);
+	setNumberOfPages(calculatedNumberOfPages);
 
     }
 
