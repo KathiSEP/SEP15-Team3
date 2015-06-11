@@ -68,7 +68,7 @@ public class CourseDAO {
 
 	boolean courseLeaderExists = false;
 
-	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+	// PRepare SQL- INSERT and database connection
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -125,13 +125,11 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// TODO image Spalte hinzufügen, Typ: bytea (kein STRING!!!!!!!)
-
 	String sql = "Insert into \"courses\" (titel, max_participants, "
 		+ "start_date, end_date, description, image) "
 		+ "values (?, ?, ?, ?, ?, ?) RETURNING id";
 
-	//  catch potential SQL-Injektion 
+	//  ccatch potential SQL-Injektion
 	try {
 
 	    // Filling PreparedStatement, check in optional fields if the user 
@@ -996,9 +994,8 @@ public class CourseDAO {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseID);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-            // (hier
-            // ein Eintrag in der Liste, da Benutzername einzigartig).
+	    // execute preparedStatement, return resultSet as a list 
+            // (here one entry in the list because the user name is unique)
             if (pS.executeUpdate() == 1) {
                 successful = true;
             } else {
