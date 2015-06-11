@@ -403,7 +403,7 @@ public class CourseDetailBean implements Pagination {
      * @return
      * @throws CourseRegistrationException
      */
-    public String signUpForCourseUnits() throws CourseRegistrationException {
+    public signUpForCourseUnits() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
         // TODO an rickys faclet anpassen
@@ -434,7 +434,6 @@ public class CourseDetailBean implements Pagination {
                 LogHandler.getInstance().debug(
                         "User succesfully added to CourseUnit");
                 trans.commit();
-                return "x";
             } else {
                 LogHandler
                         .getInstance()
@@ -459,7 +458,6 @@ public class CourseDetailBean implements Pagination {
                     "Not enough Money on the Account. User:"
                             + sessionUser.getUserID()
                             + "couldnt sign up for courseUnit:" + courseUnitID);
-            return "x";
         }
 
     }
@@ -483,13 +481,13 @@ public class CourseDetailBean implements Pagination {
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign off process
      */
-    public String signOffFromCourseUnits() throws CourseRegistrationException {
+    public void signOffFromCourseUnits() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
         // TODO noch angleichen zum FACLET
         int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap()
-                .get("CourseUNitID"));
+                .get("courseUnitID"));
         try {
 
             // Instanziere alle Models aus der Datenbank die gebraucht werden
@@ -504,14 +502,11 @@ public class CourseDetailBean implements Pagination {
             LogHandler.getInstance().debug(
                     "User sucessfully signed of from courseUnit");
             trans.commit();
-            return "x";
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().debug(
                     "User not signed off from courseUnit");
             trans.rollback();
         }
-
-        return null;
     }
 
     /**

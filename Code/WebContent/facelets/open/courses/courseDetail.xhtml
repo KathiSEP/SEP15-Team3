@@ -166,7 +166,9 @@
                    	            	</h:commandButton>
                    	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
                  	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"/>
+   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+            	                        </h:commandButton>
                        	        </h:form>
                             </h:column>
                             <h:column>
