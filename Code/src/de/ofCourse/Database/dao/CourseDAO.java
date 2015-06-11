@@ -129,7 +129,7 @@ public class CourseDAO {
 		+ "start_date, end_date, description, image) "
 		+ "values (?, ?, ?, ?, ?, ?) RETURNING id";
 
-	//  ccatch potential SQL-Injektion
+	//  catch potential SQL-Injection
 	try {
 
 	    // Filling PreparedStatement, check in optional fields if the user 
@@ -989,13 +989,13 @@ public class CourseDAO {
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "DELETE FROM \"courses\" WHERE id = ?";
-	// catch potential SQL-Injektion
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseID);
 
 	    // execute preparedStatement, return resultSet as a list 
-            // (here one entry in the list because the user name is unique)
+            // (here one entry in the list because the user id is unique)
             if (pS.executeUpdate() == 1) {
                 successful = true;
             } else {
@@ -1127,7 +1127,7 @@ public class CourseDAO {
 	String sql = "Insert into \"course_instructors\" (course_instructor_id, course_id) "
 		+ "values (?, ?)";
 
-	// catch potential SQL-Injektion
+	// catch potential SQL-Injection
 	try {
 
 	    
@@ -1179,7 +1179,7 @@ public class CourseDAO {
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
-	// catch potential SQL-Injektion
+	// catch potential SQL-Injection
 	try {
 	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
                 successful = true;

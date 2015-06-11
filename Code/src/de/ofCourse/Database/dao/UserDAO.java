@@ -68,21 +68,20 @@ public class UserDAO {
 
         String pwSalt = "";
 
-        // SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+        // Prepare SQL- Request and database connection.
         PreparedStatement pS = null;
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
 
-        // Datenbankabfrage
+        // database request
         String sql = "SELECT pw_salt FROM \"users\" WHERE nickname=?";
 
-        // mögliche SQL-Injektion abfangen
+        // catch potential SQL-Injection
         try {
             pS = conn.prepareStatement(sql);
             pS.setString(1, username);
-            // preparedStatement ausführen, gibt resultSet als Liste zurück
-            // (hier
-            // ein Eintrag in der Liste, da Benutzername einzigartig).
+            //execute preparedStatement, return resultSet as a list 
+            // (here one entry in the list because the user name is unique)
             ResultSet res = pS.executeQuery();
 
             // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
