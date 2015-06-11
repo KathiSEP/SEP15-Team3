@@ -390,7 +390,7 @@ public class CourseDetailBean implements Pagination {
         // TODO an rickys faclet anpassen
         int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap()
-                .get("CourseUNitID"));
+                .get("courseUnitID"));
         try {
             // Instanziere alle Models aus der Datenbank die gebraucht werden
             CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(trans,

@@ -61,6 +61,12 @@
                 		            	<f:facet name="header">E-Mail</f:facet>
                         		        <h:outputText value="#{user.email}"/>
                             		</h:column>
+   		                            <h:column>
+           			                    <f:facet name="header" />
+                    		            <h:commandButton id="details" class="btn btn-alert" value="Löschen" action="#">
+                            	        	<f:param name="" value=""/>
+                                		</h:commandButton>
+                            		</h:column>
 								</h:dataTable>						
 							</div>
 						</div>
@@ -133,10 +139,12 @@
                             	<h:outputText class="badge" value="#{courseUnit.price}€"/>
                             </h:column>
                             <h:column>
-                                <f:facet name="header" />
-                                <h:commandButton id="details" class="btn btn-success" value="Anmelden" action="#">
-                                    <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-                                </h:commandButton>
+                                <f:facet name="header"/>
+       	                        <h:form>
+   	    	                        <h:commandButton id="details" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}">
+            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+                   	            	</h:commandButton>
+                       	        </h:form>
                             </h:column>
 						</h:dataTable>
 					</div>
