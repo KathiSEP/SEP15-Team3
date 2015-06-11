@@ -153,7 +153,8 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+		    .error("SQL Exception occoured during executing "
+		            + "emailExists(Transaction trans, String email)");
 	    throw new InvalidDBTransferException();
 	}
 	return exists;
@@ -638,7 +639,9 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing proveLogin(Transaction trans, String username, String passwordHash)");
+		    .error("SQL Exception occoured during executing "
+		            + "verifyUser(Transaction trans, "
+		            + "String veriString)");
 	    throw new InvalidDBTransferException();
 	}
 

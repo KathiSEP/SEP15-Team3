@@ -83,6 +83,11 @@ public class CourseDetailBean implements Pagination {
      * Stores the course units that belong to the course
      */
     private List<CourseUnit> courseUnitsOfCourse;
+    
+    /**
+     * Stores the leader to be add
+     */
+    private User leaderToAdd;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -739,4 +744,109 @@ public class CourseDetailBean implements Pagination {
         this.isRegistered = isRegistered;
     }
 
+    
+    /**
+     * Deletes the course from the system.
+     * 
+     * @return  to the page search.xhtml
+     * 
+     * @author Katharina Hölzl
+     */
+    public String deleteCourse() {
+        
+        // Create a new transaction object for the database connection. 
+        this.transaction = Connection.create();
+        transaction.start();
+        
+        try{
+            
+          if(CourseDAO.deleteCourse(this.transaction, 
+                                      this.course.getCourseID()) == true){
+              FacesMessageCreator.createFacesMessage(null,
+                      "Kurs wurde erfolgreich gelöscht!");
+              this.transaction.commit();
+           // Forwarding to the page search, because the delete was successful.
+              return "/facelets/open/courses/search.xhtml?faces-redirect=true";
+          }
+          else{
+              FacesMessageCreator.createFacesMessage(null,
+                      "Löschen des Kurses fehlgeschlagen!");
+              this.transaction.rollback();
+              return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+          }
+            
+        }catch (InvalidDBTransferException e) {
+            this.transaction.rollback();
+        }  
+        
+        return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+    }
+
+    /**
+     * Adds a course leader to a course.
+     * 
+     * @author Katharina Hölzl
+     */
+    public void addCourseLeader() {
+        
+     // Create a new transaction object for the database connection. 
+        this.transaction = Connection.create();
+        transaction.start();
+        
+        if(CourseDAO.addLeaderToCourse(this.transaction, 
+                this.leaderToAdd.getUserID(), this.course.getCourseID())){
+            FacesMessageCreator.createFacesMessage(null,
+                    "Der Kursleiter wurde erfolgreich hinzugefügt!");
+            this.transaction.commit();
+        }
+        else{
+            FacesMessageCreator.createFacesMessage(null,
+                    "Hinzufügen des Kursleiters fehlgeschlagen!");
+            this.transaction.rollback();
+        }
+        
+    }
+
+    /**
+     * Returns the value of the attribute <code>leaderToAdd</code>.
+     * 
+     * @return the leader to be add
+     */
+    public User getLeaderToAdd() {
+        return leaderToAdd;
+    }
+
+    /**
+     * Sets the value of the attribute <code>leaderToAdd</code>.
+     * 
+     * @param leaderToAdd
+     *                  the leader to be add
+     */
+    public void setLeaderToAdd(User leaderToAdd) {
+        this.leaderToAdd = leaderToAdd;
+    }
+
+    /**
+     * removes the target course leaders
+     * 
+     * @author Katharina Hölzl
+     */
+    public void removeCourseLeaders() {
+     // Create a new transaction object for the database connection. 
+        this.transaction = Connection.create();
+        transaction.start();
+        
+        if(CourseDAO.removeLeaderFromCourse(this.transaction, 
+                this.leaderToAdd.getUserID(), this.course.getCourseID())){
+            FacesMessageCreator.createFacesMessage(null,
+                    "Der Kursleiter wurde erfolgreich hinzugefügt!");
+            this.transaction.commit();
+        }
+        else{
+            FacesMessageCreator.createFacesMessage(null,
+                    "Hinzufügen des Kursleiters fehlgeschlagen!");
+            this.transaction.rollback();
+        }
+    }
+    
 }

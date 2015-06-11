@@ -965,9 +965,11 @@ public class CourseDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static void deleteCourse(Transaction trans, int courseID)
+    public static boolean deleteCourse(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-
+            
+        boolean successful = false;
+        
 	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
@@ -979,15 +981,24 @@ public class CourseDAO {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseID);
 
-	    pS.executeUpdate();
-	    pS.close();
+	    // preparedStatement ausführen, gibt resultSet als Liste zurück
+            // (hier
+            // ein Eintrag in der Liste, da Benutzername einzigartig).
+            if (pS.executeUpdate() == 1) {
+                successful = true;
+            } else {
+                successful = false;
+            }
+            pS.close();
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+		    .error("SQL Exception occoured during executing "
+		            + "deleteCourse(Transaction trans, int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
+    return successful;
     }
 
     /**
@@ -1085,15 +1096,19 @@ public class CourseDAO {
      *            the user's ID
      * @param courseID
      *            the course's ID
+     * @return true if the course leader could be add to the course, else false
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
      * 
      * @author Katharina Hölzl
      */
-    public static void addLeaderToCourse(Transaction trans, int userID,
+    public static boolean addLeaderToCourse(Transaction trans, int userID, 
 	    int courseID) throws InvalidDBTransferException {
+        
+        boolean successful = false;
+        
 	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
-
+      
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -1103,15 +1118,23 @@ public class CourseDAO {
 	// mögliche SQL-Injektion abfangen
 	try {
 
-	    setRelationMethode(courseID, userID, conn, sql);
+	    
+	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
+	        successful = true;
+            } else {
+                successful = false; 
+	    }
 
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+		    .error("SQL Exception occoured during executing "
+		            + "addLeaderToCourse(Transaction trans, "
+		            + "int userID, int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
+	return successful;
     }
 
     /**
@@ -1129,13 +1152,15 @@ public class CourseDAO {
      * @param courseID
      *            the course's ID
      * @throws InvalidDBTransferException
+     * @return true if the course leader could be removed, else false.
      *             if any error occurred during the execution of the method
      * 
      * @author Katharina Hölzl
      */
-    public static void removeLeaderFromCourse(Transaction trans, int userID,
+    public static boolean removeLeaderFromCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
+        boolean successful = false;
 	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 
 	Connection connection = (Connection) trans;
@@ -1144,15 +1169,22 @@ public class CourseDAO {
 	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
 	// mögliche SQL-Injektion abfangen
 	try {
-	    setRelationMethode(courseID, userID, conn, sql);
+	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
+                successful = true;
+            } else {
+                successful = false; 
+            }
 
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing emailExists(Transaction trans, String email)");
+		    .error("SQL Exception occoured during executing "
+		            + "removeLeaderFromCourse(Transaction trans, "
+		            + "int userID,int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
+	return successful;
     }
 
     /**
@@ -1231,13 +1263,14 @@ public class CourseDAO {
      * @param preparedStmt
      * @throws SQLException
      */
-    static void setRelationMethode(int userID, int courseID,
+    static int setRelationMethode(int userID, int courseID,
 	    java.sql.Connection conn, String preparedStmt) throws SQLException {
 	PreparedStatement pS;
 	pS = conn.prepareStatement(preparedStmt);
 	pS.setInt(1, userID);
 	pS.setInt(2, courseID);
-	pS.executeUpdate();
+	return pS.executeUpdate();
+	
     }
-
+     
 }
