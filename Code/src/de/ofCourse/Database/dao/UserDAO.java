@@ -1015,33 +1015,9 @@ public class UserDAO {
      *            the ID of the user to be deleted
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
-     *             
-     * @author Patrick Cretu
      */
     public static void deleteUser(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
-    	Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement stmt = null;
-    	String query = "DELETE FROM \"users\" WHERE id = ?";
-    	
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, userID);
-            stmt.executeUpdate();
-		} catch (SQLException e) {
-			LogHandler.getInstance().error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-			throw new InvalidDBTransferException();
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					LogHandler.getInstance().error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-					throw new InvalidDBTransferException();
-				}
-			}
-		}
     }
 
     /**

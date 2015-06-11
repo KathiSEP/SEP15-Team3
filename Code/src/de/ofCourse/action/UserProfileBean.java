@@ -110,17 +110,10 @@ public class UserProfileBean implements Pagination {
      * @return link to the next page
      */
     public void saveSettings() {
-    	if (password.equals(confirmPassword)) {
-    		transaction = Connection.create();
-    		transaction.start();
-    		UserDAO.updateUser(transaction, user, password);
-    		transaction.commit();
-    		readOnly = true;
-    	} else {
-    		
-    	}
+    	
+    	readOnly = true;
     }
-    
+
     /**
      * Initializes the profile page page of the user with the details of the
      * user.
