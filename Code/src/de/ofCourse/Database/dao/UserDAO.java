@@ -1181,7 +1181,7 @@ public class UserDAO {
      * @param courseUnitID
      * @return
      */
-    private static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID) throws InvalidDBTransferException{
+    public static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID) throws InvalidDBTransferException{
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
