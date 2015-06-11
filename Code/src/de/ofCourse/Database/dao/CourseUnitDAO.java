@@ -13,6 +13,7 @@ import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
@@ -718,10 +719,106 @@ public class CourseUnitDAO {
      *         if the user doesn't participate in any course unit
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Patrick Cretu
      */
     public static List<CourseUnit> getCourseUnitsOf(Transaction trans,
 	    int userID) throws InvalidDBTransferException {
-	return null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	PreparedStatement stmt = null;
+    	ResultSet rst = null;
+    	List<CourseUnit> result = null;
+    	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".titel, \"course_units\".fee"
+    			+ "FROM \"course_units\", \"users\", \"course_unit_participants\" "
+    			+ "WHERE \"users\".id = \"course_unit_participants\".participant_id "
+    			+ "AND \"course_unit_participants\".course_unit_id = \"course_units\".id "
+    			+ "AND \"users\".id = ?";
+    	
+    	try {
+    	    stmt = conn.prepareStatement(getCourseUnits);
+    	    stmt.setInt(1, userID);
+    	    
+    	    rst = stmt.executeQuery();
+    	    result = getResult(rst);
+    	} catch (SQLException e) {
+    	    LogHandler
+    		    .getInstance()
+    		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+    	    throw new InvalidDBTransferException();
+    	} finally {
+    	    if (rst != null) {
+	    		try {
+	    		    rst.close();
+	    		} catch (SQLException e) {
+	    		    LogHandler
+	    			    .getInstance()
+	    			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+	    		    throw new InvalidDBTransferException();
+	    		}
+    	    }
+    	    if (stmt != null) {
+	    		try {
+	    		    stmt.close();
+	    		} catch (SQLException e) {
+	    		    LogHandler
+	    			    .getInstance()
+	    			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+	    		    throw new InvalidDBTransferException();
+	    		}
+    	    }
+    	}
+    	return result;
+    }
+    
+    /**
+     * 
+     * @param rst
+     * @return
+     * @throws InvalidDBTransferException
+     * 
+     * @author Patrick Cretu
+     */
+    private static List<CourseUnit> getResult(ResultSet rst)
+	    throws InvalidDBTransferException {
+		List<CourseUnit> result = new ArrayList<CourseUnit>();
+		try {
+		    int cols = rst.getMetaData().getColumnCount();
+	
+		    while (rst.next()) {
+				int i = 1;
+				List<Object> tuple = new ArrayList<Object>();
+				CourseUnit unit = new CourseUnit();
+				while (i <= cols) {
+				    Object o = rst.getObject(i);
+				    tuple.add(o);
+				    i++;
+				}
+				setProperties(unit, tuple);
+				result.add(unit);
+		    }
+		    if (!result.isEmpty()) {
+		    	return result;
+		    }
+		} catch (SQLException e) {
+		    LogHandler.getInstance().error(
+			    "SQL Exception occoured during getResult(ResultSet rst)");
+		    throw new InvalidDBTransferException();
+		}
+		return null;
+    }
+    
+    /**
+     * 
+     * @param unit
+     * @param tuple
+     * 
+     * @author Patrick Cretu
+     */
+    private static void setProperties(CourseUnit unit, List<Object> tuple) {
+    	unit.setCourseUnitID((Integer) tuple.get(0));
+    	unit.setTitle((String) tuple.get(1));
+    	unit.setPrice((Float) tuple.get(2));
     }
 
     /**
