@@ -1,8 +1,5 @@
 package de.ofCourse.action;
 
-
-
-
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,85 +44,101 @@ public class UserPictureHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
-        
+
         System.out.println("ich bin im servlet");
         Transaction trans = Connection.create();
         trans.start();
         try {
-            
-            if(req.getParameter("profilImage") != null){
+
+            if (req.getParameter("profilImage") != null) {
                 String pictureBelongsToUserID = req.getParameter("profilImage");
                 int userID = Integer.parseInt(pictureBelongsToUserID);
-                User user = UserDAO.getUser(trans, userID);
-                resp.reset();
-                resp.setContentType("image/jpg");
-                resp.setContentLength(user.getProfilImage().length);
-                resp.getOutputStream().write(user.getProfilImage());
+                byte[] userPicture = UserDAO.getImage(trans, userID);
+                if (userPicture == null) {
+                    dummypicture(resp);
+                } else {
+                    resp.reset();
+                    resp.setContentType("image/jpg");
+                    resp.setContentLength(userPicture.length);
+                    resp.getOutputStream().write(userPicture);
+
+                }
                 trans.commit();
-            } else if(req.getParameter("courseImage") != null){
-                
-                String pictureBelongsToCourseID = req.getParameter("courseImage");
+
+            } else if (req.getParameter("courseImage") != null) {
+
+                String pictureBelongsToCourseID = req
+                        .getParameter("courseImage");
                 int courseID = Integer.parseInt(pictureBelongsToCourseID);
-                Course course = CourseDAO.getCourse(trans, courseID);
-                resp.reset();
-                resp.setContentType("image/jpg");
-                resp.setContentLength(course.getCourseImage().length);
-                resp.getOutputStream().write(course.getCourseImage());
+                byte[] courseImage = CourseDAO.getImage(trans, courseID);
+                if (courseImage == null) {
+                    dummypicture(resp);
+                } else {
+                    resp.reset();
+                    resp.setContentType("image/jpg");
+                    resp.setContentLength(courseImage.length);
+                    resp.getOutputStream().write(courseImage);
+                }
+
                 trans.commit();
+            } else {
+
             }
-           
-            
-            
-            
-            
-//            InputStream picture = new ByteArrayInputStream(
-//                    user.getProfilImage());
-            
-            
-           
-            
-            
-//            BufferedInputStream input = null;
-//            BufferedOutputStream output = null;
-//
-//            try {
-//                input = new BufferedInputStream(picture);
-//                output = new BufferedOutputStream(resp.getOutputStream());
-//
-//                byte[] buffer = new byte[8192];
-//                int length;
-//                while ((length = input.read(buffer)) > 0) {
-//                    output.write(buffer, 0, length);
-//                }
-//                trans.commit();
-//            } finally {
-//                if (output != null) {
-//                    try {
-//                        output.close();
-//                    } catch (Exception e) {
-//                        LogHandler.getInstance().error(
-//                                "HTTPServlet funktioniert nicht: output.close");
-//                    }
-//                }
-//
-//                if (input != null) {
-//                    try {
-//                        input.close();
-//                    } catch (Exception e) {
-//                        LogHandler.getInstance().error(
-//                                "HTTPServlet funktioniert nicht: input.close");
-//                    }
-//                }
-//            }
+
+            // InputStream picture = new ByteArrayInputStream(
+            // user.getProfilImage());
+
+            // BufferedInputStream input = null;
+            // BufferedOutputStream output = null;
+            //
+            // try {
+            // input = new BufferedInputStream(picture);
+            // output = new BufferedOutputStream(resp.getOutputStream());
+            //
+            // byte[] buffer = new byte[8192];
+            // int length;
+            // while ((length = input.read(buffer)) > 0) {
+            // output.write(buffer, 0, length);
+            // }
+            // trans.commit();
+            // } finally {
+            // if (output != null) {
+            // try {
+            // output.close();
+            // } catch (Exception e) {
+            // LogHandler.getInstance().error(
+            // "HTTPServlet funktioniert nicht: output.close");
+            // }
+            // }
+            //
+            // if (input != null) {
+            // try {
+            // input.close();
+            // } catch (Exception e) {
+            // LogHandler.getInstance().error(
+            // "HTTPServlet funktioniert nicht: input.close");
+            // }
+            // }
+            // }
 
         } catch (Exception e) {
-            //TODO Error page 
+            // TODO Error page
             LogHandler.getInstance().error(
                     "HTTPServlet funktioniert nicht: getUser");
             trans.rollback();
         }
 
+    }
+
+    /**
+     * @param resp
+     * @throws IOException
+     */
+    private void dummypicture(HttpServletResponse resp) throws IOException {
+        resp.reset();
+        resp.setContentType("image/jpg");
+
+        resp.sendRedirect("http://localhost:8003/OfCourse/resources/img/userdata/userphoto.jpg");
     }
 
 }
