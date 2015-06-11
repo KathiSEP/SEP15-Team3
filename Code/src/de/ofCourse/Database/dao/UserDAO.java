@@ -1163,13 +1163,19 @@ public class UserDAO {
 	}
     }
     
+    /**
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param userID
+     * @param newAccountBalance
+     */
     public static void updateAccountBalance(Transaction trans, int userID, float newAccountBalance ){
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
         //TODO spalte evlt noch nciht richtig
         
-        String updateAccountBalance = "UPDATE \"users\" SET account_balance = ? WHERE user_id = ?";
+        String updateAccountBalance = "UPDATE \"users\" SET credit_balance = ? WHERE id = ?";
         
         try{
             PreparedStatement pS = conn.prepareStatement(updateAccountBalance);
