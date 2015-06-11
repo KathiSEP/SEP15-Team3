@@ -448,11 +448,10 @@
 											value="#{courseUnitManagementBean.userToAdd.userID}"
 											required="true"
 											requiredMessage="Bitte geben Sie eine ID ein. "
-											converterMessage="Die eingegebene ID ist keine Zahl. "
-											validatorMessage="Die eingegebene ID darf höchstens 9 Zeichen lang sein.">
+											converterMessage="Die eingegebene ID ist keine Zahl. ">
 											<f:convertNumber integerOnly="true" pattern="#000000000"
 												type="number" />
-											<f:validateLength minimum="0" maximum="9" />
+											<f:validator validatorId="userExistsValidator" />
 										</h:inputText>
 									</div>
 

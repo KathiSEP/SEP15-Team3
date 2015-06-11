@@ -47,4 +47,8 @@
         <validator-id>courseParticipantsValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.CourseParticipantsValidator</validator-class>
     </validator>
+     <validator>
+        <validator-id>userExistsValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.UserExistsValidator</validator-class>
+    </validator>
 </faces-config>

@@ -4,10 +4,7 @@
 package de.ofCourse.action;
 
 import java.io.Serializable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -200,23 +197,23 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// Mit Werten von CourseDetails füllen
 	// ////////////////////////////////////////////////
 
-	String fetchedMode = FacesContext.getCurrentInstance()
-		.getExternalContext().getRequestParameterMap().get("editMode");
-	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
-	    editMode = true;
-	} else {
-	    editMode = false;
-	}
-
-	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
-		.getExternalContext().getRequestParameterMap().get("courseID"));
-	if (editMode) {
-	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-		    .getExternalContext().getRequestParameterMap()
-		    .get("courseUnitID"));
-	} else {
-	    courseUnitID = 0;
-	}
+//	String fetchedMode = FacesContext.getCurrentInstance()
+//		.getExternalContext().getRequestParameterMap().get("editMode");
+//	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
+//	    editMode = true;
+//	} else {
+//	    editMode = false;
+//	}
+//
+//	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+//		.getExternalContext().getRequestParameterMap().get("courseID"));
+//	if (editMode) {
+//	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+//		    .getExternalContext().getRequestParameterMap()
+//		    .get("courseUnitID"));
+//	} else {
+//	    courseUnitID = 0;
+//	}
 
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
@@ -290,11 +287,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	if (this.checkDate()) {
 	    transaction.start();
 	    try {
-
 		calculateStartAndEndTime(this.courseUnit);
-		System.out.println(courseUnit.getStartime().toGMTString());
-		System.out.println(courseUnit.getEndtime().toGMTString());
-
 		if (this.regularCourseUnit) {
 
 		    courseUnit.getCycle().setCycleID(
@@ -549,6 +542,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
 			    courseUnitID, false));
 	    transaction.commit();
+	    userToAdd = new User();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
@@ -561,6 +555,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
     }
 
+    @SuppressWarnings("deprecation")
     private boolean checkDate() {
 	Date tempDateBegin = new Date(this.date.getTime());
 	Date tempDateEnd = new Date(this.date.getTime());
@@ -601,6 +596,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
     }
 
+    @SuppressWarnings("deprecation")
     private String dateAsString(Date date) {
 	String dateString;
 	int day = date.getDate();
@@ -932,5 +928,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     public void setSelectedToInform(int selectedToInform) {
 	this.selectedToInform = selectedToInform;
+    }
+
+    /**
+     * @return the informnobody
+     */
+    public static int getInformnobody() {
+	return informNobody;
     }
 }
