@@ -355,26 +355,22 @@ public class CourseDAO {
 		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
 		+ "courses.end_date FROM \"courses\", \"course_units\" "
-		+ "WHERE \"course_units\".start_time between current_date AND current_date + integer '6' ORDER BY %s %s LIMIT ? OFFSET ?";
+		+ "WHERE \"course_units\".start_time BETWEEN current_date AND current_date + integer '6'"
+		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 	String getAllCourses = "SELECT * FROM \"courses\" ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
 
 	switch (period) {
 	case "day":
-	    // result = getCoursesInPeriod(conn, limit, offset, orderParam,
-	    // currentDateCourses);
-	    result = getCoursesInPeriod(conn, limit, offset, orderParam,
-		    String.format(currentDateCourses, orderParam, dir));
+	    result = getCoursesInPeriod(conn, limit, offset, String.format(currentDateCourses, orderParam, dir));
 	    break;
 	case "week":
 	    // result = getCoursesInPeriod(conn, limit, offset, orderParam,
 	    // currentWeekCourses);
-	    result = getCoursesInPeriod(conn, limit, offset, orderParam,
-		    String.format(currentWeekCourses, orderParam, dir));
+	    result = getCoursesInPeriod(conn, limit, offset, String.format(currentWeekCourses, orderParam, dir));
 	    break;
 	case "total":
-	    result = getCoursesInPeriod(conn, limit, offset, orderParam,
-		    String.format(getAllCourses, orderParam, dir));
+	    result = getCoursesInPeriod(conn, limit, offset, String.format(getAllCourses, orderParam, dir));
 	    break;
 	default:
 	    ;
@@ -395,7 +391,7 @@ public class CourseDAO {
      * @author Patrick Cretu
      */
     private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
-	    int limit, int offset, String orderParam, String query)
+	    int limit, int offset, String query)
 	    throws InvalidDBTransferException {
 	PreparedStatement stmt = null;
 	ResultSet rst = null;
@@ -403,7 +399,6 @@ public class CourseDAO {
 
 	try {
 	    stmt = conn.prepareStatement(query);
-	    // stmt.setString(1, orderParam);
 	    stmt.setInt(1, limit);
 	    stmt.setInt(2, offset);
 
