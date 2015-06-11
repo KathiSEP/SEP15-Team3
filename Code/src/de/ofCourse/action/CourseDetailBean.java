@@ -835,7 +835,7 @@ public class CourseDetailBean implements Pagination {
      // Create a new transaction object for the database connection. 
         this.transaction = Connection.create();
         transaction.start();
-        
+     //TODO this.leaderToAdd.getUserID ausbessern!!!   
         if(CourseDAO.removeLeaderFromCourse(this.transaction, 
                 this.leaderToAdd.getUserID(), this.course.getCourseID())){
             FacesMessageCreator.createFacesMessage(null,
