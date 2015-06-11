@@ -81,13 +81,13 @@ public class UserDAO {
             pS = conn.prepareStatement(sql);
             pS.setString(1, username);
             //execute preparedStatement, return resultSet as a list 
-            // (here one entry in the list because the user name is unique)
+            //(here one entry in the list because the user name is unique)
             ResultSet res = pS.executeQuery();
 
-            // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-            // Eintrag gibt, ansonsten 0.
+            // execute next entry, return true if there is another entry, 
+            // else false.
             if (res.next()) {
-                // id mit zugehörigem Wert aus der Datenbank füllen.
+                // Fill the id with the associated value from the database.
                 pwSalt = res.getString("pw_salt");
             } else {
                 pwSalt = null;
@@ -97,7 +97,8 @@ public class UserDAO {
         } catch (SQLException e) {
             LogHandler
                     .getInstance()
-                    .error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
+                    .error("SQL Exception occoured during executing "
+                            + "getPWSalt(Transaction trans, String username)");
             throw new InvalidDBTransferException();
         }
 
@@ -124,24 +125,23 @@ public class UserDAO {
 	    throws InvalidDBTransferException {
 	boolean exists = false;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// prepare SQL- request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "SELECT id FROM \"users\" WHERE email=?";
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setString(1, email);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
+	    //execute preparedStatement, return resultSet as a list 
+            //(here one entry in the list because the email is unique)
 	    ResultSet res = pS.executeQuery();
 
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
+	    // execute next entry, return true if there is another entry, 
+            // else false.
 	    if (res.next()) {
 		exists = true;
 	    } else {
@@ -268,17 +268,18 @@ public class UserDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static String createUser(Transaction trans, User user, String pwHash, String salt)
+    public static String createUser(Transaction trans, User user, 
+                                    String pwHash, String salt)
 	    throws InvalidDBTransferException {
 
 	String veriString = "";
 
-	// SQL- INSERT vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- INSERT and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 	    ResultSet res = null;
 
@@ -294,12 +295,14 @@ public class UserDAO {
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
 		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-		    + "email_verification, admin_verification, role, status, veri_string, pw_salt) "
-		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, ?::role, ?::status, ?, ?)";
+		    + "email_verification, admin_verification, role, status, "
+		    + "veri_string, pw_salt) "
+		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, "
+		    + "?::role, ?::status, ?, ?)";
 
-	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
-	    // ob der Benutzer die Daten angegeben hat oder ob in die
-	    // Datenbank null-Werte geschrieben werden müssen.
+	    // Filling PreparedStatement, check in optional fields if the user 
+            // has inserted the data or if the value null must be written into
+            // the database.
 	    pS = conn.prepareStatement(sql);
 	    if (user.getFirstname() == null || user.getFirstname().length() < 1) {
 		pS.setString(1, null);
@@ -352,7 +355,9 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+		    .error("SQL Exception occoured during executing "
+		            + "createUser(Transaction trans, User user, "
+		            + "String pwHash, String salt)");
 	    throw new InvalidDBTransferException();
 	}
 
@@ -483,24 +488,23 @@ public class UserDAO {
 
 	UserStatus userStatus = null;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- Request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "SELECT status FROM \"users\" WHERE id=?";
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, userID);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
+	    ///execute preparedStatement, return resultSet as a list 
+            //(here one entry in the list because the id is unique).
 	    ResultSet res = pS.executeQuery();
 
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
+	    // Execute next entry, return true if there is another entry, 
+            // else false.
 	    if (res.next()) {
 		String userStatusString = res.getString("status");
 		switch (userStatusString) {
@@ -526,7 +530,8 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getUserStatus(Transaction trans, int userID)");
+		    .error("SQL Exception occoured during executing "
+		            + "getUserStatus(Transaction trans, int userID)");
 	    throw new InvalidDBTransferException();
 	}
 	return userStatus;
@@ -550,24 +555,23 @@ public class UserDAO {
 	    throws InvalidDBTransferException {
 	UserRole userRole = null;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- Request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "SELECT role FROM \"users\" WHERE id=?";
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, userID);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
+	  ///execute preparedStatement, return resultSet as a list 
+            //(here one entry in the list because the id is unique).
 	    ResultSet res = pS.executeQuery();
 
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
+	 // Execute next entry, return true if there is another entry, 
+            // else false.
 	    if (res.next()) {
 		String userRoleString = res.getString("role");
 		switch (userRoleString) {
@@ -590,7 +594,8 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getUserRole(Transaction trans, int userID)");
+		    .error("SQL Exception occoured during executing "
+		            + "getUserRole(Transaction trans, int userID)");
 	    throw new InvalidDBTransferException();
 	}
 	return userRole;
@@ -617,8 +622,9 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "UPDATE \"users\" SET email_verification=?, veri_string=?, status=?::status WHERE veri_string=?";
-	// mögliche SQL-Injektion abfangen
+	String sql = "UPDATE \"users\" SET email_verification=?, "
+	        + "veri_string=?, status=?::status WHERE veri_string=?";
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setBoolean(1, true);
@@ -626,9 +632,6 @@ public class UserDAO {
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
 	    if (pS.executeUpdate() == 1) {
 		success = true;
 	    } else {
@@ -673,33 +676,32 @@ public class UserDAO {
 
 	int id = wrongUsernameOrPassword;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- Request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id, nickname, pw_hash, status FROM \"users\" WHERE nickname=?";
-	// mögliche SQL-Injektion abfangen
+	String sql = "SELECT id, nickname, pw_hash, status FROM \"users\" "
+	            + " WHERE nickname=?";
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setString(1, username);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
+	    //execute preparedStatement, return resultSet as a list 
+            //(here one entry in the list because the user name is unique)
 	    ResultSet res = pS.executeQuery();
 
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
+	    // execute next entry, return true if there is another entry, 
+            // else false.
 	    if (res.next()) {
-		// Passwort aus dem Resultset abrufen
+		// Execute passwort from the Resultset.
 		String pwHashFromDB = res.getString("pw_hash");
 
-		// Gespeichertes Passwort mit dem eingegebenen Passwort
-		// vergleichen
+		// Compare the saved password with the inserted one.
 		if (passwordHash.equals(pwHashFromDB)) {
 
-		    // Überprüfen, ob der Benutzer aktiviert ist.
+		    // Check if the user is activated.
 		    if (res.getString("status").equals(
 			    UserStatus.REGISTERED.toString())) {
 			id = res.getInt("id");
@@ -717,7 +719,9 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing proveLogin(Transaction trans, String username, String passwordHash)");
+		    .error("SQL Exception occoured during executing "
+		            + "proveLogin(Transaction trans, String username, "
+		            + "String passwordHash)");
 	    throw new InvalidDBTransferException();
 
 	}
@@ -742,35 +746,30 @@ public class UserDAO {
     public static User getUser(Transaction trans, String username)
 	    throws InvalidDBTransferException {
 
-	// Neues Userobjekt erstellen und mit dem Benutzernamen füllen.
-	// Neues Adressobjekt erstellen.
+	// Generate a new user object and filling with the user name.
+	// Generate a new address object.
 	User user = new User();
 	user.setUsername(username);
 	Address address = new Address();
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- Request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// Datenbankabfrage
 	String sql = "SELECT * FROM \"users\" WHERE nickname=?";
 
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setString(1, username);
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
+	    //execute preparedStatement, return resultSet as a list 
+            //(here one entry in the list because the user name is unique)
 	    ResultSet res = pS.executeQuery();
-
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
 	    if (res.next()) {
 
-		// Userobjekt mit Werten aus der Datenbank befüllen.
+		// Fill the user object with values from the database.
 		user.setUserId(res.getInt("id"));
 		user.setFirstname(res.getString("first_name"));
 		user.setLastname(res.getString("name"));
@@ -814,7 +813,7 @@ public class UserDAO {
 		}
 
 		conn.commit();
-		// neue Datenbankabfrage für die Adresse des Benutzers
+		
 		sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
 		PreparedStatement pr = null;
 		pr = conn.prepareStatement(sql);
@@ -832,7 +831,7 @@ public class UserDAO {
 		} else {
 		    address = null;
 		}
-		// dem Userobjekt das Adressobjekt zuweisen
+		// Assign the address object to the user object.
 		user.setAddress(address);
 	    } else {
 
@@ -843,11 +842,12 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getUser(Transaction trans, String username)");
+		    .error("SQL Exception occoured during executing "
+		            + "getUser(Transaction trans, String username)");
 	    throw new InvalidDBTransferException();
 
 	}
-	// gibt das befüllte Userobjekt zurück.
+	// Returns the filled user object.
 	return user;
     }
 
@@ -870,30 +870,19 @@ public class UserDAO {
 
 	final int userDoesNotExist = -1;
 
-	// Neues Integer id erstellen.
 	int id = userDoesNotExist;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// Datenbankabfrage
 	String sql = "SELECT id FROM \"users\" WHERE nickname=?";
 
-	// mögliche SQL-Injektion abfangen
 	try {
 	    pS = conn.prepareStatement(sql);
 	    pS.setString(1, username);
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier
-	    // ein Eintrag in der Liste, da Benutzername einzigartig).
 	    ResultSet res = pS.executeQuery();
-
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten 0.
 	    if (res.next()) {
-		// id mit zugehörigem Wert aus der Datenbank füllen.
 		id = res.getInt("id");
 	    } else {
 		id = userDoesNotExist;
@@ -903,7 +892,8 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getUserID(Transaction trans, String username)");
+		    .error("SQL Exception occoured during executing "
+		            + "getUserID(Transaction trans, String username)");
 	    throw new InvalidDBTransferException();
 	}
 
