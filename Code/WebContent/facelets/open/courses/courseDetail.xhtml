@@ -14,43 +14,35 @@
 				<h1>Kursdetails</h1>
 				<div class="row">
 					<div class="col-lg-12">
-						<p style="font-size:16px;">Hier finden Sie alle Informationen zum Kurs #{courseDetailBean.getCourse().title}:</p>
+						<p style="font-size:16px;">Hier finden Sie alle Informationen zum Kurs <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
 					</div>
 				</div>
+				<h:form id="test">
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
 						<div class="panel panel-info">
 							<div class="panel-heading"><strong>Details</strong></div>
 							<div class="panel-body">
-								<h:form id="courseDetails">
 								<div class="input-group">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Kurs-ID:</strong></span>
-									<h:outputText class="form-control" style="width:170px;" id="idCourse" value="#{courseDetailBean.courseID}"/>
+									<h:inputText class="form-control" readonly="true" style="width:170px;" id="idCourse" value="#{courseDetailBean.courseID}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Max. Teilnehmer:</strong></span>
-									<h:inputText class="form-control" id="minPersonsCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().maxUsers}"/>
-									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().maxUsers}"/>
+									<h:inputText class="form-control" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.maxUsers}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Startdatum:</strong></span>
-									<h:inputText class="form-control" id="startDateCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().startdate}">
+									<h:inputText class="form-control" id="startDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.startdate}">
                                     	<f:convertDateTime pattern="dd.MM.yyyy"/>
 									</h:inputText>
-									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().startdate}">
-										<f:convertDateTime pattern="dd.MM.yyyy"/>
-									</h:outputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Enddatum:</strong></span>
-									<h:inputText class="form-control" id="endDateCourse" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().enddate}">
+									<h:inputText class="form-control" id="endDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.enddate}">
                                     	<f:convertDateTime pattern="dd.MM.yyyy"/>
                                     </h:inputText>
-   									<h:outputText class="form-control" style="width:170px;" rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().enddate}">
-										<f:convertDateTime pattern="dd.MM.yyyy"/>
-									</h:outputText>
 								</div>
-								</h:form>
 							</div>
 						</div>
 						<div class="panel panel-info">
@@ -92,8 +84,8 @@
 								<div class="row" style="text-align:center;"></div>
 								<div class="row" style="padding-top:12px;">
 									<div class="col-lg-12">
-										<h:inputText class="form-control" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().description}"/>
-										<h:outputText rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.getCourse().description}"/>
+										<h:inputText class="form-control" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.course.description}"/>
+										<h:outputText rendered="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.description}"/>
 									</div>
 								</div>
 							</div>
@@ -102,21 +94,20 @@
 							<div class="panel panel-info">
 								<div class="panel-heading"><strong>Verwaltung</strong></div>
 								<div class="panel-body">
-									<h:form>
-										<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
-										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
-										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
-															action="#{courseDetailBean.loadCreateCourseUnitPage}"/>
-										</h:panelGroup>
-										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
-									</h:form>
+									<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+									<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
+									<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
+									<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
+														action="#{courseDetailBean.loadCreateCourseUnitPage}"/>
+									</h:panelGroup>
+									<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+									<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 								</div>
 							</div>
 						</h:panelGroup>
 					</div>
 				</div>
+				</h:form>
 				<div class="panel panel-info">
 					<div class="panel-heading"><strong>Kurseinheiten</strong></div>
 					<div class="panel-body">
