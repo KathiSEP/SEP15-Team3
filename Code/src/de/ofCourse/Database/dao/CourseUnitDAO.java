@@ -347,15 +347,13 @@ public class CourseUnitDAO {
 	    throws InvalidDBTransferException {
         ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
-        String courseUnitsQuery = "SELECT * FROM \"course_units\" WHERE course_id = ?";
-        String addressQuery ="SELECT * FROM \"course_unit_addresses\" where course_unit_id = ?";
+        String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
+                + "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id";
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         PreparedStatement statement = null;
-        PreparedStatement addressStatement = null;
         ResultSet resultSet;
-        ResultSet addressResultSet;
 
         try {
             statement = conn.prepareStatement(courseUnitsQuery);
@@ -385,13 +383,31 @@ public class CourseUnitDAO {
             unit.setPrice(resultSet.getFloat("fee"));
             unit.setStartime(resultSet.getDate("start_time"));
             unit.setEndtime(resultSet.getDate("end_time"));
-
-            //Abfrage für Adresse
-
-            addressStatement = conn.prepareStatement(addressQuery);
-            addressStatement.setInt(1, unit.getCourseUnitID());
+            unit.setNumberOfUsers(getNumberOfParticipants(trans, unit.getCourseUnitID()));
 
             Address unitAddress = new Address();
+
+            unitAddress.setCity(resultSet.getString("city"));
+            unitAddress.setCountry(resultSet.getString("country"));
+            unitAddress.setZipCode(resultSet.getInt("zip_code"));
+
+            if(resultSet.getString("street") != null) {
+                unitAddress.setStreet(resultSet.getString("street"));
+            } else {
+                unitAddress.setStreet("Ohne Straße");
+            }
+
+            if(resultSet.getString("location") != null) {
+                unitAddress.setLocation(resultSet.getString("location"));
+            } else {
+                unitAddress.setLocation("Ohne Ort");
+            }
+
+            if(resultSet.getInt("house_nr") > 0) {
+                unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
+            } else {
+                unitAddress.setHouseNumber(0);
+            }
 
             unit.setAddress(unitAddress);
             courseUnits.add(unit);

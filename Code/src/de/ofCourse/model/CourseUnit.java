@@ -55,6 +55,11 @@ public class CourseUnit implements Serializable {
      * stores the minimal number of Users the courseunit needs to take place
      */
     private int minUsers;
+
+    /**
+     * stores the current number of Users in the courseunit
+     */
+    private int numberOfUsers;
     /**
      * stores the courseAdmin who will hold the CourseUnit
      */
@@ -316,5 +321,23 @@ public class CourseUnit implements Serializable {
      */
     public void setCourseUnitID(int courseUnitId) {
 	this.courseUnitID = courseUnitId;
+    }
+
+    /**
+     * Returns the value of the attribute numberOfUsers.
+     * 
+     * @return the numberOfUsers
+     */
+    public int getNumberOfUsers() {
+        return numberOfUsers;
+    }
+
+    /**
+     * Sets the value of the attribute numberOfUsers.
+     * 
+     * @param numberOfUsers the numberOfUsers to set
+     */
+    public void setNumberOfUsers(int numberOfUsers) {
+        this.numberOfUsers = numberOfUsers;
     }
 }

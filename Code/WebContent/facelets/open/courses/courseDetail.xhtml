@@ -122,8 +122,8 @@
                             </h:column>
                             <h:column>
                             	<f:facet name="header">Status</f:facet>
-                            	<!-- <h:outputText value=""/> aus dao abfragen -->
-                            	<h:outputText value=""/>
+                            	<h:outputText value="#{courseUnit.numberOfUsers}"/>
+                            	<h:outputText value="/"/>
                             	<h:outputText value="#{courseUnit.maxUsers}"/>
                             </h:column>
                             <h:column>
@@ -132,12 +132,11 @@
                             </h:column>
                             <h:column>
                             	<f:facet name="header">Preis</f:facet>
-                            	<h:outputText value="#{courseUnit.price}"/>
+                            	<h:outputText value="#{courseUnit.price}€"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header" />
-                                <h:commandButton id="details" class="btn btn-info" value="Details" 
-                                					action="#">
+                                <h:commandButton id="details" class="btn btn-success" value="Anmelden" action="#">
                                     <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
                                 </h:commandButton>
                             </h:column>
