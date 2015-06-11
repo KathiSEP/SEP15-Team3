@@ -62,7 +62,7 @@ public class UserPictureHandler extends HttpServlet {
                 resp.setContentType("image/jpg");
                 resp.setContentLength(user.getProfilImage().length);
                 resp.getOutputStream().write(user.getProfilImage());
-            
+                trans.commit();
             } else if(req.getParameter("courseImage") != null){
                 
                 String pictureBelongsToCourseID = req.getParameter("courseImage");
@@ -72,7 +72,9 @@ public class UserPictureHandler extends HttpServlet {
                 resp.setContentType("image/jpg");
                 resp.setContentLength(course.getCourseImage().length);
                 resp.getOutputStream().write(course.getCourseImage());
+                trans.commit();
             }
+           
             
             
             
