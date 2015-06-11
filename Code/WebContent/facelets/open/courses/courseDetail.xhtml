@@ -48,7 +48,7 @@
 						<div class="panel panel-info">
 							<div class="panel-heading"><strong>Kursleiter</strong></div>
 							<div class="panel-body">
-								<h:dataTable value="#{courseDetailBean.leadersOfCourse}" class="table table-hover">
+								<h:dataTable value="#{courseDetailBean.leadersOfCourse}" var="user" class="table table-hover">
 									<h:column>
 		                            	<f:facet name="header">Name</f:facet>
 		                                <h:outputText value="#{user.lastname}"/>
@@ -61,19 +61,7 @@
                 		            	<f:facet name="header">E-Mail</f:facet>
                         		        <h:outputText value="#{user.email}"/>
                             		</h:column>
-								</h:dataTable>
-								<div class="row" style="font-weight:bold;">
-									<div class="col-lg-6"><a href="#">Name</a></div>
-									<div class="col-lg-6"><a href="#">E-Mail</a></div>
-								</div>								
-								<div class="row" style="padding-top:10px;">
-									<div class="col-lg-6">Johann Göthe</div>
-									<div class="col-lg-6">goethe@literatur.de</div>
-								</div>								
-								<div class="row" style="padding-top:5px;">
-									<div class="col-lg-6">Arnold Schwarzenegger</div>
-									<div class="col-lg-6">arnold@wheyshake.com</div>
-								</div>								
+								</h:dataTable>						
 							</div>
 						</div>
 					</div>

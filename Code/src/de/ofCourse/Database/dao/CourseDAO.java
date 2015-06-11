@@ -668,7 +668,7 @@ public class CourseDAO {
         ArrayList<User> leaders = new ArrayList<User>();
 
         String leadersQuery = "SELECT \"name\", \"first_name\", \"email\" FROM "
-            + "\"users\" WHERE users.id IN "
+            + "\"users\" WHERE id IN "
             + "(SELECT course_instructor_id FROM \"course_instructors\" "
             + "WHERE course_id = ?)";
 
@@ -684,7 +684,6 @@ public class CourseDAO {
 
             while (resultSet.next()) {
             User leader = new User();
-            leader.setUserID(resultSet.getInt("id"));
 
             if (resultSet.getString("name") != null) {
                 leader.setLastname(resultSet.getString("name"));
