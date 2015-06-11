@@ -122,6 +122,7 @@ public class SearchCourseBean implements Pagination {
     	transaction = Connection.create();
     	transaction.start();
     	pagination.setCurrentPageNumber(0);
+    	pagination.setSortAsc(true);
     	pagination.setSortColumn("courseID");
     	
     	try {
@@ -185,6 +186,7 @@ public class SearchCourseBean implements Pagination {
     		transaction.start();
     		
     		pagination.setCurrentPageNumber(0);
+    		pagination.setSortAsc(true);
     		pagination.setSortColumn(searchParam);
     		try {
         		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
