@@ -83,7 +83,7 @@ public class CourseDetailBean implements Pagination {
      * Stores the course units that belong to the course
      */
     private List<CourseUnit> courseUnitsOfCourse;
-    
+
     /**
      * Stores the leader to be add
      */
@@ -126,7 +126,9 @@ public class CourseDetailBean implements Pagination {
                 transaction.commit();
             } catch (InvalidDBTransferException e) {
                 transaction.rollback();
-            LogHandler.getInstance().error("Error occured in saveCourse method of CourseDetailBean");
+                LogHandler
+                        .getInstance()
+                        .error("Error occured in saveCourse method of CourseDetailBean");
                 System.out.println("fehler");
             }
             setEditMode(false);
@@ -142,21 +144,24 @@ public class CourseDetailBean implements Pagination {
      */
     @PostConstruct
     public void init() {
-        courseID = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().
-                                                            getRequestParameterMap().get("courseID"));
+        courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap().get("courseID"));
         transaction = Connection.create();
         try {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
-                courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, null);
-                isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);
+                courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
+                        transaction, courseID, null);
+                isRegistered = UserDAO.userIsParticpant(transaction,
+                        sessionUser.getUserID(), courseID);
                 transaction.commit();
             }
-        } catch(InvalidDBTransferException e) {
+        } catch (InvalidDBTransferException e) {
             transaction.rollback();
-            LogHandler.getInstance().error("Error occured in init method of CourseDetailBean");
+            LogHandler.getInstance().error(
+                    "Error occured in init method of CourseDetailBean");
             courseID = 0;
             isRegistered = false;
             course = new Course();
@@ -205,7 +210,8 @@ public class CourseDetailBean implements Pagination {
     /**
      * Set-method for the registered for course news attribute.
      * 
-     * @param registeredForCourseNews true if registered, false if not
+     * @param registeredForCourseNews
+     *            true if registered, false if not
      * @author Ricky Strohmeier
      */
     public void setRegisteredForCourseNews(boolean registeredForCourseNews) {
@@ -426,12 +432,21 @@ public class CourseDetailBean implements Pagination {
                                 + "cant sign up");
                 trans.rollback();
                 throw new CourseRegistrationException();
-
+                
             }
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error("Database Transfare not working");
             trans.rollback();
             throw new CourseRegistrationException();
+
+        } catch (CourseRegistrationException e) {
+            trans.rollback();
+            // TODO Faclet Messenge not enough money
+            LogHandler.getInstance().error(
+                    "Not enough Money on the Account. User:"
+                            + sessionUser.getUserID()
+                            + "couldnt sign up for courseUnit:" + courseUnitID);
+            return "x";
         }
 
     }
@@ -713,6 +728,8 @@ public class CourseDetailBean implements Pagination {
             return userWhoTryToSignUp.getAccountBalance()
                     - courseUnitToSign.getPrice();
         } else {
+
+            // TODO FacletMessenge
             LogHandler
                     .getInstance()
                     .debug("User:"
@@ -738,48 +755,48 @@ public class CourseDetailBean implements Pagination {
     /**
      * Set method for the is registered boolean.
      * 
-     * @param isRegistered the isRegistered to set
+     * @param isRegistered
+     *            the isRegistered to set
      * @author Ricky Strohmeier
      */
     public void setIsRegistered(boolean isRegistered) {
         this.isRegistered = isRegistered;
     }
 
-    
     /**
      * Deletes the course from the system.
      * 
-     * @return  to the page search.xhtml
+     * @return to the page search.xhtml
      * 
      * @author Katharina Hölzl
      */
     public String deleteCourse() {
-        
-        // Create a new transaction object for the database connection. 
+
+        // Create a new transaction object for the database connection.
         this.transaction = Connection.create();
         transaction.start();
-        
-        try{
-            
-          if(CourseDAO.deleteCourse(this.transaction, 
-                                      this.course.getCourseID()) == true){
-              FacesMessageCreator.createFacesMessage(null,
-                      "Kurs wurde erfolgreich gelöscht!");
-              this.transaction.commit();
-           // Forwarding to the page search, because the delete was successful.
-              return "/facelets/open/courses/search.xhtml?faces-redirect=true";
-          }
-          else{
-              FacesMessageCreator.createFacesMessage(null,
-                      "Löschen des Kurses fehlgeschlagen!");
-              this.transaction.rollback();
-              return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
-          }
-            
-        }catch (InvalidDBTransferException e) {
+
+        try {
+
+            if (CourseDAO.deleteCourse(this.transaction,
+                    this.course.getCourseID()) == true) {
+                FacesMessageCreator.createFacesMessage(null,
+                        "Kurs wurde erfolgreich gelöscht!");
+                this.transaction.commit();
+                // Forwarding to the page search, because the delete was
+                // successful.
+                return "/facelets/open/courses/search.xhtml?faces-redirect=true";
+            } else {
+                FacesMessageCreator.createFacesMessage(null,
+                        "Löschen des Kurses fehlgeschlagen!");
+                this.transaction.rollback();
+                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+            }
+
+        } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
-        }  
-        
+        }
+
         return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
     }
 
@@ -789,23 +806,22 @@ public class CourseDetailBean implements Pagination {
      * @author Katharina Hölzl
      */
     public void addCourseLeader() {
-        
-     // Create a new transaction object for the database connection. 
+
+        // Create a new transaction object for the database connection.
         this.transaction = Connection.create();
         transaction.start();
-        
-        if(CourseDAO.addLeaderToCourse(this.transaction, 
-                this.leaderToAdd.getUserID(), this.course.getCourseID())){
+
+        if (CourseDAO.addLeaderToCourse(this.transaction,
+                this.leaderToAdd.getUserID(), this.course.getCourseID())) {
             FacesMessageCreator.createFacesMessage(null,
                     "Der Kursleiter wurde erfolgreich hinzugefügt!");
             this.transaction.commit();
-        }
-        else{
+        } else {
             FacesMessageCreator.createFacesMessage(null,
                     "Hinzufügen des Kursleiters fehlgeschlagen!");
             this.transaction.rollback();
         }
-        
+
     }
 
     /**
@@ -821,7 +837,7 @@ public class CourseDetailBean implements Pagination {
      * Sets the value of the attribute <code>leaderToAdd</code>.
      * 
      * @param leaderToAdd
-     *                  the leader to be add
+     *            the leader to be add
      */
     public void setLeaderToAdd(User leaderToAdd) {
         this.leaderToAdd = leaderToAdd;
@@ -833,21 +849,20 @@ public class CourseDetailBean implements Pagination {
      * @author Katharina Hölzl
      */
     public void removeCourseLeaders() {
-     // Create a new transaction object for the database connection. 
+        // Create a new transaction object for the database connection.
         this.transaction = Connection.create();
         transaction.start();
-     //TODO this.leaderToAdd.getUserID ausbessern!!!   
-        if(CourseDAO.removeLeaderFromCourse(this.transaction, 
-                this.leaderToAdd.getUserID(), this.course.getCourseID())){
+        // TODO this.leaderToAdd.getUserID ausbessern!!!
+        if (CourseDAO.removeLeaderFromCourse(this.transaction,
+                this.leaderToAdd.getUserID(), this.course.getCourseID())) {
             FacesMessageCreator.createFacesMessage(null,
                     "Der Kursleiter wurde erfolgreich hinzugefügt!");
             this.transaction.commit();
-        }
-        else{
+        } else {
             FacesMessageCreator.createFacesMessage(null,
                     "Hinzufügen des Kursleiters fehlgeschlagen!");
             this.transaction.rollback();
         }
     }
-    
+
 }
