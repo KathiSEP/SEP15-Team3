@@ -107,10 +107,10 @@ public class PaginationData implements Serializable {
 	if (numberOfAllItems % this.getElementsPerPage() == 0
 		&& numberOfAllItems != 0) {
 	    calculatedNumberOfPages = (numberOfAllItems / this
-		    .getElementsPerPage()) - 1;
+		    .getElementsPerPage());
 	} else {
 	    calculatedNumberOfPages = (numberOfAllItems / this
-		    .getElementsPerPage());
+		    .getElementsPerPage())+1;
 	}
 	setNumberOfPages(calculatedNumberOfPages);
 
@@ -217,6 +217,54 @@ public class PaginationData implements Serializable {
      */
     public void setSortAsc(boolean sortAsc) {
 	this.sortAsc = sortAsc;
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + currentPageNumber;
+	result = prime * result + elementsPerPage;
+	result = prime * result + numberOfPages;
+	result = prime * result + (sortAsc ? 1231 : 1237);
+	result = prime * result
+		+ ((sortColumn == null) ? 0 : sortColumn.hashCode());
+	return result;
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	PaginationData other = (PaginationData) obj;
+	if (currentPageNumber != other.currentPageNumber)
+	    return false;
+	if (elementsPerPage != other.elementsPerPage)
+	    return false;
+	if (numberOfPages != other.numberOfPages)
+	    return false;
+	if (sortAsc != other.sortAsc)
+	    return false;
+	if (sortColumn == null) {
+	    if (other.sortColumn != null)
+		return false;
+	} else if (!sortColumn.equals(other.sortColumn))
+	    return false;
+	return true;
     }
 
 }

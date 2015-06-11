@@ -112,7 +112,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      * @return link to the <code>courseDetail</code> page
      */
     public String loadCourseDetailsPageOfSelectedCourse() {
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
+	return "/facelets/open/courses/courseDetail.xhtml";
     }
 
     /**

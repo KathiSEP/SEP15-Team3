@@ -193,33 +193,25 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction = Connection.create();
 	transaction.start();
 
-	// ///////////////////////////////////////////////
-	// Mit Werten von CourseDetails füllen
-	// ////////////////////////////////////////////////
+	String fetchedMode = FacesContext.getCurrentInstance()
+		.getExternalContext().getRequestParameterMap().get("editMode");
+	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
+	    editMode = true;
+	} else {
+	    editMode = false;
+	}
 
-//	String fetchedMode = FacesContext.getCurrentInstance()
-//		.getExternalContext().getRequestParameterMap().get("editMode");
-//	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
-//	    editMode = true;
-//	} else {
-//	    editMode = false;
-//	}
-//
-//	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
-//		.getExternalContext().getRequestParameterMap().get("courseID"));
-//	if (editMode) {
-//	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-//		    .getExternalContext().getRequestParameterMap()
-//		    .get("courseUnitID"));
-//	} else {
-//	    courseUnitID = 0;
-//	}
+	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+		.getExternalContext().getRequestParameterMap().get("courseID"));
+	if (editMode) {
+	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+		    .getExternalContext().getRequestParameterMap()
+		    .get("courseUnitID"));
+	} else {
+	    courseUnitID = 0;
+	}
 
-	// ///////////////////////////////////////////////////////
-	this.courseID = 10000;
-	this.courseUnitID = 10086;
-	this.editMode = true;
-	// ////////////////////////////////////////////////////////////
+	
 
 	if (editMode) {
 	    pagination = new PaginationData(elementsPerPage, 0, "title", true);
@@ -651,7 +643,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	try {
 	    for (int i = 0; i < usersToDelete.size(); ++i) {
 		CourseUnitDAO.removeUserFromCourseUnit(transaction,
-			usersToDelete.get(i).getUserID(), courseUnit.getCourseUnitID());
+			usersToDelete.get(i).getUserID(),
+			courseUnit.getCourseUnitID());
 		float newAccountBalance = calculateNewAccountBalance(
 			courseUnit.getPrice(), usersToDelete.get(i), false);
 		UserDAO.updateAccountBalance(transaction, usersToDelete.get(i)
