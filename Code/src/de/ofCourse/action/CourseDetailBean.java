@@ -403,7 +403,7 @@ public class CourseDetailBean implements Pagination {
      * @return
      * @throws CourseRegistrationException
      */
-    public signUpForCourseUnits() throws CourseRegistrationException {
+    public void signUpForCourseUnits() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
         // TODO an rickys faclet anpassen
