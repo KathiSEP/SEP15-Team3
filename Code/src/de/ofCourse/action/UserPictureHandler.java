@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -51,19 +53,35 @@ public class UserPictureHandler extends HttpServlet {
         Transaction trans = Connection.create();
         trans.start();
         try {
-            String pictureBelongsToUserID = req.getParameter("id");
-            int userID = Integer.parseInt(pictureBelongsToUserID);
             
-            User user = UserDAO.getUser(trans, userID);
+            if(req.getParameter("profilImage") != null){
+                String pictureBelongsToUserID = req.getParameter("profilImage");
+                int userID = Integer.parseInt(pictureBelongsToUserID);
+                User user = UserDAO.getUser(trans, userID);
+                resp.reset();
+                resp.setContentType("image/jpg");
+                resp.setContentLength(user.getProfilImage().length);
+                resp.getOutputStream().write(user.getProfilImage());
+            
+            } else if(req.getParameter("courseImage") != null){
+                
+                String pictureBelongsToCourseID = req.getParameter("courseImage");
+                int courseID = Integer.parseInt(pictureBelongsToCourseID);
+                Course course = CourseDAO.getCourse(trans, courseID);
+                resp.reset();
+                resp.setContentType("image/jpg");
+                resp.setContentLength(course.getCourseImage().length);
+                resp.getOutputStream().write(course.getCourseImage());
+            }
+            
+            
+            
             
 //            InputStream picture = new ByteArrayInputStream(
 //                    user.getProfilImage());
             
             
-            resp.reset();
-            resp.setContentType("image/jpg");
-            resp.setContentLength(user.getProfilImage().length);
-            resp.getOutputStream().write(user.getProfilImage());
+           
             
             
 //            BufferedInputStream input = null;
