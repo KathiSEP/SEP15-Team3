@@ -3,6 +3,7 @@
  */
 package de.ofCourse.Database.dao;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -818,9 +819,10 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     private static void setProperties(CourseUnit unit, List<Object> tuple) {
+    	BigDecimal bg = (BigDecimal) tuple.get(2);
     	unit.setCourseUnitID((Integer) tuple.get(0));
     	unit.setTitle((String) tuple.get(1));
-    	unit.setPrice((Float) tuple.get(2));
+    	unit.setPrice(bg.floatValue());
     }
 
     /**

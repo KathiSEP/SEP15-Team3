@@ -1181,7 +1181,7 @@ public class UserDAO {
      * @param courseUnitID
      * @return
      */
-    private static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID) throws InvalidDBTransferException{
+    public static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID) throws InvalidDBTransferException{
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
@@ -1239,6 +1239,37 @@ public class UserDAO {
                 "Exception occured during loading User Picture from Database");
             throw new InvalidDBTransferException();
         }
+    }
+
+
+    /**
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param email
+     * @return
+     */
+    public static User getUserPerMail(Transaction trans, String email) {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        User user = null;
+        PreparedStatement stmt = null;
+        ResultSet rst = null;
+        String query = "SELECT nickname FROM \"users\" WHERE email=?";
+        try {
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, email);
+            
+            rst = stmt.executeQuery();
+            if (rst.next()) {
+                user = getUser(trans, rst.getString(1));
+            }
+        } catch (SQLException e) {
+            LogHandler.getInstance()
+                .error("SQL Exception occoured during executing getUser(Transaction trans, email)");
+            throw new InvalidDBTransferException();
+        }
+        return user;
     }
 
 }

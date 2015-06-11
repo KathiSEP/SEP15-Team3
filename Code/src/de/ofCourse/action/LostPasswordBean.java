@@ -9,6 +9,7 @@ import javax.faces.bean.RequestScoped;
 
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
@@ -73,11 +74,14 @@ public class LostPasswordBean {
      * database.
      */
     public void resetPassword() {
-        String salt = "";
+        transaction = Connection.create();
+        transaction.start();
+        
+        User userWhoLostPW = UserDAO.getUserPerMail(transaction, email);
+        String salt = UserDAO.getPWSalt(transaction, userWhoLostPW.getUsername() );
         String newPassword = generateNewPassword();
     	String newHashedPassword = PasswordHash.hash(newPassword, salt);
-    	transaction = Connection.create();
-    	transaction.start();
+    	
     	try {
     	    UserDAO.overridePassword(transaction, email, newHashedPassword);
     	} catch (InvalidDBTransferException e) {
@@ -85,7 +89,7 @@ public class LostPasswordBean {
     	    //TODO Exception handling
     	}
     	//TODO EMail mit Passwort rausschicken
-        //mailBean.sendMailForLostPassword(newPassword, email);
+        mailBean.sendMailForLostPassword(newPassword, email);
     	transaction.commit();
     }
 

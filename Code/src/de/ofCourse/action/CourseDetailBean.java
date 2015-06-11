@@ -155,6 +155,12 @@ public class CourseDetailBean implements Pagination {
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
                 courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
                         transaction, courseID, null);
+
+                for(int i = 0; i < courseUnitsOfCourse.size(); i++) {
+                        courseUnitsOfCourse.get(i).setUserIsParticipant(
+                                UserDAO.userIsParticpantInCourseUnit(
+                                        transaction, sessionUser.getUserID(), courseUnitsOfCourse.get(i).getCourseUnitID()));
+                }
                 isRegistered = UserDAO.userIsParticpant(transaction,
                         sessionUser.getUserID(), courseID);
                 transaction.commit();
@@ -604,7 +610,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadCreateCourseUnitPage() {
-        return "facelets/user/courseLeader/editCourseUnit.xhtml";
+        return "/facelets/user/courseLeader/editCourseUnit.xhtml";
     }
 
     /**
@@ -613,7 +619,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadEditCourseUnitPage() {
-        return "facelets/user/courseLeader/editCourseUnit.xhtml";
+        return "/facelets/user/courseLeader/editCourseUnit.xhtml";
     }
 
     /**

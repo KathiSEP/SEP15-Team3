@@ -160,13 +160,12 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Benutzerprofil}
 \begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 	\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   profile.xhtml                                         & 09.06.2015 \ \ 14:00        & 09.06.2015 \ \ 17:00        & Patrick Cretu  &  3h      &\\ 
-		\hline   UserProfileBean.java                                  & 09.06.2015 \ \ 09:00        & 09.06.2015 \ \ 13:00        & Patrick Cretu  &  4h      &\\ 
-		\hline   UserImageValidator.java                               & 10.06.2015 \ \ 09:00        & 10.06.2015 \ \ 10:00        & Patrick Cretu  &  1h      &\\ 
-		\hline   UserDAO.getUser(Transaction trans, int userID)        & 09.06.2015 \ \ 17:00        & 09.06.2015 \ \ 18:00        & Patrick Cretu  &  1h      &\\  
-		\hline   UserImageUploadTest.java                              & 10.06.2015 \ \ 10:00        & 10.06.2015 \ \ 12:00        & Patrick Cretu  &  2h      &\\
-		\hline   SearchCourseTest.java                                 & 06.06.2015  \ \ 14:30       & 06.06.2015 \ \ 16:30        & Patrick Cretu  &  2h      &\\
+		\hline   profile.xhtml                                         & 09.06.2015 \ \ 14:00        & 09.06.2015 \ \ 17:00        & Patrick Cretu  &  3h      & 6h\\ 
+		\hline   UserProfileBean.java                                  & 09.06.2015 \ \ 09:00        & 09.06.2015 \ \ 13:00        & Patrick Cretu  &  4h      & 4h \\ 
+		\hline   UserImageValidator.java                               & 10.06.2015 \ \ 09:00        & 10.06.2015 \ \ 10:00        & Patrick Cretu  &  1h      &    \\ 
+		\hline   UserDAO.getUser(Transaction trans, int userID)        & 09.06.2015 \ \ 17:00        & 09.06.2015 \ \ 18:00        & Patrick Cretu  &  1h      & 0,5h\\  
 		\hline   InvalidDBTransferException.java                       & 06.06.2015  \ \ 14:30       & 06.06.2015 \ \ 16:30        & Patrick Cretu  &  1h      &\\
+		\hline   CourseUnitDAO.getCourseUnitsOf(Transaction trans, int userID)  &         &     & Patrick Cretu & 2h& 2h\\ 
 		\hline 
 	\end{tabular} \ \\
 	\ \\
@@ -174,35 +173,30 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Benutzer anlegen/löschen}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   createUser.xhtml                                      & 08.06.2015 \ \ 16:30        & 08.06.2015 \ \ 18:30        &  Patrick Cretu &  2h                 &\\ 
-		\hline   UserManagementBean.java                               & 08.06.2015 \ \ 13:00        & 08.06.2015 \ \ 16:30        &  Patrick Cretu	&  3,5h               & \\ 
-		\hline   UserDAO.deleteUser(Transaction trans, int userID)     & 08.06.2015 \ \ 08:00        & 08.06.2015 \ \ 09:30        &  Patrick Cretu &  1,5h               &\\ 
-		\hline   CreateUserTest.java                                   & 10.06.2015 \ \ 13:00        & 10.06.2015 \ \ 15:00        &  Patrick Cretu &   2h                &\\
+		\hline   createUser.xhtml                                      & 08.06.2015 \ \ 16:30        & 08.06.2015 \ \ 18:30        &  Patrick Cretu &  2h       & 2h\\ 
+		\hline   UserManagementBean.java                               & 08.06.2015 \ \ 13:00        & 08.06.2015 \ \ 16:30        &  Patrick Cretu	&  3,5h     & 3,5h\\ 
+		\hline   UserDAO.deleteUser(Transaction trans, int userID)     & 08.06.2015 \ \ 08:00        & 08.06.2015 \ \ 09:30        &  Patrick Cretu &  1,5h     & 0,5h\\ 
 		\hline 
 	\end{tabular} \ \\
 	\ \\
 	
-	\subsection{Kursdetails, Kurs bearbeiten}
-	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
-		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   courseDetail.xhtml                                         & 10.06.2015 \ \ 08:00       & 10.06.2015  \ \  13:00     & Ricky Strohmeier  &  5h              & \\
-		\hline   CourseDetailBean.editCourse()                              & 09.06.2015 \ \ 09:00       & 09.06.2015  \ \  10:00     & Ricky Strohmeier  &  1h              & \\
-		\hline   CourseDetailBean.saveCourse()                              & 09.06.2015 \ \ 10:00       & 09.06.2015  \ \  11:00     & Ricky Strohmeier  &  1h              &\\
-		\hline   CourseDetailBean.initializeCourseDetails()                 & 09.06.2015 \ \ 11:00       & 09.06.2015  \ \  12:00     & Ricky Strohmeier  &  1h              &\\
-		\hline   CourseDetailBean.selectAllCourseUnits()                    & 09.06.2015 \ \ 12:00       & 09.06.2015  \ \  13:00     & Ricky Strohmeier  &  1h              &\\
-		\hline   Getter/Setter CourseDetailBean                             & 09.06.2015 \ \ 13:00       & 09.06.2015  \ \  13:30     & Ricky Strohmeier  &  0,5h            &\\
-		\hline   Pagination für CourseUnits                                 & 09.06.2015 \ \ 14:30       & 09.06.2015  \ \  15:30     & Ricky Strohmeier  &  1h              &\\
-		\hline   ContactUserBean.java                                       & 10.06.2015 \ \ 14:00       & 10.06.2015  \ \  16:00     & Ricky Strohmeier  &  2h              & \\
-		\hline   InputTextValidator.java                                    & 09.06.2015 \ \ 15:30       & 09.06.2015  \ \  16:30     & Ricky Strohmeier  &  1h              & \\
-		\hline   CourseDAO.getCourse(Transaction trans, int courseID)       & 09.06.2015 \ \ 16:30       & 09.06.2015  \ \  17:30     & Ricky Strohmeier  &  1h              & \\
-		\hline   CourseDAO.updateCourse(Transaction trans, Course course)   & 08.06.2015 \ \ 15:00       & 08.06.2015  \ \  16:00     & Ricky Strohmeier  &  1h              &\\
-		\hline   CourseUnitDAO.getCourseUnitsFromCourse(Transaction trans, int courseID, PaginationData pagination) & 08.06.2015 \ \ 16:00       & 08.06.2015  \ \  17:30     & Ricky Strohmeier &  1,5h              &\\
-		\hline   CourseDAO.getLeaders(Transaction trans, int courseID)    & 08.06.2015 \ \ 13:30       & 08.06.2015  \ \  15:00     & Ricky Strohmeier  &  1,5h              &\\
-		\hline   EditCourseTest.java              & 11.06.2015 \ \ 08:00     & 11.06.2015 \ \ 10:00     & Ricky Strohmeier &      2h               &\\ 
-		\hline   NavigationTest.java              & 11.06.2015 \ \ 10:00     & 11.06.2015 \ \ 12:00     & Ricky Strohmeier &      2h               &\\ 
-		\hline 
-	\end{tabular} \ \\
-	\ \\
+\subsection{Kursdetails, Kurs bearbeiten}
+\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
+	\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
+	\hline   courseDetail.xhtml                                         & 10.06.2015 \ \ 08:00       & 10.06.2015  \ \  13:00     & Ricky Strohmeier  &  5h     & 10h \\
+	\hline   CourseDetailBean.enableEditMode()                          & 09.06.2015 \ \ 09:00       & 09.06.2015  \ \  10:00     & Ricky Strohmeier  &  1h     & 0,5h\\
+	\hline   CourseDetailBean.saveCourse()                              & 09.06.2015 \ \ 10:00       & 09.06.2015  \ \  11:00     & Ricky Strohmeier  &  1h     & 1,5h\\
+	\hline   CourseDetailBean.init()                                    & 09.06.2015 \ \ 11:00       & 09.06.2015  \ \  12:00     & Ricky Strohmeier  &  1h     & 1,5h\\
+	\hline   CourseDetailBean.selectAllCourseUnits()                    & 09.06.2015 \ \ 12:00       & 09.06.2015  \ \  13:00     & Ricky Strohmeier  &  1h     &     \\
+	\hline   Getter/Setter CourseDetailBean                             & 09.06.2015 \ \ 13:00       & 09.06.2015  \ \  13:30     & Ricky Strohmeier  &  0,5h   & 0,5h\\
+	\hline   Pagination für CourseUnits                                 & 09.06.2015 \ \ 14:30       & 09.06.2015  \ \  15:30     & Ricky Strohmeier  &  1h     &     \\
+	\hline   CourseDAO.getCourse(Transaction trans, int courseID)       & 09.06.2015 \ \ 16:30       & 09.06.2015  \ \  17:30     & Ricky Strohmeier  &  1h     & 1,5h\\
+	\hline   CourseDAO.updateCourse(Transaction trans, Course course)   & 08.06.2015 \ \ 15:00       & 08.06.2015  \ \  16:00     & Ricky Strohmeier  &  1h     & 2,5h\\
+	\hline   CourseUnitDAO.getCourseUnitsFromCourse(Transaction trans, int courseID, PaginationData pagination) & 08.06.2015 \ \ 16:00       & 08.06.2015  \ \  17:30     & Ricky Strohmeier &  1,5h   &  3h \\
+	\hline   CourseDAO.getLeaders(Transaction trans, int courseID)    & 08.06.2015 \ \ 13:30       & 08.06.2015  \ \  15:00     & Ricky Strohmeier  &  1,5h    & 2h\\
+	\hline 
+\end{tabular} \ \\
+\ \\
 	
 	\subsection{Anmeldung, Abmeldung zu Kursen/Kurseinheiten}
     \begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
@@ -338,8 +332,10 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Aufwand in h} & \textbf{Verantwortlicher} \\ 
 		\hline   scheduler.xhtml                                 & 16.06.2015 \ \ 09:00        & 16.06.2015 \ \ 13:00        &  4h                 & Patrick Cretu\\ 
 		\hline   SchedulerBean.java                              & 15.06.2015 \ \ 13:00        & 15.06.2015 \ \ 18:00        &  5h                 & Patrick Cretu\\ 
-		\hline   CourseUnitDAO.getCourseUnitsOf(Transaction trans, int userID)  & 15.06.2015 \ \ 08:00        & 15.06.2015 \ \ 10:00        &  2h  & Patrick Cretu\\ 
 		\hline ViewSchedulerTest.java & 17.06.2015 \ \ 13:00 & 17.06.2015 \ \ 15:00 & 2h & Patrick Cretu\\
+		\hline   UserImageUploadTest.java                              &          &        & Patrick Cretu  &  2h      \\
+		\hline   SearchCourseTest.java                                 &         &        & Patrick Cretu  &  2h      \\
+		\hline   CreateUserTest.java                                   &   &        &  Patrick Cretu &   2h            \\
 		\hline 
 	\end{tabular} \ \\
 	\ \\

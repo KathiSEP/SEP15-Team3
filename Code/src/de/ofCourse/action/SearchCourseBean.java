@@ -122,6 +122,7 @@ public class SearchCourseBean implements Pagination {
     	transaction = Connection.create();
     	transaction.start();
     	pagination.setCurrentPageNumber(0);
+    	pagination.setSortAsc(true);
     	pagination.setSortColumn("courseID");
     	
     	try {
@@ -131,7 +132,6 @@ public class SearchCourseBean implements Pagination {
 	    	
 	    	if (result != null) {
 	    		searchResult = result;
-	    		transaction.commit();
 	    		setPagingSearchTerm(false);
 	    		setRenderTable(true);
 	    		columnSort = false;
@@ -186,6 +186,7 @@ public class SearchCourseBean implements Pagination {
     		transaction.start();
     		
     		pagination.setCurrentPageNumber(0);
+    		pagination.setSortAsc(true);
     		pagination.setSortColumn(searchParam);
     		try {
         		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
@@ -194,7 +195,6 @@ public class SearchCourseBean implements Pagination {
 	    		
 	    		if (result != null) {
 	    			searchResult = result;
-	    			transaction.commit();
 	    			setPagingSearchTerm(true);
 	    			setRenderTable(true);
 	    			columnSort = false;

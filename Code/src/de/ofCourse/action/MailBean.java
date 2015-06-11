@@ -26,11 +26,15 @@ import javax.faces.bean.ManagedBean;
 
 import javax.faces.context.FacesContext;
 
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.SmtpServer;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PropertyManager;
 
@@ -41,7 +45,7 @@ import de.ofCourse.utilities.PropertyManager;
  * The class has access to the SMTP - Server -settings which are needed to send
  * mails.
  * 
- * @author Tobias Fuchs
+ * @author Sebastian Schwarz
  */
 @ManagedBean(eager = true)
 @ApplicationScoped
@@ -169,9 +173,9 @@ public class MailBean {
            trans.commit();
          //TODO try catch?
            // E-Mail Messenge:
-           String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
-           messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
-           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
+           String messenge = createSalutation(userToInform);
+           messenge += "Welcome to the OfCourse Family. Thank you very much for your registration. \n";
+           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n" +
            
                    //koennte man noch schoener machen
                    
@@ -185,9 +189,6 @@ public class MailBean {
         }
         
         
-        
-        
-        
     }
 
     /**
@@ -199,8 +200,6 @@ public class MailBean {
      */
     public void sendConfirmationMessage(int userID) {
     }
-
-
 
     /**
      * Returns the smtpServer - object that contains the settings of the smtp
@@ -244,8 +243,7 @@ public class MailBean {
     private void sendSingleMail(String maildaddress, String subject, String messenge){
         List<String> recipients = new ArrayList<String>();
         recipients.add(maildaddress);
-        sendMail(recipients, subject, messenge);
-            
+        sendMail(recipients, subject, messenge);            
     }
 
 
@@ -256,20 +254,98 @@ public class MailBean {
      * @param email
      */
     public void sendMailForLostPassword(String newPassword, String email) {
-        // TODO Auto-generated method stub
+        Transaction trans = Connection.create();
+        trans.start();
         
+        try{
+           User userToInform = UserDAO.getUserPerMail(trans, email);
+           
+           String subject = "OfCourse new Password Email";
+           
+           String message = createLostPasswordMail(newPassword, userToInform);
+           
+           sendSingleMail(userToInform.getEmail(), subject, message);
+           LogHandler.getInstance().debug("Lost Password Mail sended");
+           
+           trans.commit();
+        } catch (InvalidDBTransferException e){
+            
+            LogHandler.getInstance().error("Error occured during getUser in the sendLostPassword Methode");
+            trans.rollback();
+        }
         
-        
+    }
+
+
+    /**
+     * @param newPassword
+     * @param userToInform
+     * @return 
+     */
+    private String createLostPasswordMail(String newPassword, User userToInform) {
+        String message = createSalutation(userToInform) ;
+           message += "Your new Password is: " + newPassword + "\n";
+           message += "Please change your Password after the next login \n\n";
+           message += createLink() + " \n";
+           message += createSignature();
+           
+           return message;
     }
     
     
     
+    /**
+     * @return
+     */
+    private String createSignature() {
+
+        String signature = "\n Yours \n";
+        signature += "faithfully, the OfCourse Team" ;
+        return signature;
+    }
+
+
     private String createSalutation(User user){
         
-        String header = "Dear " + user.getSalutation() + ". " + user.getLastname() + ", \n" ;
+        String header = "Dear " + user.getSalutation() + ". " + user.getLastname() + ", \n\n" ;
         
         return header;
         
+    }
+    
+    
+    private void sendCourseEditUnitMail(List<String> recipients, int CourseUnit){
+        Transaction trans = Connection.create();
+        trans.start();
+        try{
+            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(trans, CourseUnit);
+            
+            String subject = "CourseUnit: " +  editCourseUnit.getTitle() + " has changed";
+            
+            
+            String message = "Dear User, \n \n";
+            
+            message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at" + editCourseUnit.getStartime() + "has changed. \n";
+            message += "Please visit the OfCourse WebPage for further Information: \n\n";
+            message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
+            message += createSignature();
+            
+            sendMail(recipients, subject, message);
+        
+        }catch (InvalidDBTransferException e){
+            LogHandler.getInstance().error("Error occured during sendCourseUnitEditMail");
+        }
+            
+    }
+
+
+    /**
+     * @param courseUnit
+     * @return
+     */
+    private String createCourseLink(int courseID) {
+        String link = createLink() + "facelets/open/courses/courseDetail.xhtml?courseID=" + courseID;
+        return link;
     }
 
 }

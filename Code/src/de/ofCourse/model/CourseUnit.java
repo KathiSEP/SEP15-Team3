@@ -75,6 +75,11 @@ public class CourseUnit implements Serializable {
      * Stores the CourseID, this CourseUnit belongs to
      */
     private int courseID;
+
+    /**
+     * stores if a user is participant in this unit
+     */
+    private boolean userIsParticipant;
    
     
     /**
@@ -339,5 +344,19 @@ public class CourseUnit implements Serializable {
      */
     public void setNumberOfUsers(int numberOfUsers) {
         this.numberOfUsers = numberOfUsers;
+    }
+
+    /**
+     * @return the userIsParticipant
+     */
+    public boolean getUserIsParticipant() {
+        return userIsParticipant;
+    }
+
+    /**
+     * @param userIsParticipant the userIsParticipant to set
+     */
+    public void setUserIsParticipant(boolean userIsParticipant) {
+        this.userIsParticipant = userIsParticipant;
     }
 }
