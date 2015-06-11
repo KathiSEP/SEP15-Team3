@@ -1173,5 +1173,29 @@ public class UserDAO {
             throw new InvalidDBTransferException();
         }
     }
+    
+    /**
+     * @param trans
+     * @param userID
+     * @param courseUnitID
+     * @return
+     */
+    private static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID){
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String searchUserCourse = "SELECT * FROM \"course_unit_participants\" WHERE participant_id=? AND course_unit_id=?";
+        
+        try{
+            boolean returnStatement = isInTable(userID, courseUnitID, conn, searchUserCourse);
+            LogHandler.getInstance().debug(
+                    "UserIsParticipantInCourseUnit methode was succesfull");
+                return returnStatement;
+            } catch (SQLException e) {
+                LogHandler.getInstance().debug(
+                    "Error occured during UserIsParticipantInCourseUnit methode ");
+                throw new InvalidDBTransferException();
+            }
+    }
 
 }
