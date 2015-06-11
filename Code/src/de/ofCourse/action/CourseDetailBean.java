@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,6 +148,7 @@ public class CourseDetailBean implements Pagination {
     public void init() {
         courseID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID"));
+        leaderToAdd = new User();
         transaction = Connection.create();
         try {
             if (courseID > 0) {
@@ -267,7 +269,8 @@ public class CourseDetailBean implements Pagination {
                         "User:" + sessionUser.getUserID()
                                 + "Succesfull signed for course:" + courseID);
                 trans.commit();
-                return "#";
+
+                return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
             } else {
                 // If the course is full we throw the
                 // CourseRegistrationException
@@ -328,7 +331,7 @@ public class CourseDetailBean implements Pagination {
                         courseID);
             }
             trans.commit();
-            return "#";
+            return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
         } catch (InvalidDBTransferException e) {
             trans.rollback();
             LogHandler.getInstance().error(
