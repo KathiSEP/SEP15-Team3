@@ -89,7 +89,7 @@ public class CourseManagementBean {
         transaction.start();
         try {
             // Create course.
-            createdCourseID = CourseDAO.createCourse(this.transaction, this.course);
+            createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
             this.transaction.commit();
             
             if (createdCourseID < 0) {
@@ -103,7 +103,7 @@ public class CourseManagementBean {
 
                 // Throwing success message into the faces context..
                 FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
-                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
+               // return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
             }
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
