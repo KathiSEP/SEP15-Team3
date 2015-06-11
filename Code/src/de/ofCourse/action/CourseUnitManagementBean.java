@@ -237,7 +237,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		this.start = courseUnit.getStartime();
 		start.setHours(courseUnit.getStartime().getHours());
 		start.setMinutes(courseUnit.getStartime().getMinutes());
-		this.end= courseUnit.getStartime();
+		this.end = courseUnit.getStartime();
 		end.setHours(courseUnit.getEndtime().getHours());
 		end.setMinutes(courseUnit.getEndtime().getMinutes());
 		if (courseUnit.getCycle() == null) {
@@ -541,6 +541,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    userToAdd.getUserID(), courseUnit.getCourseUnitID());
 	    UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
 		    newAccountBalance);
+	    
+	    // Updates the shown list with the actual data
+	    this.participants.setWrappedData(CourseUnitDAO
+		    .getParticipiantsOfCourseUnit(transaction, pagination,
+			    courseUnitID, false));
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
@@ -575,12 +580,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		long endCourse = tempCourse.getEnddate().getTime();
 		if (beginCourse > tempDateBegin.getTime()
 			|| tempDateEnd.getTime() > endCourse) {
-		    FacesMessageCreator.createFacesMessage(
-			    null,
+		    FacesMessageCreator.createFacesMessage(null,
 			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
 				    + dateAsString(new Date(beginCourse))
 				    + " bis zum "
-				    + dateAsString(new Date(endCourse))+ " !");
+				    + dateAsString(new Date(endCourse)) + " !");
 
 		    return false;
 		} else {
