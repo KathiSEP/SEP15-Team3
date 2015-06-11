@@ -347,45 +347,60 @@ public class CourseUnitDAO {
 	    throws InvalidDBTransferException {
         ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
-        String leadersQuery = "SELECT * FROM \"course_units\" WHERE course_id = ?";
+        String courseUnitsQuery = "SELECT * FROM \"course_units\" WHERE course_id = ?";
+        String addressQuery ="SELECT * FROM \"course_unit_addresses\" where course_unit_id = ?";
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         PreparedStatement statement = null;
+        PreparedStatement addressStatement = null;
         ResultSet resultSet;
+        ResultSet addressResultSet;
 
         try {
-            statement = conn.prepareStatement(leadersQuery);
+            statement = conn.prepareStatement(courseUnitsQuery);
             statement.setInt(1, courseID);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
             CourseUnit unit = new CourseUnit();
 
-            unit.setCourseID(resultSet.getInt("courseUnitID"));
+            unit.setCourseID(courseID);
+            unit.setCourseUnitID(resultSet.getInt("id"));
 
-            if (resultSet.getString("title") != null) {
-                unit.setTitle(resultSet.getString("title"));
+            if(resultSet.getString("titel") != null) {
+                unit.setTitle(resultSet.getString("titel"));
             } else {
                 unit.setTitle("Ohne Titel");
             }
 
-            if (resultSet.getString("description") != null) {
+            if(resultSet.getString("description") != null) {
                 unit.setDescription(resultSet.getString("description"));
             } else {
                 unit.setDescription("Ohne Beschreibung");
             }
 
             unit.setMaxUsers(resultSet.getInt("max_participants"));
+            unit.setMinUsers(resultSet.getInt("min_participants"));
+            unit.setPrice(resultSet.getFloat("fee"));
             unit.setStartime(resultSet.getDate("start_time"));
-            unit.setEndtime(resultSet.getDate("end_date"));
+            unit.setEndtime(resultSet.getDate("end_time"));
+
+            //Abfrage für Adresse
+
+            addressStatement = conn.prepareStatement(addressQuery);
+            addressStatement.setInt(1, unit.getCourseUnitID());
+
+            Address unitAddress = new Address();
+
+            unit.setAddress(unitAddress);
             courseUnits.add(unit);
             }
             statement.close();
             resultSet.close();
         } catch (SQLException e) {
             LogHandler.getInstance().error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
-            System.out.println("cUnit");
+            System.out.println("cUnit in courseunitdao");
             throw new InvalidDBTransferException();
         }
         return courseUnits;

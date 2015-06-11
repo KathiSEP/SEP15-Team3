@@ -150,6 +150,7 @@ public class CourseDetailBean implements Pagination {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
+                courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, null);
                 isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);
                 transaction.commit();
             }
