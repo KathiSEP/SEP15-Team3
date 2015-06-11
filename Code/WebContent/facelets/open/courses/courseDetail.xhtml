@@ -109,7 +109,7 @@
 										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>									
 									</div>
 									<div class="container">
-										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.newCourseLeader}"/>
+										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.leaderToAdd.userID}"/>
 										<h:commandButton class="btn btn-success form-group" value="Kursleiter hinzufügen" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}"/>
 									</div>
 								</div>
