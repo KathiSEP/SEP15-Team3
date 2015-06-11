@@ -1284,5 +1284,37 @@ public class CourseDAO {
 	return pS.executeUpdate();
 	
     }
+    
+    public static byte[] getImage(Transaction trans, int courseID){
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        byte[] picture;
+        
+        String selectImage= "SELECT image FROM \"courses\" WHERE id=?";
+        
+        try{
+            PreparedStatement pS = conn.prepareStatement(selectImage);
+            pS.setInt(1, courseID);
+            ResultSet resultSet = pS.executeQuery();
+            pS.close();
+            
+            if(resultSet.next()){
+                picture = resultSet.getBytes("image");
+                LogHandler.getInstance().debug(
+                        "Course Picture succesfully loaded");
+                return picture;
+            }else{
+                LogHandler.getInstance().debug(
+                        "No course Picture found");
+                return null;
+            }
+        
+        } catch (SQLException e) {
+            // Error Handling
+            LogHandler.getInstance().error(
+                "Exception occured during loading course Picture from Database");
+            throw new InvalidDBTransferException();
+        }
+    }
      
 }

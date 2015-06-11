@@ -1175,12 +1175,13 @@ public class UserDAO {
     }
     
     /**
+     * @author Sebastian Schwarz
      * @param trans
      * @param userID
      * @param courseUnitID
      * @return
      */
-    private static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID){
+    private static boolean userIsParticipantInCourseUnit(Transaction trans, int userID, int courseUnitID) throws InvalidDBTransferException{
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
@@ -1196,6 +1197,48 @@ public class UserDAO {
                     "Error occured during UserIsParticipantInCourseUnit methode ");
                 throw new InvalidDBTransferException();
             }
+    }
+    
+    /**
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param courseID
+     * @return
+     */
+    public static byte[] getImage(Transaction trans, int userID) throws InvalidDBTransferException{
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        byte[] picture;
+        
+        String selectImage= "SELECT profile_image FROM \"users\" WHERE id=?";
+        
+        try{
+            PreparedStatement pS = conn.prepareStatement(selectImage);
+            pS.setInt(1, userID);
+            ResultSet resultSet = pS.executeQuery();
+            
+            
+            if(resultSet.next()){
+                picture = resultSet.getBytes("profile_image");
+                LogHandler.getInstance().debug(
+                        "User Picture succesfully loaded");
+                pS.close();
+                return picture;
+            }else{
+                LogHandler.getInstance().debug(
+                        "No User Picture found");
+                pS.close();
+                return null;
+            }
+            
+            
+        } catch (SQLException e) {
+            // Error Handling
+            LogHandler.getInstance().error(
+                "Exception occured during loading User Picture from Database");
+            throw new InvalidDBTransferException();
+        }
     }
 
 }
