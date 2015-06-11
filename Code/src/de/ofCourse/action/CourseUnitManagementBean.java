@@ -216,7 +216,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
-	this.courseUnitID = 10097;
+	this.courseUnitID = 10095;
 	this.editMode = true;
 	// ////////////////////////////////////////////////////////////
 
@@ -234,6 +234,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
 		this.date = courseUnit.getStartime();
+		int hours_start ;
+		int hours_end;
+		int minutes_start;
+		int minutes_end;
+		//TODO:  Datum
 		this.start = courseUnit.getStartime();
 		start.setHours(courseUnit.getStartime().getHours());
 		start.setMinutes(courseUnit.getStartime().getMinutes());
@@ -455,8 +460,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    LogHandler.getInstance().error(
 		    "Error occured during deleting" + " a course unit.");
 	}
-	System.out.println("Delete Course Unit");
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
+	return "/facelets/open/courses/courseDetail.xhtml";
     }
 
     /**
