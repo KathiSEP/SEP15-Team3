@@ -99,7 +99,7 @@
 				<div class="panel panel-info">
 					<div class="panel-heading"><strong>Kurseinheiten</strong></div>
 					<div class="panel-body">
-						<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" class="table table-hover">
+						<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" var="courseUnit" class="table table-hover">
 							<h:column>
                             	<f:facet name="header">Startdatum</f:facet>
                                 <h:outputText value="#{courseUnit.startime}">

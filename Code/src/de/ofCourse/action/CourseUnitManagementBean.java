@@ -192,26 +192,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     @PostConstruct
     private void init() {
-	pagination = new PaginationData(elementsPerPage, 0, "title", true);
-	this.participants = new ListDataModel<User>();
-	this.userToAdd = new User();
-	this.usersToDelete = new ArrayList<User>();
-	courseUnit = new CourseUnit();
-	courseUnit.setAddress(new Address());
-	courseUnit.setCourseAdmin(new User());
-	courseUnit.setCycle(new Cycle());
-	this.date = new Date();
-	this.start = new Date();
-	this.end = new Date();
-	this.end.setTime((this.start.getTime() + 7200000L));
+
+	transaction = Connection.create();
+	transaction.start();
 
 	// ///////////////////////////////////////////////
 	// Mit Werten von CourseDetails füllen
 	// ////////////////////////////////////////////////
+
 	/*
 	 * String fetchedMode = FacesContext.getCurrentInstance()
 	 * .getExternalContext().getRequestParameterMap().get("editMode"); if
-	 * (fetchedMode!=null && fetchedMode.toLowerCase().equals("true")) {
+	 * (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
 	 * editMode = true; } else { editMode = false; }
 	 * 
 	 * courseID = Integer.parseInt(FacesContext.getCurrentInstance()
@@ -221,39 +213,61 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	 * .getExternalContext().getRequestParameterMap() .get("courseUnitID"));
 	 * } else { courseUnitID = 0; }
 	 */
+
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
-	this.courseUnitID = 10070;
-	this.editMode = false;
+	this.courseUnitID = 10097;
+	this.editMode = true;
+	// ////////////////////////////////////////////////////////////
 
-	courseUnit.setCourseID(courseID);
-	courseUnit.setCourseUnitID(courseUnitID);
+	if (editMode) {
+	    pagination = new PaginationData(elementsPerPage, 0, "title", true);
+	    this.participants = new ListDataModel<User>();
+	    this.userToAdd = new User();
+	    this.usersToDelete = new ArrayList<User>();
 
-	transaction = Connection.create();
-	transaction.start();
+	    // Initializes the pagination and if in edit mode the displayed
+	    // course
+	    // unit
+	    try {
 
-	// Initializes the pagination and if in edit mode the displayed course
-	// unit
-	try {
+		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+			courseUnitID);
+		this.date = courseUnit.getStartime();
+		this.start = courseUnit.getStartime();
+		start.setHours(courseUnit.getStartime().getHours());
+		start.setMinutes(courseUnit.getStartime().getMinutes());
+		this.end= courseUnit.getStartime();
+		end.setHours(courseUnit.getEndtime().getHours());
+		end.setMinutes(courseUnit.getEndtime().getMinutes());
+		if (courseUnit.getCycle() == null) {
+		    courseUnit.setCycle(new Cycle());
+		}
+		this.pagination.actualizeNumberOfPages(CourseUnitDAO
+			.getNumberOfParticipants(transaction, courseUnitID));
+		this.participants.setWrappedData(CourseUnitDAO
+			.getParticipiantsOfCourseUnit(transaction, pagination,
+				courseUnitID, false));
 
-	    this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
-		    courseUnitID);
-	    if (courseUnit.getCycle() == null) {
-		courseUnit.setCycle(new Cycle());
+		this.transaction.commit();
+	    } catch (InvalidDBTransferException e) {
+		LogHandler.getInstance().error(
+			"Error occured during updating the"
+				+ " page with elements from database.");
+		this.transaction.rollback();
 	    }
-	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
-		    .getNumberOfParticipants(transaction, courseUnitID));
-	    this.participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitID, false));
-
-	    this.transaction.commit();
-	} catch (InvalidDBTransferException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during updating the"
-			    + " page with elements from database.");
-	    this.transaction.rollback();
+	} else {
+	    courseUnit = new CourseUnit();
+	    courseUnit.setAddress(new Address());
+	    courseUnit.setCourseAdmin(new User());
+	    courseUnit.setCycle(new Cycle());
+	    courseUnit.setCourseID(courseID);
+	    this.date = new Date();
+	    this.start = new Date();
+	    this.end = new Date();
+	    this.end.setTime((this.start.getTime() + 7200000L));
 	}
+
 	System.out.println("CycleId fetched: "
 		+ courseUnit.getCycle().getCycleID());
 
@@ -275,6 +289,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    try {
 
 		calculateStartAndEndTime(this.courseUnit);
+		System.out.println(courseUnit.getStartime().toGMTString());
+		System.out.println(courseUnit.getEndtime().toGMTString());
 
 		if (this.regularCourseUnit) {
 
@@ -309,7 +325,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				this.courseUnit, this.courseID, true);
 		    }
 		} else {
-		    this.courseUnit.getCycle().setCycleID(-1);
 		    CourseUnitDAO.createCourseUnit(transaction, courseUnit,
 			    courseID, false);
 		}
@@ -327,7 +342,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		this.transaction.rollback();
 	    }
 	}
-	return "/facelets/user/courseLeader/editCourseUnit.xhtml?faces-redirect=false";
+	return "x";
 
     }
 
@@ -359,7 +374,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    long difference_end_time = enddate_new - enddate_initial;
 
 	    transaction.start();
-	    // TODO: Not YET Tested
 	    try {
 		if (completeCycle && this.courseUnit.getCycle() != null) {
 		    ArrayList<Integer> idsToEdit = (ArrayList<Integer>) CourseUnitDAO
@@ -382,6 +396,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			tempUnit.setPrice(courseUnit.getPrice());
 			tempUnit.setDescription(courseUnit.getDescription());
 			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
+			tempUnit.setAddress(courseUnit.getAddress());
 
 			// update tempUnit
 			CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
@@ -407,7 +422,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			"Error occured during deleting" + " a course unit.");
 	    }
 	}
-	return "/facelets/user/courseLeader/editCourseUnit.xhtml?faces-redirect=false";
+	return "x";
     }
 
     /**
@@ -431,7 +446,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    this.deleteSingleUnit(transaction, id);
 		}
 	    } else {
-
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 	    }
 	    transaction.commit();
@@ -445,6 +459,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
     }
 
+    /**
+     * @param trans
+     * @param unitId
+     */
     private void deleteSingleUnit(Transaction trans, int unitId) {
 	try {
 	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
@@ -468,6 +486,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
     }
 
+    /**
+     * @param trans
+     * @param participants
+     */
     private void sendMailToSelected(Transaction trans,
 	    ArrayList<User> participants) {
 	int recipientsGroup = this.getSelectedToInform();
@@ -534,9 +556,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     private boolean checkDate() {
 	Date tempDateBegin = new Date(this.date.getTime());
+	Date tempDateEnd = new Date(this.date.getTime());
 	tempDateBegin.setHours(start.getHours());
 	tempDateBegin.setMinutes(start.getMinutes());
-	Date tempDateEnd = new Date(this.date.getTime());
 	tempDateEnd.setHours(end.getHours());
 	tempDateEnd.setMinutes(end.getMinutes());
 	if (tempDateBegin.getTime() > tempDateEnd.getTime()) {
@@ -553,9 +575,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		long endCourse = tempCourse.getEnddate().getTime();
 		if (beginCourse > tempDateBegin.getTime()
 			|| tempDateEnd.getTime() > endCourse) {
-		    FacesMessageCreator
-			    .createFacesMessage(null,
-				    "Die Kurseinheit liegt nicht im Bereich des Kurses!");
+		    FacesMessageCreator.createFacesMessage(
+			    null,
+			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
+				    + dateAsString(new Date(beginCourse))
+				    + " bis zum "
+				    + dateAsString(new Date(endCourse))+ " !");
 
 		    return false;
 		} else {
@@ -568,6 +593,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		return false;
 	    }
 	}
+    }
+
+    private String dateAsString(Date date) {
+	String dateString;
+	int day = date.getDate();
+	int month = (date.getMonth() + 1);
+	int year = date.getYear() + 1900;
+
+	dateString = "" + day + "." + month + "." + year;
+	return dateString;
 
     }
 

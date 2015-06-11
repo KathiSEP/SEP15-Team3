@@ -59,6 +59,8 @@ public class DatabaseConnectionManager {
      * JDBC-Driver
      */
     public static final String dbDriver = "org.postgresql.Driver";
+    
+    private static int numberOfConnection;
 
     /**
      * Flag that is used for debugging with JUnit.<br>
@@ -126,18 +128,12 @@ public class DatabaseConnectionManager {
 	} while ((!this.isConnectionActive(connection))
 		&& (counter <= 5 || freeConnections.size() > 0));
 
-	// Fetches the actual number of granted connections
-	if (debug) {
-	    numberOfConnections = 3;
-	} else {
-	    numberOfConnections = Integer.parseInt(PropertyManager
-		    .getInstance().getPropertyConfig("dbconnections"));
-	}
+	
 	/*
 	 * Calculates if there are as much as connections in use as granted by
 	 * the configuration
 	 */
-	int difference = numberOfConnections
+	int difference = numberOfConnection
 		- (freeConnections.size() + numberOfConnectionsInUse);
 
 	/*
@@ -213,16 +209,16 @@ public class DatabaseConnectionManager {
     public static DatabaseConnectionManager getInstance() {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
-	    int numberOfConnections;
+	
 
 	    if (debug) {
-		numberOfConnections = 3;
+		numberOfConnection = 3;
 	    } else {
-		numberOfConnections = Integer.parseInt(PropertyManager
+		numberOfConnection = Integer.parseInt(PropertyManager
 			.getInstance().getPropertyConfig("dbconnections"));
 	    }
 
-	    for (int i = 0; i < numberOfConnections; ++i) {
+	    for (int i = 0; i < numberOfConnection; ++i) {
 		Connection conn = establishConnection();
 		if (conn != null) {
 		    databaseConnectionManager.freeConnections.add(conn);
