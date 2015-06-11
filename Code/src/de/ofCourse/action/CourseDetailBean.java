@@ -149,12 +149,15 @@ public class CourseDetailBean implements Pagination {
     public void init() {
         courseID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID"));
+        pagination = new PaginationData(pageElements,0,"title",true);
+        
         leaderToAdd = new User();
         transaction = Connection.create();
         try {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
+                pagination.actualizeNumberOfPages(CourseDAO.getNumberOfMyCourses(transaction, sessionUser.getUserID()));
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
                 courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
                         transaction, courseID, null);
@@ -403,7 +406,7 @@ public class CourseDetailBean implements Pagination {
      * @return
      * @throws CourseRegistrationException
      */
-    public signUpForCourseUnits() throws CourseRegistrationException {
+    public void signUpForCourseUnits() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
         // TODO an rickys faclet anpassen
