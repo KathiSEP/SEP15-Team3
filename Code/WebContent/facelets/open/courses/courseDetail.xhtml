@@ -180,6 +180,41 @@
                    	            	</h:commandButton>
                        	        </h:form>
                             </h:column>
+                            <f:facet name="footer">
+                                <div class="row" style="text-align: center;">
+                                    <ul class="pagination">
+                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
+                                                action="#{courseDetailBean.goToSpecificPage}">
+                                                <f:param name="site" value="back" />
+                                            </h:commandButton></li>
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{courseDetailBean.pagination.currentPageNumber}"
+                                                action="#{courseDetailBean.goToSpecificPage}"
+                                                rendered="#{courseDetailBean.pagination.currentPageNumber>=1}">
+                                                <f:param name="site"
+                                                    value="#{courseDetailBean.pagination.currentPageNumber-1}" />
+                                            </h:commandButton></li>
+                                        <li><h:commandButton style="font-weight:bold;"
+                                                class="btn btn-primary" 
+                                                value="#{courseDetailBean.pagination.currentPageNumber +1}"
+                                                action="#{courseDetailBean.goToSpecificPage}">
+                                                <f:param name="site"
+                                                    value="#{courseDetailBean.pagination.currentPageNumber}" />
+                                            </h:commandButton></li>
+                                        <li><h:commandButton class="btn btn-default"
+                                                value="#{courseDetailBean.pagination.currentPageNumber+2}"
+                                                action="#{courseDetailBean.goToSpecificPage}"
+                                                rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}">
+                                                <f:param name="site"
+                                                    value="#{courseDetailBean.pagination.currentPageNumber+1}" />
+                                            </h:commandButton></li>
+                                        <li><h:commandButton class="btn btn-info" value="Weiter"
+                                                action="#{courseDetailBean.goToSpecificPage}">
+                                                <f:param name="site" value="forward" />
+                                        	</h:commandButton></li>
+                                    </ul>
+                                </div>
+                            </f:facet>
 						</h:dataTable>
 					</div>
 				</div>

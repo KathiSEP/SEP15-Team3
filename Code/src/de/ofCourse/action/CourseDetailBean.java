@@ -109,6 +109,7 @@ public class CourseDetailBean implements Pagination {
     private boolean editMode;
     private boolean isRegistered;
     private int courseID;
+    private static int pageElements = 10;
 
     /**
      * Saves the edited course data and sets the course details page to its
@@ -632,6 +633,19 @@ public class CourseDetailBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
+        pagination.actualizeCurrentPageNumber(FacesContext.getCurrentInstance().
+                getExternalContext().getRequestParameterMap().get("site"));
+            transaction.start();
+            try {
+                this.courseUnitsOfCourse = (ArrayList<CourseUnit>) CourseUnitDAO
+                    .getCoursesOf(transaction, this.getPagination(),
+                        this.sessionUser.getUserID());
+                this.transaction.commit();
+            } catch (InvalidDBTransferException e) {
+                LogHandler.getInstance().error(
+                    "Error occured during fething data for pagination.");
+                this.transaction.rollback();
+            }
     }
 
     /**
