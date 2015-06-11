@@ -12,9 +12,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -122,23 +124,30 @@ public class SearchCourseBean implements Pagination {
     	pagination.setCurrentPageNumber(0);
     	pagination.setSortColumn("courseID");
     	
-    	//Hier try-catch-Block
-    	
-    	pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
-    	List<Course> result = CourseDAO.getCourses(transaction, pagination,
-    			displayPeriod);
-    	
-    	if (result != null) {
-    		searchResult = result;
-    		transaction.commit();
-    		setPagingSearchTerm(false);
-    		setRenderTable(true);
-    		columnSort = false;
-    		orderPeriod = displayPeriod;
-    		orderSearchParam = searchParam;
-    		orderSearchString = searchString;
-    	} else {
-    		setRenderTable(false);
+    	try {
+    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
+	    	List<Course> result = CourseDAO.getCourses(transaction, pagination,
+	    			displayPeriod);
+	    	
+	    	if (result != null) {
+	    		searchResult = result;
+	    		transaction.commit();
+	    		setPagingSearchTerm(false);
+	    		setRenderTable(true);
+	    		columnSort = false;
+	    		orderPeriod = displayPeriod;
+	    		orderSearchParam = searchParam;
+	    		orderSearchString = searchString;
+	    		transaction.commit();
+	    	} else {
+	    		setRenderTable(false);
+	    		transaction.rollback();
+	    	}
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "createUser()");
     		transaction.rollback();
     	}
     }
@@ -172,32 +181,38 @@ public class SearchCourseBean implements Pagination {
      * in the facelet.
      */
     public void search() {
-    	transaction = Connection.create();
-    	transaction.start();
-    	
     	if (!searchString.isEmpty()) {
+    		transaction = Connection.create();
+    		transaction.start();
+    		
     		pagination.setCurrentPageNumber(0);
     		pagination.setSortColumn(searchParam);
-    		
-    		//Hier try-catch-Block
-    		
-    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
-    		List<Course> result = CourseDAO.getCourses(transaction, pagination,
-    			searchParam, searchString);
-    		
-    		if (result != null) {
-    			searchResult = result;
-    			transaction.commit();
-    			setPagingSearchTerm(true);
-    			setRenderTable(true);
-    			columnSort = false;
-    			orderPeriod = displayPeriod;
-        		orderSearchParam = searchParam;
-        		orderSearchString = searchString;
-    		} else {
-    			setRenderTable(false);
-    			transaction.rollback();
-    		}
+    		try {
+        		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
+	    		List<Course> result = CourseDAO.getCourses(transaction, pagination,
+	    			searchParam, searchString);
+	    		
+	    		if (result != null) {
+	    			searchResult = result;
+	    			transaction.commit();
+	    			setPagingSearchTerm(true);
+	    			setRenderTable(true);
+	    			columnSort = false;
+	    			orderPeriod = displayPeriod;
+	        		orderSearchParam = searchParam;
+	        		orderSearchString = searchString;
+	        		transaction.commit();
+	    		} else {
+	    			setRenderTable(false);
+	    			transaction.rollback();
+	    		}
+        	} catch (InvalidDBTransferException e) {
+        		LogHandler
+                .getInstance()
+                .error("SQL Exception occoured during executing "
+                        + "createUser()");
+        		transaction.rollback();
+        	}
     	} else {
     		setRenderTable(false);
     	}
@@ -319,23 +334,32 @@ public class SearchCourseBean implements Pagination {
     	} else {
     		pagination.setSortAsc(true);
     	}
-    	if (pagingSearchTerm) {
-    		result = CourseDAO.getCourses(transaction, pagination,
-        			orderSearchParam, orderSearchString);
-		} else {
-	    	result = CourseDAO.getCourses(transaction, pagination,
-	    			orderPeriod);
-		}
     	
-    	if (result != null) {
-    		searchResult = result;
-    		transaction.commit();
-    	} else {
-    		setRenderTable(false);
+    	try {
+    		if (pagingSearchTerm) {
+	    		result = CourseDAO.getCourses(transaction, pagination,
+	        			orderSearchParam, orderSearchString);
+			} else {
+		    	result = CourseDAO.getCourses(transaction, pagination,
+		    			orderPeriod);
+			}
+    		
+    		if (result != null) {
+	    		searchResult = result;
+	    		transaction.commit();
+	    	} else {
+	    		setRenderTable(false);
+	    		transaction.rollback();
+	    	}
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "createUser()");
     		transaction.rollback();
     	}
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -343,41 +367,50 @@ public class SearchCourseBean implements Pagination {
     public void goToSpecificPage() {
     	transaction = Connection.create();
 	    transaction.start();
-    	this.pagination.actualizeCurrentPageNumber(FacesContext
+	    
+	    try {
+    		this.pagination.actualizeCurrentPageNumber(FacesContext
 				.getCurrentInstance().getExternalContext()
 				.getRequestParameterMap().get("page"));
-    	String period;
-    	String param;
-    	String term;
-    	List<Course> result;
-    	
-    	if (columnSort) {
-    		period = orderPeriod;
-    		param = orderSearchParam;
-    		term = orderSearchString;
-    	} else {
-    		period = displayPeriod;
-    		param = searchParam;
-    		term = searchString;
-    	}
-		
-		if (pagingSearchTerm) {
-			result = CourseDAO.getCourses(transaction, pagination,
-        			param, term);
-		} else {
-			result = CourseDAO.getCourses(transaction, pagination,
-	    			period);
-		}
-		
-		if (result != null) {
-    		searchResult = result;
-    		transaction.commit();
-    	} else {
-    		setRenderTable(false);
+	    	String period;
+	    	String param;
+	    	String term;
+	    	List<Course> result;
+	    	
+	    	if (columnSort) {
+	    		period = orderPeriod;
+	    		param = orderSearchParam;
+	    		term = orderSearchString;
+	    	} else {
+	    		period = displayPeriod;
+	    		param = searchParam;
+	    		term = searchString;
+	    	}
+			
+			if (pagingSearchTerm) {
+				result = CourseDAO.getCourses(transaction, pagination,
+	        			param, term);
+			} else {
+				result = CourseDAO.getCourses(transaction, pagination,
+		    			period);
+			}
+			
+			if (result != null) {
+	    		searchResult = result;
+	    		transaction.commit();
+	    	} else {
+	    		setRenderTable(false);
+	    		transaction.rollback();
+	    	}
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "createUser()");
     		transaction.rollback();
     	}
     }
-
+    
     /**
      * {@inheritDoc}
      */
