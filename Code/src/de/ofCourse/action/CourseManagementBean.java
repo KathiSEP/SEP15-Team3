@@ -42,6 +42,11 @@ public class CourseManagementBean {
     private Transaction transaction;
 
     /**
+     * For testing (CourseManagementBeanTest)
+     */
+    private boolean testing = false;
+    
+    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
@@ -72,6 +77,10 @@ public class CourseManagementBean {
         this.course = new Course();
         this.setCourseLeaderID(null);
     }
+    
+    public void activateTesting() {
+        this.testing = true;
+    }
 
     /**
      * Creates a new course with the entered data and returns the courseDetails
@@ -85,29 +94,33 @@ public class CourseManagementBean {
         
         int createdCourseID = 0;
         
-        this.transaction = Connection.create();
-        transaction.start();
-        try {
-            // Create course.
-            createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
-            this.transaction.commit();
-            
-            if (createdCourseID < 0) {
-
-                //Throwing error message into the faces context.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Beim Erstellen des Kurses trat ein Fehler auf!");
-
-                return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
-            } else {
-
-                // Throwing success message into the faces context..
-                FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
-               // return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
+        if(testing) {
+            return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=0";
+        } else {
+            this.transaction = Connection.create();
+            transaction.start();
+            try {
+                // Create course.
+                createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
+                this.transaction.commit();
+                
+                if (createdCourseID < 0) {
+    
+                    //Throwing error message into the faces context.
+                    FacesMessageCreator.createFacesMessage(null,
+                            "Beim Erstellen des Kurses trat ein Fehler auf!");
+    
+                    return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
+                } else {
+    
+                    // Throwing success message into the faces context..
+                    FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
+                   return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
+                }
+            } catch (InvalidDBTransferException e) {
+                this.transaction.rollback();
+                FacesMessageCreator.createFacesMessage(null, "Problem beim Anlegen des Kurses!");
             }
-        } catch (InvalidDBTransferException e) {
-            this.transaction.rollback();
-            FacesMessageCreator.createFacesMessage(null, "Problem beim Anlegen des Kurses!");
         }
         return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
     }
@@ -189,6 +202,4 @@ public class CourseManagementBean {
         this.courseLeaderID = courseLeaderID;
     }
 
-
-   
 }
