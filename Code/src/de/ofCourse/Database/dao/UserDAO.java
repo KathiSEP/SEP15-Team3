@@ -1241,4 +1241,35 @@ public class UserDAO {
         }
     }
 
+
+    /**
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param email
+     * @return
+     */
+    public static User getUserPerMail(Transaction trans, String email) {
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        User user = null;
+        PreparedStatement stmt = null;
+        ResultSet rst = null;
+        String query = "SELECT nickname FROM \"users\" WHERE email=?";
+        try {
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, email);
+            
+            rst = stmt.executeQuery();
+            if (rst.next()) {
+                user = getUser(trans, rst.getString(1));
+            }
+        } catch (SQLException e) {
+            LogHandler.getInstance()
+                .error("SQL Exception occoured during executing getUser(Transaction trans, email)");
+            throw new InvalidDBTransferException();
+        }
+        return user;
+    }
+
 }
