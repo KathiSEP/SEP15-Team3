@@ -53,7 +53,8 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Titel:</span>
 									<h:inputText class="form-control" style="width:300px;"
-										id="titleCourseUnit"
+										id="titleCourseUnit" required="true"
+										requiredMessage="Bitte geben Sie einen Titel ein. "
 										value="#{courseUnitManagementBean.courseUnit.title}"
 										validatorMessage="Der eingegebene Titel darf höchstens 150 Zeichen lang sein. ">
 										<f:validateLength minimum="0" maximum="150" />
@@ -116,7 +117,8 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Straße:</span>
 									<h:inputText class="form-control" style="width:300px;"
-										id="streetCourseUnit"
+										id="streetCourseUnit" required="true"
+										requiredMessage="Bitte geben Sie eine Strasse ein. "
 										value="#{courseUnitManagementBean.courseUnit.address.street}"
 										validatorMessage="Ihre Eingabe darf höchstens 100 Zeichen lang sein. ">
 										<f:validateLength minimum="0" maximum="100" />
@@ -127,7 +129,8 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Hausnummer:</span>
 									<h:inputText class="form-control" style="width:300px;"
-										id="houseNumberCourseUnit"
+										id="houseNumberCourseUnit" required="true"
+										requiredMessage="Bitte geben Sie eine Hausnummer ein. "
 										value="#{courseUnitManagementBean.courseUnit.address.houseNumber}"
 										validatorMessage="Ihre Eingabe darf höchstens 10 Zeichen lang sein. ">
 										<f:validateLength minimum="0" maximum="10" />
@@ -177,7 +180,8 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Beschreibung:</span>
 									<h:inputText class="form-control" style="width:300px;"
-										id="descriptionCourseUnit"
+										id="descriptionCourseUnit" required="true"
+										requiredMessage="Bitte geben Sie eine Beschreibung ein. "
 										value="#{courseUnitManagementBean.courseUnit.description}"
 										validatorMessage="Die eingegebene Beschreibung darf höchstens 1000 Zeichen lang sein. ">
 										<f:validateLength minimum="0" maximum="1000" />
@@ -206,11 +210,10 @@
 										value="#{courseUnitManagementBean.courseUnit.courseAdmin.userID}"
 										required="true"
 										requiredMessage="Bitte geben Sie die Id eines aktiven Kursleiters an. "
-										converterMessage="Die eingegebene ID ist keine Zahl. "
-										validatorMessage="Die eingegebene Zahl darf höchstens 10 Zeichen lang sein. ">
+										converterMessage="Die eingegebene ID ist keine Zahl. ">
 										<f:convertNumber integerOnly="true" pattern="#000000000"
 											type="number" />
-										<f:validateLength minimum="0" maximum="10" />
+										<f:validator validatorId="courseInstructorValidator" />
 									</h:inputText>
 								</div>
 
@@ -220,6 +223,8 @@
 									<h:inputText class="form-control" style="width:300px;"
 										id="minUsersCourseUnit"
 										value="#{courseUnitManagementBean.courseUnit.minUsers}"
+										required="true"
+										requiredMessage="Bitte geben Sie eine Mindestteilnehmerzahl ein. "
 										converterMessage="Die eingegebene Mindestteilnehmerzahl ist keine Zahl."
 										validatorMessage="Die eingegebene Mindestteilnehmerzahl darf höchstens 3 Zeichen lang sein. ">
 										<f:convertNumber integerOnly="true" type="number"
@@ -234,6 +239,8 @@
 									<h:inputText class="form-control" style="width:300px;"
 										id="maxUsersCourseUnit"
 										value="#{courseUnitManagementBean.courseUnit.maxUsers}"
+										required="true"
+										requiredMessage="Bitte geben Sie eine Hoechstteilnehmerzahl ein. "
 										converterMessage="Die eingegebene Höchstteilnehmerzahl ist keine Zahl. "
 										validatorMessage="Die eingegebene Höchstteilnehmerzahl darf höchstens 3 Zeichen lang sein. ">
 										<f:convertNumber integerOnly="true" type="number"
@@ -331,143 +338,154 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title">Teilnehmer</h3>
-						</div>
-						<div class="panel-body">
-							<h:form class="form-horizontal" id="formParticipants">
-								<h:dataTable id="participantsTable"
-									value="#{courseUnitManagementBean.participants}" var="user"
-									class=" table table-hover" cellspacing="0" width="100%">
 
-									<h:column>
-										<f:facet name="header">
+				<div class="col-lg-6">
+					<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">Teilnehmer</h3>
+							</div>
+							<div class="panel-body">
+								<h:form
+									rendered="#{courseUnitManagementBean.participants.getRowCount()>0}"
+									class="form-horizontal" id="formParticipants">
+									<h:dataTable id="participantsTable"
+										value="#{courseUnitManagementBean.participants}" var="user"
+										class=" table table-hover" cellspacing="0" width="100%">
+
+										<h:column>
+											<f:facet name="header">
                                                BenutzerID
                                         </f:facet>
-										<h:outputText value="#{user.userID}" />
-									</h:column>
+											<h:outputText value="#{user.userID}" />
+										</h:column>
 
-									<h:column>
-										<f:facet name="header">
+										<h:column>
+											<f:facet name="header">
                                                Name
                                         </f:facet>
-										<h:outputText value="#{user.lastname}" />
-									</h:column>
+											<h:outputText value="#{user.lastname}" />
+										</h:column>
 
-									<h:column>
-										<f:facet name="header">
+										<h:column>
+											<f:facet name="header">
                                                Vorname
                                         </f:facet>
-										<h:outputText value="#{user.firstname}" />
-									</h:column>
+											<h:outputText value="#{user.firstname}" />
+										</h:column>
 
-									<h:column>
-										<f:facet name="header">
+										<h:column>
+											<f:facet name="header">
                                         Auswählen
                                         </f:facet>
-										<h:selectBooleanCheckbox id="checked" value="#{user.selected}" />
-									</h:column>
+											<h:selectBooleanCheckbox id="checked"
+												value="#{user.selected}" />
+										</h:column>
 
-									<f:facet name="footer">
-										<div class="row" style="text-align: center;">
-											<ul class="pagination">
-												<li><h:commandButton class="btn btn-info"
-														value="Zurueck"
-														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="site" value="back" />
-													</h:commandButton></li>
-												<li><h:commandButton class="btn btn-default"
-														value="#{courseUnitManagementBean.pagination.currentPageNumber}"
-														action="#{courseUnitManagementBean.goToSpecificPage}"
-														rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}">
-														<f:param name="site"
-															value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
-													</h:commandButton></li>
-												<li><h:commandButton style="font-weight:bold;"
-														class="btn btn-primary"
-														value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
-														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="site"
-															value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
-													</h:commandButton></li>
-												<li><h:commandButton class="btn btn-default"
-														value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
-														action="#{courseUnitManagementBean.goToSpecificPage}"
-														rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}">
-														<f:param name="site"
-															value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
-													</h:commandButton></li>
-												<li><h:commandButton class="btn btn-info"
-														value="Weiter"
-														action="#{courseUnitManagementBean.goToSpecificPage}">
-														<f:param name="site" value="forward" />
-													</h:commandButton></li>
-											</ul>
-										</div>
-									</f:facet>
-								</h:dataTable>
-								<br />
-								<br />
-								<h:commandButton value="Ausgwählte Benutzer löschen"
-									class="btn btn-info pull-right"
-									actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}" />
-							</h:form>
+										<f:facet name="footer">
+											<div class="row" style="text-align: center;">
+												<ul class="pagination">
+													<li><h:commandButton class="btn btn-info"
+															value="Zurueck"
+															action="#{courseUnitManagementBean.goToSpecificPage}">
+															<f:param name="site" value="back" />
+														</h:commandButton></li>
+													<li><h:commandButton class="btn btn-default"
+															value="#{courseUnitManagementBean.pagination.currentPageNumber}"
+															action="#{courseUnitManagementBean.goToSpecificPage}"
+															rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}">
+															<f:param name="site"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
+														</h:commandButton></li>
+													<li><h:commandButton style="font-weight:bold;"
+															class="btn btn-primary"
+															value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
+															action="#{courseUnitManagementBean.goToSpecificPage}">
+															<f:param name="site"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
+														</h:commandButton></li>
+													<li><h:commandButton class="btn btn-default"
+															value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
+															action="#{courseUnitManagementBean.goToSpecificPage}"
+															rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}">
+															<f:param name="site"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
+														</h:commandButton></li>
+													<li><h:commandButton class="btn btn-info"
+															value="Weiter"
+															action="#{courseUnitManagementBean.goToSpecificPage}">
+															<f:param name="site" value="forward" />
+														</h:commandButton></li>
+												</ul>
+											</div>
+										</f:facet>
+									</h:dataTable>
+									<br />
+									<br />
+									<h:commandButton value="Ausgwählte Benutzer löschen"
+										class="btn btn-info pull-right"
+										actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}" />
+								</h:form>
+								<h:form
+									rendered="#{courseUnitManagementBean.participants.getRowCount()==-1}"
+									class="alert alert-warning">
+									<strong>Hinweis:</strong> Es sind keine Teilnehmer für die Kurseinheit vorhanden.
+                </h:form>
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title">Benutzer hinzufügen</h3>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">Benutzer hinzufügen</h3>
+							</div>
+							<div class="panel-body">
+								<h:form class="form-horizontal" id="formUserToAddCourseUnit">
+
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Benutzer ID:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="idUser"
+											value="#{courseUnitManagementBean.userToAdd.userID}"
+											required="true"
+											requiredMessage="Bitte geben Sie eine ID ein. "
+											converterMessage="Die eingegebene ID ist keine Zahl. "
+											validatorMessage="Die eingegebene ID darf höchstens 9 Zeichen lang sein.">
+											<f:convertNumber integerOnly="true" pattern="#000000000"
+												type="number" />
+											<f:validateLength minimum="0" maximum="9" />
+										</h:inputText>
+									</div>
+
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Name:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="nameUser"
+											value="#{courseUnitManagementBean.userToAdd.lastname}"
+											validatorMessage="Der eingegebene Name darf höchstens 100 Zeichen lang sein. ">
+											<f:validateLength minimum="0" maximum="100" />
+										</h:inputText>
+									</div>
+
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">Vorname:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="firstNameUser"
+											value="#{courseUnitManagementBean.userToAdd.firstname}"
+											validatorMessage="Der eingegebene Vorname darf höchstens 100 Zeichen lang sein. ">
+											<f:validateLength minimum="0" maximum="100" />
+										</h:inputText>
+									</div>
+									<br />
+									<br />
+									<h:commandButton id="addUserCourseUnit"
+										action="#{courseUnitManagementBean.addUserToCourseUnit}"
+										class="btn btn-info pull-right" value="Benutzer hinzufügen" />
+								</h:form>
+							</div>
 						</div>
-						<div class="panel-body">
-							<h:form class="form-horizontal" id="formUserToAddCourseUnit">
-
-								<div class="input-group" style="padding-top: 5px;">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Benutzer ID:</span>
-									<h:inputText class="form-control" style="width:300px;"
-										id="idUser"
-										value="#{courseUnitManagementBean.userToAdd.userID}"
-										required="true"
-										requiredMessage="Bitte geben Sie eine ID ein. "
-										converterMessage="Die eingegebene ID ist keine Zahl. "
-										validatorMessage="Die eingegebene ID darf höchstens 9 Zeichen lang sein.">
-										<f:convertNumber integerOnly="true" pattern="#000000000"
-											type="number" />
-										<f:validateLength minimum="0" maximum="9" />
-									</h:inputText>
-								</div>
-
-								<div class="input-group" style="padding-top: 5px;">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Name:</span>
-									<h:inputText class="form-control" style="width:300px;"
-										id="nameUser"
-										value="#{courseUnitManagementBean.userToAdd.lastname}"
-										validatorMessage="Der eingegebene Name darf höchstens 100 Zeichen lang sein. ">
-										<f:validateLength minimum="0" maximum="100" />
-									</h:inputText>
-								</div>
-
-								<div class="input-group" style="padding-top: 5px;">
-									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Vorname:</span>
-									<h:inputText class="form-control" style="width:300px;"
-										id="firstNameUser"
-										value="#{courseUnitManagementBean.userToAdd.firstname}"
-										validatorMessage="Der eingegebene Vorname darf höchstens 100 Zeichen lang sein. ">
-										<f:validateLength minimum="0" maximum="100" />
-									</h:inputText>
-								</div>
-								<br />
-								<br />
-								<h:commandButton id="addUserCourseUnit"
-									action="#{courseUnitManagementBean.addUserToCourseUnit}"
-									class="btn btn-info pull-right" value="Benutzer hinzufügen" />
-							</h:form>
-						</div>
-					</div>
+					</h:panelGroup>
 				</div>
 			</div>
 		</body>

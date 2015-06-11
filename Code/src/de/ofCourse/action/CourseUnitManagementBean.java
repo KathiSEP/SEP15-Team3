@@ -19,12 +19,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.CycleDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
@@ -143,20 +145,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private boolean completeCycle;
 
-   
-
     /**
      * @return the completeCycle
      */
     public boolean isCompleteCycle() {
-        return completeCycle;
+	return completeCycle;
     }
 
     /**
-     * @param completeCycle the completeCycle to set
+     * @param completeCycle
+     *            the completeCycle to set
      */
     public void setCompleteCycle(boolean completeCycle) {
-        this.completeCycle = completeCycle;
+	this.completeCycle = completeCycle;
     }
 
     private int courseUnitID = 0;
@@ -223,11 +224,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
 	this.courseUnitID = 10070;
-	this.editMode = true;
+	this.editMode = false;
 
 	courseUnit.setCourseID(courseID);
 	courseUnit.setCourseUnitID(courseUnitID);
-	
+
 	transaction = Connection.create();
 	transaction.start();
 
@@ -235,16 +236,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// unit
 	try {
 
-	  this.courseUnit = CourseUnitDAO.getCourseUnit(transaction, courseUnitID);
-	   if(courseUnit.getCycle() == null){
-	       courseUnit.setCycle(new Cycle());
-	   }
+	    this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
+		    courseUnitID);
+	    if (courseUnit.getCycle() == null) {
+		courseUnit.setCycle(new Cycle());
+	    }
 	    this.pagination.actualizeNumberOfPages(CourseUnitDAO
 		    .getNumberOfParticipants(transaction, courseUnitID));
 	    this.participants.setWrappedData(CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
 			    courseUnitID, false));
-	    
+
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
@@ -252,7 +254,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    + " page with elements from database.");
 	    this.transaction.rollback();
 	}
-       System.out.println("CycleId fetched: " + courseUnit.getCycle().getCycleID());
+	System.out.println("CycleId fetched: "
+		+ courseUnit.getCycle().getCycleID());
 
     }
 
@@ -267,56 +270,65 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @return link to the courseDetails page
      */
     public String createCourseUnit() {
-	System.out.println("Drinnen");
-	transaction.start();
-	try {
+	if (this.checkDate()) {
+	    transaction.start();
+	    try {
 
-	    calculateStartAndEndTime(this.courseUnit);
+		calculateStartAndEndTime(this.courseUnit);
 
-	    if (this.regularCourseUnit) {
+		if (this.regularCourseUnit) {
 
-		courseUnit.getCycle().setCycleID(
-			CycleDAO.createCycle(transaction, courseID,
-				courseUnit.getCycle()));
+		    courseUnit.getCycle().setCycleID(
+			    CycleDAO.createCycle(transaction, courseID,
+				    courseUnit.getCycle()));
 
-		Date actualStartDate = this.courseUnit.getStartime();
-		Date actualEndDate = this.courseUnit.getEndtime();
+		    Date actualStartDate = this.courseUnit.getStartime();
+		    Date actualEndDate = this.courseUnit.getEndtime();
 
-		Date nextStartDate = null;
-		Date nextEndDate = null;
-		for (int i = 0; i < this.courseUnit.getCycle()
-			.getNumberOfUnits(); ++i) {
+		    Date nextStartDate = null;
+		    Date nextEndDate = null;
+		    for (int i = 0; i < this.courseUnit.getCycle()
+			    .getNumberOfUnits(); ++i) {
 
-		    if (this.courseUnit.getCycle().getTurnus() == day) {
-			nextStartDate = this.calculateDate(actualStartDate, i
-				* day);
-			nextEndDate = this
-				.calculateDate(actualEndDate, i * day);
-		    } else if (this.courseUnit.getCycle().getTurnus() == week) {
-			nextStartDate = this.calculateDate(actualStartDate, i
-				* week);
-			nextEndDate = this.calculateDate(actualEndDate, i
-				* week);
+			if (this.courseUnit.getCycle().getTurnus() == day) {
+			    nextStartDate = this.calculateDate(actualStartDate,
+				    i * day);
+			    nextEndDate = this.calculateDate(actualEndDate, i
+				    * day);
+			} else if (this.courseUnit.getCycle().getTurnus() == week) {
+			    nextStartDate = this.calculateDate(actualStartDate,
+				    i * week);
+			    nextEndDate = this.calculateDate(actualEndDate, i
+				    * week);
+			}
+			this.courseUnit.setStartime(new Date(nextStartDate
+				.getTime()));
+			this.courseUnit.setEndtime(new Date(nextEndDate
+				.getTime()));
+			CourseUnitDAO.createCourseUnit(transaction,
+				this.courseUnit, this.courseID, true);
 		    }
-		    this.courseUnit.setStartime(new Date(nextStartDate
-			    .getTime()));
-		    this.courseUnit.setEndtime(new Date(nextEndDate.getTime()));
-		    CourseUnitDAO.createCourseUnit(transaction,
-			    this.courseUnit, this.courseID, true);
+		} else {
+		    this.courseUnit.getCycle().setCycleID(-1);
+		    CourseUnitDAO.createCourseUnit(transaction, courseUnit,
+			    courseID, false);
 		}
-	    } else {
-		this.courseUnit.getCycle().setCycleID(-1);
-		CourseUnitDAO.createCourseUnit(transaction, courseUnit,
-			courseID, false);
+		this.transaction.commit();
+		System.out.println(FacesContext.getCurrentInstance()
+			.getExternalContext().getRequestParameterMap()
+			.get("courseID"));
+		return "/facelets/open/courses/courseDetail.xhtml";
+	    } catch (InvalidDBTransferException e) {
+		LogHandler.getInstance().error(
+			"Error occured during creating the"
+				+ " a new course unit.");
+		FacesMessageCreator.createFacesMessage(null,
+			"Problem beim Anlegen der Kurseinheit!");
+		this.transaction.rollback();
 	    }
-	    this.transaction.commit();
-	} catch (InvalidDBTransferException e) {
-	    LogHandler.getInstance()
-		    .error("Error occured during creating the"
-			    + " a new course unit.");
-	    this.transaction.rollback();
 	}
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
+	return "/facelets/user/courseLeader/editCourseUnit.xhtml?faces-redirect=false";
+
     }
 
     /**
@@ -334,65 +346,68 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public String saveCourseUnit() {
 	CourseUnit tempUnit = null;
-	long startdate_initial = courseUnit.getStartime().getTime();
-	long enddate_initial = courseUnit.getEndtime().getTime();
+	if (this.checkDate()) {
+	    long startdate_initial = courseUnit.getStartime().getTime();
+	    long enddate_initial = courseUnit.getEndtime().getTime();
 
-	// Update local course unit attribute with entered data
-	this.calculateStartAndEndTime(courseUnit);
-	long startdate_new = courseUnit.getStartime().getTime();
-	long enddate_new = courseUnit.getEndtime().getTime();
+	    // Update local course unit attribute with entered data
+	    this.calculateStartAndEndTime(courseUnit);
+	    long startdate_new = courseUnit.getStartime().getTime();
+	    long enddate_new = courseUnit.getEndtime().getTime();
 
-	long difference_start_time = startdate_new - startdate_initial;
-	long difference_end_time = enddate_new - enddate_initial;
+	    long difference_start_time = startdate_new - startdate_initial;
+	    long difference_end_time = enddate_new - enddate_initial;
 
-	transaction.start();
-	// TODO: Not YET Tested
-	try {
-	    if (completeCycle && this.courseUnit.getCycle() != null) {
-		ArrayList<Integer> idsToEdit = (ArrayList<Integer>) CourseUnitDAO
-			.getIdsCourseUnitsOfCycle(transaction,
-				courseUnit.getCourseUnitID());
-		for (int id : idsToEdit) {
-		    // Fetch course unit in cycle
-		    tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);
+	    transaction.start();
+	    // TODO: Not YET Tested
+	    try {
+		if (completeCycle && this.courseUnit.getCycle() != null) {
+		    ArrayList<Integer> idsToEdit = (ArrayList<Integer>) CourseUnitDAO
+			    .getIdsCourseUnitsOfCycle(transaction,
+				    courseUnit.getCourseUnitID());
+		    for (int id : idsToEdit) {
+			// Fetch course unit in cycle
+			tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);
 
-		    // Add calculated time differences
-		    tempUnit.setStartime(new Date(tempUnit.getStartime()
-			    .getTime() + difference_start_time));
-		    tempUnit.setEndtime(new Date(tempUnit.getEndtime()
-			    .getTime() + difference_end_time));
+			// Add calculated time differences
+			tempUnit.setStartime(new Date(tempUnit.getStartime()
+				.getTime() + difference_start_time));
+			tempUnit.setEndtime(new Date(tempUnit.getEndtime()
+				.getTime() + difference_end_time));
 
-		    // Update tempUnit with other entered values
-		    tempUnit.setTitle(courseUnit.getTitle());
-		    tempUnit.setMinUsers(courseUnit.getMinUsers());
-		    tempUnit.setMaxUsers(courseUnit.getMaxUsers());
-		    tempUnit.setPrice(courseUnit.getPrice());
-		    tempUnit.setDescription(courseUnit.getDescription());
-		    tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
+			// Update tempUnit with other entered values
+			tempUnit.setTitle(courseUnit.getTitle());
+			tempUnit.setMinUsers(courseUnit.getMinUsers());
+			tempUnit.setMaxUsers(courseUnit.getMaxUsers());
+			tempUnit.setPrice(courseUnit.getPrice());
+			tempUnit.setDescription(courseUnit.getDescription());
+			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
 
-		    // update tempUnit
-		    CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
+			// update tempUnit
+			CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
 
-		    // Send info mail
-		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-			    .getParticipiantsOfCourseUnit(transaction,
-				    pagination, id, true);
-		    this.sendMailToSelected(transaction, participants);
+			// Send info mail
+			ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+				.getParticipiantsOfCourseUnit(transaction,
+					pagination, id, true);
+			this.sendMailToSelected(transaction, participants);
+		    }
+		} else {
+		    // New dates are already calculated
+		    CourseUnitDAO
+			    .updateCourseUnit(transaction, getCourseUnit());
 		}
-	    } else {
-		// New dates are already calculated
-		CourseUnitDAO.updateCourseUnit(transaction, getCourseUnit());
+		transaction.commit();
+		return "/facelets/open/courses/courseDetail.xhtml";
+	    } catch (InvalidDBTransferException e) {
+		transaction.rollback();
+		FacesMessageCreator.createFacesMessage(null,
+			"Problem beim Bearbeiten der Kurseinheit!");
+		LogHandler.getInstance().error(
+			"Error occured during deleting" + " a course unit.");
 	    }
-	    transaction.commit();
-	} catch (InvalidDBTransferException e) {
-	    transaction.rollback();
-	    e.printStackTrace();
-	    LogHandler.getInstance().error(
-		    "Error occured during deleting" + " a course unit.");
 	}
-
-	System.out.println("Save Course Unit");
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true";
+	return "/facelets/user/courseLeader/editCourseUnit.xhtml?faces-redirect=false";
     }
 
     /**
@@ -416,7 +431,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    this.deleteSingleUnit(transaction, id);
 		}
 	    } else {
-	        
+
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 	    }
 	    transaction.commit();
@@ -515,6 +530,45 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    .error("Error during adding user manually to course unit. "
 			    + "User has not enough money to participate the course unit");
 	}
+    }
+
+    private boolean checkDate() {
+	Date tempDateBegin = new Date(this.date.getTime());
+	tempDateBegin.setHours(start.getHours());
+	tempDateBegin.setMinutes(start.getMinutes());
+	Date tempDateEnd = new Date(this.date.getTime());
+	tempDateEnd.setHours(end.getHours());
+	tempDateEnd.setMinutes(end.getMinutes());
+	if (tempDateBegin.getTime() > tempDateEnd.getTime()) {
+	    FacesMessageCreator.createFacesMessage(null,
+		    "Das Enddatum liegt vor dem Startdatum!");
+	    return false;
+	} else {
+	    transaction.start();
+	    try {
+		Course tempCourse = CourseDAO.getCourse(transaction,
+			courseUnit.getCourseID());
+		transaction.commit();
+		long beginCourse = tempCourse.getStartdate().getTime();
+		long endCourse = tempCourse.getEnddate().getTime();
+		if (beginCourse > tempDateBegin.getTime()
+			|| tempDateEnd.getTime() > endCourse) {
+		    FacesMessageCreator
+			    .createFacesMessage(null,
+				    "Die Kurseinheit liegt nicht im Bereich des Kurses!");
+
+		    return false;
+		} else {
+		    return true;
+		}
+	    } catch (InvalidDBTransferException e) {
+		LogHandler.getInstance().error(
+			"Error occured during fetching a course");
+		transaction.rollback();
+		return false;
+	    }
+	}
+
     }
 
     /**
@@ -811,8 +865,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	return calculated;
     }
 
-   
-
     /**
      * Calculates the <code>starttime</code> and the <code>endtime</code> of a
      * course unit fetched from the inserted values to be displayed properly.
@@ -832,8 +884,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	date.setMinutes(end.getMinutes());
 	courseUnit.setEndtime(new Date(date.getTime()));
     }
-
-   
 
     public int getSelectedToInform() {
 	return selectedToInform;
