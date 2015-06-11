@@ -915,53 +915,37 @@ public class UserDAO {
      */
     public static void updateUser(Transaction trans, User user, String pwHash)
 	    throws InvalidDBTransferException {
-	PreparedStatement statement = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	String sql = "UPDATE \"users\" "
-		+ "SET first_name = ?, name = ?, email = ?, pw_hash = ?, "
-		+ "date_of_birth = ?, form_of_address = ?, nickname = ? "
-		+ "WHERE id = ?";
-
-	try {
-	    statement = conn.prepareStatement(sql);
-	    if (user.getFirstname() == null || user.getFirstname().length() < 1) {
-		statement.setString(1, null);
-	    } else {
-		statement.setString(1, user.getFirstname());
-	    }
-	    if (user.getLastname() == null || user.getLastname().length() < 1) {
-		statement.setString(2, null);
-	    } else {
-		statement.setString(2, user.getLastname());
-	    }
-	    if (user.getEmail() == null || user.getEmail().length() < 1) {
-		statement.setString(3, null);
-	    } else {
-		statement.setString(3, user.getEmail());
-	    }
-	    statement.setString(4, pwHash);
-	    if (user.getDateOfBirth() == null) {
-		statement.setDate(5, null);
-	    } else {
-		statement.setDate(5, (Date) user.getDateOfBirth());
-	    }
-	    if (user.getSalutation() == null) {
-		statement.setString(6, null);
-	    } else {
-		statement.setString(6, user.getSalutation().toString());
-	    }
-	    statement.setString(7, user.getUsername());
-	    statement.setInt(8, user.getUserID());
-	    statement.executeUpdate();
-	    statement.close();
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing updateUser(Transaction trans, User user, String pwHash)");
-	    throw new InvalidDBTransferException();
-	}
+    	PreparedStatement statement = null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    
+    	String sql = "UPDATE \"users\" "
+    		+ "SET first_name = ?, name = ?, email = ?, pw_hash = ?, "
+    		+ "date_of_birth = ?, form_of_address = ?, nickname = ? "
+    		+ "WHERE id = ?";
+    
+    	try {
+    	    statement = conn.prepareStatement(sql);
+    		statement.setString(1, user.getFirstname());
+    		statement.setString(2, user.getLastname());
+    		statement.setString(3, user.getEmail());
+    	    statement.setString(4, pwHash);
+    		statement.setDate(5, (Date) user.getDateOfBirth());
+    		statement.setString(6, user.getSalutation().toString());
+    	    statement.setString(7, user.getUsername());
+    	    statement.setInt(8, user.getUserID());
+    	    statement.executeUpdate();
+    	    statement.close();
+    	} catch (SQLException e) {
+    	    LogHandler.getInstance().error("SQL Exception occoured in updateUser from UserDAO");
+    	    throw new InvalidDBTransferException();
+        } finally {
+            try {
+                statement.close();                
+            } catch(SQLException e) {
+                LogHandler.getInstance().error("Exception occoured in updateUser statment.close from UserDAO");
+            }
+        }
     }
 
     /**
