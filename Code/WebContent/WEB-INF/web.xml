@@ -21,11 +21,11 @@
 
     <servlet>
     <servlet-name>UserPictureHandler</servlet-name> 
-    <servlet-class>de.ofCourse.utilities.UserPictureHandler</servlet-class> 
+    <servlet-class>de.ofCourse.action.UserPictureHandler</servlet-class> 
     </servlet>
  <servlet-mapping>
     <servlet-name>UserPictureHandler</servlet-name>   
-    <url-pattern>/userImage/*</url-pattern>  
+    <url-pattern>/profilImage</url-pattern>  
 </servlet-mapping>
   
   <filter>

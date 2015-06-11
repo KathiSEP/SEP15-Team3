@@ -3,12 +3,17 @@
  */
 package de.ofCourse.action;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.UserDAO;
@@ -52,6 +57,8 @@ public class UserProfileBean implements Pagination {
      * Stores the displayed or entered data of the user
      */
     private User user;
+    
+
 
     /**
      * Stores the managed courses of a user in case of the user is a course
@@ -66,6 +73,10 @@ public class UserProfileBean implements Pagination {
     private String confirmPassword;
     
     private Part image;
+    
+    private int userID;
+
+    
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -89,7 +100,20 @@ public class UserProfileBean implements Pagination {
     	transaction = Connection.create();
     	transaction.start();
     	user = UserDAO.getUser(transaction, sessionUser.getUserID());
+    	userID = sessionUser.getUserID();
     	transaction.commit();
+//    	HttpServletRequest request = (HttpServletRequest) FacesContext
+//                .getCurrentInstance().getExternalContext().getRequestMap().put("id", userID);
+//        UserPictureHandler test = new UserPictureHandler();
+//        
+//        HttpServletResponse response = (HttpServletResponse) FacesContext
+//                .getCurrentInstance().getExternalContext().getResponse();
+//        try {
+//            test.doGet(request, response);
+//        } catch (ServletException | IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -216,6 +240,10 @@ public class UserProfileBean implements Pagination {
 	}
 
 	public Part getImage() {
+	    
+	    
+	    
+	    
 		return image;
 	}
 
@@ -272,5 +300,32 @@ public class UserProfileBean implements Pagination {
 	// TODO Auto-generated method stub
 
     }
+    
+    /**
+     * @return the userID
+     */
+    public int getUserID() {
+        
+       
+        return userID;
+    }
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+    
+    /**
+     * @return the userID
+     */
+    public String getUserIDString() {
+        
+       
+        return "" + userID;
+    }
+    
+    
 
 }
