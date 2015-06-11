@@ -661,10 +661,53 @@ public class CourseDAO {
      *         course has no course leaders
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
      */
     public static List<User> getLeaders(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-	return null;
+        ArrayList<User> leaders = new ArrayList<User>();
+
+        String leadersQuery = "SELECT \"name\", \"first_name\", \"email\" FROM "
+            + "\"users\" WHERE users.id IN "
+            + "(SELECT course_instructor_id FROM \"course_instructors\" "
+            + "WHERE course_id = ?)";
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet;
+
+        try {
+            statement = conn.prepareStatement(leadersQuery);
+            statement.setInt(1, courseID);
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+            User leader = new User();
+            leader.setUserID(resultSet.getInt("id"));
+
+            if (resultSet.getString("name") != null) {
+                leader.setLastname(resultSet.getString("name"));
+            } else {
+                leader.setLastname("geheim");
+            }
+
+            if (resultSet.getString("first_name") != null) {
+                leader.setFirstname(resultSet.getString("first_name"));
+            } else {
+                leader.setFirstname("geheim");
+            }
+            leader.setEmail(resultSet.getString("email"));
+            leaders.add(leader);
+            }
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured in getLeaders from CourseDAO");
+            System.out.println("Leader");
+            throw new InvalidDBTransferException();
+        }
+        return leaders;
     }
 
     /**
@@ -892,6 +935,7 @@ public class CourseDAO {
         String courseQuery = "UPDATE \"courses\" "
                 + "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
                 + "WHERE id = ?";
+        
         try {
             statement = conn.prepareStatement(courseQuery);
             statement.setString(1, course.getDescription());
