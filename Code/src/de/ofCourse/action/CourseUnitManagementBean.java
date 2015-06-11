@@ -216,8 +216,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
-	//this.courseUnitID = 10087;
-	this.editMode = false;
+	this.courseUnitID = 10097;
+	this.editMode = true;
 	// ////////////////////////////////////////////////////////////
 
 	if (editMode) {
@@ -240,7 +240,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		this.end= courseUnit.getStartime();
 		end.setHours(courseUnit.getEndtime().getHours());
 		end.setMinutes(courseUnit.getEndtime().getMinutes());
-		System.out.println();
 		if (courseUnit.getCycle() == null) {
 		    courseUnit.setCycle(new Cycle());
 		}
@@ -397,6 +396,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			tempUnit.setPrice(courseUnit.getPrice());
 			tempUnit.setDescription(courseUnit.getDescription());
 			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
+			tempUnit.setAddress(courseUnit.getAddress());
 
 			// update tempUnit
 			CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
@@ -446,7 +446,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    this.deleteSingleUnit(transaction, id);
 		}
 	    } else {
-
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 	    }
 	    transaction.commit();
