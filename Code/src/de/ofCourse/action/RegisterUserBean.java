@@ -48,7 +48,7 @@ public class RegisterUserBean {
     private Transaction transaction;
 
     /**
-     * 
+     * for testing (RegisterUserBeanTest)
      */
     private boolean testing = false;
 
@@ -100,7 +100,7 @@ public class RegisterUserBean {
     private SessionUserBean sessionUser;
 
     /**
-     * This ManagedProperty
+     * This ManagedProperty represents the mail bean.
      */
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;

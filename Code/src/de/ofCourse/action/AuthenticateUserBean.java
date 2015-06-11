@@ -37,13 +37,13 @@ import de.ofCourse.utilities.PasswordHash;
 public class AuthenticateUserBean {
 
     /**
-     * Represents a user object. It stores the entered username and the entered
+     * Represents a user object. It stores the entered user name and the entered
      * password, which are needed to log in.
      */
     private User loginUser;
 
     /**
-     * This managed Property 
+     * This managed Property represents the mail bean.
      */
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
@@ -86,12 +86,11 @@ public class AuthenticateUserBean {
     private SessionUserBean sessionUser;
 
     /**
-     * 
+     * Initialize new session, because nothing could be logged in at the login 
+     * page yet.
      */
     @PostConstruct
     private void init() {
-        // Initialize new session, because nothing could be logged in at 
-        // the login page yet..
         loginUser = new User();
     }
 
