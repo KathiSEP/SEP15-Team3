@@ -17,7 +17,7 @@
 						<p style="font-size:16px;">Hier finden Sie alle Informationen zum Kurs <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
 					</div>
 				</div>
-				<h:form id="test">
+				<h:form>
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
 						<div class="panel panel-info">
@@ -105,8 +105,10 @@
 									</div>
 									</h:panelGroup>
 									<div class="container">
-										<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-										<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>									
+										<h:form>
+											<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+											<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>									
+										</h:form>
 									</div>
 									<div class="container">
 										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.leaderToAdd.userID}"/>
@@ -162,6 +164,9 @@
    	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
             	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
                    	            	</h:commandButton>
+                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
+                 	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
+   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"/>
                        	        </h:form>
                             </h:column>
                             <h:column>
