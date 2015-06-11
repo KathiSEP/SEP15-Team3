@@ -9,9 +9,11 @@ import javax.faces.bean.RequestScoped;
 import javax.servlet.http.Part;
 
 import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -76,25 +78,35 @@ public class UserManagementBean {
     public String createUser() {
     	transaction = Connection.create();
     	transaction.start();
-    	String salt = generateSalt();
-        String pwHash = PasswordHash.hash(password, salt);
+        String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
         
-        if (UserDAO.emailExists(transaction, user.getEmail())) {
-            FacesMessageCreator.createFacesMessage(null, "E-Mail bereits vergeben");
-            this.transaction.rollback();
-        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
-        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
-            this.transaction.rollback();
-        } else {
-        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
-        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
-        	UserDAO.verifyUser(transaction, veriString);
-        	if (image != null) {
-        		UserDAO.uploadImage(transaction, userID, image);
-        	}
-        	transaction.commit();
+        try {
+	        if (UserDAO.emailExists(transaction, user.getEmail())) {
+	            FacesMessageCreator.createFacesMessage(null, "E-Mail bereits vergeben");
+	            this.transaction.rollback();
+	        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
+	        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
+	            this.transaction.rollback();
+	        } else {
+	        	String salt = generateSalt();
+	        	String pwHash = PasswordHash.hash(password, salt);
+	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
+	        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
+	        	UserDAO.verifyUser(transaction, veriString);
+	        	if (image != null) {
+	        		UserDAO.uploadImage(transaction, userID, image);
+	        	}
+	        	goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=false";
+	        }
+	        transaction.commit();
+        } catch (InvalidDBTransferException e) {
+        	LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "createUser()");
+        	transaction.rollback();
         }
-    	return "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=false";
+    	return goToPage;
     }
     
     private String generateSalt() {

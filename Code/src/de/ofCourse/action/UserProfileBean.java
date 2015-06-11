@@ -23,6 +23,7 @@ import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -99,23 +100,19 @@ public class UserProfileBean implements Pagination {
     	
     	transaction = Connection.create();
     	transaction.start();
-    	user = UserDAO.getUser(transaction, sessionUser.getUserID());
-    	userID = sessionUser.getUserID();
-    	transaction.commit();
-//    	HttpServletRequest request = (HttpServletRequest) FacesContext
-//                .getCurrentInstance().getExternalContext().getRequestMap().put("id", userID);
-//        UserPictureHandler test = new UserPictureHandler();
-//        
-//        HttpServletResponse response = (HttpServletResponse) FacesContext
-//                .getCurrentInstance().getExternalContext().getResponse();
-//        try {
-//            test.doGet(request, response);
-//        } catch (ServletException | IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+    	try {
+    		user = UserDAO.getUser(transaction, sessionUser.getUserID());
+    		userID = sessionUser.getUserID();
+    		transaction.commit();
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "init()");
+    		transaction.rollback();
+    	}
     }
-
+    
     /**
      * Returns the user profile page in its editable state.
      * 
@@ -134,10 +131,22 @@ public class UserProfileBean implements Pagination {
      * @return link to the next page
      */
     public void saveSettings() {
+    	transaction = Connection.create();
+    	transaction.start();
     	
-    	readOnly = true;
+    	try {
+    		UserDAO.updateUser(transaction, user, password);
+    		transaction.commit();
+    		readOnly = true;
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "saveSettings()");
+    		transaction.rollback();
+    	}
     }
-
+    
     /**
      * Initializes the profile page page of the user with the details of the
      * user.
@@ -157,6 +166,10 @@ public class UserProfileBean implements Pagination {
 	    		UserDAO.uploadImage(transaction, user.getUserID(), image);
 	    		transaction.commit();
 	    	} catch (InvalidDBTransferException e) {
+	    		LogHandler
+	            .getInstance()
+	            .error("SQL Exception occoured during executing "
+	                    + "uploadProfilePic()");
 	            this.transaction.rollback();
 	        }
     	}
