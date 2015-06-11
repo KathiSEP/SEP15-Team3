@@ -149,23 +149,27 @@ public class CourseDetailBean implements Pagination {
     public void init() {
         courseID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID"));
-        pagination = new PaginationData(pageElements,0,"title",true);
-        
+        pagination = new PaginationData(pageElements, 0, "title", true);
+
         leaderToAdd = new User();
         transaction = Connection.create();
         try {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
-                pagination.actualizeNumberOfPages(CourseDAO.getNumberOfMyCourses(transaction, sessionUser.getUserID()));
+                pagination.actualizeNumberOfPages(CourseDAO
+                        .getNumberOfMyCourses(transaction,
+                                sessionUser.getUserID()));
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
                 courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
                         transaction, courseID, null);
 
-                for(int i = 0; i < courseUnitsOfCourse.size(); i++) {
-                        courseUnitsOfCourse.get(i).setUserIsParticipant(
-                                UserDAO.userIsParticipantInCourseUnit(
-                                        transaction, sessionUser.getUserID(), courseUnitsOfCourse.get(i).getCourseUnitID()));
+                for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
+                    courseUnitsOfCourse.get(i).setUserIsParticipant(
+                            UserDAO.userIsParticipantInCourseUnit(transaction,
+                                    sessionUser.getUserID(),
+                                    courseUnitsOfCourse.get(i)
+                                            .getCourseUnitID()));
                 }
                 isRegistered = UserDAO.userIsParticpant(transaction,
                         sessionUser.getUserID(), courseID);
@@ -410,57 +414,77 @@ public class CourseDetailBean implements Pagination {
         Transaction trans = Connection.create();
         trans.start();
         // TODO an rickys faclet anpassen
-        int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap()
-                .get("courseUnitID"));
-        try {
-            // Instanziere alle Models aus der Datenbank die gebraucht werden
-            CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(trans,
-                    courseUnitID);
-            User userWhoTryToSignUp = UserDAO.getUser(trans,
-                    sessionUser.getUserID());
-            int currentAmountOfParticipants = CourseUnitDAO
-                    .getNumberOfParticipants(trans, courseUnitID);
+        if (UserDAO.userIsParticpant(trans, sessionUser.getUserID(), courseID)) {
+            int courseUnitID = Integer.parseInt(FacesContext
+                    .getCurrentInstance().getExternalContext()
+                    .getRequestParameterMap().get("courseUnitID"));
+            try {
+                // Instanziere alle Models aus der Datenbank die gebraucht
+                // werden
+                CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(
+                        trans, courseUnitID);
+                User userWhoTryToSignUp = UserDAO.getUser(trans,
+                        sessionUser.getUserID());
+                int currentAmountOfParticipants = CourseUnitDAO
+                        .getNumberOfParticipants(trans, courseUnitID);
 
-            if (courseUnitIsFull(courseUnitToSign, currentAmountOfParticipants)) {
+                if (courseUnitIsFull(courseUnitToSign,
+                        currentAmountOfParticipants)) {
 
-                // Methode berechnet neuen Kontostand
-                float newAccountBalance = signingUpForUser(courseUnitToSign,
-                        userWhoTryToSignUp);
+                    // Methode berechnet neuen Kontostand
+                    float newAccountBalance = signingUpForUser(
+                            courseUnitToSign, userWhoTryToSignUp);
 
-                // Kontostand wird geupdatet und der User in die CourseUnit
-                // eingetragen
-                CourseUnitDAO.addUserToCourseUnit(trans,
-                        sessionUser.getUserID(), courseUnitID);
-                UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
-                        newAccountBalance);
-                LogHandler.getInstance().debug(
-                        "User succesfully added to CourseUnit");
-                trans.commit();
-            } else {
-                LogHandler
-                        .getInstance()
-                        .debug("The courseUnit:"
-                                + courseUnitID
-                                + "has reached maximal amount of Particpants. User:"
-                                + userWhoTryToSignUp.getUserID()
-                                + "cant sign up");
+                    // Kontostand wird geupdatet und der User in die CourseUnit
+                    // eingetragen
+                    CourseUnitDAO.addUserToCourseUnit(trans,
+                            sessionUser.getUserID(), courseUnitID);
+                    UserDAO.updateAccountBalance(trans,
+                            sessionUser.getUserID(), newAccountBalance);
+                    
+                    //Instanziert den button
+                    for(int i = 0; i < courseUnitsOfCourse.size(); i++){
+                        if(courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID){
+                            courseUnitsOfCourse.get(i).setUserIsParticipant(true);
+                            break;
+                        }
+                    }
+                    
+                    LogHandler.getInstance().debug(
+                            "User succesfully added to CourseUnit");
+                    
+                    trans.commit();
+                } else {
+                    LogHandler
+                            .getInstance()
+                            .debug("The courseUnit:"
+                                    + courseUnitID
+                                    + "has reached maximal amount of Particpants. User:"
+                                    + userWhoTryToSignUp.getUserID()
+                                    + "cant sign up");
+                    trans.rollback();
+                    throw new CourseRegistrationException();
+
+                }
+
+            } catch (InvalidDBTransferException e) {
+                LogHandler.getInstance()
+                        .error("Database Transfare not working");
                 trans.rollback();
                 throw new CourseRegistrationException();
-                
-            }
-        } catch (InvalidDBTransferException e) {
-            LogHandler.getInstance().error("Database Transfare not working");
-            trans.rollback();
-            throw new CourseRegistrationException();
 
-        } catch (CourseRegistrationException e) {
+            } catch (CourseRegistrationException e) {
+                trans.rollback();
+                // TODO Faclet Messenge not enough money
+                LogHandler.getInstance().error(
+                        "Not enough Money on the Account. User:"
+                                + sessionUser.getUserID()
+                                + "couldnt sign up for courseUnit:"
+                                + courseUnitID);
+            }
+        } else {
+            //TODO FacletMessege
             trans.rollback();
-            // TODO Faclet Messenge not enough money
-            LogHandler.getInstance().error(
-                    "Not enough Money on the Account. User:"
-                            + sessionUser.getUserID()
-                            + "couldnt sign up for courseUnit:" + courseUnitID);
         }
 
     }
@@ -502,8 +526,17 @@ public class CourseDetailBean implements Pagination {
             // Kann hier auch noch abfragen ob User wirklich in Kurseinheit
             signOffFromSpecificCourseUnit(trans, courseUnitToSignOff,
                     userWhoTryToSignOff);
+            
+            // Instanziert noch den Damit der Button richtig angezeigt wird
+            for(int i = 0; i < courseUnitsOfCourse.size(); i++){
+                if(courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID){
+                    courseUnitsOfCourse.get(i).setUserIsParticipant(false);
+                    break;
+                }
+            }
             LogHandler.getInstance().debug(
                     "User sucessfully signed of from courseUnit");
+           
             trans.commit();
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().debug(
@@ -631,19 +664,19 @@ public class CourseDetailBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-        pagination.actualizeCurrentPageNumber(FacesContext.getCurrentInstance().
-                getExternalContext().getRequestParameterMap().get("site"));
-            transaction.start();
-            try {
-                this.courseUnitsOfCourse = (ArrayList<CourseUnit>) CourseUnitDAO
+        pagination.actualizeCurrentPageNumber(FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap().get("site"));
+        transaction.start();
+        try {
+            this.courseUnitsOfCourse = (ArrayList<CourseUnit>) CourseUnitDAO
                     .getCoursesOf(transaction, this.getPagination(),
-                        this.sessionUser.getUserID());
-                this.transaction.commit();
-            } catch (InvalidDBTransferException e) {
-                LogHandler.getInstance().error(
+                            this.sessionUser.getUserID());
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
                     "Error occured during fething data for pagination.");
-                this.transaction.rollback();
-            }
+            this.transaction.rollback();
+        }
     }
 
     /**
@@ -883,8 +916,8 @@ public class CourseDetailBean implements Pagination {
         int delLeaderID;
         try {
             delLeaderID = Integer.parseInt(delLeaderString);
-            if (CourseDAO.removeLeaderFromCourse(this.transaction,
-                    delLeaderID, this.course.getCourseID())) {
+            if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,
+                    this.course.getCourseID())) {
                 FacesMessageCreator.createFacesMessage(null,
                         "Der Kursleiter wurde erfolgreich hinzugefügt!");
                 this.transaction.commit();
@@ -894,11 +927,11 @@ public class CourseDetailBean implements Pagination {
                 this.transaction.rollback();
             }
         } catch (NumberFormatException e) {
-            //ID is no number
+            // ID is no number
             FacesMessageCreator.createFacesMessage(null,
                     "Der Kursleiter konnte nicht gelöscht werden, da die "
-                    + "übergebene ID keine positive Zahl ist!");
-        }       
+                            + "übergebene ID keine positive Zahl ist!");
+        }
     }
 
 }
