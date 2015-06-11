@@ -71,10 +71,21 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private static final int elementsPerPage = 10;
 
+    /**
+     * Represents the inform status<br>
+     * Nobody of a course unit is informed in case of changes.
+     */
     private static final int informNobody = 0;
 
+    /**
+     * Represents the inform status<br>
+     * All participants of a course unit are informed in case of changes.
+     */
     private static final int informParticipantsOfUnit = 1;
 
+    /**
+     * Stores the selected inform status
+     */
     private int selectedToInform;
 
     /**
@@ -143,22 +154,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private boolean completeCycle;
 
     /**
-     * @return the completeCycle
+     * Stores the unit id passed from the course details page
      */
-    public boolean isCompleteCycle() {
-	return completeCycle;
-    }
-
-    /**
-     * @param completeCycle
-     *            the completeCycle to set
-     */
-    public void setCompleteCycle(boolean completeCycle) {
-	this.completeCycle = completeCycle;
-    }
-
     private int courseUnitID = 0;
 
+    /**
+     * Stores the course id passed from the course details page
+     */
     private int courseID;
 
     /**
@@ -168,14 +170,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private PaginationData pagination;
 
-    public MailBean getMailBean() {
-	return mailBean;
-    }
-
-    public void setMailBean(MailBean mailBean) {
-	this.mailBean = mailBean;
-    }
-
+    /**
+     * the managed mail property
+     */
     @ManagedProperty("#{mailBean}")
     private MailBean mailBean;
 
@@ -187,12 +184,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    /**
+     * Initializes the page in edit mode or not.<br>
+     * That depends on the pressed button in the course details bean.
+     * 
+     * @author Tobias Fuchs
+     */
     @PostConstruct
     private void init() {
-
 	transaction = Connection.create();
 	transaction.start();
 
+	// Fetch the mode
 	String fetchedMode = FacesContext.getCurrentInstance()
 		.getExternalContext().getRequestParameterMap().get("editMode");
 	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
@@ -201,6 +204,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    editMode = false;
 	}
 
+	// Fetch the ids according to the selected mode
 	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
 		.getExternalContext().getRequestParameterMap().get("courseID"));
 	if (editMode) {
@@ -211,8 +215,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    courseUnitID = 0;
 	}
 
-	
-
 	if (editMode) {
 	    pagination = new PaginationData(elementsPerPage, 0, "title", true);
 	    this.participants = new ListDataModel<User>();
@@ -220,17 +222,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.usersToDelete = new ArrayList<User>();
 
 	    // Initializes the pagination and if in edit mode the displayed
-	    // course
-	    // unit
+	    // course unit
 	    try {
-
 		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
-
 		this.start = new Date(courseUnit.getStartime().getTime());
 		this.end = new Date(courseUnit.getEndtime().getTime());
 		this.date = courseUnit.getStartime();
-
 		if (courseUnit.getCycle() == null) {
 		    courseUnit.setCycle(new Cycle());
 		}
@@ -239,7 +237,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		this.participants.setWrappedData(CourseUnitDAO
 			.getParticipiantsOfCourseUnit(transaction, pagination,
 				courseUnitID, false));
-
 		this.transaction.commit();
 	    } catch (InvalidDBTransferException e) {
 		System.out.println("Exception");
@@ -259,10 +256,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.end = new Date();
 	    this.end.setTime((this.start.getTime() + 7200000L));
 	}
-
-	System.out.println("CycleId fetched: "
-		+ courseUnit.getCycle().getCycleID());
-
     }
 
     /**
@@ -274,6 +267,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * create more regular course units at once.
      * 
      * @return link to the courseDetails page
+     * 
+     * @author Tobias Fuchs
      */
     public String createCourseUnit() {
 	if (this.checkDate()) {
@@ -336,16 +331,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * Realizes the editing of a course unit that takes place regularly.<br>
-     * If <code>editAllIfRegular</code> is <code>true</code>, all course units
-     * in the cycle of this course unit are edited.<br>
-     * If <code>editAllIfRegular</code> is <code>false</code>, only this course
-     * unit is edited.<br>
      * Editing the course unit means that the database entry(ies) of the course
      * unit(s) is updated.<br>
      * After the edit, the participants receive a message to inform about the
      * changes.
      * 
-     * @return the link to this page
+     * @return the link to the next page
+     * 
+     * @author Tobias Fuchs
      */
     public String saveCourseUnit() {
 	CourseUnit tempUnit = null;
@@ -421,10 +414,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * automatically transfered back to their accounts.
      * 
      * @return link to the course details page
+     * 
+     * @author Tobias Fuchs
      */
     public String deleteCourseUnit() {
 	transaction.start();
-	// TODO: Not YET Tested
 	try {
 	    if (this.courseUnit.getCycle() != null && completeCycle) {
 		ArrayList<Integer> idsToDelete = (ArrayList<Integer>) CourseUnitDAO
@@ -439,7 +433,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
-	    e.printStackTrace();
 	    LogHandler.getInstance().error(
 		    "Error occured during deleting" + " a course unit.");
 	}
@@ -447,8 +440,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
+     * Deletes a single course unit from database.<br>
+     * That means that all participants off this unit are signed off, the paid
+     * money is transfered back and the unit is deleted.
+     * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param unitId
+     *            the id of the unit that is to be deleted
+     * 
+     * @author Tobias Fuchs
      */
     private void deleteSingleUnit(Transaction trans, int unitId) {
 	try {
@@ -474,8 +476,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
+     * Fetches the mail addresses of the users who want to be informed about
+     * changes of a course course unit they participate.
+     * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param participants
+     *            list of users
+     * 
+     * @author Tobias Fuchs
      */
     private void sendMailToSelected(Transaction trans,
 	    ArrayList<User> participants) {
@@ -495,9 +505,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
+     * Calculates and returns the account balance of a user is he signs up/signs
+     * off from a course unit.
+     * 
      * @param courseUnit
+     *            the course unit the unser wants to sign up/of from
      * @param user
-     * @return
+     *            the user whose account balance is to be updated
+     * @param signUp
+     *            whether its a sign up process
+     * @return the updated account balance
+     * @author Tobias Fuchs
      */
     private float calculateNewAccountBalance(float price, User user,
 	    boolean signUp) {
@@ -518,6 +536,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Adds the entered user to the course unit. That means the user is added to
      * the participants list and the database entry of the course unit is
      * updated. In this case the user need not to pay for the course unit.
+     * 
+     * @author Tobias Fuchs
      */
     public void addUserToCourseUnit() {
 	transaction.start();
@@ -540,13 +560,23 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    LogHandler.getInstance().error(
 		    "Error during adding user manually to course unit.");
 	} catch (CourseRegistrationException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error during adding user manually to course unit. "
-			    + "User has not enough money to participate the course unit");
+	    LogHandler.getInstance().error(
+		    "Error during adding user manually to course unit. "
+			    + "User has not enough money to "
+			    + "participate the course unit");
 	}
     }
 
+    /**
+     * Checks whether the inserted start and end dates for a course unit are
+     * valid.<br>
+     * It is checked whether the start date is before the end date and if the
+     * inserted start date is in the range of the corresponding course.
+     * 
+     * @return <code>true</code>, if the inserted dates are valid<br>
+     *         <code>false</code>, otherwise
+     * @author Tobias Fuchs
+     */
     @SuppressWarnings("deprecation")
     private boolean checkDate() {
 	Date tempDateBegin = new Date(this.date.getTime());
@@ -574,7 +604,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				    + dateAsString(new Date(beginCourse))
 				    + " bis zum "
 				    + dateAsString(new Date(endCourse)) + " !");
-
 		    return false;
 		} else {
 		    return true;
@@ -588,6 +617,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
     }
 
+    /**
+     * Returns the given date as a string in a proper format.
+     * 
+     * @param date
+     *            the date that is to be converted to a String
+     * @return the date as String
+     * @author Tobias Fuchs
+     */
     @SuppressWarnings("deprecation")
     private String dateAsString(Date date) {
 	String dateString;
@@ -604,6 +641,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Returns the value of the attribute <code>userToAdd</code>.
      * 
      * @return the user to add to the course unit
+     * @author Tobias Fuchs
      */
     public User getUserToAdd() {
 	return userToAdd;
@@ -614,6 +652,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param userToAdd
      *            the new user that is to be added to the course unit
+     * @author Tobias Fuchs
      */
     public void setUserToAdd(User userToAdd) {
 	this.userToAdd = userToAdd;
@@ -625,6 +664,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * participants.<br>
      * Deleting means the users are removed from the participants list and the
      * database entry of the course unit is updated.
+     * 
+     * @author Tobias Fuchs
      */
     public void deleteUsersFromCourseUnit() {
 	@SuppressWarnings("unchecked")
@@ -670,6 +711,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * the users that are selected and shall be deleted from the course unit.
      * 
      * @return list of users to delete from the course unit
+     * @author Tobias Fuchs
      */
     public List<User> getUsersToDelete() {
 	return usersToDelete;
@@ -681,29 +723,49 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param usersToDelete
      *            new list of users to delete from the course unit
+     * @author Tobias Fuchs
      */
     public void setUsersToDelete(List<User> usersToDelete) {
 	this.usersToDelete = usersToDelete;
     }
 
+    /**
+     * Returns the displayed/ entered date of a course unit.
+     * 
+     * @return the date of the course unit
+     * @author Tobias Fuchs
+     */
     public Date getDate() {
 	return date;
     }
 
+    /**
+     * Sets the displayed/ entered date of a course unit.
+     * 
+     * @param date
+     *            the date to set
+     * @author Tobias Fuchs
+     */
     public void setDate(Date date) {
 	this.date = date;
     }
 
     /**
-     * @return the regularCourseUnit
+     * Returns whether it is selected to edit/delete all units of a cycle.
+     * 
+     * @return whether all units are it be edited
+     * @author Tobias Fuchs
      */
     public boolean isRegularCourseUnit() {
 	return regularCourseUnit;
     }
 
     /**
+     * Sets whether the entered course unit is regular.
+     * 
      * @param regularCourseUnit
      *            the regularCourseUnit to set
+     * @author Tobias Fuchs
      */
     public void setRegularCourseUnit(boolean regularCourseUnit) {
 	this.regularCourseUnit = regularCourseUnit;
@@ -711,6 +773,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * @return the participants
+     * @author Tobias Fuchs
      */
     public DataModel<User> getParticipants() {
 	return participants;
@@ -719,6 +782,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     /**
      * @param participants
      *            the participants to set
+     * @author Tobias Fuchs
      */
     public void setParticipants(DataModel<User> participants) {
 	this.participants = participants;
@@ -729,6 +793,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @return <code>true</code>, if to render in edit mode<br>
      *         <code>false</code>, otherwise
+     * @author Tobias Fuchs
      */
     public boolean isEditMode() {
 	return editMode;
@@ -739,34 +804,49 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param editMode
      *            render in edit mode
+     * @author Tobias Fuchs
      */
     public void setEditMode(boolean editMode) {
 	this.editMode = editMode;
     }
 
     /**
-     * @return
+     * Returns the entered start date.
+     * 
+     * @return the entered start date
+     * @author Tobias Fuchs
      */
     public Date getStart() {
 	return start;
     }
 
     /**
+     * Sets the entered start date.
+     * 
      * @param start
+     *            the entered start date
+     * @author Tobias Fuchs
      */
     public void setStart(Date start) {
 	this.start = start;
     }
 
     /**
-     * @return
+     * Returns the entered end date.
+     * 
+     * @return the entered end date
+     * @author Tobias Fuchs
      */
     public Date getEnd() {
 	return end;
     }
 
     /**
+     * Sets the entered end date.
+     * 
      * @param end
+     *            the entered date
+     * @author Tobias Fuchs
      */
     public void setEnd(Date end) {
 	this.end = end;
@@ -776,6 +856,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Returns the value of the attribute <code>courseUnit</code>.
      * 
      * @return the course unit
+     * @author Tobias Fuchs
      */
     public CourseUnit getCourseUnit() {
 	return courseUnit;
@@ -786,6 +867,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param courseUnit
      *            the new value of the attribute courseUnit
+     * @author Tobias Fuchs
      */
     public void setCourseUnit(CourseUnit courseUnit) {
 	this.courseUnit = courseUnit;
@@ -793,6 +875,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
      */
     @Override
     public void goToSpecificPage() {
@@ -823,6 +907,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
      */
     @Override
     public PaginationData getPagination() {
@@ -831,6 +917,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
      */
     @Override
     public void setPagination(PaginationData pagination) {
@@ -841,6 +929,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
      * @return the session of the user
+     * @author Tobias Fuchs
      */
     public SessionUserBean getSessionUser() {
 	return sessionUser;
@@ -851,6 +940,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param userSession
      *            session of the user
+     * @author Tobias Fuchs
      */
     public void setSessionUser(SessionUserBean userSession) {
 	this.sessionUser = userSession;
@@ -860,6 +950,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Returns the id of the initializes course unit.
      * 
      * @return the id of the initialized course unit
+     * @author Tobias Fuchs
      */
     public int getCourseUnitId() {
 	return courseUnitID;
@@ -870,6 +961,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @param courseUnitId
      *            the courseUnitId of the course unit to initialize
+     * @author Tobias Fuchs
      */
     public void setCourseUnitId(int courseUnitId) {
 	this.courseUnitID = courseUnitId;
@@ -884,6 +976,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @param turnus
      *            number of day to be added to the actual date
      * @return the calculated date in the future
+     * @author Tobias Fuchs
      */
     private Date calculateDate(Date actual, int turnus) {
 	Date calculated;
@@ -902,6 +995,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @param courseUnit
      *            the course unit for which the starttime and endtime is
      *            calculated
+     * @author Tobias Fuchs
      * 
      */
     @SuppressWarnings("deprecation")
@@ -915,18 +1009,76 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	courseUnit.setEndtime(new Date(date.getTime()));
     }
 
+    /**
+     * Returns the selected inform status.
+     * 
+     * @return the current inform status
+     * @author Tobias Fuchs
+     */
     public int getSelectedToInform() {
 	return selectedToInform;
     }
 
+    /**
+     * Sets the inform status.
+     * 
+     * @param selectedToInform
+     *            the selected inform status
+     * @author Tobias Fuchs
+     */
     public void setSelectedToInform(int selectedToInform) {
 	this.selectedToInform = selectedToInform;
     }
 
     /**
+     * Returns the managed property mailBean
+     * 
+     * @return the managed property mailBean
+     * @author Tobias Fuchs
+     */
+    public MailBean getMailBean() {
+	return mailBean;
+    }
+
+    /**
+     * Sets the managed property mailBean
+     * 
+     * @param mailBean
+     *            the managed property
+     * @author Tobias Fuchs
+     */
+    public void setMailBean(MailBean mailBean) {
+	this.mailBean = mailBean;
+    }
+
+    /**
+     * Returns the inform status <code>informNobody</code>
+     * 
      * @return the informnobody
+     * @author Tobias Fuchs
      */
     public static int getInformnobody() {
 	return informNobody;
+    }
+
+    /**
+     * Returns the value of <code>completeCycle</code>
+     * 
+     * @return the completeCycle whether all course units are to be affected.
+     * @author Tobias Fuchs
+     */
+    public boolean isCompleteCycle() {
+	return completeCycle;
+    }
+
+    /**
+     * Sets the value of <code>completeCycle</code>.
+     * 
+     * @param completeCycle
+     *            the completeCycle to set
+     * @author Tobias Fuchs
+     */
+    public void setCompleteCycle(boolean completeCycle) {
+	this.completeCycle = completeCycle;
     }
 }
