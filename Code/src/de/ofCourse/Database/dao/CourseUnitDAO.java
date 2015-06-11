@@ -161,6 +161,7 @@ public class CourseUnitDAO {
 		stmt.setString(7, unit.getAddress().getLocation());
 	    }
 	    stmt.executeUpdate();
+	    stmt.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during creating a new course unit address.");
@@ -975,6 +976,7 @@ public class CourseUnitDAO {
 		}
 		participants.add(fetchedUser);
 	    }
+	    stmt.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occoured during fetching the"
