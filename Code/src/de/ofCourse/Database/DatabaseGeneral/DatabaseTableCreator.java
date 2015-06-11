@@ -93,7 +93,7 @@ public class DatabaseTableCreator {
     			"CHECK (max_participants > 0)," +
     			"title TEXT," +
     			"min_participants INTEGER CHECK (min_participants > 0)," +
-    			"fee DECIMAL(6,2) CHECK (fee >= 0)," +
+    			"fee DECIMAL(6,2) NOT NULL CHECK (fee >= 0)," +
     			"start_time TIMESTAMP NOT NULL," +
     			"end_time TIMESTAMP NOT NULL," +
     			"description TEXT" +

@@ -729,7 +729,7 @@ public class CourseUnitDAO {
     	PreparedStatement stmt = null;
     	ResultSet rst = null;
     	List<CourseUnit> result = null;
-    	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".titel, \"course_units\".fee"
+    	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".titel, \"course_units\".fee "
     			+ "FROM \"course_units\", \"users\", \"course_unit_participants\" "
     			+ "WHERE \"users\".id = \"course_unit_participants\".participant_id "
     			+ "AND \"course_unit_participants\".course_unit_id = \"course_units\".id "
@@ -738,6 +738,8 @@ public class CourseUnitDAO {
     	try {
     	    stmt = conn.prepareStatement(getCourseUnits);
     	    stmt.setInt(1, userID);
+    	    
+    	    System.out.println(stmt.toString());
     	    
     	    rst = stmt.executeQuery();
     	    result = getResult(rst);
