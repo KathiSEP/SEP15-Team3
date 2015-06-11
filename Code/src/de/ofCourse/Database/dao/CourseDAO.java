@@ -680,7 +680,7 @@ public class CourseDAO {
 	    throws InvalidDBTransferException {
         ArrayList<User> leaders = new ArrayList<User>();
 
-        String leadersQuery = "SELECT \"name\", \"first_name\", \"email\" FROM "
+        String leadersQuery = "SELECT \"name\", \"first_name\", \"email\", \"id\" FROM "
             + "\"users\" WHERE id IN "
             + "(SELECT course_instructor_id FROM \"course_instructors\" "
             + "WHERE course_id = ?)";
@@ -710,6 +710,7 @@ public class CourseDAO {
                 leader.setFirstname("geheim");
             }
             leader.setEmail(resultSet.getString("email"));
+            leader.setUserId(resultSet.getInt("id"));
             leaders.add(leader);
             }
             statement.close();
