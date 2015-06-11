@@ -216,7 +216,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
-	this.courseUnitID = 10095;
+	this.courseUnitID = 10086;
 	this.editMode = true;
 	// ////////////////////////////////////////////////////////////
 
@@ -233,18 +233,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
+		this.start =  (Date) courseUnit.getStartime().clone();
+		this.end = new Date();
 		this.date = courseUnit.getStartime();
-		int hours_start ;
-		int hours_end;
-		int minutes_start;
-		int minutes_end;
-		//TODO:  Datum
-		this.start = courseUnit.getStartime();
-		start.setHours(courseUnit.getStartime().getHours());
-		start.setMinutes(courseUnit.getStartime().getMinutes());
-		this.end = courseUnit.getStartime();
-		end.setHours(courseUnit.getEndtime().getHours());
-		end.setMinutes(courseUnit.getEndtime().getMinutes());
+		int hours_start = courseUnit.getStartime().getHours();
+		int hours_end = courseUnit.getEndtime().getHours();
+		int minutes_start = courseUnit.getStartime().getMinutes();
+		int minutes_end = courseUnit.getEndtime().getMinutes();
+		int year_start =courseUnit.getStartime().getYear();
+		int month_start =courseUnit.getStartime().getMonth();
+		int date_start =courseUnit.getStartime().getDate();
+		this.start.setTime(courseUnit.getStartime().getTime());
+		
+		
 		if (courseUnit.getCycle() == null) {
 		    courseUnit.setCycle(new Cycle());
 		}
