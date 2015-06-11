@@ -150,11 +150,6 @@ public class UserProfileBean implements Pagination {
      * picture needs to be a .jpg <br>
      */
     public void uploadProfilePic() {
-    	
-    	System.out.println("in upload methode");
-    	System.out.println("user id: " + user.getUserID());
-    	System.out.println("image size: " + image.getSize());
-    	
     	transaction = Connection.create();
     	transaction.start();
     	try {
