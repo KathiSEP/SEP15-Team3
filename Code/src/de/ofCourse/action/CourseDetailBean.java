@@ -326,6 +326,8 @@ public class CourseDetailBean implements Pagination {
                     signOffFromSpecificCourseUnit(trans,
                             courseUnitsToSignOff.get(i), userWhoTryToSignOff);
                 }
+                CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
+                        courseID);
             } else {
                 CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
                         courseID);
