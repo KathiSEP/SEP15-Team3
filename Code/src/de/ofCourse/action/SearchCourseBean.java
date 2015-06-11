@@ -104,7 +104,6 @@ public class SearchCourseBean implements Pagination {
     	displayPeriod = "total";
     	searchParam = "title";
     	pagination = new PaginationData();
-    	pagination.setCurrentPageNumber(0);
     	pagination.setElementsPerPage(10);
     	pagination.setSortAsc(true);
     }
@@ -120,6 +119,7 @@ public class SearchCourseBean implements Pagination {
     public void displayCoursesInPeriod() {
     	transaction = Connection.create();
     	transaction.start();
+    	pagination.setCurrentPageNumber(0);
     	pagination.setSortColumn("courseID");
     	
     	//Hier try-catch-Block
@@ -176,6 +176,7 @@ public class SearchCourseBean implements Pagination {
     	transaction.start();
     	
     	if (!searchString.isEmpty()) {
+    		pagination.setCurrentPageNumber(0);
     		pagination.setSortColumn(searchParam);
     		
     		//Hier try-catch-Block
