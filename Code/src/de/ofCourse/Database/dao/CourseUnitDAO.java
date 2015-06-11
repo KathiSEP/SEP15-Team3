@@ -852,6 +852,40 @@ public class CourseUnitDAO {
     }
 
     /**
+     * Counts the number of course units of a course
+     * 
+     * @param trans
+     * @param courseID
+     * @return
+     * @throws InvalidDBTransferException
+     * @author Ricky Strohmeier
+     */
+    public static int getNumberOfCourseUnits(Transaction trans, int courseID)
+            throws InvalidDBTransferException {
+        int numberOfCourseUnits = 0;
+        String courseUnitQuery = "SELECT COUNT(*) FROM \"courses_units\" WHERE courses.id IN "
+            + "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        PreparedStatement statement = null;
+        try {
+            statement = conn.prepareStatement(courseUnitQuery);
+            statementt.setInt(1, courseID);
+            ResultSet resultSet = stmt.executeQuery();
+            resultSet.next();
+            numberOfCourseUnits = resultSet.getInt(1);
+        } catch (SQLException e) {
+            LogHandler
+                .getInstance()
+                .error("Error occoured during fetching the number of courses of a certain user.");
+            e.printStackTrace();
+            throw new InvalidDBTransferException();
+        }
+        return numberOfCourseUnits;
+        }
+    /**
      * Returns the number of participants that attend the course unit with the
      * passed ID.
      * 
