@@ -64,8 +64,14 @@ public class MailBean {
 		smtpServer = new SmtpServer();
         smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail("smtphost"));
         smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail("smtpport")));
-        //TODO fehlt noch
-        smtpServer.setSsl(true);
+
+        //Tests whether the admin wants to connect per SSL or TTLS
+        if(PropertyManager.getInstance().getPropertyMail("useSSL") == "true"){
+            smtpServer.setSsl(true);
+        } else {
+            smtpServer.setSsl(false);
+        }
+        
         smtpServer.setUsername(PropertyManager.getInstance().getPropertyMail("mailusername"));
         smtpServer.setPassword(PropertyManager.getInstance().getPropertyMail("mailpassword"));
 	}
@@ -101,9 +107,13 @@ public class MailBean {
       
         // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
         prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
-        prop.put("mail.smtph.port", "465");
-        //prop.put("mail.smtp.starttls.enable", "true");
-        prop.put("mail.smtp.ssl.enable", "true");
+        prop.put("mail.smtph.port", smtpServer.getPort());
+        
+        if(smtpServer.isSsl()){
+            prop.put("mail.smtp.ssl.enable", "true");
+        }else{
+            prop.put("mail.smtp.starttls.enable", "true"); 
+        }                        
         prop.put("mail.smtp.auth", "true");
         
         
@@ -162,6 +172,9 @@ public class MailBean {
            String messenge = "Welcome " + userToInform.getSalutation() + " " + userToInform.getLastname();
            messenge += " to the OfCourse Family. Thank you very much for your registration. \n";
            messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n" +
+           
+                   //koennte man noch schoener machen
+                   
            messenge + createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
            
            String subject = "Authentication Mail";
@@ -187,16 +200,7 @@ public class MailBean {
     public void sendConfirmationMessage(int userID) {
     }
 
-    /**
-     * Generates a message which is sent in case of a user has forgot his
-     * password.<br>
-     * The message contains the new generated password.
-     * 
-     * @param userID
-     *            ID of the user, who receives the message.
-     */
-    public void sendNewPasswordMessage(int userID) {
-    }
+
 
     /**
      * Returns the smtpServer - object that contains the settings of the smtp
@@ -215,9 +219,12 @@ public class MailBean {
      *            smtpSserver - object to set
      */
     public void setSmtpServer(SmtpServer smtpServer) {
+        this.smtpServer = smtpServer;
     }
     
     /**
+     * 
+     * 
      * @return
      */
     private String createLink(){
@@ -239,6 +246,30 @@ public class MailBean {
         recipients.add(maildaddress);
         sendMail(recipients, subject, messenge);
             
+    }
+
+
+    /**
+     * 
+     * 
+     * @param newPassword
+     * @param email
+     */
+    public void sendMailForLostPassword(String newPassword, String email) {
+        // TODO Auto-generated method stub
+        
+        
+        
+    }
+    
+    
+    
+    private String createSalutation(User user){
+        
+        String header = "Dear " + user.getSalutation() + ". " + user.getLastname() + ", \n" ;
+        
+        return header;
+        
     }
 
 }
