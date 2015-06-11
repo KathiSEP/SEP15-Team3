@@ -200,19 +200,23 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	// Mit Werten von CourseDetails füllen
 	// ////////////////////////////////////////////////
 
-	/*
-	 * String fetchedMode = FacesContext.getCurrentInstance()
-	 * .getExternalContext().getRequestParameterMap().get("editMode"); if
-	 * (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
-	 * editMode = true; } else { editMode = false; }
-	 * 
-	 * courseID = Integer.parseInt(FacesContext.getCurrentInstance()
-	 * .getExternalContext().getRequestParameterMap().get("courseID")); if
-	 * (editMode) { courseUnitID =
-	 * Integer.parseInt(FacesContext.getCurrentInstance()
-	 * .getExternalContext().getRequestParameterMap() .get("courseUnitID"));
-	 * } else { courseUnitID = 0; }
-	 */
+	String fetchedMode = FacesContext.getCurrentInstance()
+		.getExternalContext().getRequestParameterMap().get("editMode");
+	if (fetchedMode != null && fetchedMode.toLowerCase().equals("true")) {
+	    editMode = true;
+	} else {
+	    editMode = false;
+	}
+
+	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+		.getExternalContext().getRequestParameterMap().get("courseID"));
+	if (editMode) {
+	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+		    .getExternalContext().getRequestParameterMap()
+		    .get("courseUnitID"));
+	} else {
+	    courseUnitID = 0;
+	}
 
 	// ///////////////////////////////////////////////////////
 	this.courseID = 10000;
@@ -233,19 +237,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
-		this.start =  (Date) courseUnit.getStartime().clone();
-		this.end = new Date();
+
+		this.start = new Date(courseUnit.getStartime().getTime());
+		this.end = new Date(courseUnit.getEndtime().getTime());
 		this.date = courseUnit.getStartime();
-		int hours_start = courseUnit.getStartime().getHours();
-		int hours_end = courseUnit.getEndtime().getHours();
-		int minutes_start = courseUnit.getStartime().getMinutes();
-		int minutes_end = courseUnit.getEndtime().getMinutes();
-		int year_start =courseUnit.getStartime().getYear();
-		int month_start =courseUnit.getStartime().getMonth();
-		int date_start =courseUnit.getStartime().getDate();
-		this.start.setTime(courseUnit.getStartime().getTime());
-		
-		
+
 		if (courseUnit.getCycle() == null) {
 		    courseUnit.setCycle(new Cycle());
 		}
@@ -257,6 +253,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		this.transaction.commit();
 	    } catch (InvalidDBTransferException e) {
+		System.out.println("Exception");
 		LogHandler.getInstance().error(
 			"Error occured during updating the"
 				+ " page with elements from database.");
@@ -546,7 +543,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    userToAdd.getUserID(), courseUnit.getCourseUnitID());
 	    UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
 		    newAccountBalance);
-	    
+
 	    // Updates the shown list with the actual data
 	    this.participants.setWrappedData(CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,

@@ -6,7 +6,9 @@ package de.ofCourse.Database.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -217,7 +219,8 @@ public class CourseUnitDAO {
 	User admin = new User();
 	
 	int adminID;
-	
+	Timestamp stamp;
+	Date date;
 	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -235,10 +238,16 @@ public class CourseUnitDAO {
 		requestedCourseUnit.setCourseUnitID(courseUnitID);
 		requestedCourseUnit.setDescription(resultSet
 			.getString("description"));
-		requestedCourseUnit.setEndtime(new java.util.Date(resultSet
-			.getDate("end_time").getTime()));
-		requestedCourseUnit.setStartime(new java.util.Date(resultSet
-			.getDate("start_time").getTime()));
+		stamp = resultSet.getTimestamp("end_time");
+		date = new Date(stamp.getYear(), stamp.getMonth(),
+			stamp.getDate(), stamp.getHours(),
+			stamp.getMinutes());
+		requestedCourseUnit.setEndtime(date);
+		stamp = resultSet.getTimestamp("start_time");
+		date = new Date(stamp.getYear(), stamp.getMonth(),
+			stamp.getDate(), stamp.getHours(),
+			stamp.getMinutes());
+		requestedCourseUnit.setStartime(date);
 		requestedCourseUnit.setMaxUsers(resultSet
 			.getInt("max_participants"));
 		requestedCourseUnit.setMinUsers(resultSet
