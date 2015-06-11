@@ -101,7 +101,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
                                         <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister"
                                             readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.zipCode}"
-                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein. ">
+                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein.">
                                                      <f:validateLength minimum ="1" maximum="10" />
                                         </h:inputText>
                                     </div>
@@ -110,8 +110,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="countryRegister"
                                                      value="#{userProfileBean.user.address.country}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie ein Land ein. "
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein. ">
+                                                     required="true" requiredMessage="Bitte geben Sie ein Land ein. "
+                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -120,7 +120,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
                                         <h:inputText class="form-control" style="width:340px;" id="emailRegister"
                                             readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.email}"
-                                            required="true"  requiredMessage="Bitte geben Sie Ihre E-MAil-Adresse ein. ">
+                                            required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein.">
                                                      <f:validator validatorId="emailValidator" />
                                         </h:inputText>
                                     </div>
@@ -140,8 +140,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
                                         <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"
                                             value="#{userProfileBean.confirmPassword}"
-                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein.">
-                                                <f:attribute name="confirmPassword" value="#{confirmPassword}" />
+                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein." binding="#{confirmPassword}">
                                         </h:inputSecret>
                                         </div>
                                     </h:panelGroup>
