@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
@@ -852,17 +853,29 @@ public class CourseDetailBean implements Pagination {
         // Create a new transaction object for the database connection.
         this.transaction = Connection.create();
         transaction.start();
-        // TODO this.leaderToAdd.getUserID ausbessern!!!
-        if (CourseDAO.removeLeaderFromCourse(this.transaction,
-                this.leaderToAdd.getUserID(), this.course.getCourseID())) {
+
+        HttpServletRequest request = (HttpServletRequest) FacesContext
+                .getCurrentInstance().getExternalContext().getRequest();
+        String delLeaderString = request.getParameter("delLeader");
+        int delLeaderID;
+        try {
+            delLeaderID = Integer.parseInt(delLeaderString);
+            if (CourseDAO.removeLeaderFromCourse(this.transaction,
+                    delLeaderID, this.course.getCourseID())) {
+                FacesMessageCreator.createFacesMessage(null,
+                        "Der Kursleiter wurde erfolgreich hinzugefügt!");
+                this.transaction.commit();
+            } else {
+                FacesMessageCreator.createFacesMessage(null,
+                        "Hinzufügen des Kursleiters fehlgeschlagen!");
+                this.transaction.rollback();
+            }
+        } catch (NumberFormatException e) {
+            //ID is no number
             FacesMessageCreator.createFacesMessage(null,
-                    "Der Kursleiter wurde erfolgreich hinzugefügt!");
-            this.transaction.commit();
-        } else {
-            FacesMessageCreator.createFacesMessage(null,
-                    "Hinzufügen des Kursleiters fehlgeschlagen!");
-            this.transaction.rollback();
-        }
+                    "Der Kursleiter konnte nicht gelöscht werden, da die "
+                    + "übergebene ID keine positive Zahl ist!");
+        }       
     }
 
 }
