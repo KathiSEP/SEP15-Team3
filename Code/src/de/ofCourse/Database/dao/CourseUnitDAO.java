@@ -14,7 +14,6 @@ import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
-import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
@@ -116,7 +115,6 @@ public class CourseUnitDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during creating a new course unit");
-	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	}
     }
@@ -156,7 +154,8 @@ public class CourseUnitDAO {
 		stmt.setString(5, unit.getAddress().getStreet());
 	    }
 	    stmt.setInt(6, unit.getAddress().getHouseNumber());
-	    if (unit.getAddress().getLocation().length() < 1 || unit.getAddress().getLocation() == null) {
+	    if (unit.getAddress().getLocation().length() < 1
+		    || unit.getAddress().getLocation() == null) {
 		stmt.setString(7, null);
 	    } else {
 		stmt.setString(7, unit.getAddress().getLocation());
@@ -165,12 +164,17 @@ public class CourseUnitDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during creating a new course unit address.");
-	    e.printStackTrace();
 	    throw new SQLException();
 	}
 
     }
 
+    /**
+     * @param trans
+     * @param userId
+     * @return
+     * @author Sebastian Schwarz
+     */
     public static boolean userWantsToBeInformed(Transaction trans, int userId) {
 	boolean wantsToBeInformed = false;
 
@@ -212,6 +216,7 @@ public class CourseUnitDAO {
      *         course unit was found
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Sebastian Schwarz
      */
     public static CourseUnit getCourseUnit(Transaction trans, int courseUnitID)
 	    throws InvalidDBTransferException {
@@ -219,11 +224,11 @@ public class CourseUnitDAO {
 	Address courseUnitAddress = new Address();
 	Cycle courseCycle = new Cycle();
 	User admin = new User();
-	
+
 	int adminID;
 	Timestamp stamp;
 	Date date;
-	
+
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -242,13 +247,11 @@ public class CourseUnitDAO {
 			.getString("description"));
 		stamp = resultSet.getTimestamp("end_time");
 		date = new Date(stamp.getYear(), stamp.getMonth(),
-			stamp.getDate(), stamp.getHours(),
-			stamp.getMinutes());
+			stamp.getDate(), stamp.getHours(), stamp.getMinutes());
 		requestedCourseUnit.setEndtime(date);
 		stamp = resultSet.getTimestamp("start_time");
 		date = new Date(stamp.getYear(), stamp.getMonth(),
-			stamp.getDate(), stamp.getHours(),
-			stamp.getMinutes());
+			stamp.getDate(), stamp.getHours(), stamp.getMinutes());
 		requestedCourseUnit.setStartime(date);
 		requestedCourseUnit.setMaxUsers(resultSet
 			.getInt("max_participants"));
@@ -279,7 +282,7 @@ public class CourseUnitDAO {
 			courseCycle.setCycleID(cycleID);
 			courseCycle.setNumberOfUnits(resultSetCycle
 				.getInt("cycle_end"));
-			
+
 			// TODO EMUMS anpassen EVTL
 			String period = resultSetCycle.getString("period");
 			switch (period) {
@@ -317,7 +320,8 @@ public class CourseUnitDAO {
 			    .getString("street"));
 		    courseUnitAddress.setZipCode(Integer
 			    .parseInt(resultSetAddress.getString("zip_code")));
-		    courseUnitAddress.setLocation(resultSetAddress.getString("location"));
+		    courseUnitAddress.setLocation(resultSetAddress
+			    .getString("location"));
 		    LogHandler.getInstance().debug(
 			    "Initialisieren von Addresse abgeschlossen");
 
@@ -356,81 +360,84 @@ public class CourseUnitDAO {
     public static List<CourseUnit> getCourseUnitsFromCourse(Transaction trans,
 	    int courseID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-        ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
+	ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
-        String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
-                + "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id";
+	String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
+		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id";
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
-        ResultSet resultSet;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement statement = null;
+	ResultSet resultSet;
 
-        try {
-            statement = conn.prepareStatement(courseUnitsQuery);
-            statement.setInt(1, courseID);
-            resultSet = statement.executeQuery();
+	try {
+	    statement = conn.prepareStatement(courseUnitsQuery);
+	    statement.setInt(1, courseID);
+	    resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-            CourseUnit unit = new CourseUnit();
+	    while (resultSet.next()) {
+		CourseUnit unit = new CourseUnit();
 
-            unit.setCourseID(courseID);
-            unit.setCourseUnitID(resultSet.getInt("id"));
+		unit.setCourseID(courseID);
+		unit.setCourseUnitID(resultSet.getInt("id"));
 
-            if(resultSet.getString("titel") != null) {
-                unit.setTitle(resultSet.getString("titel"));
-            } else {
-                unit.setTitle("Ohne Titel");
-            }
+		if (resultSet.getString("titel") != null) {
+		    unit.setTitle(resultSet.getString("titel"));
+		} else {
+		    unit.setTitle("Ohne Titel");
+		}
 
-            if(resultSet.getString("description") != null) {
-                unit.setDescription(resultSet.getString("description"));
-            } else {
-                unit.setDescription("Ohne Beschreibung");
-            }
+		if (resultSet.getString("description") != null) {
+		    unit.setDescription(resultSet.getString("description"));
+		} else {
+		    unit.setDescription("Ohne Beschreibung");
+		}
 
-            unit.setMaxUsers(resultSet.getInt("max_participants"));
-            unit.setMinUsers(resultSet.getInt("min_participants"));
-            unit.setPrice(resultSet.getFloat("fee"));
-            unit.setStartime(resultSet.getDate("start_time"));
-            unit.setEndtime(resultSet.getDate("end_time"));
-            unit.setNumberOfUsers(getNumberOfParticipants(trans, unit.getCourseUnitID()));
+		unit.setMaxUsers(resultSet.getInt("max_participants"));
+		unit.setMinUsers(resultSet.getInt("min_participants"));
+		unit.setPrice(resultSet.getFloat("fee"));
+		unit.setStartime(resultSet.getDate("start_time"));
+		unit.setEndtime(resultSet.getDate("end_time"));
+		unit.setNumberOfUsers(getNumberOfParticipants(trans,
+			unit.getCourseUnitID()));
 
-            Address unitAddress = new Address();
+		Address unitAddress = new Address();
 
-            unitAddress.setCity(resultSet.getString("city"));
-            unitAddress.setCountry(resultSet.getString("country"));
-            unitAddress.setZipCode(resultSet.getInt("zip_code"));
+		unitAddress.setCity(resultSet.getString("city"));
+		unitAddress.setCountry(resultSet.getString("country"));
+		unitAddress.setZipCode(resultSet.getInt("zip_code"));
 
-            if(resultSet.getString("street") != null) {
-                unitAddress.setStreet(resultSet.getString("street"));
-            } else {
-                unitAddress.setStreet("Ohne Straße");
-            }
+		if (resultSet.getString("street") != null) {
+		    unitAddress.setStreet(resultSet.getString("street"));
+		} else {
+		    unitAddress.setStreet("Ohne Straße");
+		}
 
-            if(resultSet.getString("location") != null) {
-                unitAddress.setLocation(resultSet.getString("location"));
-            } else {
-                unitAddress.setLocation("Ohne Ort");
-            }
+		if (resultSet.getString("location") != null) {
+		    unitAddress.setLocation(resultSet.getString("location"));
+		} else {
+		    unitAddress.setLocation("Ohne Ort");
+		}
 
-            if(resultSet.getInt("house_nr") > 0) {
-                unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
-            } else {
-                unitAddress.setHouseNumber(0);
-            }
+		if (resultSet.getInt("house_nr") > 0) {
+		    unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
+		} else {
+		    unitAddress.setHouseNumber(0);
+		}
 
-            unit.setAddress(unitAddress);
-            courseUnits.add(unit);
-            }
-            statement.close();
-            resultSet.close();
-        } catch (SQLException e) {
-            LogHandler.getInstance().error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
-            System.out.println("cUnit in courseunitdao");
-            throw new InvalidDBTransferException();
-        }
-        return courseUnits;
+		unit.setAddress(unitAddress);
+		courseUnits.add(unit);
+	    }
+	    statement.close();
+	    resultSet.close();
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
+	    System.out.println("cUnit in courseunitdao");
+	    throw new InvalidDBTransferException();
+	}
+	return courseUnits;
     }
 
     /**
@@ -444,6 +451,7 @@ public class CourseUnitDAO {
      *            the course unit to be updated
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Tobias Fuchs
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
@@ -570,7 +578,8 @@ public class CourseUnitDAO {
 	// The queries to execute
 	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE"
 		+ " id=?";
-	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE cycle_id=? AND course_units.start_time >= CURRENT_DATE";
+	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE"
+		+ " cycle_id=? AND course_units.start_time >= CURRENT_DATE";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -605,8 +614,20 @@ public class CourseUnitDAO {
 	return ids;
     }
 
+    /**
+     * Returns the price of a course unit.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param unitId
+     *            the id of the unit
+     * @return the price of the unit<br>
+     *         -1, if there goes something wrong
+     * @author Tobias Fuchs
+     */
     public static float getPriceOfUnit(Transaction trans, int unitId) {
-	String query = "SELECT fee \"course_units\" WHERE id=?";
+	String query = "SELECT fee FROM \"course_units\" WHERE id=?";
 	float price = -1;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -645,6 +666,7 @@ public class CourseUnitDAO {
      *            the course unit's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Sebastian Schwarz
      */
     public static void addUserToCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
@@ -685,26 +707,28 @@ public class CourseUnitDAO {
      *            the course unit's ID
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Sebastian Schwarz
      */
     public static void removeUserFromCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
-        
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        
-        String deleteFromCourseUnit = "DELETE FROM \"course_unit_participants\" WHERE participant_id = ? AND course_unit_id = ?";
-        
-        try{
-            CourseDAO.setRelationMethode(userID, courseUnitID, conn, deleteFromCourseUnit);
-            LogHandler.getInstance().debug(
-                    "User:" + userID + "succesfully deleted from CourseUnit:"
-                        + courseUnitID);
-            } catch (SQLException e) {
-                LogHandler.getInstance().error(
-                    "User:" + userID + "couldnt be deleted from CourseUnit:"
-                        + courseUnitID);
-                throw new InvalidDBTransferException();
-            }
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	String deleteFromCourseUnit = "DELETE FROM \"course_unit_participants\" WHERE participant_id = ? AND course_unit_id = ?";
+
+	try {
+	    CourseDAO.setRelationMethode(userID, courseUnitID, conn,
+		    deleteFromCourseUnit);
+	    LogHandler.getInstance().debug(
+		    "User:" + userID + "succesfully deleted from CourseUnit:"
+			    + courseUnitID);
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "User:" + userID + "couldnt be deleted from CourseUnit:"
+			    + courseUnitID);
+	    throw new InvalidDBTransferException();
+	}
     }
 
     /**
@@ -720,60 +744,60 @@ public class CourseUnitDAO {
      *         if the user doesn't participate in any course unit
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
-     *             
+     * 
      * @author Patrick Cretu
      */
     public static List<CourseUnit> getCourseUnitsOf(Transaction trans,
 	    int userID) throws InvalidDBTransferException {
-    	Connection connection = (Connection) trans;
-    	java.sql.Connection conn = connection.getConn();
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
-    	List<CourseUnit> result = null;
-    	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee "
-    			+ "FROM \"course_units\", \"users\", \"course_unit_participants\" "
-    			+ "WHERE \"users\".id = \"course_unit_participants\".participant_id "
-    			+ "AND \"course_unit_participants\".course_unit_id = \"course_units\".id "
-    			+ "AND \"users\".id = ?";
-    	
-    	try {
-    	    stmt = conn.prepareStatement(getCourseUnits);
-    	    stmt.setInt(1, userID);
-    	    
-    	    System.out.println(stmt.toString());
-    	    
-    	    rst = stmt.executeQuery();
-    	    result = getResult(rst);
-    	} catch (SQLException e) {
-    	    LogHandler
-    		    .getInstance()
-    		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-    	    throw new InvalidDBTransferException();
-    	} finally {
-    	    if (rst != null) {
-	    		try {
-	    		    rst.close();
-	    		} catch (SQLException e) {
-	    		    LogHandler
-	    			    .getInstance()
-	    			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-	    		    throw new InvalidDBTransferException();
-	    		}
-    	    }
-    	    if (stmt != null) {
-	    		try {
-	    		    stmt.close();
-	    		} catch (SQLException e) {
-	    		    LogHandler
-	    			    .getInstance()
-	    			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-	    		    throw new InvalidDBTransferException();
-	    		}
-    	    }
-    	}
-    	return result;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement stmt = null;
+	ResultSet rst = null;
+	List<CourseUnit> result = null;
+	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee "
+		+ "FROM \"course_units\", \"users\", \"course_unit_participants\" "
+		+ "WHERE \"users\".id = \"course_unit_participants\".participant_id "
+		+ "AND \"course_unit_participants\".course_unit_id = \"course_units\".id "
+		+ "AND \"users\".id = ?";
+
+	try {
+	    stmt = conn.prepareStatement(getCourseUnits);
+	    stmt.setInt(1, userID);
+
+	    System.out.println(stmt.toString());
+
+	    rst = stmt.executeQuery();
+	    result = getResult(rst);
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+	    throw new InvalidDBTransferException();
+	} finally {
+	    if (rst != null) {
+		try {
+		    rst.close();
+		} catch (SQLException e) {
+		    LogHandler
+			    .getInstance()
+			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+		    throw new InvalidDBTransferException();
+		}
+	    }
+	    if (stmt != null) {
+		try {
+		    stmt.close();
+		} catch (SQLException e) {
+		    LogHandler
+			    .getInstance()
+			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
+		    throw new InvalidDBTransferException();
+		}
+	    }
+	}
+	return result;
     }
-    
+
     /**
      * 
      * @param rst
@@ -784,33 +808,33 @@ public class CourseUnitDAO {
      */
     private static List<CourseUnit> getResult(ResultSet rst)
 	    throws InvalidDBTransferException {
-		List<CourseUnit> result = new ArrayList<CourseUnit>();
-		try {
-		    int cols = rst.getMetaData().getColumnCount();
-	
-		    while (rst.next()) {
-				int i = 1;
-				List<Object> tuple = new ArrayList<Object>();
-				CourseUnit unit = new CourseUnit();
-				while (i <= cols) {
-				    Object o = rst.getObject(i);
-				    tuple.add(o);
-				    i++;
-				}
-				setProperties(unit, tuple);
-				result.add(unit);
-		    }
-		    if (!result.isEmpty()) {
-		    	return result;
-		    }
-		} catch (SQLException e) {
-		    LogHandler.getInstance().error(
-			    "SQL Exception occoured during getResult(ResultSet rst)");
-		    throw new InvalidDBTransferException();
+	List<CourseUnit> result = new ArrayList<CourseUnit>();
+	try {
+	    int cols = rst.getMetaData().getColumnCount();
+
+	    while (rst.next()) {
+		int i = 1;
+		List<Object> tuple = new ArrayList<Object>();
+		CourseUnit unit = new CourseUnit();
+		while (i <= cols) {
+		    Object o = rst.getObject(i);
+		    tuple.add(o);
+		    i++;
 		}
-		return null;
+		setProperties(unit, tuple);
+		result.add(unit);
+	    }
+	    if (!result.isEmpty()) {
+		return result;
+	    }
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during getResult(ResultSet rst)");
+	    throw new InvalidDBTransferException();
+	}
+	return null;
     }
-    
+
     /**
      * 
      * @param unit
@@ -819,13 +843,13 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     private static void setProperties(CourseUnit unit, List<Object> tuple) {
-    	unit.setCourseUnitID((Integer) tuple.get(0));
-    	unit.setCourseID((Integer) tuple.get(1));
-    	unit.setTitle((String) tuple.get(2));
-    	BigDecimal bg = (BigDecimal) tuple.get(3);
-    	unit.setPrice(bg.floatValue());
+	unit.setCourseUnitID((Integer) tuple.get(0));
+	unit.setCourseID((Integer) tuple.get(1));
+	unit.setTitle((String) tuple.get(2));
+	BigDecimal bg = (BigDecimal) tuple.get(3);
+	unit.setPrice(bg.floatValue());
     }
-    
+
     /**
      * Returns the number of participants that attend the course unit with the
      * passed ID.
