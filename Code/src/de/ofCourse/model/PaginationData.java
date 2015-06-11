@@ -86,7 +86,7 @@ public class PaginationData implements Serializable {
 	    }
 	    break;
 	case "forward":
-	    if (getCurrentPageNumber() < getNumberOfPages()) {
+	    if ((getCurrentPageNumber() + 1) < getNumberOfPages()) {
 		setCurrentPageNumber(getCurrentPageNumber() + 1);
 	    }
 	    break;
