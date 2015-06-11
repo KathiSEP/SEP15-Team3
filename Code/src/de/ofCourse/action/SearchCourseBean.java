@@ -131,7 +131,6 @@ public class SearchCourseBean implements Pagination {
 	    	
 	    	if (result != null) {
 	    		searchResult = result;
-	    		transaction.commit();
 	    		setPagingSearchTerm(false);
 	    		setRenderTable(true);
 	    		columnSort = false;
@@ -194,7 +193,6 @@ public class SearchCourseBean implements Pagination {
 	    		
 	    		if (result != null) {
 	    			searchResult = result;
-	    			transaction.commit();
 	    			setPagingSearchTerm(true);
 	    			setRenderTable(true);
 	    			columnSort = false;
