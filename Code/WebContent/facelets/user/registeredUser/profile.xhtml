@@ -109,8 +109,8 @@
                                     <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="countryRegister"
-                                                     value="#{userProfileBean.user.address.country}"
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
+                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.country}"
+                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -148,7 +148,8 @@
                                     <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" rendered="#{userProfileBean.readOnly}"/>
                                     <br/>
                                     <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" rendered="#{userProfileBean.readOnly == false}"/>
-                                </h:form><br /> 
+                                </h:form>
+                                <br/> 
                             </div>
                         </div>                  
                     </div>

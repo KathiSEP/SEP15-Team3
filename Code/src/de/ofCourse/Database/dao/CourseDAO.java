@@ -355,7 +355,7 @@ public class CourseDAO {
 		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
 		+ "courses.end_date FROM \"courses\", \"course_units\" "
-		+ "WHERE \"course_units\".start_time BETWEEN current_date AND current_date + integer '6'"
+		+ "WHERE \"course_units\".start_time BETWEEN current_date AND current_date + integer '6' "
 		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 	String getAllCourses = "SELECT * FROM \"courses\" ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
