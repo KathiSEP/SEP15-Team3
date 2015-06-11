@@ -364,7 +364,8 @@ public class CourseUnitDAO {
 	ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
 	String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
-		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id";
+		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
+	    +  " ORDER BY %s %s LIMIT ? OFFSET ?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -863,8 +864,7 @@ public class CourseUnitDAO {
     public static int getNumberOfCourseUnits(Transaction trans, int courseID)
             throws InvalidDBTransferException {
         int numberOfCourseUnits = 0;
-        String courseUnitQuery = "SELECT COUNT(*) FROM \"courses_units\" WHERE courses.id IN "
-            + "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
+        String courseUnitQuery = "SELECT COUNT(*) FROM \"courses_units\" WHERE course_id = ?";
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
@@ -872,15 +872,12 @@ public class CourseUnitDAO {
         PreparedStatement statement = null;
         try {
             statement = conn.prepareStatement(courseUnitQuery);
-            statementt.setInt(1, courseID);
-            ResultSet resultSet = stmt.executeQuery();
+            statement.setInt(1, courseID);
+            ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             numberOfCourseUnits = resultSet.getInt(1);
         } catch (SQLException e) {
-            LogHandler
-                .getInstance()
-                .error("Error occoured during fetching the number of courses of a certain user.");
-            e.printStackTrace();
+            LogHandler.getInstance().error("Error occoured during fetching the number of courses of a certain user.");
             throw new InvalidDBTransferException();
         }
         return numberOfCourseUnits;
