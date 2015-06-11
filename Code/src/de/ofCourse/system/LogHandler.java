@@ -46,11 +46,15 @@ public class LogHandler {
      * @throws IOException
      */
     private void logSetup() throws IOException {
+        
         PatternLayout layout = new PatternLayout("%-5p [%t]: %m%n");
         DailyRollingFileAppender fileAppender = new DailyRollingFileAppender(
                 layout, "C:/Temp/MyLog", "'.'yyyy-MM-dd_HH-mm");
+        
         logger.addAppender(fileAppender);
+        
         // Sets the level input from properties
+        
         logger.setLevel(Level.toLevel(PropertyManager.getInstance()
                 .getPropertyLogger("loglvl")));
         // TODO Error Handling
