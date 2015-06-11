@@ -157,7 +157,9 @@
                             <h:column>
                                 <f:facet name="header"/>
        	                        <h:form>
-   	    	                        <h:commandButton id="details" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}">
+   	    	                        <h:commandButton id="details" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
+   	    	                        					rendered="#{(courseDetailBean.sessionUser.userRole == 'REGISTERED_USER' || courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'
+   	    	                        								|| courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
             	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
                    	            	</h:commandButton>
                        	        </h:form>
