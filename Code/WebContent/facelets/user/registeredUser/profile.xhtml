@@ -27,7 +27,8 @@
                                     
                                     <div class="input-group">
                                         <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
-                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.user.salutation}">
+                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.user.salutation}"
+                                        readonly="#{userProfileBean.readOnly}">
                                             <f:selectItem itemValue="Salutation.MR" itemLabel="Herr" />
                                             <f:selectItem itemValue="Salutation.MS" itemLabel="Frau" />
                                         </h:selectOneMenu>

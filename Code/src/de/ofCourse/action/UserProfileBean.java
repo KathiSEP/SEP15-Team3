@@ -150,14 +150,16 @@ public class UserProfileBean implements Pagination {
      * picture needs to be a .jpg <br>
      */
     public void uploadProfilePic() {
-    	transaction = Connection.create();
-    	transaction.start();
-    	try {
-    		UserDAO.uploadImage(transaction, user.getUserID(), image);
-    		transaction.commit();
-    	} catch (InvalidDBTransferException e) {
-            this.transaction.rollback();
-        }
+    	if (image != null) {
+    		transaction = Connection.create();
+	    	transaction.start();
+	    	try {
+	    		UserDAO.uploadImage(transaction, user.getUserID(), image);
+	    		transaction.commit();
+	    	} catch (InvalidDBTransferException e) {
+	            this.transaction.rollback();
+	        }
+    	}
     }
     
     /**
