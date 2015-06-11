@@ -104,9 +104,9 @@ public class DatabaseTableCreator {
     		"CREATE TABLE user_addresses (" +
     			"id SERIAL PRIMARY KEY," +
     			"user_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE NOT NULL," +
-    			"country VARCHAR(100) NOT NULL," +
-    			"city VARCHAR(100) NOT NULL," +
-    			"zip_code VARCHAR(10) NOT NULL," +
+    			"country VARCHAR(100)," +
+    			"city VARCHAR(100)," +
+    			"zip_code VARCHAR(10)," +
     			"street VARCHAR(100)," +
     			"house_nr INTEGER" +
     		")";
