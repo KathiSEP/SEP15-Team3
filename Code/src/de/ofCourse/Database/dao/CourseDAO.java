@@ -835,7 +835,6 @@ public class CourseDAO {
 		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
 		    stmt.setInt(1, coursesOf.get(i).getCourseID());
 		    fetchedNextUnit = stmt.executeQuery();
-		    System.out.println("hier");
 		    while (fetchedNextUnit.next()) {
 			courseUnit = new CourseUnit();
 			stamp = fetchedNextUnit.getTimestamp("start_time");
