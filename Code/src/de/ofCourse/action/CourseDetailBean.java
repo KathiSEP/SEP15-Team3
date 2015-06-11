@@ -603,7 +603,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadCreateCourseUnitPage() {
-        return null;
+        return "facelets/user/courseLeader/editCourseUnit.xhtml";
     }
 
     /**
@@ -612,7 +612,7 @@ public class CourseDetailBean implements Pagination {
      * @return link to the next page
      */
     public String loadEditCourseUnitPage() {
-        return null;
+        return "facelets/user/courseLeader/editCourseUnit.xhtml";
     }
 
     /**
