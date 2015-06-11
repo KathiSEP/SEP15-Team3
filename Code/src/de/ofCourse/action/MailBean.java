@@ -314,7 +314,7 @@ public class MailBean {
     }
     
     
-    private void sendCourseEditUnitMail(List<String> recipients, int CourseUnit){
+    public void sendCourseEditUnitMail(List<String> recipients, int CourseUnit){
         Transaction trans = Connection.create();
         trans.start();
         try{
