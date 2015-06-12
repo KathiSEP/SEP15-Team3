@@ -274,6 +274,7 @@ public class CourseDetailBean implements Pagination {
                         "User:" + sessionUser.getUserID()
                                 + "Succesfull signed for course:" + courseID);
                 trans.commit();
+                isRegistered = true;
             } else {
                 // If the course is full we throw the
                 // CourseRegistrationException
@@ -336,6 +337,7 @@ public class CourseDetailBean implements Pagination {
                         courseID);
             }
             trans.commit();
+            isRegistered = false;
         } catch (InvalidDBTransferException e) {
             trans.rollback();
             LogHandler.getInstance().error(
