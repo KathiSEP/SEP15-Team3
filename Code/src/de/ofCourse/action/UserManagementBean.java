@@ -96,6 +96,10 @@ public class UserManagementBean {
 	        	if (image != null) {
 	        		UserDAO.uploadImage(transaction, userID, image);
 	        	}
+	        	FacesMessageCreator
+                .createFacesMessage(
+                        null,
+                        "Der Nutzer wurde erfolgreich im System registriert.");
 	        	goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=false";
 	        }
 	        transaction.commit();
