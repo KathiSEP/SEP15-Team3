@@ -1245,7 +1245,7 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String addUserToInformUser = "INSERT INTO \"inform_user\" (user_id,course_id) VALUES (?,?)";
+	String addUserToInformUser = "INSERT INTO \"inform_users\" (user_id,course_id) VALUES (?,?)";
 	try {
 	    setRelationMethode(userID, courseID, conn, addUserToInformUser);
 	    LogHandler.getInstance().debug(
@@ -1274,7 +1274,7 @@ public class CourseDAO {
 	    Connection connection = (Connection) trans;
 	    java.sql.Connection conn = connection.getConn();
 
-	    String removeUserToInformUser = "DELETE FROM \"inform_user\" (user_id,course_id) VALUES (?,?)";
+	    String removeUserToInformUser = "DELETE FROM \"inform_users\" (user_id,course_id) VALUES (?,?)";
 	    try {
 	        setRelationMethode(userID, courseID, conn, removeUserToInformUser);
 	        LogHandler.getInstance().debug(
