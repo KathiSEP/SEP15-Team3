@@ -668,7 +668,7 @@ public class CourseDetailBean implements Pagination {
             transaction.commit();
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
-                    "Error occured during fething data for pagination.");
+                    "Error occured during fetching data for pagination.");
             this.transaction.rollback();
         }
     }
