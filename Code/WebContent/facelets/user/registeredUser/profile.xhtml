@@ -23,134 +23,197 @@
                                 <strong>Benutzerdaten</strong>
                             </div>
                             <div class="panel-body">
+                                
                                 <h:form class="form-horizontal" id="formSettings">
-                                    
-                                    <div class="input-group">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
-                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.user.salutation}"
-                                        readonly="#{userProfileBean.readOnly}">
-                                            <f:selectItem itemValue="Salutation.MR" itemLabel="Herr" />
-                                            <f:selectItem itemValue="Salutation.MS" itemLabel="Frau" />
-                                        </h:selectOneMenu>
-                                    </div>
+			                        <h:panelGroup rendered="#{userProfileBean.readOnly}">
+			                            <div class="input-group">
+			                                <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
+			                                <h:outputLabel class="form-control" value="#{userProfileBean.user.salutation}" />
+			                            </div>
+			                                
+	                                    <div class="input-group" style="padding-top:25px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.username}" />
+	                                    </div>
+	                                
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.firstname}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.lastname}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.dateOfBirth}" >
+	                                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+	                                        </h:outputLabel>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.street}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.houseNumber}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Stadt:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.city}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.zipCode}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.country}" />
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.email}" />
+	                                    </div>
+	                                    
+	                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" />
+                                        <br/>
+			                        </h:panelGroup>
+                                </h:form>
                                 
-                                    <div class="input-group" style="padding-top:25px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.username}"
-                                            required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein.">
-                                                     <f:validator validatorId="userNameValidator"/>
-                                        </h:inputText>
-                                    </div>
-                                
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="firstnameRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.firstname}"
-                                            validatorMessage="Ihr Vorname darf höchstens 100 Zeichen lang sein.">
-                                                      <f:validateLength minimum="0" maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="lastnameRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.lastname}"
-                                            validatorMessage="Ihr Nachname darf höchstens 100 Zeichen lang sein.">
-                                                      <f:validateLength minimum="0" maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="birthdateRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.dateOfBirth}"
-                                            converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.">
-                                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
-                                                      <f:validator validatorId="dateOfBirthValidator" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.street}"
-                                            validatorMessage="Ihre Eingabe darf höchstens 100 Zeichen lang sein.">
-                                                      <f:validateLength maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.houseNumber}"
-                                            validatorMessage="Ihre Eingabe darf höchstens 9 Zeichen lang sein.">
-                                                     <f:validateLength maximum="9" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Stadt:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="locationRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.city}"
-                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
-                                                     <f:validateLength minimum ="1" maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.zipCode}"
-                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein.">
-                                                     <f:validateLength minimum ="1" maximum="10" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
-                                        <h:inputText class="form-control" style="width:300px;" id="countryRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.address.country}"
-                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
-                                                     <f:validateLength minimum ="1" maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    
-                                    <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
-                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister"
-                                            readonly="#{userProfileBean.readOnly}" value="#{userProfileBean.user.email}"
-                                            required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein.">
-                                                     <f:validator validatorId="emailValidator" />
-                                        </h:inputText>
-                                    </div>
-                                    
+                            
+                                <h:form class="form-horizontal" id="formChangeSettings">
                                     <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
+	                                    <div class="input-group" >
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
+	                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.user.salutation}" >
+	                                            <f:selectItem itemValue="Salutation.MR" itemLabel="Herr" />
+	                                            <f:selectItem itemValue="Salutation.MS" itemLabel="Frau" />
+	                                        </h:selectOneMenu>
+	                                    </div>
+	                                
+	                                    <div class="input-group" style="padding-top:25px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
+	                                            value="#{userProfileBean.user.username}" 
+	                                            required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein.">
+	                                                     <f:validator validatorId="userNameValidator"/>
+	                                        </h:inputText>
+	                                    </div>
+	                                
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="firstnameRegister"
+	                                            value="#{userProfileBean.user.firstname}" 
+	                                            validatorMessage="Ihr Vorname darf höchstens 100 Zeichen lang sein.">
+	                                                      <f:validateLength minimum="0" maximum="100" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="lastnameRegister"
+	                                            value="#{userProfileBean.user.lastname}" 
+	                                            validatorMessage="Ihr Nachname darf höchstens 100 Zeichen lang sein.">
+	                                                      <f:validateLength minimum="0" maximum="100" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="birthdateRegister"
+	                                            value="#{userProfileBean.user.dateOfBirth}" 
+	                                            converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.">
+	                                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+	                                                      <f:validator validatorId="dateOfBirthValidator" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister"
+	                                            value="#{userProfileBean.user.address.street}" 
+	                                            validatorMessage="Ihre Eingabe darf höchstens 100 Zeichen lang sein.">
+	                                                      <f:validateLength maximum="100" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister"
+	                                            value="#{userProfileBean.user.address.houseNumber}" 
+	                                            validatorMessage="Ihre Eingabe darf höchstens 9 Zeichen lang sein.">
+	                                                     <f:validateLength maximum="9" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Stadt:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="locationRegister"
+	                                            value="#{userProfileBean.user.address.city}" 
+	                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
+	                                                     <f:validateLength minimum ="1" maximum="100" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister"
+	                                            value="#{userProfileBean.user.address.zipCode}" 
+	                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein.">
+	                                                     <f:validateLength minimum ="1" maximum="10" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+	                                        <h:inputText class="form-control" style="width:300px;" id="countryRegister"
+	                                            value="#{userProfileBean.user.address.country}" 
+	                                            validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein.">
+	                                                     <f:validateLength minimum ="1" maximum="100" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
+	                                    <div class="input-group" style="padding-top:5px;">
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
+	                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister"
+	                                            value="#{userProfileBean.user.email}" 
+	                                            required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein.">
+	                                                     <f:validator validatorId="emailValidator" />
+	                                        </h:inputText>
+	                                    </div>
+	                                    
                                         <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
-                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister"
-                                            value="#{userProfileBean.password}"
-                                            required="true" requiredMessage="Bitte geben Sie ein Passwort ein.">
-                                                <f:attribute name="confirmPassword" value="#{confirmPassword}" />
-                                                <f:validator validatorId="passwordValidator" />
-                                        </h:inputSecret>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
+	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister"
+	                                            value="#{userProfileBean.password}" 
+	                                            required="true" requiredMessage="Bitte geben Sie ein Passwort ein.">
+	                                                <f:attribute name="confirmPassword" value="#{confirmPassword}" />
+	                                                <f:validator validatorId="passwordValidator" />
+	                                        </h:inputSecret>
                                         </div>
                                         
                                         <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
-                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"
-                                            value="#{userProfileBean.confirmPassword}"
-                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein." binding="#{confirmPassword}">
-                                        </h:inputSecret>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
+	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"
+	                                            value="#{userProfileBean.confirmPassword}" 
+	                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein." binding="#{confirmPassword}">
+	                                        </h:inputSecret>
                                         </div>
+                                        <br/>
+	                                    
+	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" />
                                     </h:panelGroup>
-                                    
-                                    <br/>
-                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" rendered="#{userProfileBean.readOnly}"/>
-                                    <br/>
-                                    <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" rendered="#{userProfileBean.readOnly == false}"/>
                                 </h:form>
-                                <br/> 
+                                <br/>
+                                
                             </div>
                         </div>                  
                     </div>
