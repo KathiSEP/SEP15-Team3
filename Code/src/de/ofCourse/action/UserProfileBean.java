@@ -131,6 +131,9 @@ public class UserProfileBean implements Pagination {
      * @return link to the next page
      */
     public void saveSettings() {
+    	
+    	System.out.println("in der methode");
+    	
     	transaction = Connection.create();
     	transaction.start();
     	
