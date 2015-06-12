@@ -257,12 +257,13 @@ public class CourseDetailBean implements Pagination {
             // Course can handle
             int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans,
                     courseID);
-            // Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
+            Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
 
             // TODO Methode noch nicht implementiert feste zahl zum testen
-            // benutzt courseToSignUp.getMaxUsers()
-            if (10 > numberOfParticipants) {
+            // benutzt 
+            if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
                 System.out.println(sessionUser.getUserID());
+                
                 // Add user to course_participant list on the database server
                 CourseDAO.addUserToCourse(trans, sessionUser.getUserID(),
                         courseID);
@@ -358,6 +359,13 @@ public class CourseDetailBean implements Pagination {
                 CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
                         courseID);
             }
+            
+            
+            //aus der inform liste loeschen falls drin
+            if(UserDAO.userWantsToBeInformed(trans, sessionUser.getUserID(), courseID)){
+                CourseDAO.removeUserToInformUser(transaction, sessionUser.getUserID(), courseID);
+            }
+            
             trans.commit();
             isRegistered = false;
         } catch (InvalidDBTransferException e) {

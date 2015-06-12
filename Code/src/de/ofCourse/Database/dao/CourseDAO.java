@@ -1256,6 +1256,35 @@ public class CourseDAO {
 		    "Exception occured during addUserToInformUser");
 	    throw new InvalidDBTransferException();
 	}
+    }
+    
+    
+    
+    
+	/**
+	 * 
+	 * @author Sebastian Schwarz
+	 * @param trans
+	 * @param userID
+	 * @param courseID
+	 */
+	public static void removeUserToInformUser(Transaction trans, int userID,
+	        int courseID) {
+
+	    Connection connection = (Connection) trans;
+	    java.sql.Connection conn = connection.getConn();
+
+	    String removeUserToInformUser = "DELETE FROM \"inform_user\" (user_id,course_id) VALUES (?,?)";
+	    try {
+	        setRelationMethode(userID, courseID, conn, removeUserToInformUser);
+	        LogHandler.getInstance().debug(
+	            "Methode RemoveUserToInformUser was succesfull");
+	    } catch (SQLException e) {
+	        // Error Handling
+	        LogHandler.getInstance().error(
+	            "Exception occured during RemoveUserToInformUser");
+	        throw new InvalidDBTransferException();
+	    }
 
     }
 
