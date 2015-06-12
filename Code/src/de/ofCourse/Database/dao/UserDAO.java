@@ -785,7 +785,8 @@ public class UserDAO {
 		    user.setSalutation(Salutation.MS);
 		    break;
 		}
-
+		float accountBalance = res.getFloat("credit_balance");
+		user.setAccountBalance(accountBalance);
 		user.setProfilImage(res.getBytes("profile_image"));
 
 		String userRole = res.getString("role");

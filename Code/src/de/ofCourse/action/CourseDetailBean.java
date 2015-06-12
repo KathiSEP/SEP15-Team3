@@ -325,13 +325,35 @@ public class CourseDetailBean implements Pagination {
 
             // If the list is not empty the users gets signed Off from every
             // CourseUnit which belongs to the Course and he is signedUp to
+            // Das geht schoener aber es is schon 4 Uhr in der Frueh
             if (!courseUnitsToSignOff.isEmpty()) {
+                float money = 0;
                 for (int i = 0; i < courseUnitsToSignOff.size(); i++) {
-                    signOffFromSpecificCourseUnit(trans,
-                            courseUnitsToSignOff.get(i), userWhoTryToSignOff);
+                    CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),
+                            courseUnitsToSignOff.get(i).getCourseUnitID());
+                    money += courseUnitsToSignOff.get(i).getPrice();
+                    
+                    
+                    // die button auch wieder setzen
+                    for(int x = 0; i < courseUnitsOfCourse.size(); x++){
+                        if(courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff.get(i).getCourseUnitID()){
+                            courseUnitsOfCourse.get(x).setUserIsParticipant(false);
+                            break;
+                        }
+                    }
+                    
+                
                 }
+                
+                
+                
+                float newAccountBalance = userWhoTryToSignOff.getAccountBalance() + money;
+                UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
+                        newAccountBalance);
                 CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
                         courseID);
+                
+            
             } else {
                 CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
                         courseID);
