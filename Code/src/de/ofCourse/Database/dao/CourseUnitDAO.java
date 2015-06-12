@@ -176,10 +176,10 @@ public class CourseUnitDAO {
      * @return
      * @author Sebastian Schwarz
      */
-    public static boolean userWantsToBeInformed(Transaction trans, int userId) {
+    public static boolean userWantsToBeInformed(Transaction trans, int userID, int courseID) {
 	boolean wantsToBeInformed = false;
 
-	String query = "SELECT COUNT(*) FROM \"inform_users\" WHERE user_id=?";
+	String query = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
@@ -188,12 +188,11 @@ public class CourseUnitDAO {
 
 	try {
 	    stmt = conn.prepareStatement(query);
-	    stmt.setInt(1, userId);
-	    ResultSet resultSet = stmt.executeQuery();
-	    res.next();
-	    if (res.getInt(1) > 0) {
-		wantsToBeInformed = true;
-	    }
+	    stmt.setInt(1, userID);
+	    stmt.setInt(2, courseID);
+	    res = stmt.executeQuery();
+	    return res.next();
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occoured during checking whether"
@@ -202,7 +201,7 @@ public class CourseUnitDAO {
 	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	}
-	return wantsToBeInformed;
+	
     }
 
     /**

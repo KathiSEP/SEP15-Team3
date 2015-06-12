@@ -140,6 +140,7 @@ public class MailBean {
             Transport transport = session.getTransport("smtp");
             
             // Eingabe von benutzerdaten und password
+            //TODO noch smtp auslesen richtig
             transport.connect("smtp.gmail.com", smtpServer.getUsername(), smtpServer.getPassword());
             transport.sendMessage(mail, mail.getAllRecipients());
             transport.close();

@@ -508,7 +508,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	for (User user : participants) {
 	    if (recipientsGroup == informParticipantsOfUnit) {
 		if (CourseUnitDAO.userWantsToBeInformed(transaction,
-			user.getUserID())) {
+			user.getUserID(), courseID)) {
 		    tempUser = UserDAO.getUser(trans, user.getUserID());
 		    recipients.add(tempUser.getEmail());
 		}
