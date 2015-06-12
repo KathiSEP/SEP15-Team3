@@ -120,106 +120,108 @@
 					</div>
 				</div>
 				</h:form>
-				<div class="panel panel-info">
-					<div class="panel-heading"><strong>Kurseinheiten</strong></div>
-					<div class="panel-body">
-						<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" var="courseUnit" class="table table-hover">
-							<h:column>
-                            	<f:facet name="header">Startdatum</f:facet>
-                                <h:outputText value="#{courseUnit.startime}">
-                                    <f:convertDateTime pattern="dd.MM.yyyy"/>
-                                </h:outputText> 
-                            </h:column>
-                            <h:column>
-                           		<f:facet name="header">Uhrzeit</f:facet>
-                                <h:outputText value="#{courseUnit.startime}">
-                                    <f:convertDateTime pattern="HH:mm"/>
-                                </h:outputText>
-                            </h:column>
-                            <h:column>
-                            	<f:facet name="header">Endzeitpunkt</f:facet>
-                            	<h:outputText value="#{courseUnit.endtime}"/>
-                            </h:column>
-                            <h:column>
-                            	<f:facet name="header">Beschreibung</f:facet>
-                            	<h:outputText value="#{courseUnit.description}"/>
-                            </h:column>
-                            <h:column>
-                            	<f:facet name="header">Status</f:facet>
-                            	<h:outputText class="badge" value="#{courseUnit.numberOfUsers}/#{courseUnit.maxUsers}"/>
-                            </h:column>
-                            <h:column>
-                            	<f:facet name="header">Ort</f:facet>
-                            	<h:outputText value="#{courseUnit.address.location}"/>
-                            </h:column>
-                            <h:column>
-                            	<f:facet name="header">Preis</f:facet>
-                            	<h:outputText class="badge" value="#{courseUnit.price}€"/>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header"/>
-       	                        <h:form>
-   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
-   	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-                   	            	</h:commandButton>
-                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
-                 	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-            	                        </h:commandButton>
-                       	        </h:form>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header"/>
-       	                        <h:form>
-   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="Bearbeiten" action="#{courseDetailBean.loadEditCourseUnitPage}"
-   	    	                        				rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-   	    	                        	<f:param name="editMode" value="true"/>
-            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-            	                        <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-                   	            	</h:commandButton>
-                       	        </h:form>
-                            </h:column>
-                            <f:facet name="footer">
-                                <div class="row" style="text-align: center;">
-                                    <ul class="pagination">
-                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
-                                                action="#{courseDetailBean.goToSpecificPage}">
-                                                <f:param name="site" value="back" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{courseDetailBean.pagination.currentPageNumber}"
-                                                action="#{courseDetailBean.goToSpecificPage}"
-                                                rendered="#{courseDetailBean.pagination.currentPageNumber>=1}">
-                                                <f:param name="site"
-                                                    value="#{courseDetailBean.pagination.currentPageNumber-1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton style="font-weight:bold;"
-                                                class="btn btn-primary" 
-                                                value="#{courseDetailBean.pagination.currentPageNumber +1}"
-                                                action="#{courseDetailBean.goToSpecificPage}">
-                                                <f:param name="site"
-                                                    value="#{courseDetailBean.pagination.currentPageNumber}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{courseDetailBean.pagination.currentPageNumber+2}"
-                                                action="#{courseDetailBean.goToSpecificPage}"
-                                                rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}">
-                                                <f:param name="site"
-                                                    value="#{courseDetailBean.pagination.currentPageNumber+1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-info" value="Weiter"
-                                                action="#{courseDetailBean.goToSpecificPage}">
-                                                <f:param name="site" value="forward" />
-                                        	</h:commandButton></li>
-                                    </ul>
-                                </div>
-                            </f:facet>
-						</h:dataTable>
+				<h:form>
+					<div class="panel panel-info">
+						<div class="panel-heading"><strong>Kurseinheiten</strong></div>
+						<div class="panel-body">
+							<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" var="courseUnit" class="table table-hover">
+								<h:column>
+	                            	<f:facet name="header">Startdatum</f:facet>
+	                                <h:outputText value="#{courseUnit.startime}">
+	                                    <f:convertDateTime pattern="dd.MM.yyyy"/>
+	                                </h:outputText> 
+	                            </h:column>
+	                            <h:column>
+	                           		<f:facet name="header">Uhrzeit</f:facet>
+	                                <h:outputText value="#{courseUnit.startime}">
+	                                    <f:convertDateTime pattern="HH:mm"/>
+	                                </h:outputText>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">Endzeitpunkt</f:facet>
+	                            	<h:outputText value="#{courseUnit.endtime}"/>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">Beschreibung</f:facet>
+	                            	<h:outputText value="#{courseUnit.description}"/>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">Status</f:facet>
+	                            	<h:outputText class="badge" value="#{courseUnit.numberOfUsers}/#{courseUnit.maxUsers}"/>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">Ort</f:facet>
+	                            	<h:outputText value="#{courseUnit.address.location}"/>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">Preis</f:facet>
+	                            	<h:outputText class="badge" value="#{courseUnit.price}€"/>
+	                            </h:column>
+	                            <h:column>
+	                                <f:facet name="header"/>
+	       	                        <h:form>
+	   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
+	   	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
+	   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+	                   	            	</h:commandButton>
+	                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
+	                 	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
+	   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+	            	                        </h:commandButton>
+	                       	        </h:form>
+	                            </h:column>
+	                            <h:column>
+	                                <f:facet name="header"/>
+	       	                        <h:form>
+	   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="Bearbeiten" action="#{courseDetailBean.loadEditCourseUnitPage}"
+	   	    	                        				rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+	   	    	                        	<f:param name="editMode" value="true"/>
+	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+	            	                        <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+	                   	            	</h:commandButton>
+	                       	        </h:form>
+	                            </h:column>
+	                            <f:facet name="footer">
+	                                <div class="row" style="text-align: center;">
+	                                    <ul class="pagination">
+	                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
+	                                                action="#{courseDetailBean.goToSpecificPage}">
+	                                                <f:param name="site" value="back" />
+	                                            </h:commandButton></li>
+	                                        <li><h:commandButton class="btn btn-default"
+	                                                value="#{courseDetailBean.pagination.currentPageNumber}"
+	                                                action="#{courseDetailBean.goToSpecificPage}"
+	                                                rendered="#{courseDetailBean.pagination.currentPageNumber>=1}">
+	                                                <f:param name="site"
+	                                                    value="#{courseDetailBean.pagination.currentPageNumber-1}" />
+	                                            </h:commandButton></li>
+	                                        <li><h:commandButton style="font-weight:bold;"
+	                                                class="btn btn-primary" 
+	                                                value="#{courseDetailBean.pagination.currentPageNumber +1}"
+	                                                action="#{courseDetailBean.goToSpecificPage}">
+	                                                <f:param name="site"
+	                                                    value="#{courseDetailBean.pagination.currentPageNumber}" />
+	                                            </h:commandButton></li>
+	                                        <li><h:commandButton class="btn btn-default"
+	                                                value="#{courseDetailBean.pagination.currentPageNumber+2}"
+	                                                action="#{courseDetailBean.goToSpecificPage}"
+	                                                rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}">
+	                                                <f:param name="site"
+	                                                    value="#{courseDetailBean.pagination.currentPageNumber+1}"/>
+	                                            </h:commandButton></li>
+	                                        <li><h:commandButton class="btn btn-info" value="Weiter"
+	                                                action="#{courseDetailBean.goToSpecificPage}">
+	                                                <f:param name="site" value="forward"/>
+	                                        	</h:commandButton></li>
+	                                    </ul>
+	                                </div>
+	                            </f:facet>
+							</h:dataTable>
+						</div>
 					</div>
-				</div>
+				</h:form>
 			</ui:define>
 		</body>
 	</ui:composition>
