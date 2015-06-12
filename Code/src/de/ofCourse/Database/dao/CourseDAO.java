@@ -349,13 +349,13 @@ public class CourseDAO {
 	String orderParam = getOrderParam(pagination.getSortColumn());
 	String dir = getSortDirection(pagination.isSortAsc());
 	List<Course> result = null;
-	String currentDateCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	String currentDateCourses = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
 		+ "courses.end_date FROM \"courses\", \"course_units\" "
-		+ "WHERE \"course_units\".start_time = current_date "
+		+ "WHERE \"course_units\".start_time::date = current_date "
 		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
-	String currentWeekCourses = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	String currentWeekCourses = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
 		+ "courses.end_date FROM \"courses\", \"course_units\" "
-		+ "WHERE \"course_units\".start_time BETWEEN current_date AND current_date + integer '6' "
+		+ "WHERE \"course_units\".start_time::date BETWEEN current_date AND current_date + integer '6' "
 		+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 	String getAllCourses = "SELECT * FROM \"courses\" ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
@@ -365,8 +365,6 @@ public class CourseDAO {
 	    result = getCoursesInPeriod(conn, limit, offset, String.format(currentDateCourses, orderParam, dir));
 	    break;
 	case "week":
-	    // result = getCoursesInPeriod(conn, limit, offset, orderParam,
-	    // currentWeekCourses);
 	    result = getCoursesInPeriod(conn, limit, offset, String.format(currentWeekCourses, orderParam, dir));
 	    break;
 	case "total":
@@ -402,10 +400,7 @@ public class CourseDAO {
 	    stmt.setInt(1, limit);
 	    stmt.setInt(2, offset);
 
-	    System.out.println(stmt.toString());
-
 	    rst = stmt.executeQuery();
-
 	    result = getResult(rst);
 	} catch (SQLException e) {
 	    LogHandler
