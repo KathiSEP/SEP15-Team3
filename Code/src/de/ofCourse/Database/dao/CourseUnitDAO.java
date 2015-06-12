@@ -361,85 +361,89 @@ public class CourseUnitDAO {
     public static List<CourseUnit> getCourseUnitsFromCourse(Transaction trans,
 	    int courseID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-	ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
+        String direction = getSortDirection(pagination.isSortAsc());
+        ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
-	String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
-		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
-	    +  " ORDER BY %s %s LIMIT ? OFFSET ?";
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement statement = null;
-	ResultSet resultSet;
+        String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
+                    + "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
+                    +  " ORDER BY %s %s LIMIT ? OFFSET ?";
 
-	try {
-	    statement = conn.prepareStatement(courseUnitsQuery);
-	    statement.setInt(1, courseID);
-	    resultSet = statement.executeQuery();
+        int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();
 
-	    while (resultSet.next()) {
-		CourseUnit unit = new CourseUnit();
+        courseUnitsQuery = String.format(courseUnitsQuery, "titel", direction);
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet;
 
-		unit.setCourseID(courseID);
-		unit.setCourseUnitID(resultSet.getInt("id"));
-
-		if (resultSet.getString("titel") != null) {
-		    unit.setTitle(resultSet.getString("titel"));
-		} else {
-		    unit.setTitle("Ohne Titel");
-		}
-
-		if (resultSet.getString("description") != null) {
-		    unit.setDescription(resultSet.getString("description"));
-		} else {
-		    unit.setDescription("Ohne Beschreibung");
-		}
-
-		unit.setMaxUsers(resultSet.getInt("max_participants"));
-		unit.setMinUsers(resultSet.getInt("min_participants"));
-		unit.setPrice(resultSet.getFloat("fee"));
-		unit.setStartime(resultSet.getDate("start_time"));
-		unit.setEndtime(resultSet.getDate("end_time"));
-		unit.setNumberOfUsers(getNumberOfParticipants(trans,
-			unit.getCourseUnitID()));
-
-		Address unitAddress = new Address();
-
-		unitAddress.setCity(resultSet.getString("city"));
-		unitAddress.setCountry(resultSet.getString("country"));
-		unitAddress.setZipCode(resultSet.getInt("zip_code"));
-
-		if (resultSet.getString("street") != null) {
-		    unitAddress.setStreet(resultSet.getString("street"));
-		} else {
-		    unitAddress.setStreet("Ohne Straße");
-		}
-
-		if (resultSet.getString("location") != null) {
-		    unitAddress.setLocation(resultSet.getString("location"));
-		} else {
-		    unitAddress.setLocation("Ohne Ort");
-		}
-
-		if (resultSet.getInt("house_nr") > 0) {
-		    unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
-		} else {
-		    unitAddress.setHouseNumber(0);
-		}
-
-		unit.setAddress(unitAddress);
-		courseUnits.add(unit);
-	    }
-	    statement.close();
-	    resultSet.close();
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
-	    System.out.println("cUnit in courseunitdao");
-	    throw new InvalidDBTransferException();
-	}
-	return courseUnits;
+    	try {
+    	    statement = conn.prepareStatement(courseUnitsQuery);
+    	    statement.setInt(1, courseID);
+            statement.setInt(2, pagination.getElementsPerPage());
+            statement.setInt(3, offset);
+    	    resultSet = statement.executeQuery();
+    
+    	    while (resultSet.next()) {
+        		CourseUnit unit = new CourseUnit();
+        
+        		unit.setCourseID(courseID);
+        		unit.setCourseUnitID(resultSet.getInt("id"));
+        
+        		if (resultSet.getString("titel") != null) {
+        		    unit.setTitle(resultSet.getString("titel"));
+        		} else {
+        		    unit.setTitle("Ohne Titel");
+        		}
+        
+        		if (resultSet.getString("description") != null) {
+        		    unit.setDescription(resultSet.getString("description"));
+        		} else {
+        		    unit.setDescription("Ohne Beschreibung");
+        		}
+        
+        		unit.setMaxUsers(resultSet.getInt("max_participants"));
+        		unit.setMinUsers(resultSet.getInt("min_participants"));
+        		unit.setPrice(resultSet.getFloat("fee"));
+        		unit.setStartime(resultSet.getDate("start_time"));
+        		unit.setEndtime(resultSet.getDate("end_time"));
+        		unit.setNumberOfUsers(getNumberOfParticipants(trans,
+        			unit.getCourseUnitID()));
+        
+        		Address unitAddress = new Address();
+        
+        		unitAddress.setCity(resultSet.getString("city"));
+        		unitAddress.setCountry(resultSet.getString("country"));
+        		unitAddress.setZipCode(resultSet.getInt("zip_code"));
+        
+        		if (resultSet.getString("street") != null) {
+        		    unitAddress.setStreet(resultSet.getString("street"));
+        		} else {
+        		    unitAddress.setStreet("Ohne Straße");
+        		}
+        
+        		if (resultSet.getString("location") != null) {
+        		    unitAddress.setLocation(resultSet.getString("location"));
+        		} else {
+        		    unitAddress.setLocation("Ohne Ort");
+        		}
+        
+        		if (resultSet.getInt("house_nr") > 0) {
+        		    unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
+        		} else {
+        		    unitAddress.setHouseNumber(0);
+        		}
+        
+        		unit.setAddress(unitAddress);
+        		courseUnits.add(unit);
+    	    }
+    	    statement.close();
+    	    resultSet.close();
+    	} catch (SQLException e) {
+    	    LogHandler.getInstance().error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
+    	    throw new InvalidDBTransferException();
+    	}
+    	return courseUnits;
     }
 
     /**
@@ -864,7 +868,7 @@ public class CourseUnitDAO {
     public static int getNumberOfCourseUnits(Transaction trans, int courseID)
             throws InvalidDBTransferException {
         int numberOfCourseUnits = 0;
-        String courseUnitQuery = "SELECT COUNT(*) FROM \"courses_units\" WHERE course_id = ?";
+        String courseUnitQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();

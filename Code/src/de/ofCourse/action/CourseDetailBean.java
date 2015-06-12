@@ -146,7 +146,7 @@ public class CourseDetailBean implements Pagination {
      * @author Ricky Strohmeier
      */
     @PostConstruct
-    public void init() {
+    private void init() {
         courseID = Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID"));
         pagination = new PaginationData(pageElements, 0, "title", true);
@@ -157,12 +157,9 @@ public class CourseDetailBean implements Pagination {
             if (courseID > 0) {
                 transaction.start();
                 course = CourseDAO.getCourse(transaction, courseID);
-                pagination.actualizeNumberOfPages(CourseDAO
-                        .getNumberOfMyCourses(transaction,
-                                sessionUser.getUserID()));
+                pagination.actualizeNumberOfPages(CourseUnitDAO.getNumberOfCourseUnits(transaction, courseID));
                 leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
-                courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
-                        transaction, courseID, null);
+                courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);
 
                 for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
                     courseUnitsOfCourse.get(i).setUserIsParticipant(
@@ -250,7 +247,7 @@ public class CourseDetailBean implements Pagination {
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign up process
      */
-    public String signUpForCourse() throws CourseRegistrationException {
+    public void signUpForCourse() throws CourseRegistrationException {
         // I have to start a transaction for database comunication
         Transaction trans = Connection.create();
         trans.start();
@@ -277,8 +274,6 @@ public class CourseDetailBean implements Pagination {
                         "User:" + sessionUser.getUserID()
                                 + "Succesfull signed for course:" + courseID);
                 trans.commit();
-
-                return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
             } else {
                 // If the course is full we throw the
                 // CourseRegistrationException
@@ -311,7 +306,7 @@ public class CourseDetailBean implements Pagination {
      * @throws CourseRegistrationException
      *             if a exception occours during the sign off process
      */
-    public String signOffFromCourse() throws CourseRegistrationException {
+    public void signOffFromCourse() throws CourseRegistrationException {
         Transaction trans = Connection.create();
         trans.start();
 
@@ -341,7 +336,6 @@ public class CourseDetailBean implements Pagination {
                         courseID);
             }
             trans.commit();
-            return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
         } catch (InvalidDBTransferException e) {
             trans.rollback();
             LogHandler.getInstance().error(
@@ -668,10 +662,8 @@ public class CourseDetailBean implements Pagination {
                 .getExternalContext().getRequestParameterMap().get("site"));
         transaction.start();
         try {
-            this.courseUnitsOfCourse = (ArrayList<CourseUnit>) CourseUnitDAO
-                    .getCoursesOf(transaction, this.getPagination(),
-                            this.sessionUser.getUserID());
-            this.transaction.commit();
+            courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);
+            transaction.commit();
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
                     "Error occured during fething data for pagination.");
