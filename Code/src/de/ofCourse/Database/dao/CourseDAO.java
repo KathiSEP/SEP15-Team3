@@ -1318,7 +1318,7 @@ public class CourseDAO {
             PreparedStatement pS = conn.prepareStatement(selectImage);
             pS.setInt(1, courseID);
             ResultSet resultSet = pS.executeQuery();
-            pS.close();
+            
             
             if(resultSet.next()){
                 picture = resultSet.getBytes("image");
