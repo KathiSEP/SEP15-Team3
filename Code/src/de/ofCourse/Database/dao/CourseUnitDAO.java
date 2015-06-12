@@ -184,14 +184,14 @@ public class CourseUnitDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
-	ResultSet res = null;
+	
 
 	try {
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, userID);
 	    stmt.setInt(2, courseID);
-	    res = stmt.executeQuery();
-	    return res.next();
+	    return stmt.execute();
+	    
 	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(

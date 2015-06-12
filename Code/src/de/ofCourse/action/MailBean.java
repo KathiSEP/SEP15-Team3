@@ -345,7 +345,7 @@ public class MailBean {
      * @return
      */
     private String createCourseLink(int courseID) {
-        String link = createLink() + "facelets/open/courses/courseDetail.xhtml?courseID=" + courseID;
+        String link = createLink() + "/facelets/open/courses/courseDetail.xhtml?courseID=" + courseID;
         return link;
     }
 
