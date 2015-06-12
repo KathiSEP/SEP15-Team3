@@ -638,15 +638,6 @@ public class CourseDetailBean implements Pagination {
     }
 
     /**
-     * Redirect the user to a page where he can create a new course unit.
-     * 
-     * @return link to the next page
-     */
-    public String loadCreateCourseUnitPage() {
-        return "/facelets/user/courseLeader/editCourseUnit.xhtml";
-    }
-
-    /**
      * Redirects the user to a page where he can edit a course unit.
      * 
      * @return link to the next page

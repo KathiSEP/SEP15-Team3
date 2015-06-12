@@ -98,7 +98,7 @@
 									</div>
 									<div class="container">
 										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
-														action="#{courseDetailBean.loadCreateCourseUnitPage}">
+														action="#{courseDetailBean.loadEditCourseUnitPage}">
 										<f:param name="editMode" value="false"/>
 										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 										</h:commandButton>
@@ -106,6 +106,7 @@
 									</h:panelGroup>
 									<div class="container">
 										<h:form>
+											<h:selectBooleanCheckbox rendered="#{!courseDetailBean.isRegistered}"/>
 											<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
 											<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>									
 										</h:form>
@@ -159,29 +160,25 @@
 	                            </h:column>
 	                            <h:column>
 	                                <f:facet name="header"/>
-	       	                        <h:form>
-	   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
-	   	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-	   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-	                   	            	</h:commandButton>
-	                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
-	                 	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-	   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-	            	                        </h:commandButton>
-	                       	        </h:form>
+   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
+   	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
+   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+                   	            	</h:commandButton>
+                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
+                 	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
+   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+           	                        	<f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+       	                        	</h:commandButton>
 	                            </h:column>
 	                            <h:column>
 	                                <f:facet name="header"/>
-	       	                        <h:form>
-	   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="Bearbeiten" action="#{courseDetailBean.loadEditCourseUnitPage}"
-	   	    	                        				rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-	   	    	                        	<f:param name="editMode" value="true"/>
-	            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
-	            	                        <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-	                   	            	</h:commandButton>
-	                       	        </h:form>
+   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="Bearbeiten" action="#{courseDetailBean.loadEditCourseUnitPage}"
+   	    	                        				rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+   	    	                        	<f:param name="editMode" value="true"/>
+            	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
+            	                        <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+                   	            	</h:commandButton>
 	                            </h:column>
 	                            <f:facet name="footer">
 	                                <div class="row" style="text-align: center;">
