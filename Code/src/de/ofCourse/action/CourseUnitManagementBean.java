@@ -385,10 +385,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			this.sendMailToSelected(transaction, participants,
 				false);
 		    }
+
 		} else {
-		    // New dates are already calculated
 		    CourseUnitDAO
-			    .updateCourseUnit(transaction, getCourseUnit());
+		    .updateCourseUnit(transaction, getCourseUnit());
+		    // Send info mail
+		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+			    .getParticipiantsOfCourseUnit(transaction,
+				    pagination, courseUnit.getCourseUnitID(),
+				    true);
+		    this.sendMailToSelected(transaction, participants, false);    
 		}
 		transaction.commit();
 		return "/facelets/open/courses/courseDetail.xhtml";
@@ -423,9 +429,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				courseUnit.getCourseUnitID());
 		for (int id : idsToDelete) {
 		    this.deleteSingleUnit(transaction, id);
+		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+			    .getParticipiantsOfCourseUnit(transaction,
+				    pagination, courseUnit.getCourseUnitID(),
+				    true);
+		    this.sendMailToSelected(transaction, participants, false);
 		}
+
 	    } else {
+
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
+		ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+			.getParticipiantsOfCourseUnit(transaction, pagination,
+				courseUnit.getCourseUnitID(), true);
+		this.sendMailToSelected(transaction, participants, false);
 	    }
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
@@ -464,7 +481,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			newAccountBalance);
 	    }
 	    CourseUnitDAO.deleteCourseUnit(transaction, unitId);
-	    sendMailToSelected(transaction, participants, true);
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error during deleting a single course unit.");
@@ -498,11 +514,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		}
 	    }
 	}
-	if (delete) {
-            //mailBean.sendCourseDeleteUnitMail(recipients, this.courseUnit.getCourseUnitID());
-	} else {
-	    mailBean.sendCourseEditUnitMail(recipients,
-		    this.courseUnit.getCourseUnitID());
+	if (recipients.size() > 0) {
+	    if (delete) {
+		// mailBean.sendCourseDeleteUnitMail(recipients,
+		// this.courseUnit.getCourseUnitID());
+	    } else {
+		mailBean.sendCourseEditUnitMail(recipients,
+			this.courseUnit.getCourseUnitID());
+	    }
 	}
     }
 
@@ -521,7 +540,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private float calculateNewAccountBalance(float price, User user,
 	    boolean signUp) {
-	if (!signUp) {
+	if (signUp) {
 	    if (user.getAccountBalance() >= price) {
 		return user.getAccountBalance() - price;
 	    } else {

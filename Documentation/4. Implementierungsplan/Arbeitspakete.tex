@@ -189,7 +189,7 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\hline   CourseDetailBean.init()                                    & 09.06.2015 \ \ 11:00       & 09.06.2015  \ \  12:00     & Ricky Strohmeier  &  1h     & 1,5h\\
 	\hline   CourseDetailBean.selectAllCourseUnits()                    & 09.06.2015 \ \ 12:00       & 09.06.2015  \ \  13:00     & Ricky Strohmeier  &  1h     &     \\
 	\hline   Getter/Setter CourseDetailBean                             & 09.06.2015 \ \ 13:00       & 09.06.2015  \ \  13:30     & Ricky Strohmeier  &  0,5h   & 0,5h\\
-	\hline   Pagination für CourseUnits                                 & 09.06.2015 \ \ 14:30       & 09.06.2015  \ \  15:30     & Ricky Strohmeier  &  1h     &     \\
+	\hline   Pagination für CourseUnits                                 & 09.06.2015 \ \ 14:30       & 09.06.2015  \ \  15:30     & Ricky Strohmeier  &  1h     &  4h \\
 	\hline   CourseDAO.getCourse(Transaction trans, int courseID)       & 09.06.2015 \ \ 16:30       & 09.06.2015  \ \  17:30     & Ricky Strohmeier  &  1h     & 1,5h\\
 	\hline   CourseDAO.updateCourse(Transaction trans, Course course)   & 08.06.2015 \ \ 15:00       & 08.06.2015  \ \  16:00     & Ricky Strohmeier  &  1h     & 2,5h\\
 	\hline   CourseUnitDAO.getCourseUnitsFromCourse(Transaction trans, int courseID, PaginationData pagination) & 08.06.2015 \ \ 16:00       & 08.06.2015  \ \  17:30     & Ricky Strohmeier &  1,5h   &  3h \\
@@ -253,14 +253,18 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Kurseinheiten anlegen, editieren, löschen}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   editCourseUnit.xhtml                                       & 09.06.2015 \ \ 15:00       & 09.06.2015  \ \  17:30     & Tobias Fuchs &  2,5h                & \\
-		\hline   CourseUnitManagementBean.java                              & 09.06.2015 \ \ 08:00       & 09.06.2015  \ \  14:00     & Tobias Fuchs &  6h                & \\
-		\hline   CourseUnitDAO.createCourseUnit(Transaction trans, CourseUnit courseUnit, int courseID)  & 10.06.2015 \ \ 08:00       & 10.06.2015  \ \  09:30      &  Tobias Fuchs &                   & \\ 
-		\hline   CourseUnitDAO.getCourseUnit(Transaction trans, int courseUnitID)                        & 10.06.2015 \ \ 09:30       & 10.06.2015  \ \  10:30      & Tobias Fuchs &  1h                & \\ 
-		\hline   CourseUnitDAO.updateCourseUnit(Transaction trans, CourseUnit courseUnit)                & 10.06.2015 \ \ 10:30       & 10.06.2015  \ \  12:00      & Tobias Fuchs &   1,5h                &\\ 
-		\hline   CourseUnitDAO.deleteCourseUnit(Transaction trans, int courseUnitID)                     & 10.06.2015 \ \ 12:00       & 10.06.2015  \ \  13:30      & Tobias Fuchs &   1,5h                &\\
-		\hline   CourseUnitDAO.getNewCourseUnitID(Transaction trans)        & 10.06.2015 \ \ 16:00       & 10.06.2015  \ \ 16:30      & Tobias Fuchs  &  0,5h              &\\
-		\hline   UserDAO.getParticipiantsOfCourseUnit(Transaction trans, PaginationData pagination, int courseUnitId)& 10.06.2015 \ \ 14:30       & 10.06.2015  \ \  16:00     & Tobias Fuchs &   2h                & \\
+		\hline   editCourseUnit.xhtml                                       & 09.06.2015 \ \ 15:00       & 09.06.2015  \ \  17:30     & Tobias Fuchs &  2,5h                & 6h \\
+		\hline   CourseUnitManagementBean.java                              & 09.06.2015 \ \ 08:00       & 09.06.2015  \ \  14:00     & Tobias Fuchs &  6h                  & 9h\\
+		\hline   CourseUnitDAO.createCourseUnit(Transaction trans, CourseUnit courseUnit, int courseID)  & 10.06.2015 \ \ 08:00       & 10.06.2015  \ \  09:30      &  Tobias Fuchs &   1,5h   & 3h \\ 
+		\hline   CourseUnitDAO.updateCourseUnit(Transaction trans, CourseUnit courseUnit)                & 10.06.2015 \ \ 10:30       & 10.06.2015  \ \  12:00      & Tobias Fuchs &   1,5h & 2h\\ 
+		\hline   CourseUnitDAO.deleteCourseUnit(Transaction trans, int courseUnitID)                     & 10.06.2015 \ \ 12:00       & 10.06.2015  \ \  13:30      & Tobias Fuchs &   1,5h & 3h\\
+		\hline    CourseUnitDAO.getIdsCourseUnitsOfCycle(Transaction trans, int courseUnitId)             &      &                    &     Tobias Fuchs    &        & 2h\\
+		\hline    CourseUnitDAO.getPriceOfUnit(Transaction trans, int unitId) &      &                    &     Tobias Fuchs    &        & 0,5h\\
+		\hline    CourseUnitDAO.getNumberOfParticipants(Transaction trans,int courseUnitId) &      &                    &     Tobias Fuchs    &        & 0,5h\\ 
+		\hline   UserDAO.getParticipiantsOfCourseUnit(Transaction trans, PaginationData pagination, int courseUnitId)& 10.06.2015 \ \ 14:30       & 10.06.2015  \ \  16:00     & Tobias Fuchs &   2h                &  2h\\
+		\hline CycleDAO.createCycle(Transaction trans, int courseID, Cycle cycle) &      &                    &     Tobias Fuchs    &        & 2h\\
+		\hline CycleDAO.int getCycleId(Transaction trans, int courseUnitId) &      &                    &     Tobias Fuchs    &        & 1h\\
+		\hline PaginationDataTest.java&      &                    &     Tobias Fuchs    &        & 2h\\
 		\hline 
 	\end{tabular} \ \\
 	\ \\

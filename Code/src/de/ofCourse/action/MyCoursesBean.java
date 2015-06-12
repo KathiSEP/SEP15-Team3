@@ -83,7 +83,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 	
 	pagination = new PaginationData(elementsPerPage,0,"title",true);
 	
-	transaction = new Connection();
+	transaction = Connection.create();
 
 	transaction.start();
 	try {
