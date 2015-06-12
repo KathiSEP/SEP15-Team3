@@ -20,6 +20,7 @@ import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
@@ -77,7 +78,7 @@ public class UserProfileBean implements Pagination {
     
     private int userID;
 
-    
+    private String salutation;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -131,8 +132,11 @@ public class UserProfileBean implements Pagination {
      * @return link to the next page
      */
     public void saveSettings() {
-    	
-    	System.out.println("in der methode");
+    	if (salutation.equals("mr")) {
+    		user.setSalutation(Salutation.MR);
+    	} else {
+    		user.setSalutation(Salutation.MS);
+    	}
     	
     	transaction = Connection.create();
     	transaction.start();
@@ -338,6 +342,14 @@ public class UserProfileBean implements Pagination {
        
         return "" + userID;
     }
+
+	public String getSalutation() {
+		return salutation;
+	}
+
+	public void setSalutation(String salutation) {
+		this.salutation = salutation;
+	}
     
     
 

@@ -82,9 +82,9 @@
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.email}" />
 	                                    </div>
+	                                    <br/>
 	                                    
 	                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" />
-                                        <br/>
 			                        </h:panelGroup>
                                 </h:form>
                                 
@@ -93,9 +93,9 @@
                                     <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
 	                                    <div class="input-group" >
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
-	                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.user.salutation}" >
-	                                            <f:selectItem itemValue="Salutation.MR" itemLabel="Herr" />
-	                                            <f:selectItem itemValue="Salutation.MS" itemLabel="Frau" />
+	                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.salutation}" >
+	                                            <f:selectItem itemValue="mr" itemLabel="Herr" />
+	                                            <f:selectItem itemValue="ms" itemLabel="Frau" />
 	                                        </h:selectOneMenu>
 	                                    </div>
 	                                
