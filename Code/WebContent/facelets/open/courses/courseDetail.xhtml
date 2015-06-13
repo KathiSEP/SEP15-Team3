@@ -18,7 +18,6 @@
 					</div>
 				</div>
 				<h:form>
-				<h:graphicImage value="/image?courseImage=#{courseDetailBean.courseID}" width="200" height="200" ></h:graphicImage>
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
 						<div class="panel panel-info">
@@ -80,6 +79,7 @@
 							<div class="panel-heading"><strong>Beschreibung</strong></div>
 							<div class="panel-body">
 								<div class="row" style="text-align:center;"></div>
+								<h:graphicImage value="/image?courseImage=#{courseDetailBean.courseID}" width="200" height="200" ></h:graphicImage>
 								<div class="row" style="padding-top:12px;">
 									<div class="col-lg-12">
 										<h:inputText class="form-control" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.course.description}"/>
