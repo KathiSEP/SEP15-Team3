@@ -144,6 +144,7 @@ public class AccountManagmentBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+        this.pagination = pagination;
     }
 
     /**
@@ -162,6 +163,7 @@ public class AccountManagmentBean implements Pagination {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
 }
