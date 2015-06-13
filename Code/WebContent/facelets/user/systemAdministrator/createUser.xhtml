@@ -26,6 +26,21 @@
                         <div class="panel-body">
                             <h:form class="form-horizontal" id="formCreateUser">
                             
+                                <div class="col-lg-12">
+                                    <h:message for="firstnameRegister" style="color:red" />
+                                    <h:message for="lastnameRegister" style="color:red" />
+                                    <h:message for="usernameRegister" style="color:red" />
+                                    <h:message for="passwordRegister" style="color:red" />
+                                    <h:message for="passwordConfirmRegister" style="color:red" />
+                                    <h:message for="birthdateRegister" style="color:red" />
+                                    <h:message for="streetRegister" style="color:red" />
+                                    <h:message for="houseNumberRegister" style="color:red" />
+                                    <h:message for="locationRegister" style="color:red" />
+                                    <h:message for="zipcodeRegister" style="color:red" />
+                                    <h:message for="countryRegister" style="color:red" />
+                                    <h:message for="emailRegister" style="color:red" />
+                                </div>
+                            
                                 <div class="input-group">
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Anrede:</span>
@@ -71,7 +86,7 @@
                                         style="width: 160px; text-align: right;">Straße:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="streetRegister" value="#{userManagementBeanuser.user.address.street}"
-                                        validatorMessage="Die Eingabe darf höchstens 100 Zeichen lang sein. ">
+                                        validatorMessage="Die Straße darf höchstens 100 Zeichen lang sein. ">
                                                      <f:validateLength maximum="100" />
                                     </h:inputText>
                                 </div>
@@ -81,7 +96,7 @@
                                         style="width: 160px; text-align: right;">Hausnummer:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="housenumberRegister" value="#{userManagementBeanuser.user.address.houseNumber}"
-                                        validatorMessage="Die Eingabe darf höchstens 9 Zeichen lang sein. ">
+                                        validatorMessage="Die Hausnummer darf höchstens 9 Zeichen lang sein. ">
                                                      <f:validateLength maximum="9" />
                                     </h:inputText>
                                 </div>
@@ -91,7 +106,7 @@
                                         style="width: 160px; text-align: right;">Stadt</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="locationRegister" value="#{userManagementBeanuser.user.address.city}"
-                                        validatorMessage="Die Eingabe muss zwischen 1 und 100 Zeichen lang sein. ">
+                                        validatorMessage="Die Stadt muss zwischen 1 und 100 Zeichen lang sein. ">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                     </h:inputText>
                                 </div>
@@ -101,8 +116,17 @@
                                         style="width: 160px; text-align: right;">Postleitzahl:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="zipcodeRegister" value="#{userManagementBeanuser.user.address.zipCode}"
-                                        validatorMessage="Die Eingabe muss zwischen 1 und 10 Zeichen lang sein. ">
+                                        validatorMessage="Die Postleitzahl muss zwischen 1 und 10 Zeichen lang sein. ">
                                                      <f:validateLength minimum ="1" maximum="10" />
+                                    </h:inputText>
+                                </div>
+                                
+                                <div class="input-group" style="padding-top:5px;">
+                                    <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+                                    <h:inputText class="form-control" style="width:300px;" id="countryRegister"
+                                        value="#{userProfileBean.user.address.country}" 
+                                        validatorMessage="Das Land muss zwischen 1 und 100 Zeichen lang sein.">
+                                                     <f:validateLength minimum ="1" maximum="100" />
                                     </h:inputText>
                                 </div>
                                 
