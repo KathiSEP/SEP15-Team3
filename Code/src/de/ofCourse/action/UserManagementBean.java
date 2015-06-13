@@ -11,6 +11,7 @@ import javax.servlet.http.Part;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -46,6 +47,8 @@ public class UserManagementBean {
      * Stores the entered or displayed data of the user.
      */
     private User user;
+    
+    private String salutation;
     
     private String password;
     
@@ -88,6 +91,12 @@ public class UserManagementBean {
 	        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
 	            this.transaction.rollback();
 	        } else {
+	        	if (salutation.equals("mr")) {
+	        		user.setSalutation(Salutation.MR);
+	        	} else {
+	        		user.setSalutation(Salutation.MS);
+	        	}
+	        	
 	        	String salt = generateSalt();
 	        	String pwHash = PasswordHash.hash(password, salt);
 	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
@@ -155,7 +164,15 @@ public class UserManagementBean {
     public void setUser(User user) {
     }
 
-    public String getPassword() {
+    public String getSalutation() {
+		return salutation;
+	}
+
+	public void setSalutation(String salutation) {
+		this.salutation = salutation;
+	}
+
+	public String getPassword() {
 		return password;
 	}
 
