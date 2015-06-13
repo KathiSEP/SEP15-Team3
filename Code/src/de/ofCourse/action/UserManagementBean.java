@@ -97,7 +97,7 @@ public class UserManagementBean {
 	        		user.setSalutation(Salutation.MS);
 	        	}
 	        	
-	        	String salt = generateSalt();
+	        	String salt = String.valueOf(System.currentTimeMillis() * Math.random());
 	        	String pwHash = PasswordHash.hash(password, salt);
 	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
 	        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
@@ -120,10 +120,6 @@ public class UserManagementBean {
         	transaction.rollback();
         }
     	return goToPage;
-    }
-    
-    private String generateSalt() {
-    	return String.valueOf(System.currentTimeMillis() * Math.random());
     }
 
     /**
