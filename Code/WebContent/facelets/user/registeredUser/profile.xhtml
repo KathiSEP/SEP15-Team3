@@ -88,6 +88,20 @@
 			                        </h:panelGroup>
                                 </h:form>
                                 
+                                <div class="col-lg-12">
+			                        <h:message for="firstnameRegister" style="color:red" />
+			                        <h:message for="lastnameRegister" style="color:red" />
+			                        <h:message for="usernameRegister" style="color:red" />
+			                        <h:message for="passwordRegister" style="color:red" />
+			                        <h:message for="passwordConfirmRegister" style="color:red" />
+			                        <h:message for="birthdateRegister" style="color:red" />
+			                        <h:message for="streetRegister" style="color:red" />
+			                        <h:message for="houseNumberRegister" style="color:red" />
+			                        <h:message for="locationRegister" style="color:red" />
+			                        <h:message for="zipcodeRegister" style="color:red" />
+			                        <h:message for="countryRegister" style="color:red" />
+			                        <h:message for="emailRegister" style="color:red" />
+                                </div>
                             
                                 <h:form class="form-horizontal" id="formChangeSettings">
                                     <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
@@ -104,7 +118,6 @@
 	                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
 	                                            value="#{userProfileBean.user.username}" 
 	                                            required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein.">
-	                                                     <f:validator validatorId="userNameValidator"/>
 	                                        </h:inputText>
 	                                    </div>
 	                                

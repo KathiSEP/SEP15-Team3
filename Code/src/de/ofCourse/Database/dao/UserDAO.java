@@ -188,7 +188,7 @@ public class UserDAO {
 			}
 		} catch (SQLException e) {
 			LogHandler.getInstance().
-				error("SQL Exception occoured during executing existingNick(Transaction trans, String nickname)");
+				error("SQL Exception occoured during executing nickTaken(Transaction trans, String nickname)");
 			throw new InvalidDBTransferException();
 		} finally {
 			if (stmt != null) {
@@ -931,7 +931,11 @@ public class UserDAO {
     		statement.setString(2, user.getLastname());
     		statement.setString(3, user.getEmail());
     	    statement.setString(4, pwHash);
-    		statement.setDate(5, (Date) user.getDateOfBirth());
+    	    
+    	    java.sql.Date date = new java.sql.Date(user.getDateOfBirth()
+    				.getTime());
+    	    
+    		statement.setDate(5, date);
     		statement.setString(6, user.getSalutation().toString());
     	    statement.setString(7, user.getUsername());
     	    statement.setInt(8, user.getUserID());

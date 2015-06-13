@@ -26,6 +26,7 @@ import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Displays the profile of a user and provides the functionality to edit the data
@@ -137,14 +138,21 @@ public class UserProfileBean implements Pagination {
     	} else {
     		user.setSalutation(Salutation.MS);
     	}
-    	
     	transaction = Connection.create();
     	transaction.start();
     	
     	try {
-    		UserDAO.updateUser(transaction, user, password);
-    		transaction.commit();
-    		readOnly = true;
+    		User checkUser = UserDAO.getUser(transaction, userID);
+    		boolean nickTaken = UserDAO.nickTaken(transaction, user.getUsername());
+    		boolean emailTaken = UserDAO.emailExists(transaction, user.getEmail());
+    		
+    		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
+    			UserDAO.updateUser(transaction, user, PasswordHash.hash(password, generateSalt()));
+    			transaction.commit();
+    			readOnly = true;
+    		} else {
+    			transaction.rollback();
+    		}
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
@@ -152,6 +160,36 @@ public class UserProfileBean implements Pagination {
                     + "saveSettings()");
     		transaction.rollback();
     	}
+    }
+    
+    private String generateSalt() {
+    	return String.valueOf(System.currentTimeMillis() * Math.random());
+    }
+    
+    /**
+     * 
+     * @param checkUser
+     * @param nickTaken
+     * @param emailTaken
+     * @return
+     * 
+     * @author Patrick Cretu
+     */
+    private boolean acceptUserInput(User checkUser, boolean nickTaken, boolean emailTaken) {
+    	boolean check = false;
+    	boolean sameEmail = checkUser.getEmail().equals(user.getEmail());
+    	boolean sameNick = checkUser.getUsername().equals(user.getUsername());
+    	
+    	if (sameEmail && sameNick) {
+    		check = true;
+    	} else if(sameEmail && !sameNick && !nickTaken) {
+    		check = true;
+    	} else if (!sameEmail && !emailTaken && sameNick) {
+    		check = true;
+    	} else if (!sameEmail && !emailTaken && !sameNick && !nickTaken) {
+    		check = true;
+    	}
+    	return check;
     }
     
     /**
