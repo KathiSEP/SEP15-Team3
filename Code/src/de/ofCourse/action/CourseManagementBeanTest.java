@@ -34,7 +34,7 @@ public class CourseManagementBeanTest extends TestCase{
         
         assertEquals(courseManagementBean.getCourse(), course);
 
-        assertEquals(courseManagementBean.createCourse(), "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=0");
+        assertEquals(courseManagementBean.createCourse(), "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID=0");
         
     }
 

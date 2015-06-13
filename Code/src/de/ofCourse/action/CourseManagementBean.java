@@ -95,7 +95,7 @@ public class CourseManagementBean {
         int createdCourseID = 0;
         
         if(testing) {
-            return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=0";
+            return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID=0";
         } else {
             this.transaction = Connection.create();
             transaction.start();
@@ -115,7 +115,7 @@ public class CourseManagementBean {
     
                     // Throwing success message into the faces context..
                     FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
-                   return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&id=" + createdCourseID;
+                   return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID=" + createdCourseID;
                 }
             } catch (InvalidDBTransferException e) {
                 this.transaction.rollback();
