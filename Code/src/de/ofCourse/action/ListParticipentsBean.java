@@ -24,7 +24,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet
  * <code>listParticipients</code>.
  * 
- * @author Tobias Fuchs
+ * @author Katharina Hölzl
  *
  */
 @ManagedBean
@@ -107,7 +107,7 @@ public class ListParticipentsBean implements Pagination {
     }
 
     /**
-     * Sets the value of the attribute <code>usersToActivate</code> that stores
+     * Sets the value of the attribute <code>usersToDelete</code> that stores
      * the participants which are to deleted from the course.
      * 
      * @param usersToDelete
@@ -137,7 +137,7 @@ public class ListParticipentsBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
+     // Not needed in MyCoursesBean
 
     }
     
@@ -154,6 +154,7 @@ public class ListParticipentsBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+        this.pagination = pagination;
     }
     
    
@@ -174,6 +175,7 @@ public class ListParticipentsBean implements Pagination {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
     

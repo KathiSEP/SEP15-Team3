@@ -7,8 +7,106 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Liste der Kursteilnehmer</ui:define>
-		<body>
-		</body>
+		<ui:define name="title">Liste aller Kursteilnehmer</ui:define>
+		<ui:define name="content">
+			<body>
+			     <h1>Liste aller Kursteilnehmer</h1>
+			     <div class="row" style="padding-top:20px;">
+                    <div class="col-lg-11">
+                    </div>
+                    <div class="col-lg-1">
+                        <h:commandButton id="cancel" class="btn btn-info"
+                                    value="Zurück"
+                                    action="#{listParticipantsBean.cancel}">          
+                                    <f:param name="" value="" />
+                                </h:commandButton>
+                    </div>
+                 </div>
+			     <div class="row" style="padding-top:20px;">
+                    <div class="col-lg-12">
+                        
+                       
+                        <h:dataTable value="#{listParticipantsBean.initializeParticipantsOfCourse}"
+                            var="" id="participantsTable" class=" table table-hover"
+                            cellspacing="0" width="100%">
+                           <h:column>
+                                <f:facet name="header">
+                                               Bild
+                                </f:facet>
+                                <h:outputText value="" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                               Benutzername
+                                </f:facet>
+                                <h:outputText value="" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                               E-Mail-Adresse
+                                </f:facet>
+                                <h:outputText value="" 
+                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                               zu Kursnews eingetragen
+                                </f:facet>
+                                <h:outputText value="" 
+                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}"/>
+                            </h:column>
+                           
+                            <h:column>
+                                <f:facet name="header" />
+                                <h:commandButton id="delete" class="btn btn-info"
+                                    value="Entfernen"
+                                    action="#{listParticipantsBean.deleteUsersFromCourse}"
+                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+                                    <f:param name="" value="" />
+                                </h:commandButton>
+                            </h:column>
+                        
+                            <f:facet name="footer">
+                                    <div class="row" style="text-align: center;">
+                                        <ul class="pagination">
+                                            <li><h:commandButton class="btn btn-info" value="Zurueck"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:param name="site" value="back" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton class="btn btn-default"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}"
+                                                    rendered="#{listParticipantsBean.pagination.currentPageNumber>=1}">
+                                                    <f:param name="site"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-1}" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton style="font-weight:bold;"
+                                                    class="btn btn-primary" 
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber +1}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:param name="site"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber}" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton class="btn btn-default"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber+2}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=listParticipantsBean.pagination.currentPageNumber+1}">
+                                                    <f:param name="site"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+1}"/>
+                                                </h:commandButton></li>
+                                            <li><h:commandButton class="btn btn-info" value="Weiter"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:param name="site" value="forward"/>
+                                                </h:commandButton></li>
+                                        </ul>
+                                    </div>
+                                </f:facet>
+                        
+                        </h:dataTable>
+                        </div>
+                    </div>
+                
+			</body>
+		</ui:define>
 	</ui:composition>
 </html>
