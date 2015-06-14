@@ -65,6 +65,7 @@
 										<f:attribute name="idUserToTopUp" value="#{idUserToTopUp}" />
 										<f:validator validatorId="offlineTransactionValidator" />
 									</h:inputText>
+									<h:message for="userIDToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
@@ -72,7 +73,9 @@
 									<h:inputText class="form-control" style="width:340px;"
 										value="systemConfigurationBean.userToTopUp.username"
 										id="usernameToTopUp" reuqired="true"
-										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein." binding="#{idUserToTopUp}"></h:inputText>
+										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein."
+										binding="#{idUserToTopUp}"></h:inputText>
+									<h:message for="usernameToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
@@ -80,7 +83,8 @@
 									<h:inputText class="form-control" style="width:340px;"
 										value="systemConfigurationBean.amountToTopUp"
 										id="ammountToTopUp" reuqired="true"
-										requiredMessage="Bitte geben Sie den auszuladenden Betrag ein."></h:inputText>
+										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."></h:inputText>
+									<h:message for="ammountToTopUp" style="color:red" />
 								</div>
 								<div>
 									<br />
@@ -104,6 +108,7 @@
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
+									<h:message for="ammountGivenCredi" style="color:red" />
 								</div>
 								<div>
 									<br />
