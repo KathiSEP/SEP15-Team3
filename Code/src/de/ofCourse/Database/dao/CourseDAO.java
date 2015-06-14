@@ -154,9 +154,12 @@ public class CourseDAO {
 	    } else {
 		pS.setString(5, course.getDescription());
 	    }
-	    InputStream inputStream = courseImage.getInputStream();
-            pS.setBinaryStream(6, inputStream, courseImage.getSize());
-
+	    if(courseImage != null && courseImage.getInputStream() != null) {
+    	        InputStream inputStream = courseImage.getInputStream();
+                pS.setBinaryStream(6, inputStream, courseImage.getSize());
+	    } else {
+	        pS.setBinaryStream(6, null);
+	    }
 	    ResultSet res = pS.executeQuery();
 	    res.next();
 	    generatedCourseID = res.getInt("id");

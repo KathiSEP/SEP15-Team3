@@ -102,9 +102,10 @@ public class CourseManagementBean {
             try {
                 // Create course.
                 createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
+                boolean leaderAddOK = CourseDAO.addLeaderToCourse(this.transaction, this.getCourseLeaderID(), createdCourseID);
                 this.transaction.commit();
                 
-                if (createdCourseID < 0) {
+                if (createdCourseID < 0 || leaderAddOK == false) {
     
                     //Throwing error message into the faces context.
                     FacesMessageCreator.createFacesMessage(null,
