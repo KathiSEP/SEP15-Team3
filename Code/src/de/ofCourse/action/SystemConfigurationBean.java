@@ -3,9 +3,13 @@
  */
 package de.ofCourse.action;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -27,38 +31,74 @@ import de.ofCourse.system.Transaction;
 @ManagedBean
 @RequestScoped
 public class SystemConfigurationBean {
-    
-    
+
+    /**
+     * Stores the overdraft credit that was granted by the administrator
+     */
+    private double overdraftCredit;
+
+    /**
+     * Stores the user whose account is to be toped up
+     */
+    private User userToTopUp;
+
+    /**
+     * Stores the type of account activation that was selected by the
+     * administrator.
+     */
+    private int accountActivationType;
+
+    /**
+     * represents the type of activation: email verification
+     */
+    private static final int type_EMAILVERIFICATION = 1;
+
+    /**
+     * represents the type of activation: email verification and activation by a
+     * course leader
+     */
+    private static final int type_EMAILVERIFICATION_AND_COURSELEADER = 2;
+
+    /**
+     * represents the type of activation: email verification and activation by a
+     * administrator
+     */
+    private static final int type_EMAILVERIFICATION_AND_SYSTEMADMINISTRATOR = 3;
+
     /**
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
 
     /**
-     * Stores the type of account activation that was selected by the
-     * administrator.
-     */
-    private String accountActivationType;
-
-    /**
-     * Stores the overdraft credit that was granted by the administrator
-     */
-    private float overdraftCredit;
-
-   
-
-    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user an the selected
      * language.
      */
+    @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+
+    /**
+     * Initializes the bean with the necessary values to run
+     */
+    @PostConstruct
+    private void init() {
+	this.transaction = Connection.create();
+	this.overdraftCredit = 0.00;
+    }
+
+    private void topUpUserAccount() {
+
+    }
+    
+    private double amountToTopUp;
 
     /**
      * Determines the type of account activation, that means it updates the
      * setting relating to account activation in the database.
      */
     public void determineAccountActivationType() {
+	System.out.println(this.accountActivationType);
     }
 
     /**
@@ -67,7 +107,7 @@ public class SystemConfigurationBean {
      * 
      * @return the selected account activation type
      */
-    public String getAccountActivationType() {
+    public int getAccountActivationType() {
 	return accountActivationType;
     }
 
@@ -78,7 +118,8 @@ public class SystemConfigurationBean {
      * @param accountActivationType
      *            the new type of account activation
      */
-    public void setAccountActivationType(String accountActivationType) {
+    public void setAccountActivationType(int accountActivationType) {
+	this.accountActivationType = accountActivationType;
     }
 
     /**
@@ -86,6 +127,7 @@ public class SystemConfigurationBean {
      * setting relating to overdraft credit in the database.
      */
     public void determineOverdraftCredit() {
+	System.out.println(this.overdraftCredit);
     }
 
     /**
@@ -94,7 +136,7 @@ public class SystemConfigurationBean {
      * 
      * @return the granted credit
      */
-    public float getOverdraftCredit() {
+    public double getOverdraftCredit() {
 	return overdraftCredit;
     }
 
@@ -105,7 +147,8 @@ public class SystemConfigurationBean {
      * @param overdraftCredit
      *            the new overdraft credit
      */
-    public void setOverdraftCredit(float overdraftCredit) {
+    public void setOverdraftCredit(double overdraftCredit) {
+	this.overdraftCredit = overdraftCredit;
     }
 
     /**
@@ -114,7 +157,7 @@ public class SystemConfigurationBean {
      * @return link to <code>createUser</code> page
      */
     public String loadCreateNewUserPage() {
-	return null;
+	return "/facelets/user/systemAdministrator/createUser.xhtml";
     }
 
     /**
@@ -124,7 +167,7 @@ public class SystemConfigurationBean {
      * @return link to next page
      */
     public String loadManageUserPage() {
-	return null;
+	return "/facelets/user/systemAdministrator/listUsers.xhtml";
     }
 
     /**
@@ -133,7 +176,7 @@ public class SystemConfigurationBean {
      * @return link to <code>createCourse</code> page
      */
     public String loadCreateNewCoursePage() {
-	return null;
+	return "/facelets/user/systemAdministrator/createCourse.xhtml";
     }
 
     /**
@@ -143,10 +186,8 @@ public class SystemConfigurationBean {
      * @return link to next page
      */
     public String loadManageCoursesPage() {
-	return null;
+	return "/facelets/open/courses/search.xhtml";
     }
-
-    
 
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
@@ -164,6 +205,7 @@ public class SystemConfigurationBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+	this.sessionUser = userSession;
     }
 
 }

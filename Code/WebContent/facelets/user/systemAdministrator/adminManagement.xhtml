@@ -44,54 +44,6 @@
 							</h:form>
 						</div>
 					</div>
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title">Oberfläche</h3>
-						</div>
-						<div class="panel-body">
-							<h:form>
-								<h4>Logo</h4>
-								<div class="input-group">
-									<h:inputText class="form-control" id="logoImage"></h:inputText>
-									<span class="input-group-btn"><button
-											class="btn btn-default" type="button">Logo auswählen</button>
-									</span>
-								</div>
-								<div>
-									<br />
-									<h:commandButton id="saveLogo" class="btn btn-info pull-right"
-										style="width:135px;" value="Logo ändern" />
-								</div>
-							</h:form>
-							<br />
-							<br />
-							<br />
-							<h:form>
-								<h4>Oberfläche anpassen</h4>
-								<p style="font-size: 14px;">Hier können Sie ihre
-									'customStyle.css' - Datei hochladen:</p>
-								<div class="input-group">
-									<h:inputText class="form-control" id="cssUserInterface"></h:inputText>
-									<span class="input-group-btn">
-										<button class="btn btn-default" type="button">CSS-Datei
-											auswählen</button>
-									</span>
-								</div>
-								<div>
-									<br />
-									<h:commandButton id="saveCssUserInterface" class="btn btn-info pull-right"
-										style="width:135px;" value="Oberfläche ändern" />
-								</div>
-							</h:form>
-							<br />
-							<br />
-							<h:form>
-								<h4>Impressum</h4>
-								<h:commandButton id="editImpressum" class="btn btn-info"
-									style="width:250px;" value="Impressum bearbeiten" />
-							</h:form>
-						</div>
-					</div>
 				</div>
 				<div class="col-lg-6">
 					<div class="panel panel-info">
@@ -106,24 +58,35 @@
 										style="width: 160px; text-align: right;">ID des
 										Benutzers:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="userIDToTopUp"></h:inputText>
+										id="userIDToTopUp"
+										value="systemConfigurationBean.userToTopUp.userID"
+										reuqired="true"
+										requiredMessage="Bitte geben Sie die ID eines Benutzers ein.">
+										<f:attribute name="idUserToTopUp" value="#{idUserToTopUp}" />
+										<f:validator validatorId="offlineTransactionValidator" />
+									</h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Name:</span>
+										style="width: 160px; text-align: right;">Benutzername:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="usernameToTopUp"></h:inputText>
+										value="systemConfigurationBean.userToTopUp.username"
+										id="usernameToTopUp" reuqired="true"
+										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein." binding="#{idUserToTopUp}"></h:inputText>
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Betrag:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										id="ammountToTopUp"></h:inputText>
+										value="systemConfigurationBean.amountToTopUp"
+										id="ammountToTopUp" reuqired="true"
+										requiredMessage="Bitte geben Sie den auszuladenden Betrag ein."></h:inputText>
 								</div>
 								<div>
 									<br />
 									<h:commandButton id="spendMoney"
 										class="btn btn-success pull-right" style="width:135px;"
+										action="#{systemConfigurationBean.topUpUserAccount}"
 										value="Konto aufladen" />
 								</div>
 							</h:form>
@@ -134,22 +97,20 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;"> Gewährter
 										Kredit:</span>
-									<h:inputText class="form-control" value="0,00"
-										style="width:340px;" id="ammountGivenCredit"></h:inputText>
+									<h:inputText class="form-control"
+										value="systemConfigurationBean.overdraftCredit"
+										style="width:340px;" id="ammountGivenCredit"
+										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
+										<f:convertNumber currencyCode="EUR" currencySymbol="€"
+											groupingUsed="true" maxFractionDigits="2" type="currency" />
+									</h:inputText>
 								</div>
 								<div>
 									<br />
 									<h:commandButton id="giveCredit"
 										class="btn btn-success pull-right" style="width:135px;"
+										action="#{systemConfigurationBean.determineOverdraftCredit}"
 										value="Speichern" />
-								</div>
-							</h:form>
-							<br /> <br /> <br />
-							<h:form class="form-horizontal" id="formStatistics">
-								<h4>Statistiken</h4>
-								<div>
-									<h:commandButton id="showStatistics" class="btn btn-info "
-										style="width:250px;" value="Einnahmestatistiken anzeigen" />
 								</div>
 							</h:form>
 						</div>
@@ -167,18 +128,13 @@
 										durch:</span>
 									<div>
 										<h:selectOneMenu class="form-control"
-											value="E-Mailverifikation" id="accountActivationSelection">
-											<f:selectItem itemValue="E-Mailverifikation"
-												itemLabel="E-Mailverifikation" />
-											<f:selectItem
-												itemValue="E-Mailverifikation und Aktivierung durch Kursleiter"
+											value="#{systemConfigurationBean.accountActivationType}"
+											id="accountActivationSelection">
+											<f:selectItem itemValue="1" itemLabel="E-Mailverifikation" />
+											<f:selectItem itemValue="2"
 												itemLabel="E-Mailverifikation und Aktivierung durch Kursleiter" />
-											<f:selectItem
-												itemValue="E-Mailverifikation und Aktivierung durch Administrator"
+											<f:selectItem itemValue="3"
 												itemLabel="E-Mailverifikation und Aktivierung durch Administrator" />
-											<f:selectItem
-												itemValue="E-Mailverifikation und Aktivierung durch Kursleiter oder Administrator"
-												itemLabel="E-Mailverifikation und Aktivierung durch Kursleiter oder Administrator" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -186,6 +142,7 @@
 									<br />
 									<h:commandButton id="saveAccountActivation"
 										class="btn btn-success pull-right" style="width:135px;"
+										action="#{systemConfigurationBean.determineAccountActivationType}"
 										value="Speichern" />
 								</div>
 							</h:form>

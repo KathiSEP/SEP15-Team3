@@ -47,4 +47,8 @@
         <validator-id>userExistsValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.UserExistsValidator</validator-class>
     </validator>
+     <validator>
+        <validator-id>offlineTransactionValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.OfflineTransactionValidator</validator-class>
+    </validator>
 </faces-config>

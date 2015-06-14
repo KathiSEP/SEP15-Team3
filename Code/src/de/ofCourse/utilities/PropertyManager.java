@@ -3,8 +3,8 @@
  */
 package de.ofCourse.utilities;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
@@ -13,8 +13,7 @@ import de.ofCourse.system.LogHandler;
 
 /**
  * Provides the functionality to read out a property file, which contains system
- * configuration data. The config-file have to exist under the
- * <ServletContext-Path>/config/ and is called ofCourse.properties.
+ * configuration data.
  * 
  * @author Tobias Fuchs
  *
@@ -29,68 +28,62 @@ public class PropertyManager {
     /**
      * Name of the general configuration file
      */
-    private static String CONFIGFILENAME = "ofCourse.properties";
+    private final static String CONFIGURATIONFILE = "ofCourse.properties";
 
     /**
      * Path of the general configuration file
      */
-    private static String CONFIGFILEPATH = "/WEB-INF/config/";
+    private final static String CONFIGURATIONPATH = "/WEB-INF/config/";
 
     /**
      * Indicates whether the general configuration property was correctly loaded
      */
-    private static boolean configFileLoaded = false;
+    private static boolean configurationRead = false;
 
     /**
      * The general configuration property file to read from
      */
-    private static Properties configProperty = null;
+    private static Properties ofCourse = null;
 
     /**
      * Name of the logging configuration file
      */
-    private static String LOGGINGFILENAME = "logging.properties";
+    private final static String LOGGINGFILE = "logging.properties";
 
     /**
      * Path of the logging configuration file
      */
-    private static String LOGGINGFILEPATH = "/WEB-INF/config/";
+    private final static String LOGGINGPATH = "/WEB-INF/config/";
 
     /**
      * Indicates whether the logging configuration property was correctly loaded
      */
-    private static boolean loggingConfigFileLoaded = false;
+    private static boolean loggingRead = false;
 
     /**
      * The logging configuration property file to read from
      */
-    private static Properties loggingConfigProperty = null;
+    private static Properties logging = null;
 
     /**
      * Name of the mail configuration file
      */
-    private static String EMAILFILENAME = "mail.properties";
+    private final static String EMAILFILE = "mail.properties";
 
     /**
      * Path of the mail configuration file
      */
-    private static String EMAILFILEPATH = "/WEB-INF/config/";
+    private final static String EMAILPATH = "/WEB-INF/config/";
 
     /**
      * Indicates whether the mail configuration property was correctly loaded
      */
-    private static boolean mailConfigFileLoaded = false;
+    private static boolean mailRead = false;
 
     /**
      * The mail configuration property file to read from
      */
-    private static Properties mailConfigProperty = null;
-
-    /**
-     * Default constructor for a new PropertyManager object.
-     */
-    private PropertyManager() {
-    }
+    private static Properties mail = null;
 
     /**
      * Returns an instance of the PropertyManager class.
@@ -105,56 +98,57 @@ public class PropertyManager {
     }
 
     /**
-     * Returns a property value to a given key from the configuration file.
+     * Returns a property value to a given line from the configuration file.
      * 
-     * @param key
-     *            the key to determine the property value
+     * @param line
+     *            the line to determine the property value
      * 
      * @return the value of the found property
      */
-    public String getPropertyConfig(String key) {
+    public String getPropertyConfiguration(String line) {
 	String readValue = null;
-	configProperty = loadConfigProperty();
+	ofCourse = loadConfigurationProperty();
 
-	if (configFileLoaded && !configProperty.equals(null)) {
-	    readValue = configProperty.getProperty(key).toString();
+	if (configurationRead && !ofCourse.equals(null)) {
+	    readValue = ofCourse.getProperty(line).toString();
 	}
 	return readValue;
     }
 
     /**
-     * Returns a property value to a given key from the logging configuration
+     * Returns a property value to a given line from the logging configuration
      * file.
      * 
-     * @param key
-     *            the key to determine the property value
+     * @param line
+     *            the line to determine the property value
      * 
      * @return the value of the found property
      */
-    public String getPropertyLogger(String key) {
+    public String getPropertyLogger(String line) {
 	String readValue = null;
-	loggingConfigProperty = loadLoggingConfigProperty();
+	logging = loadLoggingConfigProperty();
 
-	if (loggingConfigFileLoaded && !loggingConfigProperty.equals(null)) {
-	    readValue = loggingConfigProperty.getProperty(key).toString();
+	if (loggingRead && !logging.equals(null)) {
+	    readValue = logging.getProperty(line).toString();
 	}
 	return readValue;
     }
 
     /**
-     * Returns a property value to a given key from the mail configuration file.
+     * Returns a property value to a given line from the mail configuration
+     * file.
      * 
-     * @param key
-     *            the key to determine the property value
+     * @param line
+     *            the line to determine the property value
      * 
      * @return the value of the found property
      */
-    public String getPropertyMail(String key) {
+    public String getPropertyMail(String line) {
 	String readValue = null;
-	mailConfigProperty = loadMailConfigProperty();
+	mail = loadMailConfigProperty();
 
-	if (mailConfigFileLoaded && !mailConfigProperty.equals(null)) {
-	    readValue = mailConfigProperty.getProperty(key).toString();
+	if (mailRead && !mail.equals(null)) {
+	    readValue = mail.getProperty(line).toString();
 	}
 	return readValue;
     }
@@ -168,20 +162,32 @@ public class PropertyManager {
      * @return the loaded property, if the loading was successful<br>
      *         null, otherwise
      */
-    private static Properties loadConfigProperty() {
+    private static Properties loadConfigurationProperty() {
 	Properties property = new Properties();
+	InputStream readInput = null;
 
 	try {
-	    property.load(FacesContext.getCurrentInstance()
+	    readInput = FacesContext
+		    .getCurrentInstance()
 		    .getExternalContext()
-		    .getResourceAsStream(CONFIGFILEPATH + CONFIGFILENAME));
-	    configFileLoaded = true;
-	} catch (FileNotFoundException e) {
-	    configFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the config property. Config poperty not found.");
+		    .getResourceAsStream(
+			    CONFIGURATIONPATH + CONFIGURATIONFILE);
+	    property.load(readInput);
+	    configurationRead = true;
 	} catch (IOException e) {
-	    configFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the config property.");
+	    configurationRead = false;
+	    LogHandler.getInstance().error(
+		    "Error during loading the config property.");
+	} finally {
+	    if (readInput != null) {
+		try {
+		    readInput.close();
+		} catch (IOException e) {
+		    LogHandler.getInstance().fatal(
+			    "Error occured during"
+				    + " loading configuration property.");
+		}
+	    }
 	}
 	return property;
     }
@@ -197,18 +203,29 @@ public class PropertyManager {
      */
     private static Properties loadLoggingConfigProperty() {
 	Properties property = new Properties();
+	InputStream readInput = null;
 
 	try {
-	    property.load(FacesContext.getCurrentInstance()
-		    .getExternalContext()
-		    .getResourceAsStream(LOGGINGFILEPATH + LOGGINGFILENAME));
-	    loggingConfigFileLoaded = true;
-	} catch (FileNotFoundException e) {
-	    loggingConfigFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the logging property. Logging poperty not found.");
+
+	    readInput = FacesContext.getCurrentInstance().getExternalContext()
+		    .getResourceAsStream(LOGGINGPATH + LOGGINGFILE);
+	    property.load(readInput);
+
+	    loggingRead = true;
 	} catch (IOException e) {
-	    loggingConfigFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the logging property.");
+	    loggingRead = false;
+	    LogHandler.getInstance().error(
+		    "Error during loading the logging property.");
+	} finally {
+	    if (readInput != null) {
+		try {
+		    readInput.close();
+		} catch (IOException e) {
+		    LogHandler.getInstance().fatal(
+			    "Error occured during"
+				    + " loading logging property.");
+		}
+	    }
 	}
 	return property;
     }
@@ -224,19 +241,27 @@ public class PropertyManager {
      */
     private static Properties loadMailConfigProperty() {
 	Properties property = new Properties();
-
+	InputStream readInput = null;
 	try {
-	    property.load(FacesContext.getCurrentInstance()
-		    .getExternalContext()
-		    .getResourceAsStream(EMAILFILEPATH + EMAILFILENAME));
-	    mailConfigFileLoaded = true;
-	} catch (FileNotFoundException e) {
-	    mailConfigFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the mail property. Mail poperty not found.");
+	    readInput = FacesContext.getCurrentInstance().getExternalContext()
+		    .getResourceAsStream(EMAILPATH + EMAILFILE);
+	    property.load(readInput);
+	    mailRead = true;
 	} catch (IOException e) {
-	    mailConfigFileLoaded = false;
-	    LogHandler.getInstance().error("Error during loading the mail property.");
+	    mailRead = false;
+	    LogHandler.getInstance().error(
+		    "Error during loading the mail property.");
+	} finally {
+	    if (readInput != null) {
+		try {
+		    readInput.close();
+		} catch (IOException e) {
+		    LogHandler.getInstance().fatal(
+			    "Error occured during" + " loading mail property.");
+		}
+	    }
 	}
 	return property;
     }
+
 }
