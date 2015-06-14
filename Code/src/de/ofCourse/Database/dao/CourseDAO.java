@@ -68,19 +68,17 @@ public class CourseDAO {
 
 	boolean courseLeaderExists = false;
 
-	// PRepare SQL- INSERT and database connection
+	// Prepare SQL- INSERT and database connection
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "SELECT * FROM users WHERE id = ? AND role != ?::role";
 
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try {
 
-	    // PreparedStatement befüllen, bei optionalen Feldern überprüfen,
-	    // ob der Benutzer die Daten angegeben hat oder ob in die
-	    // Datenbank null-Werte geschrieben werden müssen.
+	 // Filling PreparedStatement.
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseLeaderID);
 	    pS.setString(2, UserRole.REGISTERED_USER.toString());
@@ -93,7 +91,9 @@ public class CourseDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing createUser(Transaction trans, User user, String pwHash)");
+		    .error("SQL Exception occoured during executing "
+		            + "courseLeaderExists(Transaction trans, "
+		            + "int courseLeaderID)");
 	    throw new InvalidDBTransferException();
 
 	}
@@ -1151,7 +1151,8 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "Insert into \"course_instructors\" (course_instructor_id, course_id) "
+	String sql = "Insert into \"course_instructors\" "
+	        + "(course_instructor_id, course_id) "
 		+ "values (?, ?)";
 
 	// catch potential SQL-Injection
@@ -1205,7 +1206,8 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? AND course_instructor_id = ?";
+	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? "
+	        + "AND course_instructor_id = ?";
 	// catch potential SQL-Injection
 	try {
 	    if (setRelationMethode(courseID, userID, conn, sql) == 1){

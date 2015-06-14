@@ -45,7 +45,7 @@ public class CourseManagementBean {
      * For testing (CourseManagementBeanTest)
      */
     private boolean testing = false;
-    
+
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
@@ -58,17 +58,17 @@ public class CourseManagementBean {
      * Stores the entered or displayed data of the course.
      */
     private Course course;
-    
+
     /**
      * Stores the image of the course.
      */
     private Part courseImage;
-    
+
     /**
      * Stores the ID of the course leader.
      */
     private Integer courseLeaderID;
-    
+
     /**
      * Initialization of objects.
      */
@@ -77,7 +77,7 @@ public class CourseManagementBean {
         this.course = new Course();
         this.setCourseLeaderID(null);
     }
-    
+
     public void activateTesting() {
         this.testing = true;
     }
@@ -91,39 +91,49 @@ public class CourseManagementBean {
      * @return link to the courseDetail page
      */
     public String createCourse() {
-        
+
         int createdCourseID = 0;
-        
-        if(testing) {
-            return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID=0";
+
+        if (testing) {
+            return "/facelets/open/courses/courseDetail.xhtml?"
+                    + "faces-redirect=true&courseID=0";
         } else {
             this.transaction = Connection.create();
             transaction.start();
             try {
                 // Create course.
-                createdCourseID = CourseDAO.createCourse(this.transaction, this.course, this.courseImage);
-                boolean leaderAddOK = CourseDAO.addLeaderToCourse(this.transaction, this.getCourseLeaderID(), createdCourseID);
+                createdCourseID = CourseDAO.createCourse(this.transaction,
+                        this.course, this.courseImage);
+                boolean leaderAddOK = CourseDAO.addLeaderToCourse(
+                        this.transaction, this.getCourseLeaderID(),
+                        createdCourseID);
                 this.transaction.commit();
-                
+
                 if (createdCourseID < 0 || leaderAddOK == false) {
-    
-                    //Throwing error message into the faces context.
+
+                    // Throwing error message into the faces context.
                     FacesMessageCreator.createFacesMessage(null,
                             "Beim Erstellen des Kurses trat ein Fehler auf!");
-    
-                    return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
+
+                    return "/facelets/user/systemAdministrator/"
+                            + "createCourse.xhtml?faces-redirect=false";
                 } else {
-    
+
                     // Throwing success message into the faces context..
-                    FacesMessageCreator.createFacesMessage(null, "Kurs wurde erfolgreich angelegt!");             
-                   return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID=" + createdCourseID;
+                    FacesMessageCreator.createFacesMessage(null,
+                            "Kurs wurde erfolgreich angelegt!");
+                    return "/facelets/open/courses/courseDetail.xhtml?"
+                            + "faces-redirect=true&courseID="
+                            + createdCourseID;
                 }
             } catch (InvalidDBTransferException e) {
                 this.transaction.rollback();
-                FacesMessageCreator.createFacesMessage(null, "Problem beim Anlegen des Kurses!");
+                FacesMessageCreator.createFacesMessage(null,
+                        "Problem beim Anlegen des Kurses!");
             }
         }
-        return "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false";
+        return "/facelets/user/systemAdministrator/createCourse.xhtml?"
+                + "faces-redirect=false";
     }
 
     /**
@@ -132,7 +142,7 @@ public class CourseManagementBean {
      * @return the course
      */
     public Course getCourse() {
-	return course;
+        return course;
     }
 
     /**
@@ -145,15 +155,13 @@ public class CourseManagementBean {
         this.course = course;
     }
 
-    
-
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -179,7 +187,7 @@ public class CourseManagementBean {
      * Sets the value of the attribute <code>courseImage</code>.
      * 
      * @param courseImage
-     *                  image of the course
+     *            image of the course
      */
     public void setCourseImage(Part courseImage) {
         this.courseImage = courseImage;
@@ -197,7 +205,8 @@ public class CourseManagementBean {
     /**
      * Sets the value of the attribute <code>courseLeaderID</code>.
      * 
-     * @param courseLeaderID the courseLeaderID to set
+     * @param courseLeaderID
+     *            the courseLeaderID to set
      */
     public void setCourseLeaderID(Integer courseLeaderID) {
         this.courseLeaderID = courseLeaderID;
