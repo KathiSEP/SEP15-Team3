@@ -185,6 +185,9 @@ public class SearchCourseBean implements Pagination {
     		transaction = Connection.create();
     		transaction.start();
     		
+    		System.out.println("search param: " + searchParam);
+    		
+    		
     		pagination.setCurrentPageNumber(0);
     		pagination.setSortAsc(true);
     		pagination.setSortColumn(searchParam);

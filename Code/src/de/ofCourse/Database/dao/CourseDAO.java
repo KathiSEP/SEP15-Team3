@@ -198,31 +198,39 @@ public class CourseDAO {
 	String query = null;
 	switch (param) {
 	case "day":
-	    query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" "
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
 		    + "WHERE \"course_units\".start_time::date = current_date "
 		    + "AND \"course_units\".course_id = \"courses\".id";
 	    return countCourses(conn, query);
 	case "week":
-	    query = "SELECT COUNT(*) FROM \"courses\", \"course_units\" "
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
 		    + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
 	    return countCourses(conn, query);
 	case "total":
-	    query = "SELECT COUNT(*) FROM \"courses\"";
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\"";
 	    return countCourses(conn, query);
 	case "courseID":
-	    query = "SELECT COUNT(*) FROM \"courses\" "
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
 		    + "WHERE CAST(id AS TEXT) LIKE ?";
 	    return countCourses(conn, query, searchString);
 	case "title":
-	    query = "SELECT COUNT(*) FROM \"courses\" "
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
 		    + "WHERE LOWER(titel) LIKE LOWER(?)";
 	    return countCourses(conn, query, searchString);
 	case "leader":
-	    query = "SELECT COUNT(*) FROM \"courses\", \"users\", \"course_instructors\" "
+	    query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"users\", \"course_instructors\" "
 		    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
 		    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
 		    + "AND \"course_instructors\".course_id = courses.id";
 	    return countCourses(conn, query, searchString);
+	case "date":
+		
+		System.out.println("in right case");
+		
+		query = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
+				+ "WHERE \"courses\".id = \"course_units\".course_id "
+				+ "AND \"course_units\".start_time::date = ?";
+		return countCourses(conn, query, searchString);
 	}
 	return 0;
     }
@@ -294,9 +302,22 @@ public class CourseDAO {
 	int numCourses = 0;
 
 	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setString(1, searchString);
+	    //stmt = conn.prepareStatement(query);
+	    
+	    System.out.println("before set pr.stmt");
+	    
+	    //stmt.setString(1, searchString);
+	    
+	    System.out.println("after set pr.stmt");
+	    stmt = conn.prepareStatement("SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
+				+ "WHERE \"courses\".id = \"course_units\".course_id "
+				+ "AND \"course_units\".start_time::date = '2015-06-10'");
+	    System.out.println(stmt);
+	    
 	    rst = stmt.executeQuery();
+	    
+	    System.out.println(stmt);
+	    
 	    rst.next();
 	    numCourses = rst.getInt(1);
 	} catch (SQLException e) {
@@ -460,6 +481,9 @@ public class CourseDAO {
 	String orderParam = getOrderParam(pagination.getSortColumn());
 	String dir = getSortDirection(pagination.isSortAsc());
 	List<Course> result = null;
+	
+	System.out.println("order param:" + orderParam);
+	
 
 	switch (searchParam) {
 	case "courseID":
@@ -478,15 +502,23 @@ public class CourseDAO {
 		    getCoursesByTitel);
 	    break;
 	case "leader":
-	    String getCoursesQuery = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	    String getCoursesByLeader = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
 		    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
 		    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
 		    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
 		    + "AND \"course_instructors\".course_id = courses.id ORDER BY "
 		    + orderParam + " " + dir + " LIMIT ? OFFSET ?";
 	    result = getCourses(conn, limit, offset, searchString,
-		    getCoursesQuery);
+		    getCoursesByLeader);
 	    break;
+	case "date":
+		String getCoursesByDate = "SELECT DISTINCT * FROM \"courses\", \"course_units\" "
+				+ "WHERE \"courses\".id = \"course_units\".id "
+				+ "AND \"course_units\".start_time::date = ? ORDER BY " + orderParam
+				+ " " + dir + " LIMIT ? OFFSET ?";
+		result = getCourses(conn, limit, offset, searchString,
+			    getCoursesByDate);
+		break;
 	default:
 	    ;
 	}
@@ -542,6 +574,10 @@ public class CourseDAO {
 	    stmt.setInt(3, offset);
 
 	    rst = stmt.executeQuery();
+	    
+	    System.out.println(stmt);
+	    System.out.println();
+	    
 	    result = getResult(rst);
 	} catch (SQLException e) {
 	    LogHandler
