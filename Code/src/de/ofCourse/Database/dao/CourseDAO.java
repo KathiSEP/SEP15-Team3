@@ -158,7 +158,7 @@ public class CourseDAO {
     	        InputStream inputStream = courseImage.getInputStream();
                 pS.setBinaryStream(6, inputStream, courseImage.getSize());
 	    } else {
-	        pS.setBinaryStream(6, null);
+	        pS.setBinaryStream(6, null, 0);
 	    }
 	    ResultSet res = pS.executeQuery();
 	    res.next();
