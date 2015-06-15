@@ -30,7 +30,6 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  *
- * @author Tobias Fuchs
  */
 public class SystemDAO {
 
@@ -48,12 +47,12 @@ public class SystemDAO {
      */
     public static int getOverdraftCredit(Transaction trans)
 	    throws InvalidDBTransferException {
-        
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        
-        String sql = "";
-        
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	String sql = "";
+
 	return 0;
 
     }
@@ -68,10 +67,28 @@ public class SystemDAO {
      *            the new value of the granted overdraft credit
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias
      */
-    public static void setOverdraftCredit(Transaction trans, int credit)
+    public static void setOverdraftCredit(Transaction trans, float credit)
 	    throws InvalidDBTransferException {
 
+	String queryOverdraft = "UPDATE \"system_attributes\" "
+		+ "SET overdraft_credit=?";
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	try (PreparedStatement stmt = conn.prepareStatement(queryOverdraft);
+		ResultSet res = null) {
+
+	    // Update the overdraft credit in the database
+	    stmt.setFloat(1, credit);
+	    stmt.executeUpdate();
+
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting overdraft credit.");
+	    throw new InvalidDBTransferException();
+	}
     }
 
     /**
@@ -83,7 +100,7 @@ public class SystemDAO {
      * @return type of activation
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
-     *             
+     * 
      * @author Katharina Hölzl
      */
     public static Activation getActivationType(Transaction trans)
@@ -119,7 +136,7 @@ public class SystemDAO {
 		    activation = Activation.ADMIN;
 		case "COMPLETE":
 		    activation = Activation.COMPLETE;
-		break;
+		    break;
 		}
 
 	    } else {
@@ -128,8 +145,10 @@ public class SystemDAO {
 	    pS.close();
 	    res.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error("SQL Exception occoured during executing getActivationType(Transaction trans)");
-	    throw new InvalidDBTransferException();	   
+	    LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during executing getActivationType(Transaction trans)");
+	    throw new InvalidDBTransferException();
 	}
 	// gibt die Aktivierungsmethode zurück.
 	return activation;
@@ -148,7 +167,6 @@ public class SystemDAO {
      */
     public static void setActivationType(Transaction trans, Activation type)
 	    throws InvalidDBTransferException {
-
     }
 
     /**
@@ -181,7 +199,22 @@ public class SystemDAO {
      */
     public static void setSignOffLimit(Transaction trans, int limit)
 	    throws InvalidDBTransferException {
+	String querySignOff = "UPDATE \"system_attributes\" "
+		+ "SET withdrawal_hours=?";
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
+	try (PreparedStatement stmt = conn.prepareStatement(querySignOff);
+		ResultSet res = null) {
+
+	    // Update the sign off limit in the database
+	    stmt.setInt(1, limit);
+	    stmt.executeUpdate();
+
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting the sign off limit.");
+	    throw new InvalidDBTransferException();
+	}
     }
-
 }

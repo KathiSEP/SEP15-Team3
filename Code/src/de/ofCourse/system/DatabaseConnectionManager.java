@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +58,10 @@ public class DatabaseConnectionManager {
      * JDBC-Driver
      */
     public static final String dbDriver = "org.postgresql.Driver";
-    
+
+    /**
+     * number of connections to the database
+     */
     private static int numberOfConnection;
 
     /**
@@ -85,7 +87,20 @@ public class DatabaseConnectionManager {
     private DatabaseConnectionManager() {
 	freeConnections = Collections
 		.synchronizedList(new LinkedList<Connection>());
-	loadDBDriver();
+	try {
+	    Class.forName(dbDriver);
+	} catch (ClassNotFoundException e) {
+	    if (debug) {
+		System.out.println("LOGGING MESSAGE:   "
+			+ "Error occoured during"
+			+ " loading the database driver!");
+	    } else {
+		LogHandler.getInstance().error(
+			"Error occoured during"
+				+ " loading the database driver!");
+	    }
+	}
+
     }
 
     /**
@@ -95,40 +110,31 @@ public class DatabaseConnectionManager {
      */
     public synchronized Connection getConnection() {
 	Connection connection = null;
-	int numberOfConnections;
-
-	// Tries 5 times to get a connection
-	int counter = 0;
 	int indexLastElement;
 
-	do {
-	    // There's a free connection
-	    if (!this.freeConnections.isEmpty()) {
-		indexLastElement = freeConnections.size() - 1;
-		connection = freeConnections.get(indexLastElement);
-		freeConnections.remove(indexLastElement);
-	    } else {
-		// There's no free connection
-		try {
-		    wait(20);
-		} catch (InterruptedException e) {
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Error occured during "
-				+ "waiting for a connection.");
-		    } else {
-			LogHandler.getInstance().error(
-				"Error occured during waiting"
-					+ " for a connection.");
-		    }
+	// There's a free connection
+	if (!this.freeConnections.isEmpty()) {
+	    indexLastElement = freeConnections.size() - 1;
+	    connection = freeConnections.get(indexLastElement);
+	    freeConnections.remove(indexLastElement);
+	} else {
+	    // There's no free connection
+	    try {
+		wait(1000);
+	    } catch (InterruptedException e) {
+		if (debug) {
+		    System.out.println("LOGGING MESSAGE:   "
+			    + "Error occured during "
+			    + "waiting for a connection.");
+		} else {
+		    LogHandler.getInstance().error(
+			    "Error occured during waiting"
+				    + " for a connection.");
 		}
-
 	    }
-	    counter--;
-	} while ((!this.isConnectionActive(connection))
-		&& (counter <= 5 || freeConnections.size() > 0));
 
-	
+	}
+
 	/*
 	 * Calculates if there are as much as connections in use as granted by
 	 * the configuration
@@ -150,7 +156,7 @@ public class DatabaseConnectionManager {
 	    }
 	}
 
-	// Check the connection again
+	// Check the new connection before giving it free
 	if (!this.isConnectionActive(connection)) {
 	    if (debug) {
 		System.out.println("LOGGING MESSAGE:   "
@@ -209,13 +215,14 @@ public class DatabaseConnectionManager {
     public static DatabaseConnectionManager getInstance() {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
-	
 
 	    if (debug) {
 		numberOfConnection = 3;
 	    } else {
 		numberOfConnection = Integer.parseInt(PropertyManager
-			.getInstance().getPropertyConfiguration("dbconnections"));
+			.getInstance()
+			.getPropertyConfiguration("dbconnections"));
+		System.out.println(numberOfConnection);
 	    }
 
 	    for (int i = 0; i < numberOfConnection; ++i) {
@@ -313,7 +320,6 @@ public class DatabaseConnectionManager {
 		}
 	    }
 	}
-
 	freeConnections.clear();
     }
 
@@ -335,12 +341,10 @@ public class DatabaseConnectionManager {
 	    try {
 		stmt = connection.prepareStatement(query);
 		stmt.execute();
-
 		stmt.close();
 		active = true;
 	    } catch (SQLException e) {
 		this.freeConnections.remove(connection);
-		System.out.println("Not active");
 		active = false;
 	    }
 
@@ -348,22 +352,4 @@ public class DatabaseConnectionManager {
 	return active;
     }
 
-    /**
-     * Loads the database driver.
-     */
-    private static void loadDBDriver() {
-	try {
-	    Class.forName(dbDriver);
-	} catch (ClassNotFoundException e) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occoured during"
-			+ " loading the database driver!");
-	    } else {
-		LogHandler.getInstance().error(
-			"Error occoured during"
-				+ " loading the database driver!");
-	    }
-	}
-    }
 }

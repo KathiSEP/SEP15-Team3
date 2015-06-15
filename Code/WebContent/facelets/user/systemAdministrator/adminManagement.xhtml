@@ -51,17 +51,23 @@
 						</div>
 					</div>
 					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">Allgemeine Kurseinstellungen</h3>
+						</div>
 						<div class="panel-body">
 							<h:form>
-								<h4>Allgemeine Kurseinstellungen</h4>
+								Hier können Sie die Abmeldefrist für Kurseinheiten festlegen.
+								<br />
+								<br />
 								<div class="input-group">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Frist:</span>
-                                    <h:inputText class="form-control" style="width:340px;"
-                                        value="#{systemConfigurationBean.signOffLimit}"
-                                        id="signOffLimit" reuqired="true"
-                                        requiredMessage="Bitte geben Sie die Abmeldefrist ein."></h:inputText>
-                                    <h:message for="signOffLimit" style="color:red" />
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">Abmeldefrist
+										in h:</span>
+									<h:inputText class="form-control" style="width:340px;"
+										value="#{systemConfigurationBean.signOffLimit}"
+										id="signOffLimit" reuqired="true"
+										requiredMessage="Bitte geben Sie die Abmeldefrist ein."></h:inputText>
+									<h:message for="signOffLimit" style="color:red" />
 								</div>
 								<div>
 									<br />
@@ -111,9 +117,13 @@
 										style="width: 160px; text-align: right;">Betrag:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										value="#{systemConfigurationBean.amountToTopUp}"
-										id="ammountToTopUp" reuqired="true"
-										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."></h:inputText>
-									<h:message for="ammountToTopUp" style="color:red" />
+										id="amountToTopUp" reuqired="true"
+										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."
+										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
+										<f:convertNumber currencyCode="EUR" currencySymbol="€"
+											groupingUsed="true" maxFractionDigits="2" type="currency" />
+									</h:inputText>
+									<h:message for="amountToTopUp" style="color:red" />
 								</div>
 								<div>
 									<br />
@@ -132,7 +142,7 @@
 										Kredit:</span>
 									<h:inputText class="form-control"
 										value="#{systemConfigurationBean.overdraftCredit}"
-										style="width:340px;" id="ammuntGivenCredit"
+										style="width:340px;" id="amountGivenCredit"
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
@@ -166,7 +176,7 @@
 											id="accountActivationSelection">
 											<f:selectItem itemValue="1" itemLabel="E-Mailverifikation" />
 											<f:selectItem itemValue="2"
-												itemLabel="E-Mailverifikation und Aktivierung durch Kursleiter" />
+												itemLabel="Aktivierung durch Administrator" />
 											<f:selectItem itemValue="3"
 												itemLabel="E-Mailverifikation und Aktivierung durch Administrator" />
 										</h:selectOneMenu>

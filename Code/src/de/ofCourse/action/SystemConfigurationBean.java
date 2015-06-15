@@ -57,13 +57,13 @@ public class SystemConfigurationBean {
      * Represents the type of activation: email verification and activation by a
      * course leader
      */
-    private static final int type_EMAILVERIFICATION_AND_COURSELEADER = 2;
+    private static final int type_ADMIN_ACTIVATION = 2;
 
     /**
      * Represents the type of activation: email verification and activation by a
      * administrator
      */
-    private static final int type_EMAILVERIFICATION_AND_SYSTEMADMINISTRATOR = 3;
+    private static final int type_EMAILVERIFICATION_AND_ADMIN = 3;
 
     /**
      * Stores the sign off limit in hours
