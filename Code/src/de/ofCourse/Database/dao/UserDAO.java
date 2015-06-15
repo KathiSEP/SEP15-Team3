@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Part;
@@ -1075,12 +1076,58 @@ public class UserDAO {
 	    PaginationData pagination, int courseID)
 	    throws InvalidDBTransferException {
         
-     // prepare SQL- request and database connection.
-        PreparedStatement pS = null;
+        List<User> userList = new ArrayList<User>();
+        
+        // prepare SQL- request and database connection.
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
         
-	return null;
+        String sql = "SELECT DISTINCT u.id, u.nickname, u.email, u.profile_image, "
+                + "(SELECT EXISTS(SELECT * FROM inform_users WHERE user_id = cP.participant_id AND course_id = cP.course_id)) "
+                + "AS courseNews FROM course_participants cP, users u, inform_users iU "
+                + "WHERE cP.course_id = ? AND u.id = cP.participant_id;"
+                + "ORDER BY %s %s LIMIT ? OFFSET ?";
+        
+        String.format(sql, pagination.getSQLSortDirection(), getSortColumn(pagination.getSortColumn()));
+        
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setInt(1, courseID);
+            pS.setInt(2, pagination.getElementsPerPage());
+            pS.setInt(3, pagination.getCurrentPageNumber() * pagination.getElementsPerPage());
+            ResultSet res = pS.executeQuery();
+            while(res.next()) {
+                User user = new User();
+                user.setUserId(res.getInt("id"));
+                user.setEmail(res.getString("email"));
+                user.setCourseNewsSubscribed(res.getBoolean("courseNews"));
+                user.setProfilImage(res.getBytes("profile_image"));
+                userList.add(user);
+            }
+            res.close();
+        } catch (SQLException e) {
+            
+        }
+        
+	return userList;
+    }
+    
+    /**
+     * Avoids SQL-Injection with a switch case
+     * 
+     * @param sortColumn
+     * @return
+     */
+    private static String getSortColumn(String sortColumn) {
+        switch(sortColumn) {
+        case "nickname":
+            return "nickname";
+        case "email":
+            return "email";
+        case "courseNews":
+            return "courseNews";
+        default:
+            return "nickname";
+        }
     }
 
     public static List<User> getParticipiantsOfCourseUnit(Transaction trans,

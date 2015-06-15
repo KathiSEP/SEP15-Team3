@@ -35,6 +35,8 @@ public class ListParticipentsBean implements Pagination {
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
+    
+    private String sortColumnName;
 
     /**
      * Stores the the list of participants that is displayed on the page.
@@ -176,6 +178,14 @@ public class ListParticipentsBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
         this.sessionUser = userSession;
+    }
+
+    public String getSortColumnName() {
+        return sortColumnName;
+    }
+
+    public void setSortColumnName(String sortColumnName) {
+        this.sortColumnName = sortColumnName;
     }
 
     

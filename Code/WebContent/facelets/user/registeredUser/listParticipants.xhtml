@@ -37,26 +37,35 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                               Benutzername
+                                    <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="nickname" />
+                                        Benutzername
+                                    </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="" />
                             </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                               E-Mail-Adresse
+                            <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+                                <f:facet name="header" >
+                                    <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="email" />
+                                        E-Mail
+                                    </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="" 
-                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}"/>
+                                    />
                             </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                               zu Kursnews eingetragen
+                            <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+                                <f:facet name="header" >
+                                    <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="courseNews" />
+                                        Kursnews eingetragen
+                                    </h:commandLink>                                             
                                 </f:facet>
                                 <h:outputText value="" 
-                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}"/>
+                                    />
                             </h:column>
                            
-                            <h:column>
+                            <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
                                      aus Kurs löschen
                                 </f:facet>
