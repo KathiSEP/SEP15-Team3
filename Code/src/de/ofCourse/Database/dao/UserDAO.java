@@ -1048,9 +1048,32 @@ public class UserDAO {
 	return null;
     }
 
+    /**
+     * Returns a list of participants of the the selected course.
+     * 
+     * @param trans
+     *              the Transaction object which contains the connection to the
+     *              database
+     * @param pagination
+     *              the Pagination object which contains the amount of elements
+     *              which are to be retrieved
+     * @param courseID 
+     *              the id of the course from which you want to show the 
+     *              participants
+     * @return list of participants
+     * @throws InvalidDBTransferException
+     *                 if any error occurred during the execution of the method
+     * @author Katharina Hölzl
+     */
     public static List<User> getParticipiantsOfCourse(Transaction trans,
 	    PaginationData pagination, int courseID)
 	    throws InvalidDBTransferException {
+        
+     // prepare SQL- request and database connection.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
 	return null;
     }
 
