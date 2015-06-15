@@ -1159,7 +1159,7 @@ public class CourseDAO {
 	try {
 
 	    
-	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
+	    if (setRelationMethode(userID, courseID, conn, sql) == 1){
 	        successful = true;
             } else {
                 successful = false; 
