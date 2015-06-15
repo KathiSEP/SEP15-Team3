@@ -39,7 +39,7 @@
                             <h:column>
                                 <f:facet name="header">
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="nickname" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="nickname" />
                                         Benutzername
                                     </h:commandLink>
                                 </f:facet>
@@ -48,7 +48,7 @@
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="email" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="email" />
                                         E-Mail
                                     </h:commandLink>
                                 </f:facet>
@@ -58,7 +58,7 @@
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="courseNews" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="courseNews" />
                                         Kursnews eingetragen
                                     </h:commandLink>                                             
                                 </f:facet>

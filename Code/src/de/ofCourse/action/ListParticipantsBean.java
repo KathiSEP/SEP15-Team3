@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -44,7 +45,9 @@ public class ListParticipantsBean implements Pagination {
      */
     private Transaction transaction;
     
-    private static final int elementsPerPage = 5;
+    private static final int elementsPerPage = 2;
+    
+    private String sortColumn;
     
     private int courseID;
 
@@ -76,27 +79,35 @@ public class ListParticipantsBean implements Pagination {
     @PostConstruct
     private void init() {
         this.setParticipants(new ArrayList<User>());
-        
-        this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap().get("courseID")));
-        pagination = new PaginationData(elementsPerPage, 0, "title", true);
-        
-        transaction = Connection.create();
-        transaction.start();
+        this.setCourseID(-1);
         try {
-            this.pagination.actualizeNumberOfPages(CourseDAO
-                    .getNumberOfParticipants(transaction, this.getCourseID()));
-            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
-                            this.getCourseID()));
-            this.transaction.commit();
-            System.out.println(this.getParticipants().get(0).getUsername());
-        } catch (InvalidDBTransferException e) {
-            LogHandler.getInstance().error(
-                    "Error occured during updating the"
-                            + " page with elements from database.");
-            this.transaction.rollback();
+            this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
+                    .getExternalContext().getRequestParameterMap().get("courseID")));
+            pagination = new PaginationData(elementsPerPage, 0, "nickname", true);
         }
-
+        catch (Exception e) {
+            FacesMessageCreator.createFacesMessage(null, "Die Seite wurde mit keinem Parameter aufgerufen!");
+        }
+        
+        if(this.getCourseID() < 0) {
+            FacesMessageCreator.createFacesMessage(null, "Die Seite exisitert nicht!");
+        } else {       
+            transaction = Connection.create();
+            transaction.start();
+            try {
+                this.pagination.actualizeNumberOfPages(CourseDAO
+                        .getNumberOfParticipants(transaction, this.getCourseID()));
+                System.out.println(this.pagination.getNumberOfPages() + "");
+                this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                                this.getCourseID()));
+                this.transaction.commit();
+            } catch (InvalidDBTransferException e) {
+                LogHandler.getInstance().error(
+                        "Error occured during updating the"
+                                + " page with elements from database.");
+                this.transaction.rollback();
+            }
+        }
     }
 
     /**
@@ -143,7 +154,19 @@ public class ListParticipantsBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-        
+        this.getPagination().actualizeCurrentPageNumber(FacesContext
+                .getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("site"));
+        transaction.start();
+        try {
+            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                    this.getCourseID()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during fetching data for pagination.");
+            this.transaction.rollback();
+        }
     }
 
     /**
@@ -151,8 +174,21 @@ public class ListParticipantsBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-    
-
+        if(this.getPagination().getSortColumn().equals(this.getSortColumn())) {
+            this.getPagination().setSortAsc(!this.getPagination().isSortAsc());
+        } else {
+            this.getPagination().setSortColumn(this.getSortColumn());
+        }
+        transaction.start();
+        try {
+            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                    this.getCourseID()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during fetching data for pagination.");
+            this.transaction.rollback();
+        }
     }
     
     /**
@@ -219,6 +255,20 @@ public class ListParticipantsBean implements Pagination {
      */
     public void setParticipants(List<User> participants) {
         this.participants = participants;
+    }
+
+    /**
+     * @return the sortColumn
+     */
+    public String getSortColumn() {
+        return sortColumn;
+    }
+
+    /**
+     * @param sortColumn the sortColumn to set
+     */
+    public void setSortColumn(String sortColumn) {
+        this.sortColumn = sortColumn;
     }
 
     

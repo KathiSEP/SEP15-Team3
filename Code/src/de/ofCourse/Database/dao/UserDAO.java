@@ -1094,8 +1094,6 @@ public class UserDAO {
             pS.setInt(2, pagination.getElementsPerPage());
             pS.setInt(3, pagination.getCurrentPageNumber() * pagination.getElementsPerPage());
             
-            System.out.println(pS.toString());
-            
             ResultSet res = pS.executeQuery();
             while(res.next()) {
                 User user = new User();
