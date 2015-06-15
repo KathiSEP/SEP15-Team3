@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,8 +12,13 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -37,6 +43,8 @@ public class ListParticipentsBean implements Pagination {
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
+    
+    private static final int elementsPerPage = 5;
     
     private int courseID;
 
@@ -67,9 +75,25 @@ public class ListParticipentsBean implements Pagination {
 
     @PostConstruct
     private void init() {
-        setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
+        this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID")));
-        pagination = new PaginationData(pageElements, 0, "title", true);
+        pagination = new PaginationData(elementsPerPage, 0, "title", true);
+        
+        transaction = Connection.create();
+        transaction.start();
+        try {
+            this.pagination.actualizeNumberOfPages(CourseDAO
+                    .getNumberOfParticipants(transaction, this.getCourseID()));
+            this.setParticipients((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                            this.getCourseID()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during updating the"
+                            + " page with elements from database.");
+            this.transaction.rollback();
+        }
+
     }
     
     /**
@@ -189,14 +213,7 @@ public class ListParticipentsBean implements Pagination {
         this.sessionUser = userSession;
     }
 
-    public String getSortColumnName() {
-        return sortColumnName;
-    }
-
-    public void setSortColumnName(String sortColumnName) {
-        this.sortColumnName = sortColumnName;
-    }
-
+  
     /**
      * @return the courseID
      */

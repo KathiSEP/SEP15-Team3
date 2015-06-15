@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1072,7 +1071,7 @@ public class UserDAO {
      *                 if any error occurred during the execution of the method
      * @author Katharina Hölzl
      */
-    public static List<User> getParticipiantsOfCourse(Transaction trans,
+    public static List<User> getParticipantsOfCourse(Transaction trans,
 	    PaginationData pagination, int courseID)
 	    throws InvalidDBTransferException {
         
@@ -1109,6 +1108,32 @@ public class UserDAO {
         }
         
 	return userList;
+    }
+    
+    public static int getNumberOfParticipants(Transaction trans, int courseID) {
+        
+        int numberOfParticipants = 0;
+        
+        // prepare SQL- request and database connection.
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        
+        String sql = "SELECT COUNT (*) as courseParticipantNumber FROM "
+                + "(SELECT DISTINCT * FROM course_participants cP, users u "
+                + "WHERE cP.course_id = ? AND u.id = cP.participant_id) "
+                + "AS courseParticipants;";
+        
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setInt(1, courseID);
+            ResultSet res = pS.executeQuery();
+            res.next();
+            numberOfParticipants = res.getInt("courseParticipantNumber");
+            res.close();
+        } catch (SQLException e) {
+            
+        }
+        
+        return numberOfParticipants;
     }
     
     /**
