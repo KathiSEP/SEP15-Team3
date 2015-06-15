@@ -11,6 +11,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
@@ -53,7 +55,7 @@ public class ListParticipantsBean implements Pagination {
     /**
      * Stores the the list of participants that is displayed on the page.
      */
-    private List<User> participants;
+    private DataModel<User> participants;
 
     /**
      * Stores the the list of users that are to removed from the course.
@@ -77,7 +79,7 @@ public class ListParticipantsBean implements Pagination {
 
     @PostConstruct
     private void init() {
-        this.setParticipants(new ArrayList<User>());
+        this.participants = new ListDataModel<User>();
         this.setCourseID(-1);
         try {
             this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
@@ -96,7 +98,7 @@ public class ListParticipantsBean implements Pagination {
             try {
                 this.pagination.actualizeNumberOfPages(CourseDAO
                         .getNumberOfParticipants(transaction, this.getCourseID()));
-                this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                this.participants.setWrappedData(UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
                                 this.getCourseID()));
                 this.transaction.commit();
             } catch (InvalidDBTransferException e) {
@@ -116,10 +118,12 @@ public class ListParticipantsBean implements Pagination {
      * database entry of the course and the respective course units are updated.
      */
     public void deleteUsersFromCourse() {
+        @SuppressWarnings("unchecked")
+        List<User> allUsers = (List<User>) this.participants.getWrappedData();
         this.setUsersToDelete(new ArrayList<User>());
-        for(User user : this.getParticipants()) {
+        for(User user : allUsers) {
+            System.out.println(user.isSelected());
             if(user.isSelected()) {
-                System.out.println(user.getUsername());
                 this.getUsersToDelete().add(user);
             }
         }
@@ -178,7 +182,7 @@ public class ListParticipantsBean implements Pagination {
                 .getRequestParameterMap().get("site"));
         transaction.start();
         try {
-            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+            this.participants.setWrappedData(UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
                     this.getCourseID()));
             this.transaction.commit();
         } catch (InvalidDBTransferException e) {
@@ -200,7 +204,7 @@ public class ListParticipantsBean implements Pagination {
         }
         transaction.start();
         try {
-            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+            this.participants.setWrappedData(UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
                     this.getCourseID()));
             this.transaction.commit();
         } catch (InvalidDBTransferException e) {
@@ -263,20 +267,6 @@ public class ListParticipantsBean implements Pagination {
     }
 
     /**
-     * @return the participants
-     */
-    public List<User> getParticipants() {
-        return participants;
-    }
-
-    /**
-     * @param participants the participants to set
-     */
-    public void setParticipants(List<User> participants) {
-        this.participants = participants;
-    }
-
-    /**
      * @return the sortColumn
      */
     public String getSortColumn() {
@@ -288,6 +278,14 @@ public class ListParticipantsBean implements Pagination {
      */
     public void setSortColumn(String sortColumn) {
         this.sortColumn = sortColumn;
+    }
+
+    public DataModel<User> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(DataModel<User> participants) {
+        this.participants = participants;
     }
 
     
