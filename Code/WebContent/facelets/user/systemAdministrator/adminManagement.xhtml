@@ -21,7 +21,7 @@
 							<h:form>
 								<h4>Benutzer</h4>
 								<h:commandButton id="createNewUser" class="btn btn-info"
-									style="width:200px;" 
+									style="width:200px;"
 									action="#{systemConfigurationBean.loadCreateNewUserPage}"
 									value="Neuen Benutzer anlegen" />
 									&nbsp;
@@ -38,7 +38,7 @@
 								<h:commandButton id="createNewCourse" class="btn btn-info"
 									style="width:200px;"
 									action="#{systemConfigurationBean.loadCreateNewCoursePage}"
-									 value="Neuen Kurs erstellen" />
+									value="Neuen Kurs erstellen" />
                                     &nbsp;
                                     &nbsp;
                                     &nbsp;
@@ -47,6 +47,29 @@
 									class="btn btn-info" style="width:200px;"
 									action="#{systemConfigurationBean.loadManageCoursesPage}"
 									value="Kurse verwalten" />
+							</h:form>
+						</div>
+					</div>
+					<div class="panel panel-info">
+						<div class="panel-body">
+							<h:form>
+								<h4>Allgemeine Kurseinstellungen</h4>
+								<div class="input-group">
+                                    <span class="input-group-addon"
+                                        style="width: 160px; text-align: right;">Frist:</span>
+                                    <h:inputText class="form-control" style="width:340px;"
+                                        value="#{systemConfigurationBean.signOffLimit}"
+                                        id="signOffLimit" reuqired="true"
+                                        requiredMessage="Bitte geben Sie die Abmeldefrist ein."></h:inputText>
+                                    <h:message for="signOffLimit" style="color:red" />
+								</div>
+								<div>
+									<br />
+									<h:commandButton id="saveSignOffLimit"
+										class="btn btn-success pull-right" style="width:135px;"
+										action="#{systemConfigurationBean.determineSignOffLimit}"
+										value="Speichern" />
+								</div>
 							</h:form>
 						</div>
 					</div>
@@ -109,12 +132,12 @@
 										Kredit:</span>
 									<h:inputText class="form-control"
 										value="#{systemConfigurationBean.overdraftCredit}"
-										style="width:340px;" id="ammountGivenCredit"
+										style="width:340px;" id="ammuntGivenCredit"
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
-									<h:message for="ammountGivenCredi" style="color:red" />
+									<h:message for="amountGivenCredit" style="color:red" />
 								</div>
 								<div>
 									<br />

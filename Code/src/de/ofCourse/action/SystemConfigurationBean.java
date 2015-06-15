@@ -49,21 +49,26 @@ public class SystemConfigurationBean {
     private int accountActivationType;
 
     /**
-     * represents the type of activation: email verification
+     * Represents the type of activation: email verification
      */
     private static final int type_EMAILVERIFICATION = 1;
 
     /**
-     * represents the type of activation: email verification and activation by a
+     * Represents the type of activation: email verification and activation by a
      * course leader
      */
     private static final int type_EMAILVERIFICATION_AND_COURSELEADER = 2;
 
     /**
-     * represents the type of activation: email verification and activation by a
+     * Represents the type of activation: email verification and activation by a
      * administrator
      */
     private static final int type_EMAILVERIFICATION_AND_SYSTEMADMINISTRATOR = 3;
+
+    /**
+     * Stores the sign off limit in hours
+     */
+    private int signOffLimit;
 
     /**
      * Stores the transaction that is used for database interaction.
@@ -71,19 +76,19 @@ public class SystemConfigurationBean {
     private Transaction transaction;
 
     public User getUserToTopUp() {
-        return userToTopUp;
+	return userToTopUp;
     }
 
     public void setUserToTopUp(User userToTopUp) {
-        this.userToTopUp = userToTopUp;
+	this.userToTopUp = userToTopUp;
     }
 
     public double getAmountToTopUp() {
-        return amountToTopUp;
+	return amountToTopUp;
     }
 
     public void setAmountToTopUp(double amountToTopUp) {
-        this.amountToTopUp = amountToTopUp;
+	this.amountToTopUp = amountToTopUp;
     }
 
     /**
@@ -106,7 +111,7 @@ public class SystemConfigurationBean {
     private void topUpUserAccount() {
 
     }
-    
+
     private double amountToTopUp;
 
     /**
@@ -165,6 +170,28 @@ public class SystemConfigurationBean {
      */
     public void setOverdraftCredit(double overdraftCredit) {
 	this.overdraftCredit = overdraftCredit;
+    }    
+    
+    /**
+     * Determines the granted overdraft credit, that means it updates the
+     * setting relating to overdraft credit in the database.
+     */
+    public void determineSignOffLimit() {
+	System.out.println(this.signOffLimit);
+    }
+    
+    /**
+     * @return
+     */
+    public int getSignOffLimit() {
+        return signOffLimit;
+    }
+
+    /**
+     * @param signOffLimit
+     */
+    public void setSignOffLimit(int signOffLimit) {
+        this.signOffLimit = signOffLimit;
     }
 
     /**
