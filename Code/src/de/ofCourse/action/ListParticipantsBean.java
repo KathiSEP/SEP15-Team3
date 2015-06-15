@@ -15,7 +15,6 @@ import javax.faces.context.FacesContext;
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
-import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -45,7 +44,7 @@ public class ListParticipantsBean implements Pagination {
      */
     private Transaction transaction;
     
-    private static final int elementsPerPage = 2;
+    private static final int elementsPerPage = 10;
     
     private String sortColumn;
     
@@ -97,7 +96,6 @@ public class ListParticipantsBean implements Pagination {
             try {
                 this.pagination.actualizeNumberOfPages(CourseDAO
                         .getNumberOfParticipants(transaction, this.getCourseID()));
-                System.out.println(this.pagination.getNumberOfPages() + "");
                 this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
                                 this.getCourseID()));
                 this.transaction.commit();
@@ -118,6 +116,26 @@ public class ListParticipantsBean implements Pagination {
      * database entry of the course and the respective course units are updated.
      */
     public void deleteUsersFromCourse() {
+        this.setUsersToDelete(new ArrayList<User>());
+        for(User user : this.getParticipants()) {
+            if(user.isSelected()) {
+                System.out.println(user.getUsername());
+                this.getUsersToDelete().add(user);
+            }
+        }
+        transaction.start();
+        try {
+            if(!UserDAO.removeParticipantsFromCourse(this.transaction, this.getCourseID(), this.getUsersToDelete())) {
+                LogHandler.getInstance().error(
+                        "Fehler beim Löschen der Benutzer aus dem Kurs.");
+            }
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Fehler beim Löschen der Benutzer aus dem Kurs.");
+            this.transaction.rollback();
+        }
+
     }
 
     /**
@@ -145,8 +163,9 @@ public class ListParticipantsBean implements Pagination {
      * 
      * @return the link to the courseDetail - page
      */
-    public String cancel() {
-	return null;
+    public String backToDetails() {
+        System.out.println("hier");
+        return "/facelets/open/courses/courseDetail.xhtml?courseID=" + this.getCourseID() + "faces-redirect=true";
     }
 
     /**

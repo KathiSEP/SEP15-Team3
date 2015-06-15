@@ -1112,6 +1112,42 @@ public class UserDAO {
 	return userList;
     }
     
+    public static boolean removeParticipantsFromCourse(Transaction trans, int courseID, List<User> usersToRemove) {
+        boolean success = false;
+        if(usersToRemove != null && usersToRemove.size() > 0) {
+            // prepare SQL- request and database connection.
+            Connection connection = (Connection) trans;
+            java.sql.Connection conn = connection.getConn();
+            
+            String sql = "DELETE FROM course_participants WHERE course_id = ? and participant_id IN (?";
+            for(int i = 1; i < usersToRemove.size(); i++) {
+                sql += ",?";
+            }
+            sql += ");";
+            
+            try (PreparedStatement pS = conn.prepareStatement(sql)) {
+                pS.setInt(1, courseID);
+                int counter = 2;
+                for(User user : usersToRemove) {
+                    pS.setInt(counter, user.getUserID());
+                    counter++;
+                }
+                System.out.println(pS.toString());
+                if(pS.executeUpdate() > 0) {
+                    success = true;
+                } else {
+                    success = false;
+                }
+                
+            } catch (SQLException e) {
+                
+            }
+        } else {
+            success = true;
+        }
+        return success;
+    }
+    
     public static int getNumberOfParticipants(Transaction trans, int courseID) {
         
         int numberOfParticipants = 0;
