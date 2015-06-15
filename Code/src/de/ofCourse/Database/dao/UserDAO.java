@@ -781,6 +781,7 @@ public class UserDAO {
 		switch (salutation) {
 		case "MR":
 		    user.setSalutation(Salutation.MR);
+		    break;
 		case "MS":
 		    user.setSalutation(Salutation.MS);
 		    break;
@@ -793,8 +794,10 @@ public class UserDAO {
 		switch (userRole) {
 		case "REGISTERED_USER":
 		    user.setUserRole(UserRole.REGISTERED_USER);
+		    break;
 		case "COURSE_LEADER":
 		    user.setUserRole(UserRole.COURSE_LEADER);
+		    break;
 		case "SYSTEM_ADMINISTRATOR":
 		    user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
 		    break;
@@ -804,10 +807,13 @@ public class UserDAO {
 		switch (userStatus) {
 		case "ANONYMOUS":
 		    user.setUserStatus(UserStatus.ANONYMOUS);
+		    break;
 		case "NOT_ACTIVATED":
 		    user.setUserStatus(UserStatus.NOT_ACTIVATED);
+		    break;
 		case "REGISTERED":
 		    user.setUserStatus(UserStatus.REGISTERED);
+		    break;
 		case "INACTIVE":
 		    user.setUserStatus(UserStatus.INACTIVE);
 		    break;

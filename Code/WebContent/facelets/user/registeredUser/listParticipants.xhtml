@@ -57,13 +57,10 @@
                             </h:column>
                            
                             <h:column>
-                                <f:facet name="header" />
-                                <h:commandButton id="delete" class="btn btn-info"
-                                    value="Entfernen"
-                                    action="#{listParticipantsBean.deleteUsersFromCourse}"
-                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
-                                    <f:param name="" value="" />
-                                </h:commandButton>
+                                <f:facet name="header" >
+                                     aus Kurs löschen
+                                </f:facet>
+                                     <h:selectBooleanCheckbox value="false" />
                             </h:column>
                         
                             <f:facet name="footer">
@@ -105,6 +102,19 @@
                         </h:dataTable>
                         </div>
                     </div>
+                <div class="row" style="padding-top:20px;">
+                    <div class="col-lg-10">
+                    </div>
+                    <div class="col-lg-2">
+                        <h:commandButton id="delete" class="btn btn-info"
+                                    value="Entfernen"
+                                    action="#{listParticipantsBean.deleteUsersFromCourse}"
+                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+                                    <f:param name="" value="" />
+                        </h:commandButton>
+                    
+                    </div>
+                </div>
                 
 			</body>
 		</ui:define>
