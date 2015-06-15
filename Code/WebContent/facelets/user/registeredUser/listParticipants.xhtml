@@ -33,7 +33,8 @@
                                 <f:facet name="header">
                                                Bild
                                 </f:facet>
-                                <h:outputText value="#{participant.profilImage}" />
+                                <h:graphicImage value="/image?profilImage=#{participant.userID}" height="50" rendered="#{participant.profilImage != NULL}" ></h:graphicImage>
+                                
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
