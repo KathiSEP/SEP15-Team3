@@ -122,7 +122,7 @@ public class PropertyManager {
      * @param line
      *            the line to determine the property value
      * 
-     * @return the value of the found property
+     * @return the value of the found property 
      */
     public String getPropertyLogger(String line) {
 	String readValue = null;

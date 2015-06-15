@@ -21,25 +21,31 @@
 							<h:form>
 								<h4>Benutzer</h4>
 								<h:commandButton id="createNewUser" class="btn btn-info"
-									style="width:200px;" value="Neuen Benutzer anlegen" />
+									style="width:200px;" 
+									action="#{systemConfigurationBean.loadCreateNewUserPage}"
+									value="Neuen Benutzer anlegen" />
 									&nbsp;
 									&nbsp;
 									&nbsp;
                                     &nbsp;
 									<h:commandButton id="manageUsers" class="btn btn-info"
-									style="width:200px;" value="Benutzer verwalten" />
+									style="width:200px;" value="Benutzer verwalten"
+									action="#{systemConfigurationBean.loadManageUserPage}" />
 							</h:form>
 							<br /> <br />
 							<h:form>
 								<h4>Kurse</h4>
 								<h:commandButton id="createNewCourse" class="btn btn-info"
-									style="width:200px;" value="Neuen Kurs erstellen" />
+									style="width:200px;"
+									action="#{systemConfigurationBean.loadCreateNewCoursePage}"
+									 value="Neuen Kurs erstellen" />
                                     &nbsp;
                                     &nbsp;
                                     &nbsp;
                                     &nbsp;
                                 <h:commandButton id="manageCourses"
 									class="btn btn-info" style="width:200px;"
+									action="#{systemConfigurationBean.loadManageCoursesPage}"
 									value="Kurse verwalten" />
 							</h:form>
 						</div>
@@ -59,7 +65,7 @@
 										Benutzers:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										id="userIDToTopUp"
-										value="systemConfigurationBean.userToTopUp.userID"
+										value="#{systemConfigurationBean.userToTopUp.userID}"
 										reuqired="true"
 										requiredMessage="Bitte geben Sie die ID eines Benutzers ein.">
 										<f:attribute name="idUserToTopUp" value="#{idUserToTopUp}" />
@@ -71,7 +77,7 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Benutzername:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										value="systemConfigurationBean.userToTopUp.username"
+										value="#{systemConfigurationBean.userToTopUp.username}"
 										id="usernameToTopUp" reuqired="true"
 										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein."
 										binding="#{idUserToTopUp}"></h:inputText>
@@ -81,7 +87,7 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Betrag:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										value="systemConfigurationBean.amountToTopUp"
+										value="#{systemConfigurationBean.amountToTopUp}"
 										id="ammountToTopUp" reuqired="true"
 										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."></h:inputText>
 									<h:message for="ammountToTopUp" style="color:red" />
@@ -102,7 +108,7 @@
 										style="width: 160px; text-align: right;"> Gewährter
 										Kredit:</span>
 									<h:inputText class="form-control"
-										value="systemConfigurationBean.overdraftCredit"
+										value="#{systemConfigurationBean.overdraftCredit}"
 										style="width:340px;" id="ammountGivenCredit"
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"

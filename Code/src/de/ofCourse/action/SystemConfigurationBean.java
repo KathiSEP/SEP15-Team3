@@ -70,6 +70,22 @@ public class SystemConfigurationBean {
      */
     private Transaction transaction;
 
+    public User getUserToTopUp() {
+        return userToTopUp;
+    }
+
+    public void setUserToTopUp(User userToTopUp) {
+        this.userToTopUp = userToTopUp;
+    }
+
+    public double getAmountToTopUp() {
+        return amountToTopUp;
+    }
+
+    public void setAmountToTopUp(double amountToTopUp) {
+        this.amountToTopUp = amountToTopUp;
+    }
+
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user an the selected
