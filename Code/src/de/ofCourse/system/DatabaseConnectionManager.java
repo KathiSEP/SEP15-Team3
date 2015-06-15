@@ -215,7 +215,7 @@ public class DatabaseConnectionManager {
 		numberOfConnection = 3;
 	    } else {
 		numberOfConnection = Integer.parseInt(PropertyManager
-			.getInstance().getPropertyConfiguration("dbconnections"));
+			.getInstance().getPropertyConfig("dbconnections"));
 	    }
 
 	    for (int i = 0; i < numberOfConnection; ++i) {
@@ -259,16 +259,16 @@ public class DatabaseConnectionManager {
 		connection = DriverManager.getConnection(
 			"jdbc:postgresql://"
 				+ PropertyManager.getInstance()
-					.getPropertyConfiguration("dbhost")
+					.getPropertyConfig("dbhost")
 				+ ":"
 				+ PropertyManager.getInstance()
-					.getPropertyConfiguration("dbport")
+					.getPropertyConfig("dbport")
 				+ "/"
 				+ PropertyManager.getInstance()
-					.getPropertyConfiguration("dbname"),
-			PropertyManager.getInstance().getPropertyConfiguration(
+					.getPropertyConfig("dbname"),
+			PropertyManager.getInstance().getPropertyConfig(
 				"dbuser"), PropertyManager.getInstance()
-				.getPropertyConfiguration("dbpassword"));
+				.getPropertyConfig("dbpassword"));
 		connection.setAutoCommit(false);
 	    } catch (SQLException e) {
 		LogHandler.getInstance().error(
