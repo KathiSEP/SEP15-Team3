@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class User implements Serializable {
 
+    private boolean courseNewsSubscribed;
+    
     /**
      *stores the address where the user lives
      */
@@ -384,6 +386,20 @@ public class User implements Serializable {
      */
     public void setPwSalt(String pwSalt) {
         this.pwSalt = pwSalt;
+    }
+
+    /**
+     * @return the courseNewsSubscribed
+     */
+    public boolean isCourseNewsSubscribed() {
+        return courseNewsSubscribed;
+    }
+
+    /**
+     * @param courseNewsSubscribed the courseNewsSubscribed to set
+     */
+    public void setCourseNewsSubscribed(boolean courseNewsSubscribed) {
+        this.courseNewsSubscribed = courseNewsSubscribed;
     }
 
 }

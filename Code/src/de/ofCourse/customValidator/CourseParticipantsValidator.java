@@ -39,11 +39,13 @@ public class CourseParticipantsValidator implements Validator {
         try {
             maxParticipants = Integer.parseInt(maxParticipantsString);
         } catch(NumberFormatException e) {
-            throw new ValidatorException(new FacesMessage("Keine gültige Anzahl an Teilnehmern."));
+            throw new ValidatorException(new FacesMessage("Keine gültige "
+                    + "Anzahl an Teilnehmern."));
         }
         
         if(maxParticipants < 1) {
-            throw new ValidatorException(new FacesMessage("Teilnehmerzahl muss positiv sein!"));
+            throw new ValidatorException(new FacesMessage("Teilnehmerzahl muss "
+                    + "positiv sein!"));
         }
     }
 

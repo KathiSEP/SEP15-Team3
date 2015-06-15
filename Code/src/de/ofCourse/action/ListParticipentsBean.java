@@ -5,9 +5,11 @@ package de.ofCourse.action;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
@@ -35,6 +37,8 @@ public class ListParticipentsBean implements Pagination {
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
+    
+    private int courseID;
 
     /**
      * Stores the the list of participants that is displayed on the page.
@@ -61,6 +65,13 @@ public class ListParticipentsBean implements Pagination {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    @PostConstruct
+    private void init() {
+        setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestParameterMap().get("courseID")));
+        pagination = new PaginationData(pageElements, 0, "title", true);
+    }
+    
     /**
      * Returns a list of users who are attending the course.
      * 
@@ -176,6 +187,28 @@ public class ListParticipentsBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
         this.sessionUser = userSession;
+    }
+
+    public String getSortColumnName() {
+        return sortColumnName;
+    }
+
+    public void setSortColumnName(String sortColumnName) {
+        this.sortColumnName = sortColumnName;
+    }
+
+    /**
+     * @return the courseID
+     */
+    public int getCourseID() {
+        return courseID;
+    }
+
+    /**
+     * @param courseID the courseID to set
+     */
+    public void setCourseID(int courseID) {
+        this.courseID = courseID;
     }
 
     

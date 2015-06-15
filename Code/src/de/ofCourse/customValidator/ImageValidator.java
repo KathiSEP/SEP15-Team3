@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.Part;
 
 /**
  * Checks whether the image file has the right file extension and whether some 
@@ -31,26 +32,22 @@ public class ImageValidator implements Validator {
      *  
      */
     
-    private Pattern pattern;
-    private Matcher matcher;
-
-    private static final String ImagePattern = "([^\\s]+(\\.(?i)(jpg))$)";
-
-    public ImageValidator() {
-        pattern = Pattern.compile(ImagePattern);
-    }
-    
     @Override
     public void validate(FacesContext fc, UIComponent component, Object value)
 	    throws ValidatorException {
         
     
-        String image = value.toString();
-
-        matcher = pattern.matcher(image);
+        Part image = (Part) value;
         
-        if (!matcher.matches()) {
-            throw new ValidatorException(new FacesMessage("Kein gültiges Bildformat."));
-    }
+        System.out.println(image.getContentType());
+        
+        if (!image.getContentType().equals("image/jpeg")) {
+            throw new ValidatorException(new FacesMessage("Kein gültiges "
+                    + "Bildformat."));
+        }
+        if(image.getSize() > 102400) {
+            throw new ValidatorException(new FacesMessage("Das Bild muss "
+                    + "kleiner als 100 KB sein."));
+        }
     }
 }

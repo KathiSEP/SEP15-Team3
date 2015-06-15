@@ -158,7 +158,7 @@ public class CourseDAO {
     	        InputStream inputStream = courseImage.getInputStream();
                 pS.setBinaryStream(6, inputStream, courseImage.getSize());
 	    } else {
-	        pS.setBinaryStream(6, null);
+	        pS.setBinaryStream(6, null, 0);
 	    }
 	    ResultSet res = pS.executeQuery();
 	    res.next();
@@ -1159,7 +1159,7 @@ public class CourseDAO {
 	try {
 
 	    
-	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
+	    if (setRelationMethode(userID, courseID, conn, sql) == 1){
 	        successful = true;
             } else {
                 successful = false; 

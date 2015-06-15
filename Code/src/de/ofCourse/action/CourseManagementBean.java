@@ -102,15 +102,26 @@ public class CourseManagementBean {
             transaction.start();
             try {
                 // Create course.
+                System.out.println("Hier vor createCourse");
                 createdCourseID = CourseDAO.createCourse(this.transaction,
                         this.course, this.courseImage);
-                boolean leaderAddOK = CourseDAO.addLeaderToCourse(
-                        this.transaction, this.getCourseLeaderID(),
-                        createdCourseID);
+                //this.transaction.commit();
+                
+//                this.transaction = Connection.create();
+//                transaction.start();
+                System.out.println("Kursid =" + createdCourseID);
+                System.out.println("Hier nach createCourse");
+                System.out.println("Kursleiterid"+this.getCourseLeaderID());
+              boolean leaderAddOK = CourseDAO.addLeaderToCourse(
+                      this.transaction, this.getCourseLeaderID(),
+                     createdCourseID);
+              System.out.println("Hier nach addCourseLeader");
                 this.transaction.commit();
 
+                System.out.println("Hier nach commit addCourseLeader");
                 if (createdCourseID < 0 || leaderAddOK == false) {
 
+                    System.out.println("Hier im Test ");
                     // Throwing error message into the faces context.
                     FacesMessageCreator.createFacesMessage(null,
                             "Beim Erstellen des Kurses trat ein Fehler auf!");

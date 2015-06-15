@@ -69,6 +69,14 @@ public class PaginationData implements Serializable {
     }
 
 
+    public String getSQLSortDirection() {
+        if (this.isSortAsc()) {
+            return "ASC";
+        } else {
+            return "DESC";
+        }
+    }
+    
 
     /**
      * Actualizes the number of the current displayed page.
