@@ -25,7 +25,7 @@
 			     <div class="row" style="padding-top:20px;">
                     <div class="col-lg-12">
                         
-                       
+                    <h:form class="form-horizontal" id="formListParticipants">   
                         <h:dataTable value="#{listParticipantsBean.initializeParticipantsOfCourse}"
                             var="" id="participantsTable" class=" table table-hover"
                             cellspacing="0" width="100%">
@@ -38,7 +38,7 @@
                             <h:column>
                                 <f:facet name="header">
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="nickname" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="nickname" />
                                         Benutzername
                                     </h:commandLink>
                                 </f:facet>
@@ -47,7 +47,7 @@
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="email" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="email" />
                                         E-Mail
                                     </h:commandLink>
                                 </f:facet>
@@ -57,7 +57,7 @@
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumnName}" value="courseNews" />
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.pagination.sortColumn}" value="courseNews" />
                                         Kursnews eingetragen
                                     </h:commandLink>                                             
                                 </f:facet>
@@ -109,6 +109,7 @@
                                 </f:facet>
                         
                         </h:dataTable>
+                        </h:form>
                         </div>
                     </div>
                 <div class="row" style="padding-top:20px;">
