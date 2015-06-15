@@ -3,118 +3,125 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-    <ui:define name="title">Meine Kurse</ui:define>
-    <ui:define name="content">
-        <h1>Meine Kurse</h1>
-        <div class="row">
-            <div class="col-lg-12">
-                <p style="font-size: 16px;">Hier sehen Sie alle Kurse, zu denen
-                    Sie eingetragen sind.</p>
-            </div>
-        </div>
-        <h:form rendered="#{myCoursesBean.registeredCourses.size() !=0}"
-            id="myCoursesList">
-            <div class="col-lg-12 ">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <strong>Angemeldete Kurse</strong>
-                    </div>
-                    <div class="panel-body">
-                        <h:dataTable value="#{myCoursesBean.registeredCourses}"
-                            var="course" id="courseTable" class=" table table-hover"
-                            cellspacing="0" width="100%">
-                           <h:column>
-                                <f:facet name="header">
+	<ui:define name="title">Meine Kurse</ui:define>
+	<ui:define name="content">
+		<h1>Meine Kurse</h1>
+		<div class="row">
+			<div class="col-lg-12">
+				<p style="font-size: 16px;">Hier sehen Sie alle Kurse, zu denen
+					Sie eingetragen sind.</p>
+			</div>
+		</div>
+		<h:form rendered="#{myCoursesBean.registeredCourses.size() !=0}"
+			id="myCoursesList">
+			<div class="col-lg-12 ">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<strong>Angemeldete Kurse</strong>
+					</div>
+					<div class="panel-body">
+						<h:dataTable value="#{myCoursesBean.registeredCourses}"
+							var="course" id="courseTable" class=" table table-hover"
+							cellspacing="0" width="100%">
+							<h:column>
+								<f:facet name="header">
                                                ID
                                 </f:facet>
-                                <h:outputText value="#{course.courseID}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
+								<h:outputText value="#{course.courseID}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">
                                                Titel
                                 </f:facet>
-                                <h:outputText value="#{course.title}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
+								<h:outputText value="#{course.title}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">
                                                Ort
                                 </f:facet>
-                                <h:outputText value="#{course.nextCourseUnit.location}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
+								<h:outputText value="#{course.nextCourseUnit.location}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">
                                                Beginn
                                 </f:facet>
-                                <h:outputText class="nowrap"
-                                    value="#{course.nextCourseUnit.startime}">
-                                    <f:convertDateTime pattern="HH:mm" />
-                                </h:outputText>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
+								<h:outputText class="nowrap"
+									value="#{course.nextCourseUnit.startime}">
+									<f:convertDateTime pattern="HH:mm" />
+								</h:outputText>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
                                                Datum
                                 </f:facet>
-                                <h:outputText class="nowrap"
-                                    value="#{course.nextCourseUnit.startime}">
-                                    <f:convertDateTime pattern="dd.MM.yyyy" />
-                                </h:outputText>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header" />
-                                <h:commandButton id="details" class="btn btn-info"
-                                    value="Details"
-                                    action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
-                                    <f:param name="courseID" value="#{course.courseID}" />
-                                </h:commandButton>
-                            </h:column>
-                            <f:facet name="footer">
-                                <div class="row" style="text-align: center;">
-                                    <ul class="pagination">
-                                        <li><h:commandButton class="btn btn-info" value="Zurueck"
-                                                action="#{myCoursesBean.goToSpecificPage}">
-                                                <f:param name="site" value="back" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.currentPageNumber>=1}">
-                                                <f:param name="site"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber-1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton style="font-weight:bold;"
-                                                class="btn btn-primary" 
-                                                value="#{myCoursesBean.pagination.currentPageNumber +1}"
-                                                action="#{myCoursesBean.goToSpecificPage}">
-                                                <f:param name="site"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-default"
-                                                value="#{myCoursesBean.pagination.currentPageNumber+2}"
-                                                action="#{myCoursesBean.goToSpecificPage}"
-                                                rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}">
-                                                <f:param name="site"
-                                                    value="#{myCoursesBean.pagination.currentPageNumber+1}" />
-                                            </h:commandButton></li>
-                                        <li><h:commandButton class="btn btn-info" value="Weiter"
-                                                action="#{myCoursesBean.goToSpecificPage}">
-                                                <f:param name="site" value="forward" />
-                                            </h:commandButton></li>
-                                    </ul>
-                                </div>
-                            </f:facet>
-                        </h:dataTable>
-                    </div>
-                </div>
-            </div>
-        </h:form>
-        <h:form rendered="#{myCoursesBean.registeredCourses.size()==0}"
-            class="alert alert-warning">
-            <strong>Hinweis:</strong> Sie sind zu keinen Veranstaltungen angemeldet.
+								<h:outputText class="nowrap"
+									value="#{course.nextCourseUnit.startime}">
+									<f:convertDateTime pattern="dd.MM.yyyy" />
+								</h:outputText>
+							</h:column>
+							<h:column>
+								<f:facet name="header" />
+								<h:commandButton id="details" class="btn btn-info"
+									value="Details"
+									action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
+									<f:param name="courseID" value="#{course.courseID}" />
+								</h:commandButton>
+							</h:column>
+							<f:facet name="footer">
+								<h:panelGroup
+									rendered="#{myCoursesBean.pagination.numberOfPages>0}">
+									<div class="row" style="text-align: center;">
+										<ul class="pagination">
+											<li><h:commandButton class="btn btn-info"
+													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
+													value="Zurueck" action="#{myCoursesBean.goToSpecificPage}">
+													<f:param name="site"
+														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
+												</h:commandButton></li>
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
+													value="#{myCoursesBean.pagination.currentPageNumber}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:param name="site"
+														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
+												</h:commandButton></li>
+											<li><h:commandButton style="font-weight:bold;"
+													class="btn btn-primary"
+													value="#{myCoursesBean.pagination.currentPageNumber +1}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:param name="site"
+														value="#{myCoursesBean.pagination.currentPageNumber}" />
+												</h:commandButton></li>
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
+													value="#{myCoursesBean.pagination.currentPageNumber+2}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:param name="site"
+														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+												</h:commandButton></li>
+											<li><h:commandButton class="btn btn-info"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
+													value="Weiter" action="#{myCoursesBean.goToSpecificPage}">
+													<f:param name="site"
+														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+												</h:commandButton></li>
+										</ul>
+									</div>
+								</h:panelGroup>
+							</f:facet>
+						</h:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<h:form rendered="#{myCoursesBean.registeredCourses.size()==0}"
+			class="alert alert-warning">
+			<strong>Hinweis:</strong> Sie sind zu keinen Veranstaltungen angemeldet.
                 </h:form>
-    </ui:define>
+	</ui:define>
 </ui:composition>
 </html>

@@ -34,7 +34,7 @@ public class PaginationData implements Serializable {
      * Stores whether the displayed data in ascending order
      */
     private boolean sortAsc;
-
+    
     /**
      * Number of pages to display
      */
@@ -64,8 +64,10 @@ public class PaginationData implements Serializable {
 
    
 
+    /**
+     * Default constructor
+     */
     public PaginationData() {
-	// TODO Auto-generated constructor stub
     }
 
 

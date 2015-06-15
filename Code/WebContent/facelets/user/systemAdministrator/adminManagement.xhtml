@@ -97,7 +97,7 @@
 										value="#{systemConfigurationBean.userToTopUp.userID}"
 										reuqired="true"
 										requiredMessage="Bitte geben Sie die ID eines Benutzers ein.">
-										<f:attribute name="idUserToTopUp" value="#{idUserToTopUp}" />
+										<f:attribute name="userNameToTopUp" value="#{userNameToTopUp}" />
 										<f:validator validatorId="offlineTransactionValidator" />
 									</h:inputText>
 									<h:message for="userIDToTopUp" style="color:red" />
@@ -109,7 +109,7 @@
 										value="#{systemConfigurationBean.userToTopUp.username}"
 										id="usernameToTopUp" reuqired="true"
 										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein."
-										binding="#{idUserToTopUp}"></h:inputText>
+										binding="#{userNameToTopUp}"></h:inputText>
 									<h:message for="usernameToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">

@@ -3,13 +3,18 @@
  */
 package de.ofCourse.action;
 
+import java.io.Serializable;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.Database.dao.SystemDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -30,12 +35,17 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @RequestScoped
-public class SystemConfigurationBean {
+public class SystemConfigurationBean implements Serializable {
+
+    /**
+     * Serial id
+     */
+    private static final long serialVersionUID = 3365915734550887541L;
 
     /**
      * Stores the overdraft credit that was granted by the administrator
      */
-    private double overdraftCredit;
+    private float overdraftCredit;
 
     /**
      * Stores the user whose account is to be toped up
@@ -75,22 +85,6 @@ public class SystemConfigurationBean {
      */
     private Transaction transaction;
 
-    public User getUserToTopUp() {
-	return userToTopUp;
-    }
-
-    public void setUserToTopUp(User userToTopUp) {
-	this.userToTopUp = userToTopUp;
-    }
-
-    public double getAmountToTopUp() {
-	return amountToTopUp;
-    }
-
-    public void setAmountToTopUp(double amountToTopUp) {
-	this.amountToTopUp = amountToTopUp;
-    }
-
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user an the selected
@@ -105,7 +99,7 @@ public class SystemConfigurationBean {
     @PostConstruct
     private void init() {
 	this.transaction = Connection.create();
-	this.overdraftCredit = 0.00;
+	this.overdraftCredit = (float) 0.00;
     }
 
     private void topUpUserAccount() {
@@ -148,7 +142,19 @@ public class SystemConfigurationBean {
      * setting relating to overdraft credit in the database.
      */
     public void determineOverdraftCredit() {
-	System.out.println(this.overdraftCredit);
+	this.transaction.start();
+
+	try {
+	    SystemDAO.setSignOffLimit(transaction, this.signOffLimit);
+	    SystemDAO.setOverdraftCredit(transaction, this.overdraftCredit);
+	    this.transaction.commit();
+	    
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting"
+			    + " the granted overdraft credit.");
+	    this.transaction.rollback();
+	}
     }
 
     /**
@@ -168,30 +174,46 @@ public class SystemConfigurationBean {
      * @param overdraftCredit
      *            the new overdraft credit
      */
-    public void setOverdraftCredit(double overdraftCredit) {
+    public void setOverdraftCredit(float overdraftCredit) {
 	this.overdraftCredit = overdraftCredit;
-    }    
-    
+    }
+
     /**
      * Determines the granted overdraft credit, that means it updates the
      * setting relating to overdraft credit in the database.
      */
     public void determineSignOffLimit() {
-	System.out.println(this.signOffLimit);
-    }
-    
-    /**
-     * @return
-     */
-    public int getSignOffLimit() {
-        return signOffLimit;
+	this.transaction.start();
+
+	try {
+	    SystemDAO.setSignOffLimit(transaction, this.signOffLimit);
+	    this.transaction.commit();
+	    
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting"
+			    + " the sign off limit for course units.");
+	    this.transaction.rollback();
+	}
     }
 
     /**
+     * Returns the sign off limit for course units
+     * 
+     * @return the sign off limit.
+     */
+    public int getSignOffLimit() {
+	return signOffLimit;
+    }
+
+    /**
+     * Sets the sign off limit for course units.
+     * 
      * @param signOffLimit
+     *            the sign off limit
      */
     public void setSignOffLimit(int signOffLimit) {
-        this.signOffLimit = signOffLimit;
+	this.signOffLimit = signOffLimit;
     }
 
     /**
@@ -250,5 +272,4 @@ public class SystemConfigurationBean {
     public void setSessionUser(SessionUserBean userSession) {
 	this.sessionUser = userSession;
     }
-
 }

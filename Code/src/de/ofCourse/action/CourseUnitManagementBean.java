@@ -255,6 +255,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.end = new Date();
 	    this.end.setTime((this.start.getTime() + 7200000L));
 	}
+	System.out.println("NumberOfPagesUnit: " + this.pagination.getNumberOfPages());
     }
 
     /**
@@ -388,13 +389,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		} else {
 		    CourseUnitDAO
-		    .updateCourseUnit(transaction, getCourseUnit());
+			    .updateCourseUnit(transaction, getCourseUnit());
 		    // Send info mail
 		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
 			    .getParticipiantsOfCourseUnit(transaction,
 				    pagination, courseUnit.getCourseUnitID(),
 				    true);
-		    this.sendMailToSelected(transaction, participants, false);    
+		    this.sendMailToSelected(transaction, participants, false);
 		}
 		transaction.commit();
 		return "/facelets/open/courses/courseDetail.xhtml";
@@ -901,9 +902,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.actualizeCurrentPageNumber(FacesContext
+	this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
 		.getCurrentInstance().getExternalContext()
-		.getRequestParameterMap().get("site"));
+		.getRequestParameterMap().get("site")));
 	transaction.start();
 	try {
 	    this.participants.setWrappedData(CourseUnitDAO
