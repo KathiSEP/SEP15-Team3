@@ -1084,20 +1084,24 @@ public class UserDAO {
         String sql = "SELECT DISTINCT u.id, u.nickname, u.email, u.profile_image, "
                 + "(SELECT EXISTS(SELECT * FROM inform_users WHERE user_id = cP.participant_id AND course_id = cP.course_id)) "
                 + "AS courseNews FROM course_participants cP, users u, inform_users iU "
-                + "WHERE cP.course_id = ? AND u.id = cP.participant_id;"
-                + "ORDER BY %s %s LIMIT ? OFFSET ?";
+                + "WHERE cP.course_id = ? AND u.id = cP.participant_id "
+                + "ORDER BY %s %s LIMIT ? OFFSET ?;";
         
-        String.format(sql, pagination.getSQLSortDirection(), getSortColumn(pagination.getSortColumn()));
+        sql = String.format(sql, getSortColumn(pagination.getSortColumn()), pagination.getSQLSortDirection());
         
         try (PreparedStatement pS = conn.prepareStatement(sql)) {
             pS.setInt(1, courseID);
             pS.setInt(2, pagination.getElementsPerPage());
             pS.setInt(3, pagination.getCurrentPageNumber() * pagination.getElementsPerPage());
+            
+            System.out.println(pS.toString());
+            
             ResultSet res = pS.executeQuery();
             while(res.next()) {
                 User user = new User();
                 user.setUserId(res.getInt("id"));
                 user.setEmail(res.getString("email"));
+                user.setUsername(res.getString("nickname"));
                 user.setCourseNewsSubscribed(res.getBoolean("courseNews"));
                 user.setProfilImage(res.getBytes("profile_image"));
                 userList.add(user);

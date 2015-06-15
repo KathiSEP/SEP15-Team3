@@ -26,14 +26,14 @@
                     <div class="col-lg-12">
                         
                     <h:form class="form-horizontal" id="formListParticipants">   
-                        <h:dataTable value="#{listParticipantsBean.initializeParticipantsOfCourse}"
-                            var="" id="participantsTable" class=" table table-hover"
+                        <h:dataTable value="#{listParticipantsBean.participants}"
+                            var="participant" id="participantsTable" class=" table table-hover"
                             cellspacing="0" width="100%">
                            <h:column>
                                 <f:facet name="header">
                                                Bild
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="#{participant.profilImage}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -42,7 +42,7 @@
                                         Benutzername
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="#{participant.username}" />
                             </h:column>
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
@@ -51,7 +51,7 @@
                                         E-Mail
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" 
+                                <h:outputText value="#{participant.email}" 
                                     />
                             </h:column>
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
@@ -61,7 +61,7 @@
                                         Kursnews eingetragen
                                     </h:commandLink>                                             
                                 </f:facet>
-                                <h:outputText value="" 
+                                <h:outputText value="#{participant.courseNewsSubscribed}" 
                                     />
                             </h:column>
                            

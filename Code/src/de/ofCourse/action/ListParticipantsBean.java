@@ -37,7 +37,7 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @ViewScoped
-public class ListParticipentsBean implements Pagination {
+public class ListParticipantsBean implements Pagination {
     
     /**
      * Stores the transaction that is used for database interaction.
@@ -51,7 +51,7 @@ public class ListParticipentsBean implements Pagination {
     /**
      * Stores the the list of participants that is displayed on the page.
      */
-    private List<User> participients;
+    private List<User> participants;
 
     /**
      * Stores the the list of users that are to removed from the course.
@@ -75,6 +75,8 @@ public class ListParticipentsBean implements Pagination {
 
     @PostConstruct
     private void init() {
+        this.setParticipants(new ArrayList<User>());
+        
         this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap().get("courseID")));
         pagination = new PaginationData(elementsPerPage, 0, "title", true);
@@ -84,9 +86,10 @@ public class ListParticipentsBean implements Pagination {
         try {
             this.pagination.actualizeNumberOfPages(CourseDAO
                     .getNumberOfParticipants(transaction, this.getCourseID()));
-            this.setParticipients((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+            this.setParticipants((ArrayList<User>) UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
                             this.getCourseID()));
             this.transaction.commit();
+            System.out.println(this.getParticipants().get(0).getUsername());
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
                     "Error occured during updating the"
@@ -94,31 +97,6 @@ public class ListParticipentsBean implements Pagination {
             this.transaction.rollback();
         }
 
-    }
-    
-    /**
-     * Returns a list of users who are attending the course.
-     * 
-     * @return list of participants
-     */
-    public List<User> getParticipients() {
-	return participients;
-    }
-
-    /**
-     * Sets the value of the attribute <code>participants</code> of a course.
-     * 
-     * @param participients
-     *            the new participants list
-     */
-    public void setParticipients(List<User> participients) {
-    }
-
-    /**
-     * Initializes the <code>listParticipants</code> page with the participants
-     * of the course.
-     */
-    public void initializeParticipantsOfCourse() {
     }
 
     /**
@@ -165,6 +143,7 @@ public class ListParticipentsBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
+        
     }
 
     /**
@@ -172,7 +151,7 @@ public class ListParticipentsBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-     // Not needed in MyCoursesBean
+    
 
     }
     
@@ -226,6 +205,20 @@ public class ListParticipentsBean implements Pagination {
      */
     public void setCourseID(int courseID) {
         this.courseID = courseID;
+    }
+
+    /**
+     * @return the participants
+     */
+    public List<User> getParticipants() {
+        return participants;
+    }
+
+    /**
+     * @param participants the participants to set
+     */
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
     }
 
     
