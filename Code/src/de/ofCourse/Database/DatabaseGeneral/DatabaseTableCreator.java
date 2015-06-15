@@ -47,7 +47,7 @@ public class DatabaseTableCreator {
     
     private static final String CREATE_ACTIVATION =
     		"CREATE TYPE activation AS ENUM (" +
-    			"'EMAIL', 'ADMIN', 'COMPLETE'" +
+    			"'EMAIL', 'EMAIL_ADMIN', 'EMAIL_COURSE_LEADER'" +
     		")";
     
     private static final String CREATE_USERS =
@@ -165,7 +165,7 @@ public class DatabaseTableCreator {
     			"activation_type ACTIVATION NOT NULL," +
     			"withdrawal_hours INTEGER NOT NULL," +
     			"application_hours INTEGER NOT NULL," +
-    			"overdraft INTEGER NOT NULL" +
+    			"overdraft_credit INTEGER NOT NULL" +
     		")";
     
     private static final String CREATE_CUSTOMIZATION_DATA =

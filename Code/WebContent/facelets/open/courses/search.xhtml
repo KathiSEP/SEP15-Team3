@@ -56,7 +56,11 @@
                                         </h:panelGroup>
                                         <div class="col-lg-3">
                                             <div class="input-group">
-                                                <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"></h:inputText>
+                                                <h:message for="filterInput" style="color:red" />
+                                                <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"
+                                                    converterMessage="Datum Format (dd.MM.yyyy) ist falsch." >
+                                                    <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+                                                </h:inputText>
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
