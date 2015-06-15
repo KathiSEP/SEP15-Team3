@@ -27,6 +27,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading"><strong>Kurse filtern</strong></div>
                             <div class="panel-body">
+                            
                                 <h:form class="form-horizontal" id="formFilterCourses">
                                     <div class="row">
                                         <div class="col-lg-4">
@@ -56,11 +57,8 @@
                                         </h:panelGroup>
                                         <div class="col-lg-3">
                                             <div class="input-group">
+                                                <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"></h:inputText>
                                                 <h:message for="filterInput" style="color:red" />
-                                                <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"
-                                                    converterMessage="Datum Format (dd.MM.yyyy) ist falsch." >
-                                                    <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
-                                                </h:inputText>
                                             </div>
                                         </div>
                                         <div class="col-lg-2">

@@ -3,6 +3,8 @@
  */
 package de.ofCourse.action;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -182,42 +184,63 @@ public class SearchCourseBean implements Pagination {
      */
     public void search() {
     	if (!searchString.isEmpty()) {
-    		transaction = Connection.create();
-    		transaction.start();
-    		
-    		System.out.println("search param: " + searchParam);
-    		
-    		
-    		pagination.setCurrentPageNumber(0);
-    		pagination.setSortAsc(true);
-    		pagination.setSortColumn(searchParam);
-    		try {
-        		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
-	    		List<Course> result = CourseDAO.getCourses(transaction, pagination,
-	    			searchParam, searchString);
-	    		
-	    		if (result != null) {
-	    			searchResult = result;
-	    			setPagingSearchTerm(true);
-	    			setRenderTable(true);
-	    			columnSort = false;
-	    			orderPeriod = displayPeriod;
-	        		orderSearchParam = searchParam;
-	        		orderSearchString = searchString;
-	        		transaction.commit();
-	    		} else {
-	    			setRenderTable(false);
-	    			transaction.rollback();
-	    		}
-        	} catch (InvalidDBTransferException e) {
-        		LogHandler
-                .getInstance()
-                .error("SQL Exception occoured during executing "
-                        + "createUser()");
-        		transaction.rollback();
-        	}
+    		if (searchParam.equals("date")) {
+    			if (isValidDate(searchString)) {
+    				executeSearch();
+    			} else {
+    				FacesMessageCreator.createFacesMessage(null, "Das eingegebene Format ist ungültig (dd.MM.yyyy)");
+    			}
+    		} else {
+    			executeSearch();
+    		}
     	} else {
     		setRenderTable(false);
+    	}
+    }
+    
+    private boolean isValidDate(String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        dateFormat.setLenient(true);
+        
+        try {
+        	dateFormat.parse(date.trim());
+        } catch (ParseException pe) {
+        	return false;
+        }
+        return true;
+    }
+    
+    private void executeSearch() {
+    	transaction = Connection.create();
+		transaction.start();
+		
+		pagination.setCurrentPageNumber(0);
+		pagination.setSortAsc(true);
+		pagination.setSortColumn(searchParam);
+		try {
+    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
+    		List<Course> result = CourseDAO.getCourses(transaction, pagination,
+    			searchParam, searchString);
+    		
+    		if (result != null) {
+    			searchResult = result;
+    			setPagingSearchTerm(true);
+    			setRenderTable(true);
+    			columnSort = false;
+    			orderPeriod = displayPeriod;
+        		orderSearchParam = searchParam;
+        		orderSearchString = searchString;
+        		transaction.commit();
+    		} else {
+    			setRenderTable(false);
+    			transaction.rollback();
+    		}
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "createUser()");
+    		transaction.rollback();
     	}
     }
     
