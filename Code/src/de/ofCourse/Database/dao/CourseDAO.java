@@ -421,7 +421,7 @@ public class CourseDAO {
 		int limit = pagination.getElementsPerPage();
 		int offset = limit * pagination.getCurrentPageNumber();
 		String orderParam = getOrderParam(pagination.getSortColumn());
-		String dir = getSortDirection(pagination.isSortAsc());
+		String dir = pagination.getSQLSortDirection();
 		String query;
 	
 		switch (period) {
@@ -520,7 +520,7 @@ public class CourseDAO {
 		int limit = pagination.getElementsPerPage();
 		int offset = limit * pagination.getCurrentPageNumber();
 		String orderParam = getOrderParam(pagination.getSortColumn());
-		String dir = getSortDirection(pagination.isSortAsc());
+		String dir = pagination.getSQLSortDirection();
 		String query = null;
 		boolean isDate= false;
 		
