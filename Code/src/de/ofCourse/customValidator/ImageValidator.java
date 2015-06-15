@@ -42,7 +42,12 @@ public class ImageValidator implements Validator {
         System.out.println(image.getContentType());
         
         if (!image.getContentType().equals("image/jpeg")) {
-            throw new ValidatorException(new FacesMessage("Kein gültiges Bildformat."));
-    }
+            throw new ValidatorException(new FacesMessage("Kein gültiges "
+                    + "Bildformat."));
+        }
+        if(image.getSize() > 102400) {
+            throw new ValidatorException(new FacesMessage("Das Bild muss "
+                    + "kleiner als 100 KB sein."));
+        }
     }
 }
