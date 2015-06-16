@@ -33,7 +33,7 @@
                                         BenutzerID
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="user.userID" />
+                                <h:outputText value="#{user.userID}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -42,7 +42,16 @@
                                         Benutzername
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="user.username" />
+                                <h:outputText value="#{user.username}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="email" />
+                                        Email
+                                    </h:commandLink>
+                                </f:facet>
+                                <h:outputText value="#{user.email}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -51,7 +60,7 @@
                                         Name
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="user.lastname" />
+                                <h:outputText value="#{user.lastname}" />
                                     
                             </h:column>
                             <h:column>
@@ -61,7 +70,7 @@
                                         Vorname
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="user.firstname" />
+                                <h:outputText value="#{user.firstname}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -70,13 +79,15 @@
                                         Geburtsdatum
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="user.dateOfBirth" />
+                                <h:outputText value="#{user.dateOfBirth}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
                             </h:column>
                             <h:column>
                                 <f:facet name="header" >
                                      aktivieren
                                      </f:facet>
-                                     <h:selectBooleanCheckbox value="#{users.selected}" /> 
+                                     <h:selectBooleanCheckbox id="checked" value="#{user.selected}" /> 
                             </h:column>
                         
                             <f:facet name="footer">

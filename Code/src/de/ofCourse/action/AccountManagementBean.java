@@ -5,15 +5,19 @@ package de.ofCourse.action;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
@@ -41,6 +45,8 @@ public class AccountManagementBean implements Pagination {
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
+    
+    private static final int elementsPerPage = 10;
 
     private String sortColumn;
 
@@ -52,7 +58,7 @@ public class AccountManagementBean implements Pagination {
     /**
      * The users that are displayed on the page.
      */
-    private List<User> users;
+    private DataModel<User> users;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -69,6 +75,26 @@ public class AccountManagementBean implements Pagination {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    @PostConstruct
+    private void init() {
+        this.users = new ListDataModel<User>();
+        pagination = new PaginationData(elementsPerPage, 0, "nickname", true);
+        
+        transaction = Connection.create();
+        transaction.start();
+        try {
+            this.pagination.actualizeNumberOfPages(UserDAO
+                    .getNumberOfNotAdminActivatedUsers(this.transaction));
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during updating the"
+                            + " page with elements from database.");
+            this.transaction.rollback();
+        }
+    }
+    
     /**
      * Activates the user accounts that are selected in the facelet.
      * <p>
@@ -80,6 +106,7 @@ public class AccountManagementBean implements Pagination {
      * system.
      */
     public void activateAccounts() {
+        
     }
 
     /**
@@ -101,30 +128,22 @@ public class AccountManagementBean implements Pagination {
     }
 
     /**
-     * Returns the value of the attribute <code>users</code>.
-     * 
-     * @return the displayed users
-     */
-    public List<User> getUsers() {
-	return users;
-    }
-
-    /**
-     * Sets the value of the attribute <code>users</code>.
-     * 
-     * @param users
-     *            the users that are to be displayed
-     */
-    public void setUsers(List<User> users) {
-    }
-
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void goToSpecificPage() {
-        
+        this.getPagination().actualizeCurrentPageNumber(FacesContext
+                .getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("site"));
+        transaction.start();
+        try {
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during fetching data for pagination.");
+            this.transaction.rollback();
+        }
     }
 
     /**
@@ -132,8 +151,20 @@ public class AccountManagementBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
-
+        if(this.getPagination().getSortColumn().equals(this.getSortColumn())) {
+            this.getPagination().setSortAsc(!this.getPagination().isSortAsc());
+        } else {
+            this.getPagination().setSortColumn(this.getSortColumn());
+        }
+        transaction.start();
+        try {
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during fetching data for pagination.");
+            this.transaction.rollback();
+        }
     }
    
 
@@ -184,6 +215,20 @@ public class AccountManagementBean implements Pagination {
      */
     public void setSortColumn(String sortColumn) {
         this.sortColumn = sortColumn;
+    }
+
+    /**
+     * @return the users
+     */
+    public DataModel<User> getUsers() {
+        return users;
+    }
+
+    /**
+     * @param users the users to set
+     */
+    public void setUsers(DataModel<User> users) {
+        this.users = users;
     }
 
 }

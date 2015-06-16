@@ -879,7 +879,6 @@ public class UserDAO {
                     
                     boolean emailVerification = res.getBoolean("email_verification");
                     boolean adminVerification = res.getBoolean("admin_verification");
-                    String status = res.getString("status");
                     
                     // Check if the user is activated.
                     if (res.getString("status").equals(
@@ -1389,6 +1388,14 @@ public class UserDAO {
             return "email";
         case "courseNews":
             return "courseNews";
+        case "id":
+            return "id";
+        case "first_name":
+            return "first_name";
+        case "name":
+            return "name";
+        case "date_of_birth":
+            return "date_of_birth";
         default:
             return "nickname";
         }
@@ -1676,6 +1683,79 @@ public class UserDAO {
         }
 
         return 0;
+    }
+
+    public static int getNumberOfNotAdminActivatedUsers(Transaction trans) 
+        throws InvalidDBTransferException {
+        int numberOfNotAdminActivatedUsers = -1;
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        ResultSet res = null;
+        String sql = "SELECT COUNT (*) AS numberOfNotAdminActivatedUsers FROM users where admin_verification = ?";
+
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setBoolean(1, false);
+            
+            res = pS.executeQuery();
+            if (res.next()) {
+                numberOfNotAdminActivatedUsers = res.getInt(1);
+            } else {
+                numberOfNotAdminActivatedUsers = -1;
+            }
+
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "SQL Exception occoured during executing getNumberOfUsersWithThisName");
+            throw new InvalidDBTransferException();
+        }        
+        return numberOfNotAdminActivatedUsers;
+    }
+
+    public static List<User> getNotAdminActivatedUsers(Transaction trans,
+            PaginationData pagination) throws InvalidDBTransferException {
+        List<User> notAdminActivatedUsers = new ArrayList<User>();
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        ResultSet res = null;
+        String sql = "SELECT id, first_name, name, email, nickname, date_of_birth "
+                + "FROM users WHERE admin_verification = ? "
+                + "ORDER BY %s %s LIMIT ? OFFSET ?;";
+
+        sql = String.format(sql, getSortColumn(pagination.getSortColumn()),
+                pagination.getSQLSortDirection());
+
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setBoolean(1, false);
+            pS.setInt(2, pagination.getElementsPerPage());
+            pS.setInt(
+                    3,
+                    pagination.getCurrentPageNumber()
+                            * pagination.getElementsPerPage());
+            
+            res = pS.executeQuery();
+
+            while(res.next()) {
+                User user = new User();
+                user.setUserId(res.getInt("id"));
+                user.setFirstname(res.getString("first_name"));
+                user.setLastname(res.getString("name"));
+                user.setEmail(res.getString("email"));
+                user.setUsername(res.getString("nickname"));
+                user.setDateOfBirth(new java.util.Date(res.getDate(
+                        "date_of_birth").getTime()));
+                notAdminActivatedUsers.add(user);
+            }
+
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "SQL Exception occoured during executing getNumberOfUsersWithThisName");
+            throw new InvalidDBTransferException();
+        }        
+        return notAdminActivatedUsers;
     }
 
 }
