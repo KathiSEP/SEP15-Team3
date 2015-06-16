@@ -22,6 +22,7 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
 import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -61,8 +62,6 @@ public class UserProfileBean implements Pagination {
      */
     private User user;
     
-
-
     /**
      * Stores the managed courses of a user in case of the user is a course
      * leader
@@ -80,6 +79,8 @@ public class UserProfileBean implements Pagination {
     private int userID;
 
     private String salutation;
+    
+    private String role;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -135,11 +136,7 @@ public class UserProfileBean implements Pagination {
      * @return link to the next page
      */
     public void saveSettings() {
-    	if (salutation.equals("mr")) {
-    		user.setSalutation(Salutation.MR);
-    	} else {
-    		user.setSalutation(Salutation.MS);
-    	}
+    	setEnums();
     	transaction = Connection.create();
     	transaction.start();
     	
@@ -166,6 +163,22 @@ public class UserProfileBean implements Pagination {
             .error("SQL Exception occoured during executing "
                     + "saveSettings()");
     		transaction.rollback();
+    	}
+    }
+    
+    private void setEnums() {
+    	if (salutation.equals("ms")) {
+    		user.setSalutation(Salutation.MS);
+    	} else {
+    		user.setSalutation(Salutation.MR);
+    	}
+    	
+    	if (role.equals("admin")) {
+    		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
+    	} else if (role.equals("leader")) {
+    		user.setUserRole(UserRole.COURSE_LEADER);
+    	} else {
+    		user.setUserRole(UserRole.REGISTERED_USER);
     	}
     }
     
@@ -221,6 +234,10 @@ public class UserProfileBean implements Pagination {
 	            this.transaction.rollback();
 	        }
     	}
+    }
+    
+    public void deleteProfilePic() {
+    	
     }
     
     /**
@@ -390,6 +407,14 @@ public class UserProfileBean implements Pagination {
 
 	public void setSalutation(String salutation) {
 		this.salutation = salutation;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
     
     
