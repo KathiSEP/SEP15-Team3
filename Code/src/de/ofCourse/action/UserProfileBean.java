@@ -237,7 +237,18 @@ public class UserProfileBean implements Pagination {
     }
     
     public void deleteProfilePic() {
-    	
+    	transaction = Connection.create();
+    	transaction.start();
+    	try {
+    		UserDAO.delete(transaction, user.getUserID(), false);
+    		transaction.commit();
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "deleteProfilePic()");
+            this.transaction.rollback();
+        }
     }
     
     /**
