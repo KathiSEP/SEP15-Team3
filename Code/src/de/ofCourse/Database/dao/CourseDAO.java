@@ -103,7 +103,29 @@ public class CourseDAO {
 			+ "WHERE \"courses\".id = \"course_units\".course_id "
 			+ "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 	
-    /**
+    
+    public static boolean doCourseMaintenance(Transaction trans) throws InvalidDBTransferException {
+        boolean success = false;
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+
+        String sql = "DELETE FROM courses WHERE end_date < CURRENT_TIMESTAMP";
+
+        // catch potential SQL-Injection
+        try (PreparedStatement pS = conn.prepareStatement(sql)){
+            pS.executeUpdate();
+        } catch (SQLException e) {
+            LogHandler
+                    .getInstance()
+                    .error("Error");
+            throw new InvalidDBTransferException();
+
+        }
+        return success;
+    }
+	
+     /**
      * Checks, whether the inserted id of the course leader exists in the system
      * or not.
      * 

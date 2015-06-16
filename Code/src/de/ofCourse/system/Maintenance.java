@@ -3,6 +3,12 @@
  */
 package de.ofCourse.system;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+
 /**
  * Provides the maintenance service of the system which is responsible for
  * deleting courses which are out of date.<br>
@@ -19,12 +25,42 @@ public class Maintenance implements Runnable {
      * Singleton-object of the Maintenace class 
      */
     private static Maintenance maintenance;
+    
+    private static final long timerPeriod = 82400000L;
+    
+    private Timer timer;
 
     /**
      * Represents whether the maintenance thread is running
      */
     private boolean maintenaceStopped;
 
+    class MaintenanceTask extends TimerTask {
+        
+        private Transaction transaction;
+        
+        @Override
+        public void run() {
+            this.transaction = Connection.create();
+            this.transaction.start();
+            try {
+                if(CourseDAO.doCourseMaintenance(this.transaction) == true) {
+                    LogHandler
+                    .getInstance()
+                    .error("Maintenance erfolgreich ausgeführt!");
+                } else {
+                    LogHandler
+                    .getInstance()
+                    .error("Fehler!");
+                }
+
+            } catch (InvalidDBTransferException e) {
+                this.transaction.rollback();
+            }
+        }
+        
+    }
+    
     /**
      * Returns <code>true</code> if the maintenance thread is already running.
      * 
@@ -32,13 +68,15 @@ public class Maintenance implements Runnable {
      *         <code>false</code> otherwise
      */
     public synchronized boolean isMaintenaceStopped() {
-	return maintenaceStopped;
+	return this.maintenaceStopped;
     }
 
     /**
      * Stops the maintenance thread.
      */
     public synchronized void shutDown() {
+        this.timer.cancel();
+        this.maintenaceStopped = true;
     }
 
     /**
@@ -57,8 +95,9 @@ public class Maintenance implements Runnable {
      */
     @Override
     public void run() {
-	// TODO Auto-generated method stub
-
+	this.maintenaceStopped = false;
+	this.timer = new Timer();
+        this.timer.schedule(new MaintenanceTask(), 0, timerPeriod);
     }
 
 }
