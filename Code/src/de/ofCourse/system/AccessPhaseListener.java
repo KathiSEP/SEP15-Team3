@@ -323,7 +323,7 @@ public class AccessPhaseListener implements PhaseListener {
 	listForAdministrators
 		.add("/facelets/user/systemAdministrator/adminManagement.xhtml");
 	listForAdministrators
-		.add("/facelets/user/systemAdministrator/listUsers.xhtml");
+		.add("/facelets/user/systemAdministrator/searchUser.xhtml");
 	listForAdministrators
 		.add("/facelets/user/systemAdministrator/createUser.xhtml");
 	listForAdministrators

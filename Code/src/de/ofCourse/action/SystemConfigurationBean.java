@@ -238,7 +238,7 @@ public class SystemConfigurationBean implements Serializable {
      * @return link to next page
      */
     public String loadManageUserPage() {
-	return "/facelets/user/systemAdministrator/listUsers.xhtml";
+	return "/facelets/user/systemAdministrator/searchUser.xhtml";
     }
 
     /**

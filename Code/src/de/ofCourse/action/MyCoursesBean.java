@@ -124,7 +124,6 @@ public class MyCoursesBean implements Pagination, Serializable {
 		.getCurrentInstance().getExternalContext()
 		.getRequestParameterMap().get("site")));
 	transaction.start();
-	transaction.start();
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
 		    .getCoursesOf(transaction, this.getPagination(),

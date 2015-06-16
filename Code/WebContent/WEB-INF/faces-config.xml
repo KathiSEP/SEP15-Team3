@@ -9,7 +9,11 @@
 			<default-locale>de</default-locale>
 		</locale-config>
 	</application>
-   
+    <lifecycle>
+        <phase-listener>
+             de.ofCourse.system.AccessPhaseListener
+        </phase-listener>
+    </lifecycle>
     
     <validator>
         <validator-id>emailValidator</validator-id>

@@ -28,6 +28,14 @@
 							var="course" id="courseTable" class=" table table-hover"
 							cellspacing="0" width="100%">
 							<h:column>
+                                            <f:facet name="header">
+                                               Bild
+                                            </f:facet>
+                                            <h:graphicImage
+                                                value="/image?profilImage=#{course.courseID}" height="25"/>
+
+                                        </h:column>
+							<h:column>
 								<f:facet name="header">
                                                ID
                                 </f:facet>

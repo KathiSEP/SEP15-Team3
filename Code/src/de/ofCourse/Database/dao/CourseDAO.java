@@ -49,83 +49,81 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseDAO {
 
-	private final static String NUM_COURSES_DAY = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-		    + "WHERE \"course_units\".start_time::date = current_date "
-		    + "AND \"course_units\".course_id = \"courses\".id";
-	
-	private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-		    + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
-	
-	private final static String NUM_COURSES_TOTAL = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\"";
-	
-	private final static String NUM_COURSES_ID = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
-		    + "WHERE CAST(id AS TEXT) LIKE ?";
-	
-	private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
-		    + "WHERE LOWER(titel) LIKE LOWER(?)";
-	
-	private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"users\", \"course_instructors\" "
-		    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
-		    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
-		    + "AND \"course_instructors\".course_id = courses.id";
-	
-	private final static String NUM_COURSES_DATE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-			+ "WHERE \"courses\".id = \"course_units\".course_id "
-			+ "AND \"course_units\".start_time::date = ?";
-	
-	private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
-			+ "courses.end_date FROM \"courses\", \"course_units\" "
-			+ "WHERE \"course_units\".start_time::date = current_date "
-			+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-	private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
-			+ "courses.end_date FROM \"courses\", \"course_units\" "
-			+ "WHERE \"course_units\".start_time::date BETWEEN current_date AND current_date + integer '6' "
-			+ "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-	private final static String ALL_COURSES = "SELECT * FROM \"courses\" ORDER BY %s %s"
-			+ " LIMIT ? OFFSET ?";
-	
-	private final static String GET_COURSES_BY_ID = "SELECT * FROM \"courses\" "
-		    + "WHERE CAST(id AS TEXT) LIKE ? ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-	private final static String GET_COURSES_BY_TITLE = "SELECT * FROM \"courses\" "
-		    + "WHERE LOWER(titel) LIKE LOWER(?) ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-	private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
-		    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
-		    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
-		    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
-		    + "AND \"course_instructors\".course_id = courses.id ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-	private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
-			+ "courses.end_date FROM \"courses\", \"course_units\" "
-			+ "WHERE \"courses\".id = \"course_units\".course_id "
-			+ "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
-	
-    
-    public static boolean doCourseMaintenance(Transaction trans) throws InvalidDBTransferException {
-        boolean success = false;
-        
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
+    private final static String NUM_COURSES_DAY = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
+	    + "WHERE \"course_units\".start_time::date = current_date "
+	    + "AND \"course_units\".course_id = \"courses\".id";
 
-        String sql = "DELETE FROM courses WHERE end_date < CURRENT_TIMESTAMP";
+    private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
+	    + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
 
-        // catch potential SQL-Injection
-        try (PreparedStatement pS = conn.prepareStatement(sql)){
-            pS.executeUpdate();
-        } catch (SQLException e) {
-            LogHandler
-                    .getInstance()
-                    .error("Error");
-            throw new InvalidDBTransferException();
+    private final static String NUM_COURSES_TOTAL = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\"";
 
-        }
-        return success;
+    private final static String NUM_COURSES_ID = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
+	    + "WHERE CAST(id AS TEXT) LIKE ?";
+
+    private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
+	    + "WHERE LOWER(titel) LIKE LOWER(?)";
+
+    private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"users\", \"course_instructors\" "
+	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
+	    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
+	    + "AND \"course_instructors\".course_id = courses.id";
+
+    private final static String NUM_COURSES_DATE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
+	    + "WHERE \"courses\".id = \"course_units\".course_id "
+	    + "AND \"course_units\".start_time::date = ?";
+
+    private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	    + "courses.end_date FROM \"courses\", \"course_units\" "
+	    + "WHERE \"course_units\".start_time::date = current_date "
+	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	    + "courses.end_date FROM \"courses\", \"course_units\" "
+	    + "WHERE \"course_units\".start_time::date BETWEEN current_date AND current_date + integer '6' "
+	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    private final static String ALL_COURSES = "SELECT * FROM \"courses\" ORDER BY %s %s"
+	    + " LIMIT ? OFFSET ?";
+
+    private final static String GET_COURSES_BY_ID = "SELECT * FROM \"courses\" "
+	    + "WHERE CAST(id AS TEXT) LIKE ? ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    private final static String GET_COURSES_BY_TITLE = "SELECT * FROM \"courses\" "
+	    + "WHERE LOWER(titel) LIKE LOWER(?) ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
+	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
+	    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
+	    + "AND \"course_instructors\".course_id = courses.id ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+	    + "courses.end_date FROM \"courses\", \"course_units\" "
+	    + "WHERE \"courses\".id = \"course_units\".course_id "
+	    + "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+
+    public static boolean doCourseMaintenance(Transaction trans)
+	    throws InvalidDBTransferException {
+	boolean success = false;
+
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	String sql = "DELETE FROM courses WHERE end_date < CURRENT_TIMESTAMP";
+
+	// catch potential SQL-Injection
+	try (PreparedStatement pS = conn.prepareStatement(sql)) {
+	    pS.executeUpdate();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error("Error");
+	    throw new InvalidDBTransferException();
+
+	}
+	return success;
     }
-	
-     /**
+
+    /**
      * Checks, whether the inserted id of the course leader exists in the system
      * or not.
      * 
@@ -156,7 +154,7 @@ public class CourseDAO {
 	// catch potential SQL-Injection
 	try {
 
-	 // Filling PreparedStatement.
+	    // Filling PreparedStatement.
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseLeaderID);
 	    pS.setString(2, UserRole.REGISTERED_USER.toString());
@@ -167,11 +165,10 @@ public class CourseDAO {
 	    pS.close();
 	    res.close();
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "courseLeaderExists(Transaction trans, "
-		            + "int courseLeaderID)");
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "courseLeaderExists(Transaction trans, "
+			    + "int courseLeaderID)");
 	    throw new InvalidDBTransferException();
 
 	}
@@ -191,8 +188,8 @@ public class CourseDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static int createCourse(Transaction trans, Course course, Part courseImage)
-	    throws InvalidDBTransferException {
+    public static int createCourse(Transaction trans, Course course,
+	    Part courseImage) throws InvalidDBTransferException {
 
 	final int errorGeneratingCourse = -1;
 
@@ -207,12 +204,12 @@ public class CourseDAO {
 		+ "start_date, end_date, description, image) "
 		+ "values (?, ?, ?, ?, ?, ?) RETURNING id";
 
-	//  catch potential SQL-Injection
+	// catch potential SQL-Injection
 	try {
 
-	    // Filling PreparedStatement, check in optional fields if the user 
-            // has inserted the data or if the value null must be written into
-            // the database.
+	    // Filling PreparedStatement, check in optional fields if the user
+	    // has inserted the data or if the value null must be written into
+	    // the database.
 	    pS = conn.prepareStatement(sql);
 	    if (course.getTitle() == null || course.getTitle().length() < 1) {
 		pS.setString(1, null);
@@ -232,11 +229,11 @@ public class CourseDAO {
 	    } else {
 		pS.setString(5, course.getDescription());
 	    }
-	    if(courseImage != null && courseImage.getInputStream() != null) {
-    	        InputStream inputStream = courseImage.getInputStream();
-                pS.setBinaryStream(6, inputStream, courseImage.getSize());
+	    if (courseImage != null && courseImage.getInputStream() != null) {
+		InputStream inputStream = courseImage.getInputStream();
+		pS.setBinaryStream(6, inputStream, courseImage.getSize());
 	    } else {
-	        pS.setBinaryStream(6, null, 0);
+		pS.setBinaryStream(6, null, 0);
 	    }
 	    ResultSet res = pS.executeQuery();
 	    res.next();
@@ -244,21 +241,19 @@ public class CourseDAO {
 	    pS.close();
 	    res.close();
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-                            + "createCourse(Transaction trans, Course course, "
-                            + "Part courseImage)");
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "createCourse(Transaction trans, Course course, "
+			    + "Part courseImage)");
 	    throw new InvalidDBTransferException();
 
 	} catch (IOException e) {
-            LogHandler
-            .getInstance()
-            .error("SQL Exception occoured during executing "
-                    + "createCourse(Transaction trans, Course course, "
-                    + "Part courseImage)");
-            throw new InvalidDBTransferException();
-    }
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "createCourse(Transaction trans, Course course, "
+			    + "Part courseImage)");
+	    throw new InvalidDBTransferException();
+	}
 	return generatedCourseID;
     }
 
@@ -274,33 +269,33 @@ public class CourseDAO {
      */
     public static int getNumberOfCourses(Transaction trans, String param,
 	    String searchString) throws InvalidDBTransferException {
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-		String query = null;
-		switch (param) {
-		case "day":
-		    query = NUM_COURSES_DAY;
-		    return countCourses(conn, query, null, false);
-		case "week":
-		    query = NUM_COURSES_WEEK;
-		    return countCourses(conn, query, null, false);
-		case "total":
-		    query = NUM_COURSES_TOTAL;
-		    return countCourses(conn, query, null, false);
-		case "courseID":
-		    query = NUM_COURSES_ID;
-		    return countCourses(conn, query, searchString, false);
-		case "title":
-		    query = NUM_COURSES_TITLE;
-		    return countCourses(conn, query, searchString, false);
-		case "leader":
-		    query = NUM_COURSES_LEADER;
-		    return countCourses(conn, query, searchString, false);
-		case "date":
-			query = NUM_COURSES_DATE;
-			return countCourses(conn, query, searchString, true);
-		}
-		return 0;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	String query = null;
+	switch (param) {
+	case "day":
+	    query = NUM_COURSES_DAY;
+	    return countCourses(conn, query, null, false);
+	case "week":
+	    query = NUM_COURSES_WEEK;
+	    return countCourses(conn, query, null, false);
+	case "total":
+	    query = NUM_COURSES_TOTAL;
+	    return countCourses(conn, query, null, false);
+	case "courseID":
+	    query = NUM_COURSES_ID;
+	    return countCourses(conn, query, searchString, false);
+	case "title":
+	    query = NUM_COURSES_TITLE;
+	    return countCourses(conn, query, searchString, false);
+	case "leader":
+	    query = NUM_COURSES_LEADER;
+	    return countCourses(conn, query, searchString, false);
+	case "date":
+	    query = NUM_COURSES_DATE;
+	    return countCourses(conn, query, searchString, true);
+	}
+	return 0;
     }
 
     /**
@@ -364,34 +359,35 @@ public class CourseDAO {
      * @author Patrick Cretu
      */
     private static int countCourses(java.sql.Connection conn, String query,
-	    String searchString, boolean isDate) throws InvalidDBTransferException {
+	    String searchString, boolean isDate)
+	    throws InvalidDBTransferException {
 	PreparedStatement stmt = null;
 	ResultSet rst = null;
 	int numCourses = 0;
 
 	try {
 	    stmt = conn.prepareStatement(query);
-	    
+
 	    if (searchString != null) {
-	    	if (isDate) {
-	    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-	            Date parsed;
-				try {
-					parsed = format.parse(searchString);
-				} catch (ParseException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during countCourses(java.sql.Connection conn," +
-				    	   "String query, String searchString, boolean isDate)");
-					throw new InvalidDBTransferException();
-				}
-	            java.sql.Date date = new java.sql.Date(parsed.getTime());
-	    		stmt.setDate(1, date);
-	    	} else {
-	    		stmt.setString(1, searchString);
-	    	}
+		if (isDate) {
+		    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		    Date parsed;
+		    try {
+			parsed = format.parse(searchString);
+		    } catch (ParseException e) {
+			LogHandler
+				.getInstance()
+				.error("SQL Exception occoured during countCourses(java.sql.Connection conn,"
+					+ "String query, String searchString, boolean isDate)");
+			throw new InvalidDBTransferException();
+		    }
+		    java.sql.Date date = new java.sql.Date(parsed.getTime());
+		    stmt.setDate(1, date);
+		} else {
+		    stmt.setString(1, searchString);
+		}
 	    }
-	    
+
 	    rst = stmt.executeQuery();
 	    rst.next();
 	    numCourses = rst.getInt(1);
@@ -438,26 +434,27 @@ public class CourseDAO {
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String period)
 	    throws InvalidDBTransferException {
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-		int limit = pagination.getElementsPerPage();
-		int offset = limit * pagination.getCurrentPageNumber();
-		String orderParam = getOrderParam(pagination.getSortColumn());
-		String dir = pagination.getSQLSortDirection();
-		String query;
-	
-		switch (period) {
-		case "day":
-		    query = CURRENT_DATE_COURSES;
-		    break;
-		case "week":
-		    query = CURRENT_WEEK_COURSES;
-		    break;
-		default:
-		    query = ALL_COURSES;
-		    break;
-		}
-		return getCoursesInPeriod(conn, limit, offset, String.format(query, orderParam, dir));
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	int limit = pagination.getElementsPerPage();
+	int offset = limit * pagination.getCurrentPageNumber();
+	String orderParam = getOrderParam(pagination.getSortColumn());
+	String dir = pagination.getSQLSortDirection();
+	String query;
+
+	switch (period) {
+	case "day":
+	    query = CURRENT_DATE_COURSES;
+	    break;
+	case "week":
+	    query = CURRENT_WEEK_COURSES;
+	    break;
+	default:
+	    query = ALL_COURSES;
+	    break;
+	}
+	return getCoursesInPeriod(conn, limit, offset,
+		String.format(query, orderParam, dir));
     }
 
     /**
@@ -537,33 +534,33 @@ public class CourseDAO {
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String searchParam, String searchString)
 	    throws InvalidDBTransferException {
-		Connection connection = (Connection) trans;
-		java.sql.Connection conn = connection.getConn();
-		int limit = pagination.getElementsPerPage();
-		int offset = limit * pagination.getCurrentPageNumber();
-		String orderParam = getOrderParam(pagination.getSortColumn());
-		String dir = pagination.getSQLSortDirection();
-		String query = null;
-		boolean isDate= false;
-		
-		switch (searchParam) {
-		case "title":
-			query = GET_COURSES_BY_TITLE;
-		    break;
-		case "leader":
-			query = GET_COURSES_BY_LEADER;
-		    break;
-		case "date":
-			query = GET_COURSES_BY_DATE;
-			isDate = true;
-			break;
-		default:
-			query = GET_COURSES_BY_ID;
-		}
-		return getCourses(conn, limit, offset, searchString,
-				String.format(query, orderParam, dir), isDate);
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	int limit = pagination.getElementsPerPage();
+	int offset = limit * pagination.getCurrentPageNumber();
+	String orderParam = getOrderParam(pagination.getSortColumn());
+	String dir = pagination.getSQLSortDirection();
+	String query = null;
+	boolean isDate = false;
+
+	switch (searchParam) {
+	case "title":
+	    query = GET_COURSES_BY_TITLE;
+	    break;
+	case "leader":
+	    query = GET_COURSES_BY_LEADER;
+	    break;
+	case "date":
+	    query = GET_COURSES_BY_DATE;
+	    isDate = true;
+	    break;
+	default:
+	    query = GET_COURSES_BY_ID;
+	}
+	return getCourses(conn, limit, offset, searchString,
+		String.format(query, orderParam, dir), isDate);
     }
-    
+
     /**
      * 
      * @param orderParam
@@ -572,18 +569,18 @@ public class CourseDAO {
      * @author Patrick Cretu
      */
     private static String getOrderParam(String orderParam) {
-		switch (orderParam) {
-		case "title":
-		    return "titel";
-		case "maxUsers":
-		    return "max_participants";
-		case "starts":
-		    return "start_date";
-		case "ends":
-		    return "end_date";
-		default:
-		    return "id";
-		}
+	switch (orderParam) {
+	case "title":
+	    return "titel";
+	case "maxUsers":
+	    return "max_participants";
+	case "starts":
+	    return "start_date";
+	case "ends":
+	    return "end_date";
+	default:
+	    return "id";
+	}
     }
 
     /**
@@ -601,60 +598,60 @@ public class CourseDAO {
     private static List<Course> getCourses(java.sql.Connection conn, int limit,
 	    int offset, String searchString, String query, boolean isDate)
 	    throws InvalidDBTransferException {
-		PreparedStatement stmt = null;
-		ResultSet rst = null;
-		List<Course> result = null;
-	
+	PreparedStatement stmt = null;
+	ResultSet rst = null;
+	List<Course> result = null;
+
+	try {
+	    stmt = conn.prepareStatement(query);
+
+	    if (isDate) {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		Date parsed = format.parse(searchString);
+		java.sql.Date date = new java.sql.Date(parsed.getTime());
+		stmt.setDate(1, date);
+	    } else {
+		String search = "%" + searchString + "%";
+		stmt.setString(1, search);
+	    }
+	    stmt.setInt(2, limit);
+	    stmt.setInt(3, offset);
+
+	    rst = stmt.executeQuery();
+	    result = getResult(rst);
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+	    throw new InvalidDBTransferException();
+	} catch (ParseException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+	    throw new InvalidDBTransferException();
+	} finally {
+	    if (rst != null) {
 		try {
-		    stmt = conn.prepareStatement(query);
-		    
-		    if (isDate) {
-		    	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		        Date parsed = format.parse(searchString);
-		        java.sql.Date date = new java.sql.Date(parsed.getTime());
-		    	stmt.setDate(1, date);
-		    } else {
-		    	String search = "%" + searchString + "%";
-		    	stmt.setString(1, search);
-		    }
-		    stmt.setInt(2, limit);
-		    stmt.setInt(3, offset);
-	
-		    rst = stmt.executeQuery();
-		    result = getResult(rst);
+		    rst.close();
 		} catch (SQLException e) {
 		    LogHandler
 			    .getInstance()
 			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
 		    throw new InvalidDBTransferException();
-		} catch (ParseException e) {
-			LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-			throw new InvalidDBTransferException();
-		} finally {
-		    if (rst != null) {
-				try {
-				    rst.close();
-				} catch (SQLException e) {
-				    LogHandler
-					    .getInstance()
-					    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-				    throw new InvalidDBTransferException();
-				}
-		    }
-		    if (stmt != null) {
-				try {
-				    stmt.close();
-				} catch (SQLException e) {
-				    LogHandler
-					    .getInstance()
-					    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-				    throw new InvalidDBTransferException();
-				}
-		    }
 		}
-		return result;
+	    }
+	    if (stmt != null) {
+		try {
+		    stmt.close();
+		} catch (SQLException e) {
+		    LogHandler
+			    .getInstance()
+			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
+		    throw new InvalidDBTransferException();
+		}
+	    }
+	}
+	return result;
     }
 
     /**
@@ -667,31 +664,31 @@ public class CourseDAO {
      */
     private static List<Course> getResult(ResultSet rst)
 	    throws InvalidDBTransferException {
-		List<Course> result = new ArrayList<Course>();
-		try {
-		    int cols = rst.getMetaData().getColumnCount();
-	
-		    while (rst.next()) {
-			int i = 1;
-			List<Object> tuple = new ArrayList<Object>();
-			Course course = new Course();
-			while (i <= cols) {
-			    Object o = rst.getObject(i);
-			    tuple.add(o);
-			    i++;
-			}
-			setProperties(course, tuple);
-			result.add(course);
-		    }
-		    if (!result.isEmpty()) {
-			return result;
-		    }
-		} catch (SQLException e) {
-		    LogHandler.getInstance().error(
-			    "SQL Exception occoured during getResult(ResultSet rst)");
-		    throw new InvalidDBTransferException();
+	List<Course> result = new ArrayList<Course>();
+	try {
+	    int cols = rst.getMetaData().getColumnCount();
+
+	    while (rst.next()) {
+		int i = 1;
+		List<Object> tuple = new ArrayList<Object>();
+		Course course = new Course();
+		while (i <= cols) {
+		    Object o = rst.getObject(i);
+		    tuple.add(o);
+		    i++;
 		}
-		return null;
+		setProperties(course, tuple);
+		result.add(course);
+	    }
+	    if (!result.isEmpty()) {
+		return result;
+	    }
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during getResult(ResultSet rst)");
+	    throw new InvalidDBTransferException();
+	}
+	return null;
     }
 
     /**
@@ -702,11 +699,11 @@ public class CourseDAO {
      * @author Patrick Cretu
      */
     private static void setProperties(Course course, List<Object> tuple) {
-		course.setCourseID((Integer) tuple.get(0));
-		course.setTitle((String) tuple.get(1));
-		course.setMaxUsers((Integer) tuple.get(2));
-		course.setStartdate((Date) tuple.get(3));
-		course.setEnddate((Date) tuple.get(4));
+	course.setCourseID((Integer) tuple.get(0));
+	course.setTitle((String) tuple.get(1));
+	course.setMaxUsers((Integer) tuple.get(2));
+	course.setStartdate((Date) tuple.get(3));
+	course.setEnddate((Date) tuple.get(4));
     }
 
     /**
@@ -751,48 +748,49 @@ public class CourseDAO {
      */
     public static List<User> getLeaders(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-        ArrayList<User> leaders = new ArrayList<User>();
+	ArrayList<User> leaders = new ArrayList<User>();
 
-        String leadersQuery = "SELECT \"name\", \"first_name\", \"email\", \"id\" FROM "
-            + "\"users\" WHERE id IN "
-            + "(SELECT course_instructor_id FROM \"course_instructors\" "
-            + "WHERE course_id = ?)";
+	String leadersQuery = "SELECT \"name\", \"first_name\", \"email\", \"id\" FROM "
+		+ "\"users\" WHERE id IN "
+		+ "(SELECT course_instructor_id FROM \"course_instructors\" "
+		+ "WHERE course_id = ?)";
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
-        ResultSet resultSet;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement statement = null;
+	ResultSet resultSet;
 
-        try {
-            statement = conn.prepareStatement(leadersQuery);
-            statement.setInt(1, courseID);
-            resultSet = statement.executeQuery();
+	try {
+	    statement = conn.prepareStatement(leadersQuery);
+	    statement.setInt(1, courseID);
+	    resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-            User leader = new User();
+	    while (resultSet.next()) {
+		User leader = new User();
 
-            if (resultSet.getString("name") != null) {
-                leader.setLastname(resultSet.getString("name"));
-            } else {
-                leader.setLastname("geheim");
-            }
+		if (resultSet.getString("name") != null) {
+		    leader.setLastname(resultSet.getString("name"));
+		} else {
+		    leader.setLastname("geheim");
+		}
 
-            if (resultSet.getString("first_name") != null) {
-                leader.setFirstname(resultSet.getString("first_name"));
-            } else {
-                leader.setFirstname("geheim");
-            }
-            leader.setEmail(resultSet.getString("email"));
-            leader.setUserId(resultSet.getInt("id"));
-            leaders.add(leader);
-            }
-            statement.close();
-            resultSet.close();
-        } catch (SQLException e) {
-            LogHandler.getInstance().error("Error occoured in getLeaders from CourseDAO");
-            throw new InvalidDBTransferException();
-        }
-        return leaders;
+		if (resultSet.getString("first_name") != null) {
+		    leader.setFirstname(resultSet.getString("first_name"));
+		} else {
+		    leader.setFirstname("geheim");
+		}
+		leader.setEmail(resultSet.getString("email"));
+		leader.setUserId(resultSet.getInt("id"));
+		leaders.add(leader);
+	    }
+	    statement.close();
+	    resultSet.close();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occoured in getLeaders from CourseDAO");
+	    throw new InvalidDBTransferException();
+	}
+	return leaders;
     }
 
     /**
@@ -810,34 +808,35 @@ public class CourseDAO {
      * @author Ricky Strohmeier
      */
     public static Course getCourse(Transaction trans, int courseID)
-            throws InvalidDBTransferException {
-        Course course = new Course();
-        String courseQuery = "SELECT * FROM \"courses\" WHERE id = ?";
+	    throws InvalidDBTransferException {
+	Course course = new Course();
+	String courseQuery = "SELECT * FROM \"courses\" WHERE id = ?";
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement statement = null;
+	ResultSet resultSet = null;
 
-        try {
-            statement = conn.prepareStatement(courseQuery);
-            statement.setInt(1, courseID);
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            course.setTitle(resultSet.getString("titel"));
-            course.setMaxUsers(resultSet.getInt("max_participants"));
-            course.setStartdate(resultSet.getDate("start_date"));
-            course.setEnddate(resultSet.getDate("end_date"));
-            course.setDescription(resultSet.getString("description"));
-            course.setCourseID(resultSet.getInt("id"));
-            course.setCourseImage(resultSet.getBytes("image"));
-            statement.close();
-            resultSet.close();
-        } catch (SQLException e) {
-            LogHandler.getInstance().error("Error occoured in getCourse from CourseDAO");
-            throw new InvalidDBTransferException();
-        }
-        return course;
+	try {
+	    statement = conn.prepareStatement(courseQuery);
+	    statement.setInt(1, courseID);
+	    resultSet = statement.executeQuery();
+	    resultSet.next();
+	    course.setTitle(resultSet.getString("titel"));
+	    course.setMaxUsers(resultSet.getInt("max_participants"));
+	    course.setStartdate(resultSet.getDate("start_date"));
+	    course.setEnddate(resultSet.getDate("end_date"));
+	    course.setDescription(resultSet.getString("description"));
+	    course.setCourseID(resultSet.getInt("id"));
+	    course.setCourseImage(resultSet.getBytes("image"));
+	    statement.close();
+	    resultSet.close();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occoured in getCourse from CourseDAO");
+	    throw new InvalidDBTransferException();
+	}
+	return course;
     }
 
     /**
@@ -860,20 +859,23 @@ public class CourseDAO {
 	    throws InvalidDBTransferException {
 	String direction = getSortDirection(pagination.isSortAsc());
 	ArrayList<Course> coursesOf = new ArrayList<Course>();
-	String getCourseQuery = "SELECT id, titel FROM \"courses\" "
-		+ "WHERE courses.id IN (SELECT course_id FROM"
-		+ " \"course_participants\" "
-		+ "WHERE participant_id = ?) ORDER BY %s %s"
-		+ " LIMIT ? OFFSET ?";
-	String getNextCourseUnitQuery = "SELECT course_units.start_time,"
-		+ " course_unit_addresses.location "
-		+ "FROM \"course_units\",\"course_unit_addresses\" "
-		+ "WHERE course_units.course_id = ? "
-		+ "AND course_units.start_time >= CURRENT_DATE AND"
-		+ " course_unit_addresses.course_unit_id = course_units.id "
-		+ "ORDER BY course_units.start_time ASC LIMIT 1";
+	String getCourseQuery = "SELECT DISTINCT courses.id, courses.titel,"
+		+ " (SELECT DISTINCT start_time FROM course_units"
+		+ " WHERE courses.id = course_units.course_id AND"
+		+ " course_units.start_time > CURRENT_DATE LIMIT 1)"
+		+ " FROM courses, course_units WHERE courses.id IN"
+		+ " (SELECT course_id"
+		+ " FROM course_participants WHERE participant_id = ?)"
+		+ " ORDER BY %s %s" + " LIMIT ? OFFSET ?";
+	String getNextCourseUnitQuery = "SELECT course_unit_addresses.location"
+		+ " FROM course_units, course_unit_addresses WHERE"
+		+ " course_units.course_id =? "
+		+ " AND course_units.start_time >= CURRENT_DATE"
+		+ " AND course_unit_addresses.course_unit_id = course_units.id"
+		+ " ORDER BY course_units.start_time ASC LIMIT 1";
 
-	getCourseQuery = String.format(getCourseQuery, "titel", direction);
+	getCourseQuery = String.format(getCourseQuery,
+		pagination.getSortColumn(), direction);
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -888,46 +890,56 @@ public class CourseDAO {
 	    stmt.setInt(3, calculateOffset);
 	    ResultSet fetchedCourses = stmt.executeQuery();
 
+	    Timestamp stamp;
+	    Date date;
+	    CourseUnit courseUnit;
+
 	    // Fills the list coursesOf with courses from the database.
 	    // At this time only id an title is set
 	    while (fetchedCourses.next()) {
 		Course fetchedCourse = new Course();
 		fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
-
+		// fetchedCourse.setCourseImage(fetchedCourses.getBytes("image"));
 		if (fetchedCourses.getString("titel") != null) {
 		    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
 		} else {
 		    fetchedCourse.setTitle("Nicht angegeben");
 		}
+		courseUnit = new CourseUnit();
+		stamp = fetchedCourses.getTimestamp("start_time");
+		if (stamp != null) {
+		    date = new Date(stamp.getYear(), stamp.getMonth(),
+			    stamp.getDate(), stamp.getHours(),
+			    stamp.getMinutes());
+		    courseUnit.setStartime(date);
+		}
+		fetchedCourse.setNextCourseUnit(courseUnit);
 		coursesOf.add(fetchedCourse);
+
 	    }
 
 	    if (coursesOf.size() > 0) {
 
 		// Fetches the leaders of a course
-		ResultSet fetchedNextUnit;
-		Timestamp stamp;
-		Date date;
-		CourseUnit courseUnit;
+		ResultSet fetchedLocation;
 
 		for (int i = 0; i < coursesOf.size(); ++i) {
 		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
 		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedNextUnit = stmt.executeQuery();
-		    while (fetchedNextUnit.next()) {
-			courseUnit = new CourseUnit();
-			stamp = fetchedNextUnit.getTimestamp("start_time");
-			date = new Date(stamp.getYear(), stamp.getMonth(),
-				stamp.getDate(), stamp.getHours(),
-				stamp.getMinutes());
-			courseUnit.setStartime(date);
-			if (fetchedNextUnit.getString("location") != null) {
-			    courseUnit.setLocation(fetchedNextUnit
-				    .getString("location"));
+		    fetchedLocation = stmt.executeQuery();
+		    while (fetchedLocation.next()) {
+
+			if (fetchedLocation.getString("location") != null) {
+			    coursesOf
+				    .get(i)
+				    .getNextCourseUnit()
+				    .setLocation(
+					    fetchedLocation
+						    .getString("location"));
 			} else {
-			    courseUnit.setLocation("Nicht angegeben");
+			    coursesOf.get(i).getNextCourseUnit()
+				    .setLocation("Nicht angegeben");
 			}
-			coursesOf.get(i).setNextCourseUnit(courseUnit);
 		    }
 		}
 	    }
@@ -1010,31 +1022,34 @@ public class CourseDAO {
      * @author Ricky Strohmeier
      */
     public static void updateCourse(Transaction trans, Course course)
-            throws InvalidDBTransferException {
+	    throws InvalidDBTransferException {
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
-        
-        String courseQuery = "UPDATE \"courses\" "
-                + "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
-                + "WHERE id = ?";
-        
-        try {
-            statement = conn.prepareStatement(courseQuery);
-            statement.setString(1, course.getDescription());
-            statement.setInt(2, course.getMaxUsers());
-            java.sql.Date startDate = new java.sql.Date(course.getStartdate().getTime());
-            statement.setDate(3, startDate);
-            java.sql.Date endDate = new java.sql.Date(course.getEnddate().getTime());
-            statement.setDate(4, endDate);
-            statement.setInt(5, course.getCourseID());
-            statement.executeUpdate();
-            statement.close();
-        } catch (SQLException e) {
-            LogHandler.getInstance().error("SQL Exception occoured in updateCourse of CourseDAO");
-            throw new InvalidDBTransferException();
-        }
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement statement = null;
+
+	String courseQuery = "UPDATE \"courses\" "
+		+ "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
+		+ "WHERE id = ?";
+
+	try {
+	    statement = conn.prepareStatement(courseQuery);
+	    statement.setString(1, course.getDescription());
+	    statement.setInt(2, course.getMaxUsers());
+	    java.sql.Date startDate = new java.sql.Date(course.getStartdate()
+		    .getTime());
+	    statement.setDate(3, startDate);
+	    java.sql.Date endDate = new java.sql.Date(course.getEnddate()
+		    .getTime());
+	    statement.setDate(4, endDate);
+	    statement.setInt(5, course.getCourseID());
+	    statement.executeUpdate();
+	    statement.close();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured in updateCourse of CourseDAO");
+	    throw new InvalidDBTransferException();
+	}
     }
 
     /**
@@ -1052,9 +1067,9 @@ public class CourseDAO {
      */
     public static boolean deleteCourse(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-            
-        boolean successful = false;
-        
+
+	boolean successful = false;
+
 	// Prepare SQL- Request and database connection.
 	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
@@ -1066,23 +1081,22 @@ public class CourseDAO {
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseID);
 
-	    // execute preparedStatement, return resultSet as a list 
-            // (here one entry in the list because the user id is unique)
-            if (pS.executeUpdate() == 1) {
-                successful = true;
-            } else {
-                successful = false;
-            }
-            pS.close();
+	    // execute preparedStatement, return resultSet as a list
+	    // (here one entry in the list because the user id is unique)
+	    if (pS.executeUpdate() == 1) {
+		successful = true;
+	    } else {
+		successful = false;
+	    }
+	    pS.close();
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "deleteCourse(Transaction trans, int courseID)");
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "deleteCourse(Transaction trans, int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
-    return successful;
+	return successful;
     }
 
     /**
@@ -1186,36 +1200,33 @@ public class CourseDAO {
      * 
      * @author Katharina Hölzl
      */
-    public static boolean addLeaderToCourse(Transaction trans, int userID, 
+    public static boolean addLeaderToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
-        
-        boolean successful = false;
-        
-	//  Prepare SQL- INSERT and database connection.
-      
+
+	boolean successful = false;
+
+	// Prepare SQL- INSERT and database connection.
+
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "Insert into \"course_instructors\" "
-	        + "(course_instructor_id, course_id) "
-		+ "values (?, ?)";
+		+ "(course_instructor_id, course_id) " + "values (?, ?)";
 
 	// catch potential SQL-Injection
 	try {
 
-	    
-	    if (setRelationMethode(userID, courseID, conn, sql) == 1){
-	        successful = true;
-            } else {
-                successful = false; 
+	    if (setRelationMethode(userID, courseID, conn, sql) == 1) {
+		successful = true;
+	    } else {
+		successful = false;
 	    }
 
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "addLeaderToCourse(Transaction trans, "
-		            + "int userID, int courseID)");
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "addLeaderToCourse(Transaction trans, "
+			    + "int userID, int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
@@ -1237,36 +1248,35 @@ public class CourseDAO {
      * @param courseID
      *            the course's ID
      * @throws InvalidDBTransferException
-     * @return true if the course leader could be removed, else false.
-     *             if any error occurred during the execution of the method
+     * @return true if the course leader could be removed, else false. if any
+     *         error occurred during the execution of the method
      * 
      * @author Katharina Hölzl
      */
     public static boolean removeLeaderFromCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
-        boolean successful = false;
+	boolean successful = false;
 	// Prepare SQL- request and database connection.
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? "
-	        + "AND course_instructor_id = ?";
+		+ "AND course_instructor_id = ?";
 	// catch potential SQL-Injection
 	try {
-	    if (setRelationMethode(courseID, userID, conn, sql) == 1){
-                successful = true;
-            } else {
-                successful = false; 
-            }
+	    if (setRelationMethode(courseID, userID, conn, sql) == 1) {
+		successful = true;
+	    } else {
+		successful = false;
+	    }
 
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "removeLeaderFromCourse(Transaction trans, "
-		            + "int userID,int courseID)");
+	    LogHandler.getInstance().error(
+		    "SQL Exception occoured during executing "
+			    + "removeLeaderFromCourse(Transaction trans, "
+			    + "int userID,int courseID)");
 	    throw new InvalidDBTransferException();
 
 	}
@@ -1338,34 +1348,31 @@ public class CourseDAO {
 	    throw new InvalidDBTransferException();
 	}
     }
-    
-    
-    
-    
-	/**
-	 * 
-	 * @author Sebastian Schwarz
-	 * @param trans
-	 * @param userID
-	 * @param courseID
-	 */
-	public static void removeUserToInformUser(Transaction trans, int userID,
-	        int courseID) {
 
-	    Connection connection = (Connection) trans;
-	    java.sql.Connection conn = connection.getConn();
+    /**
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param userID
+     * @param courseID
+     */
+    public static void removeUserToInformUser(Transaction trans, int userID,
+	    int courseID) {
 
-	    String removeUserToInformUser = "DELETE FROM \"inform_users\" (user_id,course_id) VALUES (?,?)";
-	    try {
-	        setRelationMethode(userID, courseID, conn, removeUserToInformUser);
-	        LogHandler.getInstance().debug(
-	            "Methode RemoveUserToInformUser was succesfull");
-	    } catch (SQLException e) {
-	        // Error Handling
-	        LogHandler.getInstance().error(
-	            "Exception occured during RemoveUserToInformUser");
-	        throw new InvalidDBTransferException();
-	    }
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	String removeUserToInformUser = "DELETE FROM \"inform_users\" (user_id,course_id) VALUES (?,?)";
+	try {
+	    setRelationMethode(userID, courseID, conn, removeUserToInformUser);
+	    LogHandler.getInstance().debug(
+		    "Methode RemoveUserToInformUser was succesfull");
+	} catch (SQLException e) {
+	    // Error Handling
+	    LogHandler.getInstance().error(
+		    "Exception occured during RemoveUserToInformUser");
+	    throw new InvalidDBTransferException();
+	}
 
     }
 
@@ -1385,39 +1392,38 @@ public class CourseDAO {
 	pS.setInt(1, userID);
 	pS.setInt(2, courseID);
 	return pS.executeUpdate();
-	
+
     }
-    
-    public static byte[] getImage(Transaction trans, int courseID){
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        byte[] picture;
-        
-        String selectImage= "SELECT image FROM \"courses\" WHERE id=?";
-        
-        try{
-            PreparedStatement pS = conn.prepareStatement(selectImage);
-            pS.setInt(1, courseID);
-            ResultSet resultSet = pS.executeQuery();
-            
-            
-            if(resultSet.next()){
-                picture = resultSet.getBytes("image");
-                LogHandler.getInstance().debug(
-                        "Course Picture succesfully loaded");
-                return picture;
-            }else{
-                LogHandler.getInstance().debug(
-                        "No course Picture found");
-                return null;
-            }
-        
-        } catch (SQLException e) {
-            // Error Handling
-            LogHandler.getInstance().error(
-                "Exception occured during loading course Picture from Database");
-            throw new InvalidDBTransferException();
-        }
+
+    public static byte[] getImage(Transaction trans, int courseID) {
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	byte[] picture;
+
+	String selectImage = "SELECT image FROM \"courses\" WHERE id=?";
+
+	try {
+	    PreparedStatement pS = conn.prepareStatement(selectImage);
+	    pS.setInt(1, courseID);
+	    ResultSet resultSet = pS.executeQuery();
+
+	    if (resultSet.next()) {
+		picture = resultSet.getBytes("image");
+		LogHandler.getInstance().debug(
+			"Course Picture succesfully loaded");
+		return picture;
+	    } else {
+		LogHandler.getInstance().debug("No course Picture found");
+		return null;
+	    }
+
+	} catch (SQLException e) {
+	    // Error Handling
+	    LogHandler
+		    .getInstance()
+		    .error("Exception occured during loading course Picture from Database");
+	    throw new InvalidDBTransferException();
+	}
     }
-     
+
 }
