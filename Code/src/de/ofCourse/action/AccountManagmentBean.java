@@ -38,6 +38,7 @@ public class AccountManagmentBean implements Pagination {
      */
     private Transaction transaction;
 
+    private String sortColumn;
 
     /**
      * The users that are selected by the user and shall be activated.
@@ -164,6 +165,20 @@ public class AccountManagmentBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
         this.sessionUser = userSession;
+    }
+
+    /**
+     * @return the sortColumn
+     */
+    public String getSortColumn() {
+        return sortColumn;
+    }
+
+    /**
+     * @param sortColumn the sortColumn to set
+     */
+    public void setSortColumn(String sortColumn) {
+        this.sortColumn = sortColumn;
     }
 
 }

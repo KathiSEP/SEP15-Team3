@@ -24,54 +24,59 @@
                     
                     <h:form class="form-horizontal" id="formActivateUsers">
                         <h:dataTable value="#{accountManagementBean.users}"
-                            var="users" id="participantsTable" class=" table table-hover"
+                            var="user" id="participantsTable" class=" table table-hover"
                             cellspacing="0" width="100%">
                            <h:column>
                                 <f:facet name="header">
-                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
-                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="nickname" />
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="id" />
                                         BenutzerID
                                     </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="user.userID" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                               Benutzername
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="nickname" />
+                                        Benutzername
+                                    </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="user.username" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                               Name
+                                      <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="name" />
+                                        Name
+                                    </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="user.lastname" />
                                     
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                               Vorname
+                                    <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="first_name" />
+                                        Vorname
+                                    </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="user.firstname" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                               Geburtsdatum
+                                    <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="date_of_birth" />
+                                        Geburtsdatum
+                                    </h:commandLink>
                                 </f:facet>
-                                <h:outputText value="" />
+                                <h:outputText value="user.dateOfBirth" />
                             </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                               Ort
-                                </f:facet>
-                                <h:outputText value="" />
-                            </h:column>
-                           
                             <h:column>
                                 <f:facet name="header" >
                                      aktivieren
                                      </f:facet>
-                                     <h:selectBooleanCheckbox value="false" /> 
+                                     <h:selectBooleanCheckbox value="#{users.selected}" /> 
                             </h:column>
                         
                             <f:facet name="footer">
