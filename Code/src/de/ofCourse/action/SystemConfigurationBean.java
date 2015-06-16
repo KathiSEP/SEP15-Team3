@@ -48,17 +48,12 @@ public class SystemConfigurationBean implements Serializable {
      */
     private float overdraftCredit;
 
-    /**
-     * Stores the user whose account is to be toped up
-     */
-    private User userToTopUp;
 
     /**
      * Stores the type of account activation that was selected by the
      * administrator.
      */
     private String accountActivationType;
-
 
 
     /**
@@ -84,6 +79,7 @@ public class SystemConfigurationBean implements Serializable {
      */
     @PostConstruct
     private void init() {
+	
 	this.transaction = Connection.create();
 	transaction.start();
 	try{
@@ -96,28 +92,6 @@ public class SystemConfigurationBean implements Serializable {
 	    this.transaction.rollback();
 	}
 	
-    }
-
-    private void topUpUserAccount() {
-
-    }
-
-    private double amountToTopUp;
-
-    public User getUserToTopUp() {
-        return userToTopUp;
-    }
-
-    public void setUserToTopUp(User userToTopUp) {
-        this.userToTopUp = userToTopUp;
-    }
-
-    public double getAmountToTopUp() {
-        return amountToTopUp;
-    }
-
-    public void setAmountToTopUp(double amountToTopUp) {
-        this.amountToTopUp = amountToTopUp;
     }
 
     /**

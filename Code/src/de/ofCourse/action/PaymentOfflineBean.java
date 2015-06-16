@@ -3,12 +3,16 @@
  */
 package de.ofCourse.action;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import de.ofCourse.exception.BankAccountException;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -69,11 +73,34 @@ public class PaymentOfflineBean {
      * @return <code>true</code> if the amount of money was deposited correctly;
      *         <code>false</code> otherwise
      * 
-     * @throws BankAccountException
-     *             if there occurs an error during toping up the user account
      */
-    public boolean depositAmountOnUserAccount() throws BankAccountException {
-	return false;
+    public void depositAmountOnUserAccount() {
+	this.transaction.start();
+	try {
+
+	    
+	    
+	    transaction.commit();
+	    FacesMessageCreator.createFacesMessage(
+		    "formToUpAccount:spendMoney", "Der Account wurde mit "
+			    + this.amountToDeposit + " Euro aufgeladen.");
+	} catch (InvalidDBTransferException e) {
+	    this.transaction.rollback();
+	    LogHandler.getInstance().error(
+		    "Error occured during depositing money on the account of user: "
+			    + this.user.getUserID());
+	    FacesMessageCreator.createFacesMessage(
+		    "formToUpAccount:spendMoney",
+		    "Fehler beim Aufladen des Benutzeraccounts.");
+	}
+
+    }
+
+    @PostConstruct
+    private void init() {
+	user = new User();
+	this.transaction = Connection.create();
+
     }
 
     /**
@@ -115,8 +142,6 @@ public class PaymentOfflineBean {
      */
     public void setAmountToDeposit(float amountToDeposit) {
     }
-
-   
 
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.

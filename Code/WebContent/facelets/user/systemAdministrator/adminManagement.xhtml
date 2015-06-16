@@ -94,7 +94,7 @@
 										Benutzers:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										id="userIDToTopUp"
-										value="#{systemConfigurationBean.userToTopUp.userID}"
+										value="#{paymentOfflineBean.user.userID}"
 										reuqired="true"
 										requiredMessage="Bitte geben Sie die ID eines Benutzers ein.">
 										<f:attribute name="userNameToTopUp" value="#{userNameToTopUp}" />
@@ -106,23 +106,22 @@
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Benutzername:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										value="#{systemConfigurationBean.userToTopUp.username}"
-										id="usernameToTopUp" reuqired="true"
+										value="#{paymentOfflineBean.user.username}"
+										id="userNameToTopUp" required="true"
 										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein."
-										binding="#{userNameToTopUp}"></h:inputText>
-									<h:message for="usernameToTopUp" style="color:red" />
+										binding="#{userNameToTopUp}"/>
+									<h:message for="userNameToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
 										style="width: 160px; text-align: right;">Betrag:</span>
 									<h:inputText class="form-control" style="width:340px;"
-										value="#{systemConfigurationBean.amountToTopUp}"
+										value="#{paymentOfflineBean.amountToDeposit}"
 										id="amountToTopUp" reuqired="true"
 										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
-										<f:validator validatorId="offlineTransactionValidator"/>
 									</h:inputText>
 									<h:message for="amountToTopUp" style="color:red" />
 								</div>
@@ -130,8 +129,9 @@
 									<br />
 									<h:commandButton id="spendMoney"
 										class="btn btn-success pull-right" style="width:135px;"
-										action="#{systemConfigurationBean.topUpUserAccount}"
-										value="Konto aufladen" />
+										action="#{paymentOfflineBean.depositAmountOnUserAccount}"
+										value="Konto aufladen"/>
+										<h:message id="moneyMessage" for="spendMoney" style="color:red" />
 								</div>
 							</h:form>
 							<br /> <br />
