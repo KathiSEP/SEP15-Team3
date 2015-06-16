@@ -12,6 +12,7 @@ import javax.faces.bean.RequestScoped;
 
 import de.ofCourse.Database.dao.SystemDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Activation;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -56,24 +57,9 @@ public class SystemConfigurationBean implements Serializable {
      * Stores the type of account activation that was selected by the
      * administrator.
      */
-    private int accountActivationType;
+    private String accountActivationType;
 
-    /**
-     * Represents the type of activation: email verification
-     */
-    private static final int type_EMAILVERIFICATION = 1;
 
-    /**
-     * Represents the type of activation: email verification and activation by a
-     * course leader
-     */
-    private static final int type_ADMIN_ACTIVATION = 2;
-
-    /**
-     * Represents the type of activation: email verification and activation by a
-     * administrator
-     */
-    private static final int type_EMAILVERIFICATION_AND_ADMIN = 3;
 
     /**
      * Stores the sign off limit in hours
@@ -99,7 +85,17 @@ public class SystemConfigurationBean implements Serializable {
     @PostConstruct
     private void init() {
 	this.transaction = Connection.create();
-	this.overdraftCredit = (float) 0.00;
+	transaction.start();
+	try{
+	this.overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
+	this.signOffLimit = SystemDAO.getSignOffLimit(transaction);
+	this.transaction.commit();
+	}
+	catch(InvalidDBTransferException e){
+	    LogHandler.getInstance().error("Error during initializing admin managements page");
+	    this.transaction.rollback();
+	}
+	
     }
 
     private void topUpUserAccount() {
@@ -108,12 +104,49 @@ public class SystemConfigurationBean implements Serializable {
 
     private double amountToTopUp;
 
+    public User getUserToTopUp() {
+        return userToTopUp;
+    }
+
+    public void setUserToTopUp(User userToTopUp) {
+        this.userToTopUp = userToTopUp;
+    }
+
+    public double getAmountToTopUp() {
+        return amountToTopUp;
+    }
+
+    public void setAmountToTopUp(double amountToTopUp) {
+        this.amountToTopUp = amountToTopUp;
+    }
+
     /**
      * Determines the type of account activation, that means it updates the
      * setting relating to account activation in the database.
      */
     public void determineAccountActivationType() {
-	System.out.println(this.accountActivationType);
+	this.transaction.start();
+	
+	try {
+	    switch(this.accountActivationType){
+	    case "EMAIL":
+		SystemDAO.setActivationType(transaction, Activation.EMAIL);
+		break;
+	    case "EMAIL_COURSE_LEADER":
+		SystemDAO.setActivationType(transaction, Activation.EMAIL_COURSE_LEADER);
+		break;
+	    case "EMAIL_ADMIN":
+		SystemDAO.setActivationType(transaction, Activation.EMAIL_ADMIN);
+		break;
+	    }
+	    
+	    this.transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting"
+			    + " the granted overdraft credit.");
+	    this.transaction.rollback();
+	}
     }
 
     /**
@@ -122,7 +155,7 @@ public class SystemConfigurationBean implements Serializable {
      * 
      * @return the selected account activation type
      */
-    public int getAccountActivationType() {
+    public String getAccountActivationType() {
 	return accountActivationType;
     }
 
@@ -133,7 +166,7 @@ public class SystemConfigurationBean implements Serializable {
      * @param accountActivationType
      *            the new type of account activation
      */
-    public void setAccountActivationType(int accountActivationType) {
+    public void setAccountActivationType(String accountActivationType) {
 	this.accountActivationType = accountActivationType;
     }
 
@@ -145,7 +178,6 @@ public class SystemConfigurationBean implements Serializable {
 	this.transaction.start();
 
 	try {
-	    SystemDAO.setSignOffLimit(transaction, this.signOffLimit);
 	    SystemDAO.setOverdraftCredit(transaction, this.overdraftCredit);
 	    this.transaction.commit();
 	    
@@ -163,7 +195,7 @@ public class SystemConfigurationBean implements Serializable {
      * 
      * @return the granted credit
      */
-    public double getOverdraftCredit() {
+    public float getOverdraftCredit() {
 	return overdraftCredit;
     }
 

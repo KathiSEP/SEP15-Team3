@@ -122,7 +122,7 @@
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
-										<f:validator id="offlineTransactionValidator"/>
+										<f:validator validatorId="offlineTransactionValidator"/>
 									</h:inputText>
 									<h:message for="amountToTopUp" style="color:red" />
 								</div>
@@ -175,10 +175,10 @@
 										<h:selectOneMenu class="form-control"
 											value="#{systemConfigurationBean.accountActivationType}"
 											id="accountActivationSelection">
-											<f:selectItem itemValue="1" itemLabel="E-Mailverifikation" />
-											<f:selectItem itemValue="2"
-												itemLabel="Aktivierung durch Administrator" />
-											<f:selectItem itemValue="3"
+											<f:selectItem itemValue="EMAIL" itemLabel="E-Mailverifikation" />
+											<f:selectItem itemValue="EMAIL_COURSE_LEADER"
+												itemLabel="E-Mailverifikation und Aktivierung durch Kursleiter" />
+											<f:selectItem itemValue="EMAIL_ADMIN"
 												itemLabel="E-Mailverifikation und Aktivierung durch Administrator" />
 										</h:selectOneMenu>
 									</div>

@@ -77,10 +77,9 @@ public class SystemDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(queryOverdraft);
-		ResultSet res = null) {
+	try (PreparedStatement stmt = conn.prepareStatement(queryOverdraft)) {
 
-	    // Update the overdraft credit in the database
+	    // Update the account activation in the database
 	    stmt.setFloat(1, credit);
 	    stmt.executeUpdate();
 
@@ -125,17 +124,19 @@ public class SystemDAO {
 	    ResultSet res = pS.executeQuery();
 
 	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null.
+	    // Eintrag gibt, ansonsten null. 
 	    if (res.next()) {
 
 		String activationString = res.getString("activation_type");
 		switch (activationString) {
 		case "EMAIL":
 		    activation = Activation.EMAIL;
-		case "ADMIN":
-		    activation = Activation.ADMIN;
-		case "COMPLETE":
-		    activation = Activation.COMPLETE;
+		    break;
+		case "EMAIL_ADMIN":
+		    activation = Activation.EMAIL_ADMIN;
+		    break;
+		case "EMAIL_COURSE_LEADER":
+		    activation = Activation.EMAIL_COURSE_LEADER;
 		    break;
 		}
 
@@ -167,6 +168,23 @@ public class SystemDAO {
      */
     public static void setActivationType(Transaction trans, Activation type)
 	    throws InvalidDBTransferException {
+	String queryActivation = "UPDATE \"system_attributes\" "
+		+ "SET activation_type=?::activation";
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+
+	try (PreparedStatement stmt = conn.prepareStatement(queryActivation)) {
+
+	    // Update the overdraft credit in the database
+	    stmt.setString(1, type.toString());
+	    stmt.executeUpdate();
+	} catch (SQLException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during setting activation type.");
+	    System.out.println("Execeptionk");
+	    throw new InvalidDBTransferException();
+	}
+	
     }
 
     /**
@@ -204,8 +222,7 @@ public class SystemDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(querySignOff);
-		ResultSet res = null) {
+	try (PreparedStatement stmt = conn.prepareStatement(querySignOff)) {
 
 	    // Update the sign off limit in the database
 	    stmt.setInt(1, limit);
