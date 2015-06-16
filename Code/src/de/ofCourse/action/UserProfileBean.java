@@ -105,7 +105,8 @@ public class UserProfileBean implements Pagination {
     	transaction.start();
     	try {
     		user = UserDAO.getUser(transaction, sessionUser.getUserID());
-    		userID = sessionUser.getUserID();
+    		userID = Integer.parseInt(FacesContext.getCurrentInstance()
+                    .getExternalContext().getRequestParameterMap().get("userID"));
     		transaction.commit();
     	} catch (InvalidDBTransferException e) {
     		LogHandler
