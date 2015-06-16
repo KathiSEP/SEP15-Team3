@@ -663,8 +663,8 @@ public class CourseDetailBean implements Pagination {
      * 
      * @return link to the next page
      */
-    public String loadParticipientsPage() {
-        return null;
+    public String loadParticipantsPage() {
+        return "/facelets/user/registeredUser/listParticipants.xhtml";
     }
 
     /**

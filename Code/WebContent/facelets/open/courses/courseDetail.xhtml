@@ -102,25 +102,32 @@
 										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
 									</div>
 									<div class="container">
+										<p/>
 										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
 														action="#{courseDetailBean.loadEditCourseUnitPage}">
 										<f:param name="editMode" value="false"/>
 										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+										<p/>
 										</h:commandButton>
+										<h:commandButton class="btn btn-info" value="Kursteilnehmer anzeigen" action="#{courseDetailBean.loadParticipantsPage}"/>
+										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 									</div>
 									</h:panelGroup>
 									<div class="container">
+										<p/>
 										<h:form>
 											<h:panelGroup rendered="#{!courseDetailBean.isRegistered}">
-		                                		<h:outputText value="Hier klicken um sich zu den Kursnews einzutragen"/>
-												<h:selectBooleanCheckbox value="#{courseDetailBean.registeredForCourseNews}"/>
+												<h:selectBooleanCheckbox id="cNews" value="#{courseDetailBean.registeredForCourseNews}"/>
+											    <h:outputLabel value="Bei Anmeldung Kursnews erhalten" for="cNews"/>
+											    <p/>
 											</h:panelGroup>
 											<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-											<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>									
+											<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 										</h:form>
 									</div>
 									<div class="container">
-										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.leaderToAdd.userID}"/>
+									<p/>
+										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"/>
 										<h:commandButton class="btn btn-success form-group" value="Kursleiter hinzufügen" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}"/>
 									</div>
 								</div>
