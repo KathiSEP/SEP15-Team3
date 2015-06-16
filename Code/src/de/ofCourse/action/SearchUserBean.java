@@ -3,14 +3,22 @@
  */
 package de.ofCourse.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -40,7 +48,11 @@ public class SearchUserBean implements Pagination {
      * Stores the the search result that is displayed on the page. In this case
      * it's a list of users.
      */
-    private List<User> searchResult;
+    private ArrayList<User> searchResult;
+    
+    private String displayPeriod;
+
+    
 
     /**
      * Stores the search parameter that was selected by the user
@@ -50,7 +62,10 @@ public class SearchUserBean implements Pagination {
     /**
      * Stores the search term that was entered by the user
      */
-    private String searchTerm;
+    private String searchString;
+
+    private boolean renderTable = true;
+    
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -66,6 +81,14 @@ public class SearchUserBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    @PostConstruct
+    public void init(){
+        searchParam = "name";
+        pagination = new PaginationData();
+        pagination.setElementsPerPage(10);
+        pagination.setSortAsc(true);
+    }
 
     /**
      * Searches for users in the system according to the selected search
@@ -83,7 +106,7 @@ public class SearchUserBean implements Pagination {
      * 
      * @return list of found users
      */
-    public List<User> getSearchResult() {
+    public ArrayList<User> getSearchResult() {
 	return searchResult;
     }
 
@@ -94,7 +117,8 @@ public class SearchUserBean implements Pagination {
      * @param searchResult
      *            list of users found in the database for the actual search
      */
-    public void setSearchResult(List<User> searchResult) {
+    public void setSearchResult(ArrayList<User> searchResult) {
+        this.searchResult = searchResult;
     }
 
     /**
@@ -115,6 +139,7 @@ public class SearchUserBean implements Pagination {
      *            the selected search parameter
      */
     public void setSearchParam(String searchParam) {
+        this.searchParam = searchParam;
     }
 
     /**
@@ -123,8 +148,8 @@ public class SearchUserBean implements Pagination {
      * 
      * @return the entered search term
      */
-    public String getSearchTerm() {
-	return searchTerm;
+    public String getSearchString() {
+	return searchString;
     }
 
     /**
@@ -134,7 +159,22 @@ public class SearchUserBean implements Pagination {
      * @param searchTerm
      *            the entered search term
      */
-    public void setSearchTerm(String searchTerm) {
+    public void setSearchString(String searchTerm) {
+        this.searchString = searchTerm;
+    }
+    
+    /**
+     * @return the renderTable
+     */
+    public boolean isRenderTable() {
+        return renderTable;
+    }
+
+    /**
+     * @param renderTable the renderTable to set
+     */
+    public void setRenderTable(boolean renderTable) {
+        this.renderTable = renderTable;
     }
 
     /**
@@ -193,5 +233,40 @@ public class SearchUserBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
     }
+    
+    public void displayAllUsers(){
+        searchParam = "all";
+        transaction = Connection.create();
+        transaction.start();
+        
+        pagination.setCurrentPageNumber(0);
+        pagination.setSortAsc(true);
+        pagination.setSortColumn("name");
+        
+        try{
+            pagination.actualizeNumberOfPages(UserDAO.getNumberOfUsers(transaction));
+            ArrayList<User> result = UserDAO.getUsers(transaction, pagination, searchParam, searchString);
+            
+            if(result != null){
+                searchResult = result;
+                setRenderTable(true);
+                
+                
+                transaction.commit();
+            }else{
+                setRenderTable(false);
+                transaction.rollback();
+            }
+        }catch(InvalidDBTransferException e){
+            LogHandler
+            .getInstance()
+            .error("Error occured during displaYAllUsers");
+            transaction.rollback();
+        }
+        
+    }
+    
 
+
+    
 }
