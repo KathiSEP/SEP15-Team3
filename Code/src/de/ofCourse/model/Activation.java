@@ -13,14 +13,15 @@ public enum Activation {
     EMAIL,
     
     /**
-     * The account of a user must be activated by an administrator
-     */
-    ADMIN,
-    
-    /**
      * The account of a user must be activated by an administrator and by 
      * e-mail verification.
      */
-    COMPLETE;
+    EMAIL_ADMIN,
+    
+    /**
+     * The account of a user must be activated by a course leader and by 
+     * e-mail verification.
+     */
+    EMAIL_COURSE_LEADER;
    
 }
