@@ -66,7 +66,7 @@
            			                    <f:facet name="header"/>
                     		            <h:commandButton id="löschen" class="btn btn-xs btn-danger" value="Löschen" action="#{courseDetailBean.removeCourseLeaders}"
                     		            					rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
-                            	        	<f:param name="delLeader" value="#{user.userID}"/>
+                            	        	<f:param name="leaderID" value="#{user.userID}"/>
                                 		</h:commandButton>
                                 		<f:facet name="header"/>
                                 		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil">
