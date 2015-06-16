@@ -9,6 +9,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
 import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Provides the services of directing to the login page, selecting the displayed
@@ -45,6 +46,15 @@ public class NavigationBean {
     	} else {
     		sessionUser.setLanguage(Language.DE);
     	}
+    }
+
+    /**
+     * Loads the needed label in the choosen language.
+     * @param label the label to be load.
+     * @return the label in the certain language.
+     */
+    public String getLabel(String label) {
+        return LanguageManager.getInstance().getProperty(label, sessionUser.getLanguage());
     }
 
     /**

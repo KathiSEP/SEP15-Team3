@@ -30,7 +30,12 @@ public class FooterBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
+
+    /**
+     * Loads the needed label in the choosen language.
+     * @param label the label to be load.
+     * @return the label in the certain language.
+     */
     public String getLabel(String label) {
     	return LanguageManager.getInstance().getProperty(label, sessionUser.getLanguage());
     }

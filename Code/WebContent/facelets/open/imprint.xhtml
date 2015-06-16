@@ -8,10 +8,10 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	  xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Impressum</ui:define>
+		<ui:define name="title">#{navigationBean.getLabel('imprint.title')}</ui:define>
 		<body>
 			<ui:define name="content">
-				<h1>Impressum</h1>
+				<h1>#{navigationBean.getLabel('imprint.header')}</h1>
 				<div class="container col-xs-3 col-xs-offset-4" align="center">
 					<h:outputText value="SEP Team 3 SS15 - Universität Passau"/><br/>
 					<h:outputText value="Innstraße 41, 94032 Passau" /><br/>
