@@ -24,7 +24,7 @@
                             <strong>Benutzerdaten</strong>
                         </div>
                         <div class="panel-body">
-                            <h:form class="form-horizontal" id="formCreateUser">
+                            <h:form enctype="multipart/form-data" class="form-horizontal" id="formCreateUser">
                             
                                 <div class="col-lg-12">
                                     <h:message for="firstnameRegister" style="color:red" />
@@ -45,7 +45,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Anrede:</span>
-                                    <h:selectOneMenu class="form-control" id="titleRegister" value="#{userManagementBeanuser.user.salutation}">
+                                    <h:selectOneMenu class="form-control" id="titleRegister" value="#{userManagementBean.salutation}">
                                         <f:selectItem itemValue="mr" itemLabel="Herr" />
                                         <f:selectItem itemValue="ms" itemLabel="Frau" />
                                     </h:selectOneMenu>
@@ -55,7 +55,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Vorname:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="firstnameRegister" value="#{userManagementBeanuser.user.firstname}"
+                                        id="firstnameRegister" value="#{userManagementBean.user.firstname}"
                                         validatorMessage="Der Vorname darf höchstens 100 Zeichen lang sein.">
                                                       <f:validateLength minimum="0" maximum="100" />
                                     </h:inputText>
@@ -65,7 +65,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Name:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="lastnameRegister" value="#{userManagementBeanuser.user.lastname}"
+                                        id="lastnameRegister" value="#{userManagementBean.user.lastname}"
                                         validatorMessage="Der Nachname darf höchstens 100 Zeichen lang sein.">
                                                       <f:validateLength minimum="0" maximum="100" />
                                     </h:inputText>
@@ -75,7 +75,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Geburtstag:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="birthdateRegister" value="#{userManagementBeanuser.user.dateOfBirth}"
+                                        id="birthdateRegister" value="#{userManagementBean.user.dateOfBirth}"
                                         converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.">
                                         <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
                                                      <f:validator validatorId="dateOfBirthValidator" />
@@ -86,7 +86,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Straße:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="streetRegister" value="#{userManagementBeanuser.user.address.street}"
+                                        id="streetRegister" value="#{userManagementBean.user.address.street}"
                                         validatorMessage="Die Straße darf höchstens 100 Zeichen lang sein. ">
                                                      <f:validateLength maximum="100" />
                                     </h:inputText>
@@ -96,7 +96,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Hausnummer:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="housenumberRegister" value="#{userManagementBeanuser.user.address.houseNumber}"
+                                        id="housenumberRegister" value="#{userManagementBean.user.address.houseNumber}"
                                         validatorMessage="Die Hausnummer darf höchstens 9 Zeichen lang sein. ">
                                                      <f:validateLength maximum="9" />
                                     </h:inputText>
@@ -106,7 +106,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Stadt</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="locationRegister" value="#{userManagementBeanuser.user.address.city}"
+                                        id="locationRegister" value="#{userManagementBean.user.address.city}"
                                         validatorMessage="Die Stadt muss zwischen 1 und 100 Zeichen lang sein. ">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                     </h:inputText>
@@ -116,7 +116,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Postleitzahl:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="zipcodeRegister" value="#{userManagementBeanuser.user.address.zipCode}"
+                                        id="zipcodeRegister" value="#{userManagementBean.user.address.zipCode}"
                                         validatorMessage="Die Postleitzahl muss zwischen 1 und 10 Zeichen lang sein. ">
                                                      <f:validateLength minimum ="1" maximum="10" />
                                     </h:inputText>
@@ -125,7 +125,7 @@
                                 <div class="input-group" style="padding-top:5px;">
                                     <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
                                     <h:inputText class="form-control" style="width:300px;" id="countryRegister"
-                                        value="#{userProfileBean.user.address.country}" 
+                                        value="#{userManagementBean.user.address.country}" 
                                         validatorMessage="Das Land muss zwischen 1 und 100 Zeichen lang sein.">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                     </h:inputText>
@@ -135,7 +135,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">E-Mail-Adresse:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="emailRegister" value="#{userManagementBeanuser.user.email}"
+                                        id="emailRegister" value="#{userManagementBean.user.email}"
                                         required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein. ">
                                                      <f:validator validatorId="emailValidator" />
                                     </h:inputText>
@@ -145,7 +145,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Benutzername:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="usernameRegister" value="#{userManagementBeanuser.user.username}"
+                                        id="usernameRegister" value="#{userManagementBean.user.username}"
                                         required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein. ">
                                                      <f:validator validatorId="userNameValidator"/>
                                     </h:inputText>
@@ -155,7 +155,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Passwort:</span>
                                     <h:inputSecret class="form-control" style="width:340px;"
-                                        id="passwordRegister" value="#{userManagementBeanuser.password}"
+                                        id="passwordRegister" value="#{userManagementBean.password}"
                                         required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
                                                        <f:attribute name="confirmPassword" value="#{confirmPassword}" />
                                                        <f:validator validatorId="passwordValidator" />
@@ -167,8 +167,7 @@
                                         style="width: 160px; text-align: right;">Passwort
                                         bestätigen:</span>
                                     <h:inputSecret class="form-control" style="width:340px;"
-                                        id="passwordConfirmRegister" value="#{userManagementBeanuser.confirmPassword}"
-                                        value="#{registerUserBean.registerConfirmPassword}"
+                                        id="passwordConfirmRegister" value="#{userManagementBean.confirmPassword}"
                                                        required="true"  requiredMessage="Bitte bestätigen Sie Ihr Passwort."
                                                        binding="#{confirmPassword}">
                                     </h:inputSecret>
@@ -179,11 +178,10 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Benutzerrolle:</span>
                                     <div>
-                                        <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userManagementBean.user.userRole}">
-                                            <f:selectItem itemValue="UserRole.REGISTERED_USER" itemLabel="Benutzer" />
-                                            <f:selectItem itemValue="UserRole.COURSE_LEADER" itemLabel="Kursleiter" />
-                                            <f:selectItem itemValue="UserRole.SYSTEM_ADMINISTRATOR"
-                                                itemLabel="Administrator" />
+                                        <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userManagementBean.role}">
+                                            <f:selectItem itemValue="registered" itemLabel="Benutzer" />
+                                            <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
+                                            <f:selectItem itemValue="admin" itemLabel="Administrator" />
                                         </h:selectOneMenu>
                                     </div>
                                 </div>

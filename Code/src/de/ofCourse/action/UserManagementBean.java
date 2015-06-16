@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -13,6 +14,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -50,6 +52,8 @@ public class UserManagementBean {
     
     private String salutation;
     
+    private String role;
+    
     private String password;
     
     private String confirmPassword;
@@ -64,6 +68,7 @@ public class UserManagementBean {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
     
+    @PostConstruct
     public void init() {
     	image = null;
     	this.user = new User();
@@ -91,25 +96,22 @@ public class UserManagementBean {
 	        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
 	            this.transaction.rollback();
 	        } else {
-	        	if (salutation.equals("mr")) {
-	        		user.setSalutation(Salutation.MR);
-	        	} else {
-	        		user.setSalutation(Salutation.MS);
-	        	}
-	        	
+	        	setEnums();
 	        	String salt = String.valueOf(System.currentTimeMillis() * Math.random());
 	        	String pwHash = PasswordHash.hash(password, salt);
 	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
 	        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
 	        	UserDAO.verifyUser(transaction, veriString);
+	        	
 	        	if (image != null) {
 	        		UserDAO.uploadImage(transaction, userID, image);
 	        	}
+	        	
 	        	FacesMessageCreator
                 .createFacesMessage(
                         null,
                         "Der Nutzer wurde erfolgreich im System registriert.");
-	        	goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=false";
+	        	goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=true";
 	        }
 	        transaction.commit();
         } catch (InvalidDBTransferException e) {
@@ -121,7 +123,23 @@ public class UserManagementBean {
         }
     	return goToPage;
     }
-
+    
+    private void setEnums() {
+    	if (salutation.equals("mr")) {
+    		user.setSalutation(Salutation.MR);
+    	} else {
+    		user.setSalutation(Salutation.MS);
+    	}
+    	
+    	if (role.equals("admin")) {
+    		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
+    	} else if (role.equals("leader")) {
+    		user.setUserRole(UserRole.COURSE_LEADER);
+    	} else {
+    		user.setUserRole(UserRole.REGISTERED_USER);
+    	}
+    }
+    
     /**
      * Uploads a selected picture file from the local system to the server. The
      * picture needs to be a .jpg <br>
@@ -166,6 +184,14 @@ public class UserManagementBean {
 
 	public void setSalutation(String salutation) {
 		this.salutation = salutation;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getPassword() {

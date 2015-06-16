@@ -147,7 +147,9 @@ public class UserProfileBean implements Pagination {
     		boolean emailTaken = UserDAO.emailExists(transaction, user.getEmail());
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
-    			UserDAO.updateUser(transaction, user, PasswordHash.hash(password, generateSalt()));
+    			String salt = String.valueOf(System.currentTimeMillis() * Math.random());
+	        	String pwHash = PasswordHash.hash(password, salt);
+    			UserDAO.updateUser(transaction, user, pwHash);
     			transaction.commit();
     			readOnly = true;
     		} else {
@@ -160,10 +162,6 @@ public class UserProfileBean implements Pagination {
                     + "saveSettings()");
     		transaction.rollback();
     	}
-    }
-    
-    private String generateSalt() {
-    	return String.valueOf(System.currentTimeMillis() * Math.random());
     }
     
     /**
