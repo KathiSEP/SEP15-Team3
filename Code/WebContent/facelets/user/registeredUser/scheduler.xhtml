@@ -8,74 +8,124 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html">
     <ui:composition template="/WEB-INF/template.xhtml">
         <ui:define name="title">Wochenplan</ui:define>
-        <body>
+        <ui:define name="content">
         
-            <table>
+            <body>
+        
+            <h:form class="form-horizontal" id="schedule">
+            
+                <table>
                 <tr>
-                    <th>
-                        Montag
-                    </th>
-                    
-                    <th>
-                        Dienstag
-                    </th>
-                    
-                    <th>
-                        Mittwoch
-                    </th>
-                    
-                    <th>
-                        Donnerstag
-                    </th>
-                    
-                    <th>
-                        Freitag
-                    </th>
-                    
-                    <th>
-                        Samstag
-                    </th>
-                    
-                    <th>
-                        Sonntag
-                    </th>
-                    
+                    <th>Montag</th> <th>Montag</th> <th>Dienstag</th> <th>Mittwoch</th>
+                    <th>Donnerstag</th> <th>Freitag</th> <th>Samstag</th> <th>Sonntag</th>
                 </tr>
                     
                 <tr>
-                    <td>
-                        
-                    </td>
+                    <td>06:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 6)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 6)}" /></td>
+                </tr>
+                
+               <tr>
+                    <td>08:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 8)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 8)}" /></td>
                 </tr>
                 
                 <tr>
-                    
+                    <td>10:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 10)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 10)}" /></td>
                 </tr>
                 
                 <tr>
-                    
+                    <td>12:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 12)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 12)}" /></td>
                 </tr>
                 
                 <tr>
-                    
+                    <td>14:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 14)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 14)}" /></td>
                 </tr>
                 
                 <tr>
-                    
+                    <td>16:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 16)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 16)}" /></td>
                 </tr>
                 
                 <tr>
-                    
+                    <td>18:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 18)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 18)}" /></td>
                 </tr>
                 
                 <tr>
-                    <td>
-                    
-                    </td>
+                    <td>20:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 20)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 20)}" /></td>
+                </tr>
+                
+                <tr>
+                    <td>22:00</td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Mon', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Tue', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Wed', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Thu', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Fri', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sat', 22)}" /></td>
+                    <td><h:outputLabel class="form-control" value="#{schedulerBean.getUnit('Sun', 22)}" /></td>
                 </tr>
                 
             </table>
+            
+            </h:form>
         
-        </body>
+            </body>
+        
+        </ui:define>
+        
     </ui:composition>
 </html>

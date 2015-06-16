@@ -3,10 +3,17 @@
  */
 package de.ofCourse.action;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 
+import de.ofCourse.model.CourseUnit;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -24,7 +31,7 @@ import de.ofCourse.system.Transaction;
  *
  */
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class SchedulerBean {
 
     
@@ -33,6 +40,9 @@ public class SchedulerBean {
      */
     private Transaction transaction;
     
+    private Map<Integer, List<List<CourseUnit>>> weekDays
+	  = new HashMap<Integer, List<List<CourseUnit>>>(7);
+    
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
@@ -40,6 +50,15 @@ public class SchedulerBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    @PostConstruct
+    public void init() {
+    	
+    }
+    
+    public void getUnit(String day, int hour) {
+    	
+    }
 
     /**
      * Swaps the actual displayed week in the scheduler to the following week.
@@ -65,7 +84,7 @@ public class SchedulerBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -74,7 +93,16 @@ public class SchedulerBean {
      * @param userSession
      *            session of the user
      */
-    public void setSessionUser(SessionUserBean userSession) {
+    public void setSessionUser(SessionUserBean sessionUser) {
+    	this.sessionUser = sessionUser;
     }
+
+	public Map<Integer, List<List<CourseUnit>>> getWeekDays() {
+		return weekDays;
+	}
+
+	public void setWeekDays(Map<Integer, List<List<CourseUnit>>> weekDays) {
+		this.weekDays = weekDays;
+	}
 
 }
