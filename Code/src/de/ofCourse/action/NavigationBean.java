@@ -8,6 +8,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
+import de.ofCourse.model.Language;
+
 /**
  * Provides the services of directing to the login page, selecting the displayed
  * language and to perform the logout action.
@@ -36,6 +38,14 @@ public class NavigationBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    public void setLanguage(String language) {
+    	if (language.equals("en")) {
+    		sessionUser.setLanguage(Language.EN);
+    	} else {
+    		sessionUser.setLanguage(Language.DE);
+    	}
+    }
 
     /**
      * Performs the logout action.<br>
