@@ -122,6 +122,7 @@
 										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
+										<f:validator id="offlineTransactionValidator"/>
 									</h:inputText>
 									<h:message for="amountToTopUp" style="color:red" />
 								</div>

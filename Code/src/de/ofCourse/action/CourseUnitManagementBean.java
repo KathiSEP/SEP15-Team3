@@ -255,7 +255,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    this.end = new Date();
 	    this.end.setTime((this.start.getTime() + 7200000L));
 	}
-	System.out.println("NumberOfPagesUnit: " + this.pagination.getNumberOfPages());
     }
 
     /**

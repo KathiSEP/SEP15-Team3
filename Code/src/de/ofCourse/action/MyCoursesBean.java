@@ -10,6 +10,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
@@ -33,7 +36,7 @@ import de.ofCourse.system.Transaction;
  *
  */
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class MyCoursesBean implements Pagination, Serializable {
 
     /**
@@ -63,11 +66,6 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     private PaginationData pagination;
 
-    /**
-     * Managed Property that represents the current displayed site of pagination
-     */
-    @ManagedProperty(value = "#{param.site}")
-    private int site;
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -84,7 +82,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
-	pagination = new PaginationData(elementsPerPage, site, "title", true);
+	pagination = new PaginationData(elementsPerPage, 0, "title", true);
 	
 	transaction = Connection.create();
 	transaction.start();
@@ -93,7 +91,6 @@ public class MyCoursesBean implements Pagination, Serializable {
 	    this.pagination.actualizeNumberOfPages(CourseDAO
 		    .getNumberOfMyCourses(transaction,
 			    this.sessionUser.getUserID()));
-	    System.out.println("Number Of pages: " + this.pagination.getNumberOfPages());
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
 		    .getCoursesOf(transaction, this.getPagination(),
 			    this.sessionUser.getUserID());
@@ -123,7 +120,10 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.setCurrentPageNumber(site);
+	this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
+		.getCurrentInstance().getExternalContext()
+		.getRequestParameterMap().get("site")));
+	transaction.start();
 	transaction.start();
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
@@ -159,25 +159,6 @@ public class MyCoursesBean implements Pagination, Serializable {
     @Override
     public void setPagination(PaginationData pagination) {
 	this.pagination = pagination;
-    }
-
-    /**
-     * Returns the current displayed site of pagination.
-     * 
-     * @return the number of the site
-     */
-    public int getSite() {
-	return site;
-    }
-
-    /**
-     * Sets the current displayed site of pagination.
-     * 
-     * @param site
-     *            the number of the site
-     */
-    public void setSite(int site) {
-	this.site = site;
     }
 
     /**
