@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.BankAccountException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
@@ -68,18 +69,15 @@ public class PaymentOfflineBean {
      * If the entered name and the entered id belongs to the same user, the
      * amount is deposited on the users account, that means the account balance
      * of the user is updated in the database.<br>
-     * If there goes something wrong a BankAccountException is thrown.
      * 
-     * @return <code>true</code> if the amount of money was deposited correctly;
-     *         <code>false</code> otherwise
      * 
      */
     public void depositAmountOnUserAccount() {
 	this.transaction.start();
 	try {
 
-	    
-	    
+	    UserDAO.updateAccountBalanceInOne(transaction,
+		    this.user.getUserID(), getAmountToDeposit());
 	    transaction.commit();
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney", "Der Account wurde mit "
@@ -121,6 +119,7 @@ public class PaymentOfflineBean {
      *            the new user who is about to get the money
      */
     public void setUser(User user) {
+	this.user = user;
     }
 
     /**
@@ -141,6 +140,8 @@ public class PaymentOfflineBean {
      *            the amount of money to deposit
      */
     public void setAmountToDeposit(float amountToDeposit) {
+	this.amountToDeposit = amountToDeposit;
+
     }
 
     /**
@@ -159,6 +160,7 @@ public class PaymentOfflineBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+	this.sessionUser = userSession;
     }
 
 }

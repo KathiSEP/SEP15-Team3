@@ -28,34 +28,53 @@
 							var="course" id="courseTable" class=" table table-hover"
 							cellspacing="0" width="100%">
 							<h:column>
-                                            <f:facet name="header">
+								<f:facet name="header">
                                                Bild
                                             </f:facet>
-                                            <h:graphicImage
-                                                value="/image?profilImage=#{course.courseID}" height="25"/>
+								<h:graphicImage value="/image?profilImage=#{course.courseID}"
+									height="25" />
 
-                                        </h:column>
+							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                               ID
-                                </f:facet>
+									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+										styleClass="theader">
+										<f:setPropertyActionListener
+											target="#{myCoursesBean.orderParam}"
+											value="id" />
+                                                ID
+                                            </h:commandLink>
+								</f:facet>
 								<h:outputText value="#{course.courseID}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                               Titel
-                                </f:facet>
+									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+										styleClass="theader">
+										<f:setPropertyActionListener
+											target="#{myCoursesBean.orderParam}" value="titel" />
+                                                Titel
+                                            </h:commandLink>
+								</f:facet>
 								<h:outputText value="#{course.title}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                               Ort
+                                    <h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+                                        styleClass="theader">
+                                                Ort
+                                            </h:commandLink>
                                 </f:facet>
 								<h:outputText value="#{course.nextCourseUnit.location}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                               Beginn
+                                    <h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+                                        styleClass="theader">
+                                        <f:setPropertyActionListener
+                                            target="#{myCoursesBean.orderParam}" value="start_time" />
+                                                Beginn
+                                            </h:commandLink>
                                 </f:facet>
 								<h:outputText class="nowrap"
 									value="#{course.nextCourseUnit.startime}">
@@ -64,7 +83,12 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                               Datum
+                                    <h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+                                        styleClass="theader">
+                                        <f:setPropertyActionListener
+                                            target="#{myCoursesBean.orderParam}" value="start_time" />
+                                                Datum
+                                            </h:commandLink>
                                 </f:facet>
 								<h:outputText class="nowrap"
 									value="#{course.nextCourseUnit.startime}">

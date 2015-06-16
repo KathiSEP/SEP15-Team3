@@ -60,12 +60,16 @@ public class MyCoursesBean implements Pagination, Serializable {
     private ArrayList<Course> registeredCourses;
 
     /**
+     * Param by that is sorted
+     */
+    private String orderParam;
+
+    /**
      * This attribute represents a pagination object. It stores all the
      * information that is necessary for pagination, e.g. the number of elements
      * per page.
      */
     private PaginationData pagination;
-
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -83,10 +87,10 @@ public class MyCoursesBean implements Pagination, Serializable {
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
 	pagination = new PaginationData(elementsPerPage, 0, "titel", true);
-	
+
 	transaction = Connection.create();
 	transaction.start();
-	
+
 	try {
 	    this.pagination.actualizeNumberOfPages(CourseDAO
 		    .getNumberOfMyCourses(transaction,
@@ -95,7 +99,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 		    .getCoursesOf(transaction, this.getPagination(),
 			    this.sessionUser.getUserID());
 	    this.transaction.commit();
-	    
+
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during updating the"
@@ -141,7 +145,20 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void sortBySpecificColumn() {
-	// Not needed in MyCoursesBean
+	this.transaction.start();
+	this.pagination.setSortColumn(getOrderParam());
+	System.out.println(this.getOrderParam());
+	try {
+	    this.registeredCourses = (ArrayList<Course>) CourseDAO
+		    .getCoursesOf(transaction, getPagination(),
+			    this.sessionUser.getUserID());
+	    transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    transaction.rollback();
+	    LogHandler.getInstance().error(
+		    "Error occured during sorting my courses");
+	}
+
     }
 
     /**
@@ -177,6 +194,25 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     public void setRegisteredCourses(ArrayList<Course> registeredCourses) {
 	this.registeredCourses = registeredCourses;
+    }
+
+    /**
+     * Returns the order parameter.
+     * 
+     * @return the order parameter
+     */
+    public String getOrderParam() {
+	return orderParam;
+    }
+
+    /**
+     * Sets the order parameter.
+     * 
+     * @param orderParam
+     *            the order paramater to set
+     */
+    public void setOrderParam(String orderParam) {
+	this.orderParam = orderParam;
     }
 
     /**
