@@ -20,6 +20,7 @@ import java.util.List;
 import javax.servlet.http.Part;
 
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Activation;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
@@ -856,7 +857,7 @@ public class UserDAO {
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
 
-        String sql = "SELECT id, nickname, pw_hash, status FROM \"users\" "
+        String sql = "SELECT id, nickname, pw_hash, status, email_verification, admin_verification FROM \"users\" "
                 + " WHERE nickname=?";
         // catch potential SQL-Injection
         try {
@@ -875,11 +876,27 @@ public class UserDAO {
 
                 // Compare the saved password with the inserted one.
                 if (passwordHash.equals(pwHashFromDB)) {
-
+                    
+                    boolean emailVerification = res.getBoolean("email_verification");
+                    boolean adminVerification = res.getBoolean("admin_verification");
+                    String status = res.getString("status");
+                    
                     // Check if the user is activated.
                     if (res.getString("status").equals(
                             UserStatus.REGISTERED.toString())) {
-                        id = res.getInt("id");
+                        if(emailVerification == true) {
+                            if(SystemDAO.getActivationType(trans).equals(Activation.EMAIL)) {
+                                id = res.getInt("id");
+                            } else {
+                                if(adminVerification == true) {
+                                    id = res.getInt("id");
+                                } else {
+                                    id = accountNotActivated;
+                                }
+                            }                            
+                        } else {
+                            id = accountNotActivated;
+                        }                       
                     } else {
                         id = accountNotActivated;
                     }
