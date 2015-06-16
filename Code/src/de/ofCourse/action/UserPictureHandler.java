@@ -45,7 +45,7 @@ public class UserPictureHandler extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        System.out.println("ich bin im servlet");
+       
         Transaction trans = Connection.create();
         trans.start();
         try {

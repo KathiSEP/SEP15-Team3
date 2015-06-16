@@ -10,11 +10,15 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.mail.search.SentDateTerm;
 
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 
+import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -38,7 +42,7 @@ import de.ofCourse.system.Transaction;
 @ManagedBean
 @ViewScoped
 public class SearchUserBean implements Pagination {
-    
+
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -49,10 +53,8 @@ public class SearchUserBean implements Pagination {
      * it's a list of users.
      */
     private ArrayList<User> searchResult;
-    
-    private String displayPeriod;
 
-    
+    private String orderParam;
 
     /**
      * Stores the search parameter that was selected by the user
@@ -65,7 +67,6 @@ public class SearchUserBean implements Pagination {
     private String searchString;
 
     private boolean renderTable = true;
-    
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -81,9 +82,24 @@ public class SearchUserBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
+
+    /**
+     * @return the orderParam
+     */
+    public String getOrderParam() {
+        return orderParam;
+    }
+
+    /**
+     * @param orderParam
+     *            the orderParam to set
+     */
+    public void setOrderParam(String orderParam) {
+        this.orderParam = orderParam;
+    }
+
     @PostConstruct
-    public void init(){
+    public void init() {
         searchParam = "name";
         pagination = new PaginationData();
         pagination.setElementsPerPage(10);
@@ -98,6 +114,53 @@ public class SearchUserBean implements Pagination {
      * in the facelet.
      */
     public void search() {
+        transaction = Connection.create();
+        transaction.start();
+
+        pagination.setCurrentPageNumber(0);
+        pagination.setSortAsc(true);
+        pagination.setSortColumn("name");
+        ArrayList<User> result;
+        try {
+            result = getResultArray();
+            
+            if (result != null) {
+                searchResult = result;
+                setRenderTable(true);
+
+                transaction.commit();
+            } else {
+                setRenderTable(false);
+                transaction.rollback();
+            }
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during search");
+            transaction.rollback();
+        }
+
+    }
+
+    /**
+     * @return
+     * @throws InvalidDBTransferException
+     */
+    private ArrayList<User> getResultArray() throws InvalidDBTransferException {
+        ArrayList<User> result;
+        if (searchParam.equals("name")) {
+            pagination
+                    .actualizeNumberOfPages(UserDAO
+                            .getNumberOfUsersWithThisName(transaction,
+                                    searchParam));
+            result = UserDAO.getUsers(transaction,
+                    pagination, searchParam, searchString);
+
+            
+        }else{
+            result = UserDAO.getUsers(transaction,
+                    pagination, searchParam, searchString); 
+        }
+        return result;
     }
 
     /**
@@ -107,7 +170,7 @@ public class SearchUserBean implements Pagination {
      * @return list of found users
      */
     public ArrayList<User> getSearchResult() {
-	return searchResult;
+        return searchResult;
     }
 
     /**
@@ -128,7 +191,7 @@ public class SearchUserBean implements Pagination {
      * @return the selected search parameter
      */
     public String getSearchParam() {
-	return searchParam;
+        return searchParam;
     }
 
     /**
@@ -149,7 +212,7 @@ public class SearchUserBean implements Pagination {
      * @return the entered search term
      */
     public String getSearchString() {
-	return searchString;
+        return searchString;
     }
 
     /**
@@ -162,7 +225,7 @@ public class SearchUserBean implements Pagination {
     public void setSearchString(String searchTerm) {
         this.searchString = searchTerm;
     }
-    
+
     /**
      * @return the renderTable
      */
@@ -171,7 +234,8 @@ public class SearchUserBean implements Pagination {
     }
 
     /**
-     * @param renderTable the renderTable to set
+     * @param renderTable
+     *            the renderTable to set
      */
     public void setRenderTable(boolean renderTable) {
         this.renderTable = renderTable;
@@ -183,7 +247,7 @@ public class SearchUserBean implements Pagination {
      * @return link to the profile page of the user
      */
     public String loadUserProfilPageOfSelectedUser() {
-	return null;
+        return null;
     }
 
     /**
@@ -191,14 +255,54 @@ public class SearchUserBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-    }
+        transaction = Connection.create();
+        transaction.start();
+        pagination.setSortColumn(orderParam);
 
+        ArrayList<User> result;
+
+        if (pagination.isSortAsc()) {
+            pagination.setSortAsc(false);
+        } else {
+            pagination.setSortAsc(true);
+        }
+
+        try {
+            result = getResultArray();
+
+            if (result != null) {
+                searchResult = result;
+                transaction.commit();
+            } else {
+                setRenderTable(false);
+                transaction.rollback();
+            }
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occoured during executing sortBySpecificColumn");
+        }
+
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void goToSpecificPage() {
+        this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
+                .getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("site")));
+            transaction.start();
+            transaction.start();
+            try {
+                searchResult = getResultArray();
+                this.transaction.commit();
+                
+            } catch (InvalidDBTransferException e) {
+                LogHandler.getInstance().error(
+                    "Error occured during fething data for pagination.");
+                this.transaction.rollback();
+            }
     }
 
     /**
@@ -206,7 +310,7 @@ public class SearchUserBean implements Pagination {
      */
     @Override
     public PaginationData getPagination() {
-	return pagination;
+        return pagination;
     }
 
     /**
@@ -222,7 +326,7 @@ public class SearchUserBean implements Pagination {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -233,40 +337,40 @@ public class SearchUserBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean userSession) {
     }
-    
-    public void displayAllUsers(){
+
+    public void displayAllUsers() {
         searchParam = "all";
         transaction = Connection.create();
         transaction.start();
-        
+
         pagination.setCurrentPageNumber(0);
         pagination.setSortAsc(true);
         pagination.setSortColumn("name");
-        
-        try{
-            pagination.actualizeNumberOfPages(UserDAO.getNumberOfUsers(transaction));
-            ArrayList<User> result = UserDAO.getUsers(transaction, pagination, searchParam, searchString);
-            
-            if(result != null){
+
+        try {
+            pagination.actualizeNumberOfPages(UserDAO
+                    .getNumberOfUsers(transaction));
+            ArrayList<User> result = getResultArray();
+
+            if (result != null) {
                 searchResult = result;
                 setRenderTable(true);
-                
-                
+
                 transaction.commit();
-            }else{
+            } else {
                 setRenderTable(false);
                 transaction.rollback();
             }
-        }catch(InvalidDBTransferException e){
-            LogHandler
-            .getInstance()
-            .error("Error occured during displaYAllUsers");
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during displaYAllUsers");
             transaction.rollback();
         }
-        
+
     }
-    
 
+    public String loadProfil() {
+        return "/facelets/user/registeredUser/profile.xhtml";
+    }
 
-    
 }

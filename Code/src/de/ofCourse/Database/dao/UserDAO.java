@@ -11,6 +11,8 @@ import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -473,11 +475,26 @@ public class UserDAO {
 
             while (resultSet.next()) {
                 User userToAdd = new User();
-                userToAdd.setFirstname(resultSet.getString("first_name"));
-                userToAdd.setLastname(resultSet.getString("name"));
+                if(resultSet.getString("first_name") == null){
+                    userToAdd.setFirstname("Nicht angegeben");
+                }else{
+                    userToAdd.setFirstname(resultSet.getString("first_name"));
+                }
+                if(resultSet.getString("name") == null){
+                    userToAdd.setLastname("Nicht angegeben");
+                }else{
+                    userToAdd.setLastname(resultSet.getString("name"));
+                }
+                if(resultSet.getDate("date_of_birth") == null){
+                    SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+                    Date jesusBirth = dateformat.parse("25/12/0001");
+                    userToAdd.setDateOfBirth(jesusBirth);
+                }else{
+                    userToAdd.setDateOfBirth(new java.util.Date(resultSet.getDate(
+                            "date_of_birth").getTime())); 
+                }
                 userToAdd.setEmail(resultSet.getString("email"));
-                userToAdd.setDateOfBirth(new java.util.Date(resultSet.getDate(
-                        "date_of_birth").getTime()));
+                
                 userToAdd.setUsername(resultSet.getString("nickname"));
                 userToAdd.setUserID(resultSet.getInt("id"));
                 result.add(userToAdd);
@@ -487,6 +504,9 @@ public class UserDAO {
             LogHandler.getInstance().error(
                     "Error occured during GetResult Methode");
             throw new SQLException();
+        } catch (ParseException e){
+            LogHandler.getInstance().error(
+                    "Error occured during Parsing Jesus Birthday");
         }
         return result;
     }
@@ -551,13 +571,13 @@ public class UserDAO {
 
             resultSet = pS.executeQuery();
             result = getResult(resultSet);
-
+            return result;
         } catch (SQLException e) {
             LogHandler.getInstance().error(
                     "Error occured during GetUsers(connection) Methode");
             throw new InvalidDBTransferException();
         }
-        return null;
+        
     }
 
     /**
@@ -1606,6 +1626,35 @@ public class UserDAO {
         } catch (SQLException e) {
             LogHandler.getInstance().error(
                     "SQL Exception occoured during executing getNumberOfUsers");
+            throw new InvalidDBTransferException();
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param transaction
+     * @param searchParam
+     * @return
+     */
+    public static int getNumberOfUsersWithThisName(Transaction transaction,
+            String searchParam) {
+        Connection connection = (Connection) transaction;
+        java.sql.Connection conn = connection.getConn();
+
+        ResultSet resultSet = null;
+        String sql = "SELECT COUNT (*) FROM \"users\" where name = ?";
+
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setString(1, searchParam);
+            resultSet = pS.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "SQL Exception occoured during executing getNumberOfUsersWithThisName");
             throw new InvalidDBTransferException();
         }
 
