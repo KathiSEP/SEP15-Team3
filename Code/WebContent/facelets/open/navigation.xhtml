@@ -35,7 +35,9 @@
                         <li><h:outputLink value="#{request.contextPath}/facelets/open/courses/search.xhtml">Suche</h:outputLink></li>
                         <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/myCourses.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Meine Kurse</h:outputLink></li>
                         <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/scheduler.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Terminplaner</h:outputLink></li>
-                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Profil</h:outputLink></li>
+                        <li><h:outputLink value="#{request.contextPath}/facelets/user/registeredUser/profile.xhtml" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">Profil
+                        	<f:param name="userID" value="#{navigationBean.sessionUser.userID}"/>
+                        </h:outputLink></li>
                         <h:panelGroup rendered="#{(navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 	                        <li class="dropdown">
 	                        	<h:outputLink value="#" class="dropdown-toggle" p:data-toggle="dropdown" role="button" aria-expanded="false">Administration<span class="caret"></span></h:outputLink>
