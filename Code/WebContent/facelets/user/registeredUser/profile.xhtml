@@ -222,14 +222,16 @@
 	                                        </h:inputSecret>
                                         </div>
                                         
-                                        <div class="input-group" style="padding-top:5px;">
-                                            <span class="input-group-addon" style="width: 160px; text-align: right;">Benutzerrolle:</span>
-                                                <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
-                                                    <f:selectItem itemValue="registered" itemLabel="Benutzer" />
-                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-                                                    <f:selectItem itemValue="admin" itemLabel="Administrator" />
-                                                </h:selectOneMenu>
-                                        </div>
+                                        <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+	                                        <div class="input-group" style="padding-top:5px;">
+	                                            <span class="input-group-addon" style="width: 160px; text-align: right;">Benutzerrolle:</span>
+	                                                <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
+	                                                    <f:selectItem itemValue="registered" itemLabel="Benutzer" />
+	                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
+	                                                    <f:selectItem itemValue="admin" itemLabel="Administrator" />
+	                                                </h:selectOneMenu>
+	                                        </div>
+                                        </h:panelGroup>
                                         <br/>
 	                                    
 	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" />
