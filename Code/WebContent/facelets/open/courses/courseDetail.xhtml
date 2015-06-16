@@ -68,6 +68,10 @@
                     		            					rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                             	        	<f:param name="delLeader" value="#{user.userID}"/>
                                 		</h:commandButton>
+                                		<f:facet name="header"/>
+                                		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil">
+                                			<f:param name="leaderID" value="#{user.userID}"/>
+                               			</h:commandButton>
    		                            </h:form>
                             		</h:column>
 								</h:dataTable>						
