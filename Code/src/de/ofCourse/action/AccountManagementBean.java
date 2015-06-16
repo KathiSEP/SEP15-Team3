@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -106,7 +107,30 @@ public class AccountManagementBean implements Pagination {
      * system.
      */
     public void activateAccounts() {
-        
+        @SuppressWarnings("unchecked")
+        List<User> allUsers = (List<User>) this.users.getWrappedData();
+        this.usersToActivate = new ArrayList<User>();
+        for(User user : allUsers) {
+            if(user.isSelected()) {
+                this.usersToActivate.add(user);
+            }
+        }
+        transaction.start();
+        try {
+            if(UserDAO.AdminActivateUsers(this.transaction, this.usersToActivate) == false) {
+                LogHandler.getInstance().error(
+                        "Error occured during deleteUsersFromCourse().");
+            } else {
+                this.pagination.actualizeNumberOfPages(UserDAO
+                        .getNumberOfNotAdminActivatedUsers(this.transaction));
+                this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            }
+            this.transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(
+                    "Error occured during deleteUsersFromCourse().");
+            this.transaction.rollback();
+        }
     }
 
     /**
