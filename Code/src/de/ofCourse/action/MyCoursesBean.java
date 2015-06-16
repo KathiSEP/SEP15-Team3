@@ -160,6 +160,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     @Override
     public void sortBySpecificColumn() {
 	this.transaction.start();
+	this.refreshDirection();
 	this.pagination.setSortColumn(getOrderParam());
 	
 	try {
@@ -172,7 +173,21 @@ public class MyCoursesBean implements Pagination, Serializable {
 	    LogHandler.getInstance().error(
 		    "Error occured during sorting my courses");
 	}
-
+    }
+    
+    /**
+     * Refreshes the sort direction.
+     */
+    private void refreshDirection(){
+	if(this.orderParam.equals(pagination.getSortColumn())){
+	    if(pagination.isSortAsc()){
+		pagination.setSortAsc(false);
+	    }else{
+		pagination.setSortAsc(true);
+	    }
+	}else{
+	    this.pagination.setSortAsc(true);
+	}
     }
 
     /**

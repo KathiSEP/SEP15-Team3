@@ -164,6 +164,43 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private int courseID;
 
     /**
+     * Param by which is sorted
+     */
+    private String orderParam;
+
+    /**
+     * @return the orderParam
+     */
+    public String getOrderParam() {
+	return orderParam;
+    }
+
+    /**
+     * @param orderParam
+     *            the orderParam to set
+     */
+    public void setOrderParam(String orderParam) {
+	this.orderParam = orderParam;
+    }
+
+    private int currentPage;
+
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+	return currentPage;
+    }
+
+    /**
+     * @param currentPage
+     *            the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+	this.currentPage = currentPage;
+    }
+
+    /**
      * This attribute represents a pagination object. It stores all the
      * information that is necessary for pagination, e.g. the number of elements
      * per page.
@@ -216,7 +253,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
 
 	if (editMode) {
-	    pagination = new PaginationData(elementsPerPage, 0, "title", true);
+	    pagination = new PaginationData(elementsPerPage, 0, "name", true);
 	    this.participants = new ListDataModel<User>();
 	    this.userToAdd = new User();
 	    this.usersToDelete = new ArrayList<User>();
@@ -901,9 +938,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
-		.getCurrentInstance().getExternalContext()
-		.getRequestParameterMap().get("site")));
+	this.pagination.setCurrentPageNumber(this.currentPage);
 	transaction.start();
 	try {
 	    this.participants.setWrappedData(CourseUnitDAO
@@ -922,8 +957,35 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     @Override
     public void sortBySpecificColumn() {
-	// Not needed in this bean
+	this.transaction.start();
+	this.refreshDirection();
+	this.pagination.setSortColumn(getOrderParam());
 
+	try {
+	    this.participants.setWrappedData(CourseUnitDAO
+		    .getParticipiantsOfCourseUnit(transaction, pagination,
+			    courseUnitID, false));
+	    transaction.commit();
+	} catch (InvalidDBTransferException e) {
+	    transaction.rollback();
+	    LogHandler.getInstance().error(
+		    "Error occured during sorting my courses");
+	}
+    }
+
+    /**
+     * Refreshes the sort direction.
+     */
+    private void refreshDirection() {
+	if (this.orderParam.equals(pagination.getSortColumn())) {
+	    if (pagination.isSortAsc()) {
+		pagination.setSortAsc(false);
+	    } else {
+		pagination.setSortAsc(true);
+	    }
+	} else {
+	    this.pagination.setSortAsc(true);
+	}
     }
 
     /**

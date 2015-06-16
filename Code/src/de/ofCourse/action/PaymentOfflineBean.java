@@ -3,6 +3,8 @@
  */
 package de.ofCourse.action;
 
+import java.io.Serializable;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -32,7 +34,12 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @RequestScoped
-public class PaymentOfflineBean {
+public class PaymentOfflineBean implements Serializable {
+
+    /**
+     * Serial id
+     */
+    private static final long serialVersionUID = 6305315564441571151L;
 
     /**
      * Stores the transaction that is used for database interaction.

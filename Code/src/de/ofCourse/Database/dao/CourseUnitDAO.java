@@ -176,7 +176,8 @@ public class CourseUnitDAO {
      * @return
      * @author Sebastian Schwarz
      */
-    public static boolean userWantsToBeInformed(Transaction trans, int userID, int courseID) {
+    public static boolean userWantsToBeInformed(Transaction trans, int userID,
+	    int courseID) {
 	boolean wantsToBeInformed = false;
 
 	String query = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
@@ -184,15 +185,13 @@ public class CourseUnitDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
-	
 
 	try {
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, userID);
 	    stmt.setInt(2, courseID);
 	    return stmt.execute();
-	    
-	    
+
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occoured during checking whether"
@@ -201,7 +200,7 @@ public class CourseUnitDAO {
 	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	}
-	
+
     }
 
     /**
@@ -360,89 +359,91 @@ public class CourseUnitDAO {
     public static List<CourseUnit> getCourseUnitsFromCourse(Transaction trans,
 	    int courseID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-        String direction = getSortDirection(pagination.isSortAsc());
-        ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
+	String direction = getSortDirection(pagination.isSortAsc());
+	ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
 
+	String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
+		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
+		+ " ORDER BY %s %s LIMIT ? OFFSET ?";
 
-        String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
-                    + "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
-                    +  " ORDER BY %s %s LIMIT ? OFFSET ?";
+	int offset = pagination.getElementsPerPage()
+		* pagination.getCurrentPageNumber();
 
-        int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();
+	courseUnitsQuery = String.format(courseUnitsQuery, "titel", direction);
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	PreparedStatement statement = null;
+	ResultSet resultSet;
 
-        courseUnitsQuery = String.format(courseUnitsQuery, "titel", direction);
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
-        ResultSet resultSet;
+	try {
+	    statement = conn.prepareStatement(courseUnitsQuery);
+	    statement.setInt(1, courseID);
+	    statement.setInt(2, pagination.getElementsPerPage());
+	    statement.setInt(3, offset);
+	    resultSet = statement.executeQuery();
 
-    	try {
-    	    statement = conn.prepareStatement(courseUnitsQuery);
-    	    statement.setInt(1, courseID);
-            statement.setInt(2, pagination.getElementsPerPage());
-            statement.setInt(3, offset);
-    	    resultSet = statement.executeQuery();
-    
-    	    while (resultSet.next()) {
-        		CourseUnit unit = new CourseUnit();
-        
-        		unit.setCourseID(courseID);
-        		unit.setCourseUnitID(resultSet.getInt("id"));
-        
-        		if (resultSet.getString("titel") != null) {
-        		    unit.setTitle(resultSet.getString("titel"));
-        		} else {
-        		    unit.setTitle("Ohne Titel");
-        		}
-        
-        		if (resultSet.getString("description") != null) {
-        		    unit.setDescription(resultSet.getString("description"));
-        		} else {
-        		    unit.setDescription("Ohne Beschreibung");
-        		}
-        
-        		unit.setMaxUsers(resultSet.getInt("max_participants"));
-        		unit.setMinUsers(resultSet.getInt("min_participants"));
-        		unit.setPrice(resultSet.getFloat("fee"));
-        		unit.setStartime(resultSet.getDate("start_time"));
-        		unit.setEndtime(resultSet.getDate("end_time"));
-        		unit.setNumberOfUsers(getNumberOfParticipants(trans,
-        			unit.getCourseUnitID()));
-        
-        		Address unitAddress = new Address();
-        
-        		unitAddress.setCity(resultSet.getString("city"));
-        		unitAddress.setCountry(resultSet.getString("country"));
-        		unitAddress.setZipCode(resultSet.getInt("zip_code"));
-        
-        		if (resultSet.getString("street") != null) {
-        		    unitAddress.setStreet(resultSet.getString("street"));
-        		} else {
-        		    unitAddress.setStreet("Ohne Straße");
-        		}
-        
-        		if (resultSet.getString("location") != null) {
-        		    unitAddress.setLocation(resultSet.getString("location"));
-        		} else {
-        		    unitAddress.setLocation("Ohne Ort");
-        		}
-        
-        		if (resultSet.getInt("house_nr") > 0) {
-        		    unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
-        		} else {
-        		    unitAddress.setHouseNumber(0);
-        		}
-        
-        		unit.setAddress(unitAddress);
-        		courseUnits.add(unit);
-    	    }
-    	    statement.close();
-    	    resultSet.close();
-    	} catch (SQLException e) {
-    	    LogHandler.getInstance().error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
-    	    throw new InvalidDBTransferException();
-    	}
-    	return courseUnits;
+	    while (resultSet.next()) {
+		CourseUnit unit = new CourseUnit();
+
+		unit.setCourseID(courseID);
+		unit.setCourseUnitID(resultSet.getInt("id"));
+
+		if (resultSet.getString("titel") != null) {
+		    unit.setTitle(resultSet.getString("titel"));
+		} else {
+		    unit.setTitle("Ohne Titel");
+		}
+
+		if (resultSet.getString("description") != null) {
+		    unit.setDescription(resultSet.getString("description"));
+		} else {
+		    unit.setDescription("Ohne Beschreibung");
+		}
+
+		unit.setMaxUsers(resultSet.getInt("max_participants"));
+		unit.setMinUsers(resultSet.getInt("min_participants"));
+		unit.setPrice(resultSet.getFloat("fee"));
+		unit.setStartime(resultSet.getDate("start_time"));
+		unit.setEndtime(resultSet.getDate("end_time"));
+		unit.setNumberOfUsers(getNumberOfParticipants(trans,
+			unit.getCourseUnitID()));
+
+		Address unitAddress = new Address();
+
+		unitAddress.setCity(resultSet.getString("city"));
+		unitAddress.setCountry(resultSet.getString("country"));
+		unitAddress.setZipCode(resultSet.getInt("zip_code"));
+
+		if (resultSet.getString("street") != null) {
+		    unitAddress.setStreet(resultSet.getString("street"));
+		} else {
+		    unitAddress.setStreet("Ohne Straße");
+		}
+
+		if (resultSet.getString("location") != null) {
+		    unitAddress.setLocation(resultSet.getString("location"));
+		} else {
+		    unitAddress.setLocation("Ohne Ort");
+		}
+
+		if (resultSet.getInt("house_nr") > 0) {
+		    unitAddress.setHouseNumber(resultSet.getInt("house_nr"));
+		} else {
+		    unitAddress.setHouseNumber(0);
+		}
+
+		unit.setAddress(unitAddress);
+		courseUnits.add(unit);
+	    }
+	    statement.close();
+	    resultSet.close();
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("Error occoured in CourseUnitFromCourse from CourseUnitDAO");
+	    throw new InvalidDBTransferException();
+	}
+	return courseUnits;
     }
 
     /**
@@ -865,26 +866,29 @@ public class CourseUnitDAO {
      * @author Ricky Strohmeier
      */
     public static int getNumberOfCourseUnits(Transaction trans, int courseID)
-            throws InvalidDBTransferException {
-        int numberOfCourseUnits = 0;
-        String courseUnitQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
+	    throws InvalidDBTransferException {
+	int numberOfCourseUnits = 0;
+	String courseUnitQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
 
-        Connection connection = (Connection) trans;
-        java.sql.Connection conn = connection.getConn();
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
 
-        PreparedStatement statement = null;
-        try {
-            statement = conn.prepareStatement(courseUnitQuery);
-            statement.setInt(1, courseID);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            numberOfCourseUnits = resultSet.getInt(1);
-        } catch (SQLException e) {
-            LogHandler.getInstance().error("Error occoured during fetching the number of courses of a certain user.");
-            throw new InvalidDBTransferException();
-        }
-        return numberOfCourseUnits;
-        }
+	PreparedStatement statement = null;
+	try {
+	    statement = conn.prepareStatement(courseUnitQuery);
+	    statement.setInt(1, courseID);
+	    ResultSet resultSet = statement.executeQuery();
+	    resultSet.next();
+	    numberOfCourseUnits = resultSet.getInt(1);
+	} catch (SQLException e) {
+	    LogHandler
+		    .getInstance()
+		    .error("Error occoured during fetching the number of courses of a certain user.");
+	    throw new InvalidDBTransferException();
+	}
+	return numberOfCourseUnits;
+    }
+
     /**
      * Returns the number of participants that attend the course unit with the
      * passed ID.
@@ -961,14 +965,15 @@ public class CourseUnitDAO {
     public static List<User> getParticipiantsOfCourseUnit(Transaction trans,
 	    PaginationData pagination, int courseUnitId, boolean all)
 	    throws InvalidDBTransferException {
+	String direction = getSortDirection(pagination.isSortAsc());
 	ArrayList<User> participants = new ArrayList<User>();
-	String query = "SELECT id, name, first_name FROM"
+	String query = "SELECT id, name, first_name, nickname FROM"
 		+ " users WHERE users.id IN"
 		+ " (SELECT participant_id FROM course_unit_participants"
-		+ " WHERE course_unit_id = ?) ORDER BY ? "
-		+ getSortDirection(pagination.isSortAsc())
+		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
 
+	query = String.format(query, pagination.getSortColumn(), direction);
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -987,9 +992,8 @@ public class CourseUnitDAO {
 
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, courseUnitId);
-	    stmt.setString(2, "name");
-	    stmt.setInt(3, limit);
-	    stmt.setInt(4, offset);
+	    stmt.setInt(2, limit);
+	    stmt.setInt(3, offset);
 	    ResultSet fetchedParticipants = stmt.executeQuery();
 
 	    while (fetchedParticipants.next()) {
@@ -1008,6 +1012,8 @@ public class CourseUnitDAO {
 		} else {
 		    fetchedUser.setFirstname("Nicht angegeben");
 		}
+		fetchedUser.setUsername(fetchedParticipants
+			.getString("nickname"));
 		participants.add(fetchedUser);
 	    }
 	    stmt.close();

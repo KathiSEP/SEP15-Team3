@@ -356,28 +356,59 @@
 											<f:facet name="header">
                                                Bild
                                             </f:facet>
-											<h:graphicImage
-												value="/image?profilImage=#{user.userID}" height="25"/>
+											<h:graphicImage value="/image?profilImage=#{user.userID}"
+												height="25" />
 
 										</h:column>
 										<h:column>
 											<f:facet name="header">
-                                               BenutzerID
-                                        </f:facet>
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}" value="id" />
+                                                ID
+                                            </h:commandLink>
+											</f:facet>
 											<h:outputText value="#{user.userID}" />
 										</h:column>
-
 										<h:column>
 											<f:facet name="header">
-                                               Name
-                                        </f:facet>
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="nickname" />
+                                                Benutzername
+                                            </h:commandLink>
+											</f:facet>
+											<h:outputText value="#{user.username}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="name" />
+                                                Nachname
+                                            </h:commandLink>
+											</f:facet>
 											<h:outputText value="#{user.lastname}" />
 										</h:column>
-
 										<h:column>
 											<f:facet name="header">
-                                               Vorname
-                                        </f:facet>
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="first_name" />
+                                                Vorname
+                                            </h:commandLink>
+											</f:facet>
 											<h:outputText value="#{user.firstname}" />
 										</h:column>
 
@@ -397,35 +428,40 @@
 																rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
 																value="Zurueck"
 																action="#{courseUnitManagementBean.goToSpecificPage}">
-																<f:param name="site"
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
 															</h:commandButton></li>
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber}"
 																action="#{courseUnitManagementBean.goToSpecificPage}">
-																<f:param name="site"
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
 															</h:commandButton></li>
 														<li><h:commandButton style="font-weight:bold;"
 																class="btn btn-primary"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
 																action="#{courseUnitManagementBean.goToSpecificPage}">
-																<f:param name="site"
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
 															</h:commandButton></li>
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
 																action="#{courseUnitManagementBean.goToSpecificPage}">
-																<f:param name="site"
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
 															</h:commandButton></li>
 														<li><h:commandButton class="btn btn-info"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
 																value="Weiter"
 																action="#{courseUnitManagementBean.goToSpecificPage}">
-																<f:param name="site"
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
 															</h:commandButton></li>
 													</ul>
