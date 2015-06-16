@@ -60,6 +60,7 @@ public class LaunchSystem {
         //Erstellt die Datenbank
         DatabaseTableCreator.buildUpDatabase();
         SetupAdmin.createInitialAdmin();
+        Maintenance.getInstance().run();
         //DatabaseTableDestroyer.dropTables();
         LogHandler.getInstance().error("finished");
         
@@ -84,6 +85,7 @@ public class LaunchSystem {
     @PreDestroy
     public void shutdownMaintenance() {
         DatabaseConnectionManager.getInstance().shutDown();
+        Maintenance.getInstance().shutDown();
     }
 
     /**
