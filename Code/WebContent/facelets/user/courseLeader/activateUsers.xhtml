@@ -10,17 +10,28 @@
 		<ui:define name="title">Benutzer aktivieren</ui:define>
 		<ui:define name="content">
             <body>
-                 <h1>Liste aller noch nicht aktivierten Benutzer</h1>
+                <h:form class="form-horizontal" id="formMessages">
+	                 <h1>Liste aller noch nicht aktivierten Benutzer</h1> 
+	                 <div class="row" style="padding-top:20px;">
+	                     <div class="col-lg-12">
+	                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
+	                    </div>  
+	                 </div>
+                 </h:form>
+                 
                  <div class="row" style="padding-top:20px;">
                     <div class="col-lg-12">
-                        
-                       
-                        <h:dataTable value="#{accountManagementBean.setUsers}"
-                            var="" id="participantsTable" class=" table table-hover"
+                    
+                    <h:form class="form-horizontal" id="formActivateUsers">
+                        <h:dataTable value="#{accountManagementBean.users}"
+                            var="users" id="participantsTable" class=" table table-hover"
                             cellspacing="0" width="100%">
                            <h:column>
                                 <f:facet name="header">
-                                               BenutzerID
+                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="nickname" />
+                                        BenutzerID
+                                    </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="" />
                             </h:column>
@@ -99,21 +110,23 @@
                                     </div>
                                 </f:facet>
                         
-                        </h:dataTable>
+                            </h:dataTable>
+                        </h:form>
                         </div>
                     </div>
                 <div class="row" style="padding-top:20px;">
-                    <div class="col-lg-10">
-                    </div>
-                    <div class="col-lg-2">
-                        <h:commandButton id="activate" class="btn btn-info"
-                                    value="Aktivieren"
-                                    action="#{accountManagementBean.activateAccounts}">
-                                    <f:param name="" value="" />
-                        </h:commandButton>
-                    
-                    </div>
-                </div>
+                     <h:form class="form-horizontal" id="activateUsersForm">
+	                    <div class="col-lg-10">
+	                    </div>
+	                    <div class="col-lg-2">
+	                        <h:commandButton id="activate" class="btn btn-info"
+	                                    value="Aktivieren"
+	                                    action="#{accountManagementBean.activateAccounts}">
+	                        </h:commandButton>
+	                    
+	                    </div>
+                    </h:form>
+               </div>
             </body>
         </ui:define>
 	</ui:composition>
