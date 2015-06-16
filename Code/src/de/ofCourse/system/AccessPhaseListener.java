@@ -111,34 +111,36 @@ public class AccessPhaseListener implements PhaseListener {
 
 	// Fetch data from session
 	this.sessionUser = new SessionUserBean();
+	String role ="";
 	if (sessionMap.containsKey("userID")
 		&& sessionMap.containsKey("userRole")) {
 
 	    sessionUser.setUserID((int) sessionMap.get("userID"));
 	    sessionUser.setUserRole((UserRole) sessionMap.get("userRole"));
+	    role = sessionUser.getUserRole().toString();
 	}
-	UserRole role = sessionUser.getUserRole();
+	
 
 	if (!loginPage && !loggedIn) {
-	    if (!this.isPermitted(fctx, null)) {
+	    if (!this.isPermitted(fctx,"")) {
 		this.redirect(ctx, "/facelets/open/authenticate.xhtml");
 	    }
 	} else {
 	    switch (role) {
-	    case REGISTERED_USER:
-		if (!isPermitted(fctx, UserRole.REGISTERED_USER)) {
+	    case "REGISTERED_USER":
+		if (!isPermitted(fctx, "REGISTERED_USER")) {
 		    this.redirect(ctx, "/facelets/open/index.xhtml");
 		}
 		break;
 
-	    case COURSE_LEADER:
-		if (!isPermitted(fctx, UserRole.COURSE_LEADER)) {
+	    case "COURSE_LEADER":
+		if (!isPermitted(fctx, "COURSE_LEADER")) {
 		    this.redirect(ctx, "/facelets/open/index.xhtml");
 		}
 		break;
 
-	    case SYSTEM_ADMINISTRATOR:
-		if (!isPermitted(fctx, UserRole.SYSTEM_ADMINISTRATOR)) {
+	    case "SYSTEM_ADMINISTRATOR":
+		if (!isPermitted(fctx, "SYSTEM_ADMINISTRATOR")) {
 		    this.redirect(ctx, "/facelets/open/index.xhtml");
 		}
 		break;
@@ -196,11 +198,11 @@ public class AccessPhaseListener implements PhaseListener {
      *         requested page<br>
      *         <code>false</code>, otherwise
      */
-    private boolean isPermitted(FacesContext fctx, UserRole role) {
+    private boolean isPermitted(FacesContext fctx, String role) {
 	boolean isPermitted = false;
 
 	switch (role) {
-	case SYSTEM_ADMINISTRATOR:
+	case "SYSTEM_ADMINISTRATOR":
 	    for (int i = 0; i < this.administrators.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId()
 			.equals(administrators.get(i))) {
@@ -208,14 +210,14 @@ public class AccessPhaseListener implements PhaseListener {
 		}
 	    }
 
-	case COURSE_LEADER:
+	case "COURSE_LEADER":
 	    for (int i = 0; i < this.courseLeaders.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId().equals(courseLeaders.get(i))) {
 		    isPermitted = true;
 		}
 	    }
 
-	case REGISTERED_USER:
+	case "REGISTERED_USER":
 	    for (int i = 0; i < this.registeredUsers.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId()
 			.equals(registeredUsers.get(i))) {
