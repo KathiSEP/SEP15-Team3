@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.utilities.PropertyManager;
 
 /**
  * Provides the maintenance service of the system which is responsible for
@@ -85,7 +86,11 @@ public class Maintenance implements Runnable {
      * @return instance of the class Maintenance
      */
     public static Maintenance getInstance() {
-	return maintenance;
+        if (maintenance == null) {
+            maintenance = new Maintenance();
+        }
+
+        return maintenance;
     }
 
     /**
