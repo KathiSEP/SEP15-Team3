@@ -260,15 +260,15 @@
                                             </div>
                                             <br/>
                                             
-                                            <h:inputFile class="btn btn-default" value="#{userProfileBean.image}" />
+                                            <h:inputFile class="btn btn-default" value="#{userProfileBean.image}" rendered="#{userProfileBean.readOnly == false}"/>
                                             <br/>
                                             
                                             <div class="col-lg-4" style="text-align:right;">
-                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild speichern" action="#{userProfileBean.uploadProfilePic()}"/>
+                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild speichern" action="#{userProfileBean.uploadProfilePic()}" rendered="#{userProfileBean.readOnly == false}"/>
                                             </div>
                                             
                                             <div class="col-lg-4" style="text-align:right;">
-                                                <h:commandButton id="deleteProfilePicture" class="btn btn-info" value="Profilbild löschen" action="#{userProfileBean.deleteProfilePic()}"/>
+                                                <h:commandButton id="deleteProfilePicture" class="btn btn-info" value="Profilbild löschen" action="#{userProfileBean.deleteProfilePic()}" rendered="#{userProfileBean.readOnly == false}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -282,6 +282,7 @@
                                     <div class="panel-body">
                                         Ihr aktueller Kontostand beträgt:
                                         <h:outputLabel value="#{userProfileBean.user.accountBalance}"/>
+                                        €
                                     </div>
                                 </div>                                      
                             </div>
