@@ -7,6 +7,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.utilities.LanguageManager;
+import de.ofCourse.utilities.PropertyManager;
+
 /**
  * Implements the forwarding to AGB page, imprint page and help page.<br>
  * <p>
@@ -27,6 +30,10 @@ public class FooterBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    public String getLabel(String label) {
+    	return LanguageManager.getInstance().getProperty(label, sessionUser.getLanguage());
+    }
     
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.

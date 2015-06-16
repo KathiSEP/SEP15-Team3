@@ -13,7 +13,7 @@
 	<body>
 		<ui:composition>
 			<ul id="footermenu" class="pager">
-				<li><h:outputLink value="#{request.contextPath}/facelets/open/imprint.xhtml">Impressum</h:outputLink></li>
+				<li><h:outputLink value="#{request.contextPath}/facelets/open/imprint.xhtml">#{footerBean.getLabel('footer.imprint')}</h:outputLink></li>
 				<li><h:outputLink value="#{request.contextPath}/facelets/open/agb.xhtml">AGB</h:outputLink></li>
 				<li><h:outputLink value="#{request.contextPath}/facelets/open/help.xhtml">Hilfe</h:outputLink></li>
 			</ul>
