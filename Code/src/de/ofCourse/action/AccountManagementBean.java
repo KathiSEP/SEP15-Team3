@@ -35,7 +35,7 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @ViewScoped
-public class AccountManagmentBean implements Pagination {
+public class AccountManagementBean implements Pagination {
 
     /**
      * Stores the transaction that is used for database interaction.

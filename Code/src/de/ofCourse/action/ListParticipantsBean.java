@@ -120,19 +120,22 @@ public class ListParticipantsBean implements Pagination {
     public void deleteUsersFromCourse() {
         @SuppressWarnings("unchecked")
         List<User> allUsers = (List<User>) this.participants.getWrappedData();
-        this.setUsersToDelete(new ArrayList<User>());
+        this.usersToDelete = new ArrayList<User>();
         for(User user : allUsers) {
-            System.out.println(user.isSelected());
             if(user.isSelected()) {
-                this.getUsersToDelete().add(user);
-                //this.usersToDelete.add(user);
+                this.usersToDelete.add(user);
             }
         }
         transaction.start();
         try {
-            if(!UserDAO.removeParticipantsFromCourse(this.transaction, this.getCourseID(), this.getUsersToDelete())) {
+            if(UserDAO.removeParticipantsFromCourse(this.transaction, this.getCourseID(), this.getUsersToDelete()) == false) {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
+            } else {
+                this.pagination.actualizeNumberOfPages(CourseDAO
+                        .getNumberOfParticipants(transaction, this.getCourseID()));
+                this.participants.setWrappedData(UserDAO.getParticipantsOfCourse(this.transaction, this.getPagination(),
+                                this.getCourseID()));
             }
             this.transaction.commit();
         } catch (InvalidDBTransferException e) {
