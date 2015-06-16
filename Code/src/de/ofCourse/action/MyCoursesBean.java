@@ -60,9 +60,25 @@ public class MyCoursesBean implements Pagination, Serializable {
     private ArrayList<Course> registeredCourses;
 
     /**
-     * Param by that is sorted
+     * Param by which is sorted
      */
     private String orderParam;
+
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -124,9 +140,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
-		.getCurrentInstance().getExternalContext()
-		.getRequestParameterMap().get("site")));
+	this.pagination.setCurrentPageNumber(this.currentPage);
 	transaction.start();
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
@@ -135,7 +149,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
-		    "Error occured during fething data for pagination.");
+		    "Error occured during fetching data for pagination.");
 	    this.transaction.rollback();
 	}
     }
@@ -147,7 +161,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     public void sortBySpecificColumn() {
 	this.transaction.start();
 	this.pagination.setSortColumn(getOrderParam());
-	System.out.println(this.getOrderParam());
+	
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
 		    .getCoursesOf(transaction, getPagination(),
@@ -209,7 +223,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      * Sets the order parameter.
      * 
      * @param orderParam
-     *            the order paramater to set
+     *            the order s to set
      */
     public void setOrderParam(String orderParam) {
 	this.orderParam = orderParam;
@@ -233,5 +247,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     public void setSessionUser(SessionUserBean userSession) {
 	this.sessionUser = userSession;
     }
+
+    
 
 }

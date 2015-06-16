@@ -111,35 +111,35 @@
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
 													value="Zurueck" action="#{myCoursesBean.goToSpecificPage}">
-													<f:param name="site"
-														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
+													<f:setPropertyActionListener
+                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-default"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
 													value="#{myCoursesBean.pagination.currentPageNumber}"
 													action="#{myCoursesBean.goToSpecificPage}">
-													<f:param name="site"
-														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
+													<f:setPropertyActionListener
+                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
 												</h:commandButton></li>
 											<li><h:commandButton style="font-weight:bold;"
 													class="btn btn-primary"
 													value="#{myCoursesBean.pagination.currentPageNumber +1}"
 													action="#{myCoursesBean.goToSpecificPage}">
-													<f:param name="site"
-														value="#{myCoursesBean.pagination.currentPageNumber}" />
+													<f:setPropertyActionListener
+                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber}"  />
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-default"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
 													value="#{myCoursesBean.pagination.currentPageNumber+2}"
 													action="#{myCoursesBean.goToSpecificPage}">
-													<f:param name="site"
-														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+													<f:setPropertyActionListener
+                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}" />
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
 													value="Weiter" action="#{myCoursesBean.goToSpecificPage}">
-													<f:param name="site"
-														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+													<f:setPropertyActionListener
+                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}"  />
 												</h:commandButton></li>
 										</ul>
 									</div>

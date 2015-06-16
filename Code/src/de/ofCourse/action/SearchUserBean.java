@@ -56,10 +56,27 @@ public class SearchUserBean implements Pagination {
 
     private String orderParam;
 
+private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
     /**
      * Stores the search parameter that was selected by the user
      */
     private String searchParam;
+    
 
     /**
      * Stores the search term that was entered by the user
@@ -289,10 +306,7 @@ public class SearchUserBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-        this.pagination.setCurrentPageNumber(Integer.parseInt(FacesContext
-                .getCurrentInstance().getExternalContext()
-                .getRequestParameterMap().get("site")));
-            transaction.start();
+	this.pagination.setCurrentPageNumber(this.currentPage);
             transaction.start();
             try {
                 searchResult = getResultArray();
