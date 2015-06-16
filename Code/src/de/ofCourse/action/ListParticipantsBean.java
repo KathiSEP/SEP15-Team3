@@ -125,18 +125,19 @@ public class ListParticipantsBean implements Pagination {
             System.out.println(user.isSelected());
             if(user.isSelected()) {
                 this.getUsersToDelete().add(user);
+                //this.usersToDelete.add(user);
             }
         }
         transaction.start();
         try {
             if(!UserDAO.removeParticipantsFromCourse(this.transaction, this.getCourseID(), this.getUsersToDelete())) {
                 LogHandler.getInstance().error(
-                        "Fehler beim Löschen der Benutzer aus dem Kurs.");
+                        "Error occured during deleteUsersFromCourse().");
             }
             this.transaction.commit();
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
-                    "Fehler beim Löschen der Benutzer aus dem Kurs.");
+                    "Error occured during deleteUsersFromCourse().");
             this.transaction.rollback();
         }
 

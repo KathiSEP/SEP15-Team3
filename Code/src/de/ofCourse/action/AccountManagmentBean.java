@@ -8,9 +8,13 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
+import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -120,6 +124,7 @@ public class AccountManagmentBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
+        
     }
 
     /**

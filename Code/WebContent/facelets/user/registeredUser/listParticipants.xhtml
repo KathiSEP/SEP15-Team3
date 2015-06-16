@@ -69,7 +69,7 @@
                                 <f:facet name="header" >
                                      aus Kurs löschen
                                 </f:facet>
-                                     <h:selectBooleanCheckbox value="#{participant.selected}"/>
+                                     <h:selectBooleanCheckbox id="checked" value="#{participant.selected}"/>
                             </h:column>
                         
                             <f:facet name="footer">
@@ -109,25 +109,20 @@
                                 </f:facet>
                         
                         </h:dataTable>
-                        </h:form>
-                        </div>
-                    </div>
-                <div class="row" style="padding-top:20px;">
-                    <h:form class="form-horizontal" id="userRemoveForm">
-                    <div class="col-lg-10">
-                    </div>
-                    <div class="col-lg-2">
-                        <h:commandButton id="delete" class="btn btn-info"
-                                    value="Entfernen"
-                                    action="#{listParticipantsBean.deleteUsersFromCourse()}"
-                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
-                        </h:commandButton>
-                    
-                    </div>
-                    
-                    </h:form>
-                </div>
-                
+                        
+                   
+	               
+	                        <h:commandButton id="delete" class="btn btn-info"
+	                                    value="Entfernen"
+	                                    actionListener="#{listParticipantsBean.deleteUsersFromCourse}"
+	                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+	                        </h:commandButton>
+	                     </h:form>
+	                    </div>
+	                    
+	                    
+	                </div>
+               
 			</body>
 		</ui:define>
 	</ui:composition>
