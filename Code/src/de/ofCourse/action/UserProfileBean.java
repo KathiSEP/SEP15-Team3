@@ -99,6 +99,7 @@ public class UserProfileBean implements Pagination {
     @PostConstruct
     public void init() {
     	readOnly = true;
+    	password = null;
     	
     	transaction = Connection.create();
     	transaction.start();
@@ -147,8 +148,11 @@ public class UserProfileBean implements Pagination {
     		boolean emailTaken = UserDAO.emailExists(transaction, user.getEmail());
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
-    			String salt = String.valueOf(System.currentTimeMillis() * Math.random());
-	        	String pwHash = PasswordHash.hash(password, salt);
+    			String pwHash = null;
+    			if (password != null) {
+    				String salt = String.valueOf(System.currentTimeMillis() * Math.random());
+    				pwHash = PasswordHash.hash(password, salt);
+    			}
     			UserDAO.updateUser(transaction, user, pwHash);
     			transaction.commit();
     			readOnly = true;
