@@ -3,6 +3,8 @@
  */
 package de.ofCourse.action;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -228,9 +230,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     @PostConstruct
-    private void init() {
+    public void init() {
 	transaction = Connection.create();
-	transaction.start();
 
 	// Fetch the mode
 	String fetchedMode = FacesContext.getCurrentInstance()
@@ -260,6 +261,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	    // Initializes the pagination and if in edit mode the displayed
 	    // course unit
+	    transaction.start();
 	    try {
 		this.courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
@@ -506,18 +508,18 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private void deleteSingleUnit(Transaction trans, int unitId) {
 	try {
 	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
+		    .getParticipiantsOfCourseUnit(trans, pagination,
 			    unitId, true);
 	    for (User user : participants) {
-		CourseUnitDAO.removeUserFromCourseUnit(transaction,
+		CourseUnitDAO.removeUserFromCourseUnit(trans,
 			user.getUserID(), unitId);
 		float newAccountBalance = calculateNewAccountBalance(
-			(CourseUnitDAO.getPriceOfUnit(transaction, unitId)),
+			(CourseUnitDAO.getPriceOfUnit(trans, unitId)),
 			user, false);
-		UserDAO.updateAccountBalance(transaction, user.getUserID(),
+		UserDAO.updateAccountBalance(trans, user.getUserID(),
 			newAccountBalance);
 	    }
-	    CourseUnitDAO.deleteCourseUnit(transaction, unitId);
+	    CourseUnitDAO.deleteCourseUnit(trans, unitId);
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error during deleting a single course unit.");
@@ -593,7 +595,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     /**
      * Adds the entered user to the course unit. That means the user is added to
      * the participants list and the database entry of the course unit is
-     * updated. In this case the user need not to pay for the course unit.
+     * updated.
      * 
      * @author Tobias Fuchs
      */
@@ -608,9 +610,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    newAccountBalance);
 
 	    // Updates the shown list with the actual data
-	    this.participants.setWrappedData(CourseUnitDAO
+	    List<User> temp = CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitID, false));
+			    courseUnitID, false);
+	    this.participants.setWrappedData(temp);
 	    transaction.commit();
 	    userToAdd = new User();
 	} catch (InvalidDBTransferException e) {
@@ -752,7 +755,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	    // Updates the shown list with the actual data
 	    this.participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
+		    .getParticipiantsOfCourseUnit(transaction, this.getPagination(),
 			    courseUnitID, false));
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
