@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import javax.faces.bean.ViewScoped;
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.Week;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -31,7 +33,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet
  * <code>scheduler</code>.
  * 
- * @author Tobias Fuchs
+ * @author Patrick Cretu
  *
  */
 @ManagedBean
@@ -39,6 +41,8 @@ import de.ofCourse.system.Transaction;
 public class SchedulerBean {
 
     
+	private final int NUM_ROWS = 9;
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -63,7 +67,15 @@ public class SchedulerBean {
     	try {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		Date currentMonday = getCurrentMonday(transaction, currentDate);
-    		List<CourseUnit> weeklyUnits = CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
+    		List<CourseUnit> weeklyUnits =
+    				CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
+    		List<Week> week = new ArrayList<Week>();
+    		int hour = 6;
+    		
+    		for (int i = 0; i < NUM_ROWS; i++) {
+    			week.add(getWeekTuple(weeklyUnits, hour));
+    			hour += 2;
+    		}
     		
     		
     	} catch (InvalidDBTransferException e) {
@@ -115,6 +127,25 @@ public class SchedulerBean {
     	}
 		return currentMonday;
 	}
+    
+    private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
+    	Week week = null;
+    	List<CourseUnit> result = new ArrayList<CourseUnit>();
+    	
+    	for (int i = 0; i < weeklyUnits.size(); i++) {
+    		if (startsAt(weeklyUnits.get(i), hour)) {
+    			
+    		}
+    	}
+    	
+    	return week;
+    }
+    
+    private boolean startsAt(CourseUnit unit, int hour) {
+    	
+    	
+    	return false;
+    }
 
 	public void getUnit(String day, int hour) {
     	
