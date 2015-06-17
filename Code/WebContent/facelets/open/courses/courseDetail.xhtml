@@ -68,7 +68,7 @@
                             	        	<f:param name="leaderID" value="#{user.userID}"/>
                                 		</h:commandButton>
                                 		<f:facet name="header"/>
-                                		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil">
+                                		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil" action="/facelets/user/registeredUser/adminProfile.xhtml">
                                 			<f:param name="userID" value="#{user.userID}"/>
                                			</h:commandButton>
                             		</h:column>
