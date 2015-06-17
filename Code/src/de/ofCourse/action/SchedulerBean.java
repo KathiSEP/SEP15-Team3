@@ -43,7 +43,7 @@ public class SchedulerBean {
 
     
 	
-	private String date;
+	private String thisDate;
 	private Date monday;
 	
     /**
@@ -66,7 +66,7 @@ public class SchedulerBean {
     public void init() {
 		
 		//
-		setDate("heute");
+		setThisDate("heute");
 		System.out.println("in init");
 		
     	transaction = Connection.create();
@@ -76,7 +76,7 @@ public class SchedulerBean {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		
     		//
-    		setDate(currentDate);
+    		setThisDate(currentDate);
     		System.out.println("today: " + currentDate);
     		
     		Date currentMonday = getCurrentMonday(transaction, currentDate);
@@ -213,20 +213,20 @@ public class SchedulerBean {
 		this.weekDays = weekDays;
 	}
 
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
 	public Date getMonday() {
 		return monday;
 	}
 
 	public void setMonday(Date monday) {
 		this.monday = monday;
+	}
+
+	public String getThisDate() {
+		return thisDate;
+	}
+
+	public void setThisDate(String thisDate) {
+		this.thisDate = thisDate;
 	}
 
 }
