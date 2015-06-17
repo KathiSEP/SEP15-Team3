@@ -44,14 +44,16 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseUnitDAO {
 	
-	private static final String GET_WEEKLY_UNITS = "SELECT * FROM \"course_units\", \"course_unit_participants\", \"users\" " +
+	private static final String GET_WEEKLY_UNITS = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee, " +
+			"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"course_unit_participants\", \"users\" " +
 			"WHERE \"course_units\".id = \"course_unit_participants\".course_unit_id " + 
 			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
 			"AND \"users\".id = ? " +
 			"AND \"course_units\".start_time::date BETWEEN ? AND ?::date + integer '6' " +
 			"ORDER BY \"course_units\".start_time";
 	
-	private static final String GET_UNITS_OF = "SELECT id, course_id, fee FROM \"course_units\", \"users\", \"course_unit_participants\" " +
+	private static final String GET_UNITS_OF = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee, " +
+		"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"users\", \"course_unit_participants\" " +
 		"WHERE \"users\".id = \"course_unit_participants\".participant_id " +
 		"AND \"course_unit_participants\".course_unit_id = \"course_units\".id " +
 		"AND \"users\".id = ?";
@@ -859,14 +861,11 @@ public class CourseUnitDAO {
     private static void setProperties(CourseUnit unit, List<Object> tuple) {
 		unit.setCourseUnitID((Integer) tuple.get(0));
 		unit.setCourseID((Integer) tuple.get(1));
-		unit.setMaxUsers((Integer) tuple.get(3));
-		unit.setTitle((String) tuple.get(4));
-		unit.setMinUsers((Integer) tuple.get(5));
-		BigDecimal bg = (BigDecimal) tuple.get(6);
+		unit.setTitle((String) tuple.get(2));
+		BigDecimal bg = (BigDecimal) tuple.get(3);
 		unit.setPrice(bg.floatValue());
-		unit.setStartime((Date) tuple.get(7));
-		unit.setEndtime((Date) tuple.get(8));
-		unit.setDescription((String) tuple.get(9));
+		unit.setStartime((Date) tuple.get(4));
+		unit.setEndtime((Date) tuple.get(5));
     }
     
     /**
