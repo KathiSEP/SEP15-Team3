@@ -44,8 +44,7 @@ public class UserPictureHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-       
+        
         Transaction trans = Connection.create();
         trans.start();
         try {

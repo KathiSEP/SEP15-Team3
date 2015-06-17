@@ -1375,7 +1375,7 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String removeUserToInformUser = "DELETE FROM \"inform_users\" (user_id,course_id) VALUES (?,?)";
+	String removeUserToInformUser = "DELETE FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 	try {
 	    setRelationMethode(userID, courseID, conn, removeUserToInformUser);
 	    LogHandler.getInstance().debug(
@@ -1400,11 +1400,13 @@ public class CourseDAO {
      */
     static int setRelationMethode(int userID, int courseID,
 	    java.sql.Connection conn, String preparedStmt) throws SQLException {
-	PreparedStatement pS;
+	PreparedStatement pS = null;
 	pS = conn.prepareStatement(preparedStmt);
 	pS.setInt(1, userID);
 	pS.setInt(2, courseID);
-	return pS.executeUpdate();
+	int success = pS.executeUpdate();
+	pS.close();
+	return success;
 
     }
 

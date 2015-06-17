@@ -332,16 +332,16 @@ public class CourseDetailBean implements Pagination, Serializable {
      *             if a exception occours during the sign off process
      */
     public void signOffFromCourse() throws CourseRegistrationException {
-        Transaction trans = Connection.create();
-        trans.start();
+        transaction = Connection.create();
+        transaction.start();
 
         try {
-            User userWhoTryToSignOff = UserDAO.getUser(trans,
+            User userWhoTryToSignOff = UserDAO.getUser(transaction,
                     sessionUser.getUserID());
 
             // Fetching a List of all CourseUnits the User takes part in
             List<CourseUnit> signedCourseUnits = CourseUnitDAO
-                    .getCourseUnitsOf(trans, userWhoTryToSignOff.getUserID());
+                    .getCourseUnitsOf(transaction, userWhoTryToSignOff.getUserID());
 
             // Getting a List of Courses which only belongs to the Course and
             // the User is signed Up
@@ -353,7 +353,7 @@ public class CourseDetailBean implements Pagination, Serializable {
             if (!courseUnitsToSignOff.isEmpty()) {
                 float money = 0;
                 for (int i = 0; i < courseUnitsToSignOff.size(); i++) {
-                    CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),
+                    CourseUnitDAO.removeUserFromCourseUnit(transaction, sessionUser.getUserID(),
                             courseUnitsToSignOff.get(i).getCourseUnitID());
                     money += courseUnitsToSignOff.get(i).getPrice();
                     
@@ -372,27 +372,27 @@ public class CourseDetailBean implements Pagination, Serializable {
                 
                 
                 float newAccountBalance = userWhoTryToSignOff.getAccountBalance() + money;
-                UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
+                UserDAO.updateAccountBalance(transaction, sessionUser.getUserID(),
                         newAccountBalance);
-                CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
+                CourseDAO.removeUserFromCourse(transaction, sessionUser.getUserID(),
                         courseID);
                 
             
             } else {
-                CourseDAO.removeUserFromCourse(trans, sessionUser.getUserID(),
+                CourseDAO.removeUserFromCourse(transaction, sessionUser.getUserID(),
                         courseID);
             }
             
             
             //aus der inform liste loeschen falls drin
-            if(UserDAO.userWantsToBeInformed(trans, sessionUser.getUserID(), courseID)){
+            if(UserDAO.userWantsToBeInformed(transaction, sessionUser.getUserID(), courseID)){
                 CourseDAO.removeUserToInformUser(transaction, sessionUser.getUserID(), courseID);
             }
             
-            trans.commit();
+            transaction.commit();
             isRegistered = false;
         } catch (InvalidDBTransferException e) {
-            trans.rollback();
+            transaction.rollback();
             LogHandler.getInstance().error(
                     "Error occured while trying to sign off from course");
             throw new CourseRegistrationException();

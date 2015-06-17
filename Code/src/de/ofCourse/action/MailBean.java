@@ -144,6 +144,7 @@ public class MailBean {
             transport.connect("smtp.gmail.com", smtpServer.getUsername(), smtpServer.getPassword());
             transport.sendMessage(mail, mail.getAllRecipients());
             transport.close();
+            
             System.out.println("Mail wird verschickt");
         }catch (MessagingException e){
             //TODO Logging
@@ -167,7 +168,7 @@ public class MailBean {
     public void sendAuthentificationMessage(int userID, String veriString) {
         
         // User who should get the authentificationMessage will be loaded from Database
-        Transaction trans = new Connection();
+        Transaction trans = Connection.create();
         trans.start();
         try{
            User userToInform = UserDAO.getUser(trans, userID); 
@@ -176,11 +177,12 @@ public class MailBean {
            // E-Mail Messenge:
            String messenge = createSalutation(userToInform);
            messenge += "Welcome to the OfCourse Family. Thank you very much for your registration. \n";
-           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n" +
+           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n";
            
                    //koennte man noch schoener machen
                    
-           messenge + createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
+           messenge += createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
+           messenge += createSignature();
            
            String subject = "Authentication Mail";
            
@@ -307,8 +309,13 @@ public class MailBean {
 
 
     private String createSalutation(User user){
+        String header;
         
-        String header = "Dear " + user.getSalutation() + ". " + user.getLastname() + ", \n\n" ;
+        if(user.getLastname() == null){
+            header = "Dear User" + ", \n\n" ;
+        }else{
+            header = "Dear " + user.getSalutation() + ". " + user.getLastname() + ", \n\n" ;
+        }
         
         return header;
         
