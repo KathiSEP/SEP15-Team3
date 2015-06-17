@@ -123,21 +123,29 @@ public class AccountManagementBean implements Pagination {
             try {
                 if(UserDAO.AdminActivateUsers(this.transaction, this.usersToActivate) == false) {
                     LogHandler.getInstance().error(
-                            "Error occured during deleteUsersFromCourse().");
-                } else {
-                    this.pagination.actualizeNumberOfPages(UserDAO
-                            .getNumberOfNotAdminActivatedUsers(this.transaction));
-                    this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
-                    FacesMessageCreator.createFacesMessage(null, "Benutzer erfolgreich aktiviert!");
-                }
-                this.transaction.commit();
+                            "Error occured during adminActivateUsers().");
+                    } else {
+                        //Activate Users
+                        this.pagination.actualizeNumberOfPages(UserDAO
+                                .getNumberOfNotAdminActivatedUsers(this.transaction));
+                        this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers
+                                (this.transaction, 
+                                 this.getPagination()));
+                        
+                        FacesMessageCreator.createFacesMessage(
+                                 null, "Benutzer erfolgreich aktiviert!");
+                        }
+                        this.transaction.commit();
+                
             } catch (InvalidDBTransferException e) {
                 LogHandler.getInstance().error(
-                        "Error occured during deleteUsersFromCourse().");
+                        "Error occured during adminActivateUsers().");
+                
                 this.transaction.rollback();
-            }
-        } else {
-            FacesMessageCreator.createFacesMessage(null, "Keine Benutzer ausgewählt!");            
+               }
+         } else {
+            FacesMessageCreator.createFacesMessage(
+                    null, "Keine Benutzer ausgewählt!");            
         }
     }
 
@@ -167,10 +175,16 @@ public class AccountManagementBean implements Pagination {
         this.getPagination().actualizeCurrentPageNumber(FacesContext
                 .getCurrentInstance().getExternalContext()
                 .getRequestParameterMap().get("site"));
+        
         transaction.start();
+        
         try {
-            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(
+                    this.transaction, 
+                    this.getPagination()));
+            
             this.transaction.commit();
+            
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
                     "Error occured during fetching data for pagination.");
@@ -183,15 +197,23 @@ public class AccountManagementBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
+        
         if(this.getPagination().getSortColumn().equals(this.getSortColumn())) {
             this.getPagination().setSortAsc(!this.getPagination().isSortAsc());
+            
         } else {
             this.getPagination().setSortColumn(this.getSortColumn());
         }
+        
         transaction.start();
+        
         try {
-            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(
+                    this.transaction, 
+                    this.getPagination()));
+            
             this.transaction.commit();
+            
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
                     "Error occured during fetching data for pagination.");

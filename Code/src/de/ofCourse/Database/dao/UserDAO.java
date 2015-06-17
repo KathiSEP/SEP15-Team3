@@ -1355,8 +1355,11 @@ public class UserDAO {
      */
     public static boolean removeParticipantsFromCourse(Transaction trans,
 	    int courseID, List<User> usersToRemove) {
+        
 	boolean success = false;
+	
 	if (usersToRemove != null && usersToRemove.size() > 0) {
+	    
 	    // prepare SQL- request and database connection.
 	    Connection connection = (Connection) trans;
 	    java.sql.Connection conn = connection.getConn();
@@ -1452,6 +1455,7 @@ public class UserDAO {
      */
     private static String getSortColumn(String sortColumn) {
 	switch (sortColumn) {
+	
 	case "nickname":
 	    return "nickname";
 	case "email":
@@ -1839,9 +1843,7 @@ public class UserDAO {
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setBoolean(1, false);
 	    pS.setInt(2, pagination.getElementsPerPage());
-	    pS.setInt(
-		    3,
-		    pagination.getCurrentPageNumber()
+	    pS.setInt(3, pagination.getCurrentPageNumber()
 			    * pagination.getElementsPerPage());
 
 	    res = pS.executeQuery();
@@ -1853,6 +1855,7 @@ public class UserDAO {
 		user.setLastname(res.getString("name"));
 		user.setEmail(res.getString("email"));
 		user.setUsername(res.getString("nickname"));
+		
 		if(res.getDate("date_of_birth") == null) {
 		    user.setDateOfBirth(null);
 		} else {
@@ -1919,8 +1922,11 @@ public class UserDAO {
      */
     public static boolean AdminActivateUsers(Transaction trans,
             List<User> usersToActivate) throws InvalidDBTransferException {
+        
         boolean success = false;
+        
         if (usersToActivate != null && usersToActivate.size() > 0) {
+            
             // prepare SQL- request and database connection.
             Connection connection = (Connection) trans;
             java.sql.Connection conn = connection.getConn();
@@ -1936,10 +1942,12 @@ public class UserDAO {
             try (PreparedStatement pS = conn.prepareStatement(sql)) {
                 pS.setBoolean(1, true);
                 int counter = 2;
+                
                 for (User user : usersToActivate) {
                     pS.setInt(counter, user.getUserID());
                     counter++;
                 }
+                
                 if (pS.executeUpdate() > 0) {
                     success = true;
                 } else {
