@@ -154,21 +154,32 @@ public class CourseUnitManagementBeanTest {
 	// Create the course unit management
 	bean = new CourseUnitManagementBean();
     }
-
+    
+    
     @Test
     public void testAddUserToCourseUnit() {
+	// Initializes the session
+		pm.put("editMode", "true");
+		pm.put("courseID", "1");
+		pm.put("courseUnitID", "1");
+	
+	
+	
+    }
+    
+
+    @Test
+    public void testDeleteCourseUnit() {
 
 	// Initializes the session
 	pm.put("editMode", "true");
 	pm.put("courseID", "1");
 	pm.put("courseUnitID", "1");
 
-	DataModel<User> dataModelUserList = new ListDataModel<User>();
-	dataModelUserList.setWrappedData(participants);
 
 	// Initializes the Bean
 	bean.init();
-	bean.setParticipants(dataModelUserList);
+	
 	bean.setPagination(pagination);
 	bean.setCourseUnit(unit);
 	bean.setUserToAdd(part);

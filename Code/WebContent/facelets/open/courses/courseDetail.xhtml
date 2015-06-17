@@ -61,8 +61,7 @@
                 		            	<f:facet name="header">E-Mail</f:facet>
                         		        <h:outputText value="#{user.email}"/>
                             		</h:column>
-   		                            <h:column>
-   		                            <h:form>
+   		                            <h:column>	                            
            			                    <f:facet name="header"/>
                     		            <h:commandButton id="löschen" class="btn btn-xs btn-danger" value="Löschen" action="#{courseDetailBean.removeCourseLeaders}"
                     		            					rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
@@ -72,7 +71,6 @@
                                 		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil">
                                 			<f:param name="leaderID" value="#{user.userID}"/>
                                			</h:commandButton>
-   		                            </h:form>
                             		</h:column>
 								</h:dataTable>						
 							</div>
