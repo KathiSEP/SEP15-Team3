@@ -361,7 +361,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 		    money += courseUnitsToSignOff.get(i).getPrice();
 
 		    // die button auch wieder setzen
-		    for (int x = 0; i < courseUnitsOfCourse.size(); x++) {
+		    for (int x = 0; x < courseUnitsOfCourse.size(); x++) {
 			if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff
 				.get(i).getCourseUnitID()) {
 			    courseUnitsOfCourse.get(x).setUserIsParticipant(
