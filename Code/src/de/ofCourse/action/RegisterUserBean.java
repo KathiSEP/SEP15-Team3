@@ -48,11 +48,6 @@ public class RegisterUserBean {
     private Transaction transaction;
 
     /**
-     * for testing (RegisterUserBeanTest)
-     */
-    private boolean testing = false;
-
-    /**
      * Represents a user object. It stores the data which is entered by the user
      * who wants to register.
      */
@@ -72,13 +67,8 @@ public class RegisterUserBean {
     public void setUserToRegistrate(User userToRegistrate) {
         this.userToRegistrate = userToRegistrate;
     }
-
-    /**
-     * Sets a flag so that the database query won't be executed
-     */
-    public void activateTesting() {
-        this.testing = true;
-    }
+    
+    private boolean agbAccepted;
 
     /**
      * The password which was inserted by the user.
@@ -156,21 +146,20 @@ public class RegisterUserBean {
      * user name is already in use, a error message is displayed.
      */
     public String registerUser() {
-
-        if (this.saluString.equals("mr.")) {
-            this.getUserToRegistrate().setSalutation(Salutation.MR);
-        } else if (this.saluString.equals("ms.")) {
-            this.getUserToRegistrate().setSalutation(Salutation.MS);
-        } else {
-            this.getUserToRegistrate().setSalutation(null);
-        }
-
-        String veriString = "";
+        if(agbAccepted == true) {
+            if(this.saluString == null) {
+                this.getUserToRegistrate().setSalutation(null);
+            } else if (this.saluString.equals("mr.")) {
+                this.getUserToRegistrate().setSalutation(Salutation.MR);
+            } else if (this.saluString.equals("ms.")) {
+                this.getUserToRegistrate().setSalutation(Salutation.MS);
+            } else {
+                this.getUserToRegistrate().setSalutation(null);
+            }
         
-        if (testing) {
-            return "/facelets/open/index.xhtml?faces-redirect=false";
-        } else {
-
+            String veriString = "";
+            
+        
             // Initialize database connection
             this.transaction = Connection.create();
             transaction.start();
@@ -184,44 +173,48 @@ public class RegisterUserBean {
                 // Check if the inserted mail already exists in the system.
                 if (UserDAO.emailExists(transaction, this.getUserToRegistrate()
                         .getEmail())) {
-
+        
                     // Throwing error message into the faces context if the 
                     // mail already exists.
                     FacesMessageCreator.createFacesMessage(null,
                             "E-Mail existiert bereits!");
-
+        
                     this.transaction.rollback();
                     return "/facelets/open/authenticate.xhtml?faces-redirect=false";
                 } else {
-
+        
                     // If the inserted mail doesn't already exist, create a 
                     //new user.
                     veriString = UserDAO.createUser(this.transaction,
                             this.getUserToRegistrate(), passwordHash, salt);
-
+        
                     int userID = UserDAO.getUserID(this.transaction, this
                             .getUserToRegistrate().getUsername());
-
+        
                     this.transaction.commit();
-
-                    mailBean = new MailBean();
+        
                     mailBean.sendAuthentificationMessage(userID, veriString);
-
+        
                 }
             } catch (InvalidDBTransferException e) {
                 this.transaction.rollback();
             }
+        
+            // Throwing success message into the faces context.
+            FacesMessageCreator
+                    .createFacesMessage(
+                            null,
+                            "Sie haben sich erfolgreich im System registriert. "
+                            + "Bitte bestätigen Sie den Aktivierungslink aus der "
+                            + "Verifizierungsmail!");
+            return "/facelets/open/index.xhtml?faces-redirect=true";
+        } else {
+            FacesMessageCreator
+            .createFacesMessage(
+                    null,
+                    "Bitte AGBs bestätigen!");
+            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
         }
-
-        // Throwing success message into the faces context.
-        FacesMessageCreator
-                .createFacesMessage(
-                        null,
-                        "Sie haben sich erfolgreich im System registriert. "
-                        + "Bitte bestätigen Sie den Aktivierungslink aus der "
-                        + "Verifizierungsmail!");
-        return "/facelets/open/index.xhtml?faces-redirect=false";
-
     }
 
     /**
@@ -306,6 +299,20 @@ public class RegisterUserBean {
      */
     public void setSaluString(String saluString) {
         this.saluString = saluString;
+    }
+
+    /**
+     * @return the agbAccepted
+     */
+    public boolean isAgbAccepted() {
+        return agbAccepted;
+    }
+
+    /**
+     * @param agbAccepted the agbAccepted to set
+     */
+    public void setAgbAccepted(boolean agbAccepted) {
+        this.agbAccepted = agbAccepted;
     }
 
 }

@@ -364,8 +364,16 @@ public class UserDAO {
 	    pS.setString(2, user.getAddress().getCountry());
 	    pS.setString(3, user.getAddress().getCity());
 	    pS.setInt(4, user.getAddress().getZipCode());
-	    pS.setString(5, user.getAddress().getStreet());
-	    pS.setInt(6, user.getAddress().getHouseNumber());
+	    if(user.getAddress().getStreet() == null) {
+	        pS.setString(5, null);
+	    } else {
+	        pS.setString(5, user.getAddress().getStreet());
+	    }
+	    if(user.getAddress().getHouseNumber() == null) {
+	        pS.setNull(6, java.sql.Types.INTEGER);
+	    } else {
+	        pS.setInt(6, user.getAddress().getHouseNumber());
+	    }
 
 	    pS.executeUpdate();
 
@@ -969,8 +977,12 @@ public class UserDAO {
 		user.setFirstname(res.getString("first_name"));
 		user.setLastname(res.getString("name"));
 		user.setEmail(res.getString("email"));
-		user.setDateOfBirth(new java.util.Date(res.getDate(
+		if(res.getDate("date_of_birth") == null) {
+		    user.setDateOfBirth(null);
+		} else {
+		    user.setDateOfBirth(new java.util.Date(res.getDate(
 			"date_of_birth").getTime()));
+		}
 
 		String salutation = res.getString("form_of_address");
 		switch (salutation) {

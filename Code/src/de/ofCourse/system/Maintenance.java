@@ -54,7 +54,7 @@ public class Maintenance implements Runnable {
                     .getInstance()
                     .error("Fehler!");
                 }
-
+                this.transaction.commit();
             } catch (InvalidDBTransferException e) {
                 this.transaction.rollback();
             }

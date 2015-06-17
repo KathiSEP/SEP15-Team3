@@ -168,7 +168,7 @@
                                     
                                     <br />
                                     <div>
-                                        <h:selectBooleanCheckbox value="true" required="true"  
+                                        <h:selectBooleanCheckbox value="#{registerUserBean.agbAccepted}" required="true" 
                                                           requiredMessage="Bitte bestätigen Sie die AGBs."/> 
                                                           #{sessionUser.getLabel('authenticate.row.register.bottomText')}
                                         <a href="#{request.contextPath}/facelets/open/agb.xhtml" target="_blank">#{sessionUser.getLabel('authenticate.row.register.bottomLink')}</a>
