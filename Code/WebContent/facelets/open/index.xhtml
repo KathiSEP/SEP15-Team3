@@ -7,16 +7,16 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">#{navigationBean.getLabel('index.title')}</ui:define>
+		<ui:define name="title">#{sessionUser.getLabel('index.title')}</ui:define>
 		<body>
 			<ui:define name="content">
 				<div class="container" align="center">
-					<h1>#{navigationBean.getLabel('index.header')}</h1>
+					<h1>#{sessionUser.getLabel('index.header')}</h1>
 					<h:link outcome="/facelets/open/authenticate.xhtml">
 					<h:graphicImage class="img-responsive" url="/resources/img/logo.png"/>
 					</h:link>
 					<br/>
-					<h:outputText value="#{navigationBean.getLabel('index.bottom')}" rendered="#{!(navigationBean.sessionUser.userID != 0)}" />
+					<h:outputText value="#{sessionUser.getLabel('index.bottom')}" rendered="#{!(navigationBean.sessionUser.userID != 0)}" />
 					<h:messages id="login" globalOnly="true" styleClass="alert alert-success"/>
 				</div>
 			</ui:define>

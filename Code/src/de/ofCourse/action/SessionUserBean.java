@@ -11,6 +11,7 @@ import javax.faces.bean.SessionScoped;
 import de.ofCourse.model.Language;
 import de.ofCourse.model.UserRole;
 import de.ofCourse.model.UserStatus;
+import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Represents the management of the session of a logged in user.<p>
@@ -123,5 +124,14 @@ public class SessionUserBean implements Serializable {
      */
     public void setLanguage(Language language) {
 	this.language = language;
+    }
+
+    /**
+     * Loads the needed label in the choosen language.
+     * @param label the label to be load.
+     * @return the label in the certain language.
+     */
+    public String getLabel(String label) {
+        return LanguageManager.getInstance().getProperty(label, language);
     }
 }

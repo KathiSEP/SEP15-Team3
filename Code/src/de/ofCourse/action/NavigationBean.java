@@ -49,15 +49,6 @@ public class NavigationBean {
     }
 
     /**
-     * Loads the needed label in the choosen language.
-     * @param label the label to be load.
-     * @return the label in the certain language.
-     */
-    public String getLabel(String label) {
-        return LanguageManager.getInstance().getProperty(label, sessionUser.getLanguage());
-    }
-
-    /**
      * Performs the logout action.<br>
      * By pressing the <code>logout</code> button, the user is logged out. That
      * means his userStatus is set to <code>ANONYMOUS</code> and he is

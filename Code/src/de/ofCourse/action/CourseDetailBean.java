@@ -4,6 +4,7 @@
 package de.ofCourse.action;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +50,17 @@ import de.ofCourse.system.Transaction;
  * 
  * This class is Bean and controller of the facelet <code>coursDetails</code>.
  * 
- * @author Tobias Fuchs
+ * @author Ricky Strohmeier
  *
  */
 @ManagedBean
 @ViewScoped
-public class CourseDetailBean implements Pagination {
+public class CourseDetailBean implements Pagination, Serializable {
+
+    /**
+     * Serial ID
+     */
+    private static final long serialVersionUID = 4941379076876916373L;
 
     /**
      * Stores the transaction that is used for database interaction.
@@ -150,7 +156,6 @@ public class CourseDetailBean implements Pagination {
                 LogHandler
                         .getInstance()
                         .error("Error occured in saveCourse method of CourseDetailBean");
-                System.out.println("fehler");
             }
             setEditMode(false);
         }

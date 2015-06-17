@@ -7,15 +7,12 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	  xmlns:f="http://java.sun.com/jsf/core">
-	<head>
-		<title>Footer</title>
-	</head>
 	<body>
 		<ui:composition>
 			<ul id="footermenu" class="pager">
-				<li><h:outputLink value="#{request.contextPath}/facelets/open/imprint.xhtml">#{footerBean.getLabel('footer.imprint')}</h:outputLink></li>
-				<li><h:outputLink value="#{request.contextPath}/facelets/open/agb.xhtml">#{footerBean.getLabel('footer.terms')}</h:outputLink></li>
-				<li><h:outputLink value="#{request.contextPath}/facelets/open/help.xhtml">#{footerBean.getLabel('footer.help')}</h:outputLink></li>
+				<li><h:outputLink value="#{request.contextPath}/facelets/open/imprint.xhtml">#{sessionUser.getLabel('footer.imprint')}</h:outputLink></li>
+				<li><h:outputLink value="#{request.contextPath}/facelets/open/agb.xhtml">#{sessionUser.getLabel('footer.terms')}</h:outputLink></li>
+				<li><h:outputLink value="#{request.contextPath}/facelets/open/help.xhtml">#{sessionUser.getLabel('footer.help')}</h:outputLink></li>
 			</ul>
 		</ui:composition>
 	</body>
