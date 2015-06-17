@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,13 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 
+import de.ofCourse.Database.dao.CourseUnitDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -53,10 +57,66 @@ public class SchedulerBean {
     
     @PostConstruct
     public void init() {
+    	transaction = Connection.create();
+    	transaction.start();
     	
+    	try {
+    		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
+    		Date currentMonday = getCurrentMonday(transaction, currentDate);
+    		List<CourseUnit> weeklyUnits = CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
+    		
+    		
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "init()");
+    		transaction.rollback();
+    	}
     }
     
-    public void getUnit(String day, int hour) {
+    private Date getCurrentMonday(Transaction trans, String currentDate) {
+    	Date currentMonday = null;
+    	int gap;
+    	String[] tokens = currentDate.split("\\s+");
+    	String currentDay = tokens[0];
+    	
+    	switch (currentDay) {
+    	case "Tue":
+    		gap = 1;
+    		break;
+    	case "Wed":
+    		gap = 2;
+    		break;
+    	case "Thu":
+    		gap = 3;
+    		break;
+    	case "Fri":
+    		gap = 4;
+    		break;
+    	case "Sat":
+    		gap = 5;
+    		break;
+    	case "Sun":
+    		gap = 6;
+    		break;
+    	default:
+    		gap = 0;
+    	}
+		
+    	try {
+    		currentMonday = CourseUnitDAO.getCurrentMonday(trans, gap);
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "getCurrentMonday(Transaction trans, String currentDate)");
+    		transaction.rollback();
+    	}
+		return currentMonday;
+	}
+
+	public void getUnit(String day, int hour) {
     	
     }
 

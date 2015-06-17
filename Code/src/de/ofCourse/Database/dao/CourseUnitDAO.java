@@ -7,11 +7,13 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.ofCourse.action.Pagination;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
@@ -855,7 +857,80 @@ public class CourseUnitDAO {
 	BigDecimal bg = (BigDecimal) tuple.get(3);
 	unit.setPrice(bg.floatValue());
     }
+    
+    /**
+     * 
+     * @param trans
+     * @return
+     * 
+     * @author Patrick Cretu
+     */
+    public static String getCurrentWeekDay(Transaction trans) {
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	Statement stmt = null;
+    	ResultSet rst = null;
+    	String currentDay = null;
+    	String getDay = "SELECT timeofday()";
+    	
+    	try {
+			stmt = conn.createStatement();
+			rst = stmt.executeQuery(getDay);
+			rst.next();
+			currentDay = rst.getString(1);
+		} catch (SQLException e) {
+			LogHandler.getInstance().
+				error("SQL Exception occoured during getCurrentWeekDay(Transaction trans)");
+			throw new InvalidDBTransferException();
+		}
+    	return currentDay;
+    }
 
+    /**
+     * 
+     * @param trans
+     * @param gap
+     * @return
+     * 
+     * @author Patrick Cretu
+     */
+    public static java.sql.Date getCurrentMonday(Transaction trans, int gap) {
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	Statement stmt = null;
+    	ResultSet rst = null;
+    	java.sql.Date currentMonday = null;
+    	String getMonday = "SELECT current_date - integer '" + gap + "'";
+    	
+    	try {
+			stmt = conn.createStatement();
+			rst = stmt.executeQuery(getMonday);
+			rst.next();
+			currentMonday = rst.getDate(1);
+		} catch (SQLException e) {
+			LogHandler.getInstance().
+			error("SQL Exception occoured during getCurrentMonday(Transaction trans, int gap)");
+			throw new InvalidDBTransferException();
+		}
+    	return currentMonday;
+    }
+    
+    /**
+     * 
+     * @param trans
+     * @param pagination
+     * @param userID
+     * @param monday
+     * @return
+     * 
+     * @author Patrick Cretu
+     */
+    public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans,
+    		Pagination pagination, int userID, java.sql.Date monday) {
+    	
+    	return null;
+    }
+    
     /**
      * Counts the number of course units of a course
      * 
