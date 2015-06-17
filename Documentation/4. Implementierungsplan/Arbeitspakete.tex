@@ -314,9 +314,12 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Teilnehmerliste}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   listParticipients.xhtml                                    & 15.06.2015 \ \ 13:00     & 15.06.2015 \ \ 15:00     & Kathi Hölzl & 2h               &  h \\
-		\hline   ListParticipantsBean.java                                  & 15.06.2015 \ \ 15:00     & 15.06.2015 \ \ 18:00     & Kathi Hölzl  &      3h      &      h     \\
-		\hline   UserDAO.getParticipiantsOfCourse(Transaction trans, PaginationData pagination, int courseID)  & 15.06.2015 \ \ 08:00     & 15.06.2015 \ \ 09:30              & Kathi Hölzl  &      1,5h   &      h \\
+		\hline   listParticipients.xhtml                                    & 15.06.2015 \ \ 13:00     & 15.06.2015 \ \ 15:00     & Kathi Hölzl & 2h               & 2 h \\
+		\hline   ListParticipantsBean.java                                  & 15.06.2015 \ \ 15:00     & 15.06.2015 \ \ 18:00     & Kathi Hölzl  &      3h      &     3 h     \\
+		\hline   UserDAO.getParticipiantsOfCourse(Transaction trans, PaginationData pagination, int courseID)  & 15.06.2015 \ \ 08:00     & 15.06.2015 \ \ 09:30              & Kathi Hölzl  &      1,5h   &     2 h \\
+		\hline   UserDAO.getSortColumn(String sortColumn)  & 15.06.2015 \ \ 09:30     & 15.06.2015 \ \ 10:00              & Kathi Hölzl  &      0,5h   &     0,5 h \\
+		\hline   UserDAO.getNumberOfParticipants(Transaction trans, int courseID)  & 15.06.2015 \ \ 10:00     & 15.06.2015 \ \ 11:00              & Kathi Hölzl  &      1 h   &     1 h \\
+		\hline   UserDAO.removeParticipantsFromCourse(Transaction trans, int courseID, List<User> usersToRemove)  & 15.06.2015 \ \ 11:00     & 15.06.2015 \ \ 12:30              & Kathi Hölzl  &      1,5 h   &     1,5 h \\
 		\hline 
 	\end{tabular} \ \\
 	\ \\
@@ -348,9 +351,12 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Benutzer aktivieren}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   activateUsers.xhtml                                 & 16.06.2015 \ \ 13:00     & 16.06.2015 \ \ 15:00               & Kathi Hölzl  &      2h     &      h    \\
-		\hline   AccountManagementBean.java                          & 16.06.2015 \ \ 09:00     & 16.06.2015 \ \ 12:00            & Kathi Hölzl &      3h    &      h    \\
-		\hline   ActivateUsersTest.java                              & 17.06.2015 \ \ 08:00     & 17.06.2015 \ \ 10:00          & Kathi Hölzl  &      2h      &      h     \\
+		\hline   activateUsers.xhtml                                 & 16.06.2015 \ \ 14:00     & 16.06.2015 \ \ 16:00               & Kathi Hölzl  &      2h     &     2 h    \\
+		\hline   AccountManagementBean.java                          & 16.06.2015 \ \ 11:00     & 16.06.2015 \ \ 14:00            & Kathi Hölzl &      3h    &     3 h    \\
+		\hline   UserDAO.getNumberOfNotAdminActivatedUsers (Transaction trans)    & 16.06.2015 \ \ 08:00     & 16.06.2015 \ \ 09:00            & Kathi Hölzl &      1h    &      1h    \\
+		\hline   UserDAO.getNotAdminActivatedUsers(Transaction trans, PaginationData pagination)    & 16.06.2015 \ \ 09:00     & 16.06.2015 \ \ 10:00            & Kathi Hölzl &      1,5 h    &      1,5h    \\
+		\hline   UserDAO.AdminActivateUsers(Transaction trans, List<User> usersToActivate)    & 16.06.2015 \ \ 10:00     & 16.06.2015 \ \ 11:00            & Kathi Hölzl &      1 h    &      1h    \\
+		\hline   AccountManagementBeanTest.java                              & 17.06.2015 \ \ 15:00     & 17.06.2015 \ \ 18:00          & Kathi Hölzl  &      2h      &     3 h     \\
 		\hline 
 	\end{tabular} \ \\
 	\ \\
@@ -383,9 +389,10 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\ \\	
 	
 	\subsection{Wartung}
-	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|c|p{3.5cm}|}
-		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Aufwand in h} & \textbf{Verantwortlicher} \\ 
-		\hline   Maintenance.java         & 16.06.2015 \ \ 14:00       & 16.06.2015  \ \  17:00      &  3h                & Kathi Hölzl\\
+	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
+		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
+		\hline   Maintenance.java         & 16.06.2015 \ \ 16:30       & 16.06.2015  \ \  18:00        & Kathi Hölzl &  3h  &  1,5h \\
+		\hline   CourseDAO.doCourseMaintenance(Transaction trans)         & 16.06.2015 \ \ 16:00       & 16.06.2015  \ \  16:30        & Kathi Hölzl &  0,5 h  &  0,5h \\
 		\hline
 	\end{tabular}				
 \end{landscape}
