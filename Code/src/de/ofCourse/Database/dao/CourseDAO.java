@@ -103,6 +103,19 @@ public class CourseDAO {
 	    + "WHERE \"courses\".id = \"course_units\".course_id "
 	    + "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+     * Deletes all the courses from the system where the end date is before 
+     * the actual date
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @return true if the maintenance was successful, else false
+     * @throws InvalidDBTransferException
+     *                          if any error occurred during the execution of 
+     *                          the method
+     * @author Katharina Hölzl
+     */
     public static boolean doCourseMaintenance(Transaction trans)
 	    throws InvalidDBTransferException {
 	boolean success = false;

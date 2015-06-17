@@ -1318,12 +1318,30 @@ public class UserDAO {
 	    }
 	    res.close();
 	} catch (SQLException e) {
-
+	    LogHandler
+                .getInstance()
+                .error("SQL Exception occoured during executing "
+                    + "getParticipantsOfCourse(Transaction trans, "
+                    + "PaginationData pagination, int courseID)");
+            throw new InvalidDBTransferException();
 	}
 
 	return userList;
     }
 
+    /**
+     * Delete the selected participants from the course.
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @param courseID
+     *          the id of the course from which the users must be deleted
+     * @param usersToRemove
+     *          list of users which must be deleted
+     * @return true if deleting was successful, else false
+     * @author Katharina Hölzl
+     */
     public static boolean removeParticipantsFromCourse(Transaction trans,
 	    int courseID, List<User> usersToRemove) {
 	boolean success = false;
@@ -1332,7 +1350,8 @@ public class UserDAO {
 	    Connection connection = (Connection) trans;
 	    java.sql.Connection conn = connection.getConn();
 
-	    String sql = "DELETE FROM course_participants WHERE course_id = ? and participant_id IN (?";
+	    String sql = "DELETE FROM course_participants WHERE course_id = ? "
+	            + "and participant_id IN (?";
 	    for (int i = 1; i < usersToRemove.size(); i++) {
 		sql += ",?";
 	    }
@@ -1353,7 +1372,12 @@ public class UserDAO {
 		}
 
 	    } catch (SQLException e) {
-
+	        LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing "
+                            + "removeParticipantsFromCourse(Transaction trans, "
+                            + "int courseID, List<User> usersToRemove)");
+	        throw new InvalidDBTransferException();
 	    }
 	} else {
 	    success = true;
@@ -1361,6 +1385,20 @@ public class UserDAO {
 	return success;
     }
 
+    /**
+     * 
+     * Returns the number of participants of the course. This method is used 
+     * for pagination to get the number of needed sites.
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @param courseID
+     *          the id of the course from which the participants should be 
+     *          displayed
+     * @return the number of participants of the course
+     * @author Katharina Hölzl
+     */
     public static int getNumberOfParticipants(Transaction trans, int courseID) {
 
 	int numberOfParticipants = 0;
@@ -1381,7 +1419,12 @@ public class UserDAO {
 	    numberOfParticipants = res.getInt("courseParticipantNumber");
 	    res.close();
 	} catch (SQLException e) {
-
+	    LogHandler
+                .getInstance()
+                .error("SQL Exception occoured during executing "
+                        + "getNumberOfParticipants(Transaction trans, "
+                        + "int courseID)");
+            throw new InvalidDBTransferException();
 	}
 
 	return numberOfParticipants;
@@ -1391,7 +1434,10 @@ public class UserDAO {
      * Avoids SQL-Injection with a switch case
      * 
      * @param sortColumn
-     * @return
+     *                the selected column  
+     * @return the name of the selected column, if no column is selected 
+     *         return 'nickname'
+     * @author Katharina Hölzl
      */
     private static String getSortColumn(String sortColumn) {
 	switch (sortColumn) {
@@ -1699,6 +1745,21 @@ public class UserDAO {
 	return 0;
     }
 
+    /**
+     * Return the number of users which are not yet activated by a 
+     * administrator
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @return the number of users which are not yet activated by a 
+     *          administrator or course leader, return -1 if every user is yet 
+     *          activated by a administrator
+     * @throws InvalidDBTransferException
+     *                          if any error occurred during the execution 
+     *                          of the method
+     * @author Katharina Hölzl
+     */
     public static int getNumberOfNotAdminActivatedUsers(Transaction trans)
 	    throws InvalidDBTransferException {
 	int numberOfNotAdminActivatedUsers = -1;
@@ -1707,7 +1768,8 @@ public class UserDAO {
 	java.sql.Connection conn = connection.getConn();
 
 	ResultSet res = null;
-	String sql = "SELECT COUNT (*) AS numberOfNotAdminActivatedUsers FROM users where admin_verification = ?";
+	String sql = "SELECT COUNT (*) AS numberOfNotAdminActivatedUsers FROM "
+	        + "users where admin_verification = ?";
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setBoolean(1, false);
@@ -1722,14 +1784,34 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getNumberOfUsersWithThisName");
+		    .error("SQL Exception occoured during executing "
+		            + "getNumberOfNotAdminActivatedUsers(Transaction "
+		            + "trans)");
 	    throw new InvalidDBTransferException();
 	}
 	return numberOfNotAdminActivatedUsers;
     }
 
+    /**
+     * Returns the list of the users which are not yet activated by a 
+     * administrator or a course leader
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @param pagination
+     *          the Pagination object which contains the amount of elements
+     *          which are to be retrieved
+     * @return a list of the users which are not yet activated by a 
+     *         administrator
+     * @throws InvalidDBTransferException
+     *                          if any error occurred during the execution of 
+     *                          the method
+     * @author Katharina Hölzl
+     */
     public static List<User> getNotAdminActivatedUsers(Transaction trans,
 	    PaginationData pagination) throws InvalidDBTransferException {
+        
 	List<User> notAdminActivatedUsers = new ArrayList<User>();
 
 	Connection connection = (Connection) trans;
@@ -1768,7 +1850,9 @@ public class UserDAO {
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getNumberOfUsersWithThisName");
+		    .error("SQL Exception occoured during executing "
+		            + "getNotAdminActivatedUsers(Transaction trans, "
+		            + "PaginationData pagination)");
 	    throw new InvalidDBTransferException();
 	}
 	return notAdminActivatedUsers;
@@ -1802,5 +1886,64 @@ public class UserDAO {
 	    throw new InvalidDBTransferException();
 	}
     }
+    
+    
+    /**
+     * Activates the selected users.
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @param usersToActivate
+     *                  list of the users which are selected to activate
+     * @return true if the activation of the users was successful, else false
+     * @throws InvalidDBTransferException
+     *                          if any error occurred during the execution of 
+     *                          the method
+     * @author Katharina Hölzl
+     */
+    public static boolean AdminActivateUsers(Transaction trans,
+            List<User> usersToActivate) throws InvalidDBTransferException {
+        boolean success = false;
+        if (usersToActivate != null && usersToActivate.size() > 0) {
+            // prepare SQL- request and database connection.
+            Connection connection = (Connection) trans;
+            java.sql.Connection conn = connection.getConn();
+
+            String sql = "UPDATE users SET admin_verification = ? WHERE id "
+                    + "IN (?";
+            
+            for (int i = 1; i < usersToActivate.size(); i++) {
+                sql += ",?";
+            }
+            sql += ");";
+
+            try (PreparedStatement pS = conn.prepareStatement(sql)) {
+                pS.setBoolean(1, true);
+                int counter = 2;
+                for (User user : usersToActivate) {
+                    pS.setInt(counter, user.getUserID());
+                    counter++;
+                }
+                if (pS.executeUpdate() > 0) {
+                    success = true;
+                } else {
+                    success = false;
+                }
+
+            } catch (SQLException e) {
+                LogHandler
+                    .getInstance()
+                    .error("SQL Exception occoured during executing "
+                            + "AdminActivateUsers(Transaction trans, "
+                            + "List<User> usersToActivate)");
+                throw new InvalidDBTransferException();
+            }
+        } else {
+            success = true;
+        }
+        return success;
+    }
+    
 
 }
