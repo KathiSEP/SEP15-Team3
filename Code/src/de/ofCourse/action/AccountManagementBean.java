@@ -115,21 +115,29 @@ public class AccountManagementBean implements Pagination {
                 this.usersToActivate.add(user);
             }
         }
-        transaction.start();
-        try {
-            if(UserDAO.AdminActivateUsers(this.transaction, this.usersToActivate) == false) {
+        
+        if(this.usersToActivate.size() > 0) {
+        
+            this.transaction = Connection.create();
+            transaction.start();
+            try {
+                if(UserDAO.AdminActivateUsers(this.transaction, this.usersToActivate) == false) {
+                    LogHandler.getInstance().error(
+                            "Error occured during deleteUsersFromCourse().");
+                } else {
+                    this.pagination.actualizeNumberOfPages(UserDAO
+                            .getNumberOfNotAdminActivatedUsers(this.transaction));
+                    this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+                    FacesMessageCreator.createFacesMessage(null, "Benutzer erfolgreich aktiviert!");
+                }
+                this.transaction.commit();
+            } catch (InvalidDBTransferException e) {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
-            } else {
-                this.pagination.actualizeNumberOfPages(UserDAO
-                        .getNumberOfNotAdminActivatedUsers(this.transaction));
-                this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+                this.transaction.rollback();
             }
-            this.transaction.commit();
-        } catch (InvalidDBTransferException e) {
-            LogHandler.getInstance().error(
-                    "Error occured during deleteUsersFromCourse().");
-            this.transaction.rollback();
+        } else {
+            FacesMessageCreator.createFacesMessage(null, "Keine Benutzer ausgewählt!");            
         }
     }
 

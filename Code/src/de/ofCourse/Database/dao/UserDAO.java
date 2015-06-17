@@ -1853,8 +1853,12 @@ public class UserDAO {
 		user.setLastname(res.getString("name"));
 		user.setEmail(res.getString("email"));
 		user.setUsername(res.getString("nickname"));
-		user.setDateOfBirth(new java.util.Date(res.getDate(
+		if(res.getDate("date_of_birth") == null) {
+		    user.setDateOfBirth(null);
+		} else {
+		    user.setDateOfBirth(new java.util.Date(res.getDate(
 			"date_of_birth").getTime()));
+		}
 		notAdminActivatedUsers.add(user);
 	    }
 
