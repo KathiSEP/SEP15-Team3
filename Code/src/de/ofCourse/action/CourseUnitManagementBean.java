@@ -477,15 +477,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    if (UserDAO.userIsParticipantInCourseUnit(
 				    transaction, user.getUserID(), unitId)) {
                                amount+=CourseUnitDAO.getPriceOfUnit(transaction, unitId);	
+                               CourseUnitDAO.removeUserFromCourseUnit(transaction, user.getUserID(), unitId);
 			    }
-			    CourseUnitDAO.removeUserFromCourseUnit(transaction, user.getUserID(), unitId);
 			}
 			float newBalance = amount + user.getAccountBalance();
 			UserDAO.updateAccountBalance(transaction, user.getUserID(), newBalance);
 		    }
-		    CourseUnitDAO.deleteCourseUnit(transaction, id);
-		    
-		    this.deleteSingleUnit(transaction, id);
+		    CourseUnitDAO.deleteCourseUnit(transaction, id);		    
 
 		    this.sendMailToSelected(transaction, participants, false);
 		}

@@ -189,6 +189,7 @@
                                 </div>
 
                                 <div class="input-group" style="padding-top: 5px;">
+                                  <h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">Preis:</span>
                                     <h:inputText class="form-control" style="width:300px;"
@@ -200,6 +201,7 @@
                                         <f:convertNumber currencyCode="EUR" currencySymbol="€"
                                             groupingUsed="true" maxFractionDigits="2" type="currency" />
                                     </h:inputText>
+                                   </h:panelGroup>
                                 </div>
 
                                 <div class="input-group" style="padding-top: 5px;">
