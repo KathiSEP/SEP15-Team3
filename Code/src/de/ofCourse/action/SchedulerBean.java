@@ -15,6 +15,9 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
@@ -41,10 +44,8 @@ import de.ofCourse.system.Transaction;
 @RequestScoped
 public class SchedulerBean {
 
-     
 	
-	private String thisDate;
-	private Date monday;
+	private java.sql.Date currentMonday;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -64,23 +65,20 @@ public class SchedulerBean {
 
 	@PostConstruct
     public void init() {
-		
-		//
-		System.out.println("in init in SchedulerBean: ");
-		
     	transaction = Connection.create();
     	transaction.start();
     	
     	try {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
+    		currentMonday = getCurrentMonday(transaction, currentDate);
     		
-    		//
-    		System.out.println("today: " + currentDate);
     		
-    		Date currentMonday = getCurrentMonday(transaction, currentDate);
-    		
-    		//
+    		LocalDate date = new LocalDate(currentMonday.getTime(), DateTimeZone.UTC);
+    		LocalDate tomorrow = date.plusDays(1);
     		System.out.println("monday: " + currentMonday);
+    		System.out.println("monday + 1: " + tomorrow);
+    		System.out.println("monday after increment: " + currentMonday);
+    		
     		
     		List<CourseUnit> weeklyUnits =
     				CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
@@ -155,7 +153,10 @@ public class SchedulerBean {
     
     private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
     	int hours = unit.getStartime().getHours();
-    	if (hours >= 6 && hours < 8) {
+    	
+    	System.out.println("unit stunde: " + hours);
+    	
+    	if (hours >= hour && hours < hour) {
     		return true;
     	}
     	return false;
@@ -210,20 +211,12 @@ public class SchedulerBean {
 		this.weekDays = weekDays;
 	}
 
-	public Date getMonday() {
-		return monday;
+	public Date getCurrentMonday() {
+		return currentMonday;
 	}
 
-	public void setMonday(Date monday) {
-		this.monday = monday;
-	}
-
-	public String getThisDate() {
-		return thisDate;
-	}
-
-	public void setThisDate(String thisDate) {
-		this.thisDate = thisDate;
+	public void setCurrentMonday(Date currentMonday) {
+		this.currentMonday = currentMonday;
 	}
 
 }

@@ -848,7 +848,7 @@ public class CourseUnitDAO {
 		    "SQL Exception occoured during getResult(ResultSet rst)");
 	    throw new InvalidDBTransferException();
 	}
-	return null;
+	return result;
     }
 
     /**
