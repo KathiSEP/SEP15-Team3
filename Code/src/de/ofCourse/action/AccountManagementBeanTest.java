@@ -42,61 +42,62 @@ import de.ofCourse.model.User;
 @PrepareForTest({Connection.class, UserDAO.class, PaginationData.class, FacesMessage.class, FacesMessageCreator.class, InvalidDBTransferException.class, FacesContext.class})
 public class AccountManagementBeanTest {
     
-    // Neue Testbean anlegen.
+    // Create new Bean for testing
     private AccountManagementBean accountManagementBean;
     
-    // Benötigte Attribute der Testbean anlegen.
+    // Create necessary attributes of the test bean
     private PaginationData pagination;
     private List<User> notAdminActivatedUsers;
     private Connection connection;
     
-    // FacesContext und ExternalContext hermocken.
+    // Mock FacesContext and ExternalContext .
     @Mock
     FacesContext facesContext;
     
     @Mock
     ExternalContext externalContext;
     
-    // Captor für die FacesMessages erstellen.
+    // Create captor for the FacesMessages.
     ArgumentCaptor<String> clientIdCaptor;
     ArgumentCaptor<FacesMessage> facesMessageCaptor;
     private FacesMessage captured;
     
-    // RequestParameterMap erstellen (wird hier aber nicht benötigt)
+    // Create RequestParameterMap
     private Map<String, String> requestParameterMap;
     
     /**
-     * Vorbereitung für den Test.
+     * Preparations for the test
      */
     @SuppressWarnings("deprecation")
     @Before
     public void setup() {
-        // FacesContext statisch mocken.
+        // Mock FacesContext statically .
         PowerMockito.mockStatic(FacesContext.class);
         
-        // Angeben, was zurückgegeben werden soll, wenn nach der Instanz des FacesContext oder ExternalContext gefragt wird.
+        // Specify what should be returned if it's ask for the instance of the
+        // FacesContext or the ExternalContext.
         Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
 
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         
-        // RequestParameterMap erstellen (wird hier nicht benötigt)
+        // Create RequestParameterMap.
         requestParameterMap = new HashMap<String, String>();
         Mockito.when(externalContext.getRequestParameterMap()).thenReturn(requestParameterMap);
         
-        // Connection Klasse statisch mocken.
+        // Mock the Connection class statically.
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
                 
-        // Datenbankklasse statisch mocken.
+        // Moch the database class statically.
         PowerMockito.mockStatic(UserDAO.class);
         
-        // Festlegen, was die Datenbankmethoden bei bestimmten Aufrufen zurückgeben sollen.
+        // Specify what the methods of the database should return by specific requests.
         Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyObject())).thenReturn(true);
 
         Mockito.when(UserDAO.getNumberOfNotAdminActivatedUsers(connection)).thenReturn(2);
 
-        // Rückgabeliste initialisieren und belegen.
+        // Initialize and fill the return list.
         notAdminActivatedUsers = new ArrayList<User>();
         
         User user1 = new User();
@@ -126,7 +127,7 @@ public class AccountManagementBeanTest {
         
         Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).thenReturn(notAdminActivatedUsers);
         
-        // Captor für die FacesMessages initialisieren.
+        // Initialize the captor for the FacesMessages.
         clientIdCaptor = ArgumentCaptor.forClass(String.class);
         facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
     }
@@ -136,42 +137,42 @@ public class AccountManagementBeanTest {
      */
     @Test
     public void test() {
-        // Neue Testbean initialisieren.
+        // Initialize new test bean.
         accountManagementBean = new AccountManagementBean();
         
-        // Benötigte Attribute setzen.
+        // Set necessary attributes.
         DataModel<User> dataModelUserList = new ListDataModel<User>();
         dataModelUserList.setWrappedData(notAdminActivatedUsers);
         
         accountManagementBean.setUsers(dataModelUserList);
         accountManagementBean.setPagination(pagination);
         
-        // Überprüfen, ob diese richtig gesetzt wurden.
+        // Check if the attribute setting was correct.
         assertEquals(dataModelUserList, accountManagementBean.getUsers());
         assertEquals(pagination, accountManagementBean.getPagination());
         
-        // Zu testende Methode aufrufen.
+        // Call the method for testing.
         accountManagementBean.activateAccounts();
         
-        // FacesMessage prüfen
+        // Check FacesMessage.
         verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
         assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());
         assertEquals("Keine Benutzer ausgewählt!", captured.getSummary());
         
-        // Benutzer auswählen.
+        // Select user.
         notAdminActivatedUsers.get(0).setSelected(true);
         notAdminActivatedUsers.get(1).setSelected(true);
         dataModelUserList.setWrappedData(notAdminActivatedUsers);
         
-        // Attribute erneut setzen.
+        // Set attributes new.
         accountManagementBean.setUsers(dataModelUserList);
                 
-        // Zu testende Methode erneut aufrufen.
+        // Call the method for testing again.
         accountManagementBean.activateAccounts();
         
-        // FacesMessage prüfen
+        // Check FacesMessage.
         verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
