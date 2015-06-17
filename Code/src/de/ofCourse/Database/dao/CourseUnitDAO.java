@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.ofCourse.action.Pagination;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
@@ -44,6 +43,13 @@ import de.ofCourse.system.Transaction;
  *
  */
 public class CourseUnitDAO {
+	
+	private final static String GET_WEEKLY_UNITS = "SELECT \"course_units\".titel, \"course_units\".start_time, \"course_units\".end_time " +
+			"FROM \"course_units\", \"course_unit_participants\", \"users\" WHERE " +
+			"\"course_units\".id = \"course_unit_participants\".course_unit_id " + 
+			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
+			"AND \"users\".id = ? " +
+			"AND \"course_units\".start_time::date BETWEEN ? AND ? + integer '6'";
 
     /**
      * Adds a course unit to the list of course units in the database. A course
@@ -925,10 +931,30 @@ public class CourseUnitDAO {
      * 
      * @author Patrick Cretu
      */
-    public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans,
-    		Pagination pagination, int userID, java.sql.Date monday) {
+    public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday) {
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    	PreparedStatement stmt = null;
+    	ResultSet rst = null;
+    	List<CourseUnit> result = null;
     	
-    	return null;
+    	try {
+			stmt = conn.prepareStatement(GET_WEEKLY_UNITS);
+			stmt.setInt(1, userID);
+			stmt.setDate(2, monday);
+			stmt.setDate(3, monday);
+			
+			rst = stmt.executeQuery();
+			
+			//muss noch angepasst werden, einfach select * und dann setProperties anpassen
+			result = getResult(rst);
+		} catch (SQLException e) {
+			LogHandler.getInstance().
+			error("SQL Exception occoured during" +
+					"getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday)");
+			throw new InvalidDBTransferException();
+		}
+    	return result;
     }
     
     /**
