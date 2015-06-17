@@ -193,7 +193,10 @@
                                     </div>
                                     <div class="panel-body">
                                         <div class="input-group">
-                                            <h:inputFile value="#{userManagementBean.image}" />
+                                            <h:inputFile class="btn btn-default" id="userImage" value="#{userManagementBean.image}">
+                                                <f:validator validatorId="imageValidator"></f:validator>
+                                            </h:inputFile>
+                                            <h:message for="userImage" style="color:red" />
                                         </div>
                                     </div>
                                 </div>

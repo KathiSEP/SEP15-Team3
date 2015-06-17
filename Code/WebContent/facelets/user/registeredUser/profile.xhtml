@@ -262,7 +262,10 @@
                                             </div>
                                             <br/>
                                             
-                                            <h:inputFile class="btn btn-default" value="#{userProfileBean.image}" rendered="#{userProfileBean.readOnly == false}"/>
+                                            <h:inputFile class="btn btn-default" id="userImage" value="#{userProfileBean.image}" rendered="#{userProfileBean.readOnly == false}">
+                                                <f:validator validatorId="imageValidator"></f:validator>
+                                            </h:inputFile>
+                                            <h:message for="userImage" style="color:red" />
                                             <br/>
                                             
                                             <div class="col-lg-4" style="text-align:right;">

@@ -49,7 +49,8 @@ public class CourseUnitDAO {
 			"\"course_units\".id = \"course_unit_participants\".course_unit_id " + 
 			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
 			"AND \"users\".id = ? " +
-			"AND \"course_units\".start_time::date BETWEEN ? AND ? + integer '6'";
+			"AND \"course_units\".start_time::date BETWEEN ? AND ?::date + integer '6' " +
+			"ORDER BY \"course_units\".start_time";
 
     /**
      * Adds a course unit to the list of course units in the database. A course

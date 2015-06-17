@@ -76,8 +76,6 @@ public class SchedulerBean {
     			week.add(getWeekTuple(weeklyUnits, hour));
     			hour += 2;
     		}
-    		
-    		
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
