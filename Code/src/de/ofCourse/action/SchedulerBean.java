@@ -66,7 +66,6 @@ public class SchedulerBean {
     public void init() {
 		
 		//
-		setThisDate("heute");
 		System.out.println("in init in SchedulerBean: ");
 		
     	transaction = Connection.create();
@@ -76,13 +75,11 @@ public class SchedulerBean {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		
     		//
-    		setThisDate(currentDate);
     		System.out.println("today: " + currentDate);
     		
     		Date currentMonday = getCurrentMonday(transaction, currentDate);
     		
     		//
-    		setMonday(currentMonday);
     		System.out.println("monday: " + currentMonday);
     		
     		List<CourseUnit> weeklyUnits =

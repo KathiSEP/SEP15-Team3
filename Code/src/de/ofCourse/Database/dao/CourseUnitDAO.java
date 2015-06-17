@@ -44,13 +44,17 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseUnitDAO {
 	
-	private final static String GET_WEEKLY_UNITS = "SELECT \"course_units\".titel, \"course_units\".start_time, \"course_units\".end_time " +
-			"FROM \"course_units\", \"course_unit_participants\", \"users\" WHERE " +
-			"\"course_units\".id = \"course_unit_participants\".course_unit_id " + 
+	private static final String GET_WEEKLY_UNITS = "SELECT * FROM \"course_units\", \"course_unit_participants\", \"users\" " +
+			"WHERE \"course_units\".id = \"course_unit_participants\".course_unit_id " + 
 			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
 			"AND \"users\".id = ? " +
 			"AND \"course_units\".start_time::date BETWEEN ? AND ?::date + integer '6' " +
 			"ORDER BY \"course_units\".start_time";
+	
+	private static final String GET_UNITS_OF = "SELECT id, course_id, fee FROM \"course_units\", \"users\", \"course_unit_participants\" " +
+		"WHERE \"users\".id = \"course_unit_participants\".participant_id " +
+		"AND \"course_unit_participants\".course_unit_id = \"course_units\".id " +
+		"AND \"users\".id = ?";
 
     /**
      * Adds a course unit to the list of course units in the database. A course
@@ -768,15 +772,10 @@ public class CourseUnitDAO {
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
 	ResultSet rst = null;
-	List<CourseUnit> result = null;
-	String getCourseUnits = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee "
-		+ "FROM \"course_units\", \"users\", \"course_unit_participants\" "
-		+ "WHERE \"users\".id = \"course_unit_participants\".participant_id "
-		+ "AND \"course_unit_participants\".course_unit_id = \"course_units\".id "
-		+ "AND \"users\".id = ?";
-
+	List<CourseUnit> result = new ArrayList<CourseUnit>();
+	
 	try {
-	    stmt = conn.prepareStatement(getCourseUnits);
+	    stmt = conn.prepareStatement(GET_UNITS_OF);
 	    stmt.setInt(1, userID);
 
 	    System.out.println(stmt.toString());
@@ -858,11 +857,16 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     private static void setProperties(CourseUnit unit, List<Object> tuple) {
-	unit.setCourseUnitID((Integer) tuple.get(0));
-	unit.setCourseID((Integer) tuple.get(1));
-	unit.setTitle((String) tuple.get(2));
-	BigDecimal bg = (BigDecimal) tuple.get(3);
-	unit.setPrice(bg.floatValue());
+		unit.setCourseUnitID((Integer) tuple.get(0));
+		unit.setCourseID((Integer) tuple.get(1));
+		unit.setMaxUsers((Integer) tuple.get(3));
+		unit.setTitle((String) tuple.get(4));
+		unit.setMinUsers((Integer) tuple.get(5));
+		BigDecimal bg = (BigDecimal) tuple.get(6);
+		unit.setPrice(bg.floatValue());
+		unit.setStartime((Date) tuple.get(7));
+		unit.setEndtime((Date) tuple.get(8));
+		unit.setDescription((String) tuple.get(9));
     }
     
     /**
