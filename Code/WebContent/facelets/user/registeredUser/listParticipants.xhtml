@@ -7,17 +7,17 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Liste aller Kursteilnehmer</ui:define>
+		<ui:define name="title">#{sessionUser.getLabel('listParticipants.title')}</ui:define>
 		<ui:define name="content">
 			<body>
 			     <h:form class="form-horizontal" id="formBack">
-				     <h1>Liste aller Kursteilnehmer</h1>
+				     <h1>#{sessionUser.getLabel('listParticipants.header')}</h1>
 				     <div class="row" style="padding-top:20px;">
 	                    <div class="col-lg-11">
 	                    <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
 	                    </div>
 	                    <div class="col-lg-1">
-	                        <h:commandButton id="cancel" class="btn btn-info" value="Zurück" action="#{listParticipantsBean.backToDetails()}">          
+	                        <h:commandButton id="cancel" class="btn btn-info" value="#{sessionUser.getLabel('listParticipants.backButton')}" action="#{listParticipantsBean.backToDetails()}">          
 	                        </h:commandButton>
 	                    </div>
 	                 </div>
@@ -31,7 +31,7 @@
                             cellspacing="0" width="100%">
                            <h:column>
                                 <f:facet name="header">
-                                               Bild
+                                        #{sessionUser.getLabel('listParticipants.table.image')}
                                 </f:facet>
                                 <h:graphicImage value="/image?profilImage=#{participant.userID}" height="50" rendered="#{participant.profilImage != NULL}" ></h:graphicImage>
                                 
@@ -40,7 +40,7 @@
                                 <f:facet name="header">
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="nickname" />
-                                        Benutzername
+                                        #{sessionUser.getLabel('listParticipants.table.username')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{participant.username}" />
@@ -49,7 +49,7 @@
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="email" />
-                                        E-Mail
+                                        #{sessionUser.getLabel('listParticipants.table.mail')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{participant.email}" 
@@ -59,7 +59,7 @@
                                 <f:facet name="header" >
                                     <h:commandLink action="#{listParticipantsBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{listParticipantsBean.sortColumn}" value="courseNews" />
-                                        Kursnews eingetragen
+                                        #{sessionUser.getLabel('listParticipants.table.news')}
                                     </h:commandLink>                                             
                                 </f:facet>
                                 <h:outputText value="#{participant.courseNewsSubscribed}"/>
@@ -67,7 +67,7 @@
                            
                             <h:column rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                                 <f:facet name="header" >
-                                     aus Kurs löschen
+                                     #{sessionUser.getLabel('listParticipants.table.delete')}
                                 </f:facet>
                                      <h:selectBooleanCheckbox id="checked" value="#{participant.selected}"/>
                             </h:column>
@@ -75,7 +75,7 @@
                             <f:facet name="footer">
                                     <div class="row" style="text-align: center;">
                                         <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info" value="Zurueck"
+                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.back')}"
                                                     action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:param name="site" value="back" />
                                                 </h:commandButton></li>
@@ -100,7 +100,7 @@
                                                     <f:param name="site"
                                                         value="#{listParticipantsBean.pagination.currentPageNumber+1}"/>
                                                 </h:commandButton></li>
-                                            <li><h:commandButton class="btn btn-info" value="Weiter"
+                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.forward')}"
                                                     action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:param name="site" value="forward"/>
                                                 </h:commandButton></li>
@@ -113,7 +113,7 @@
                    
 	               
 	                        <h:commandButton id="delete" class="btn btn-info"
-	                                    value="Entfernen"
+	                                    value="#{sessionUser.getLabel('listParticipants.deleteButton')}"
 	                                    actionListener="#{listParticipantsBean.deleteUsersFromCourse}"
 	                                    rendered="#{listParticipantsBean.sessionUser.userRole == 'COURSE_LEADER' || listParticipantsBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
 	                        </h:commandButton>

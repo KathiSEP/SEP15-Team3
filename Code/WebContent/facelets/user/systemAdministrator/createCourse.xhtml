@@ -7,14 +7,14 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">Neuen Kurs anlegen</ui:define>
+	<ui:define name="title">#{sessionUser.getLabel('createCourse.title')}</ui:define>
 	<ui:define name="content">
 		<body>
-			<h1>Neuen Kurs anlegen</h1>
+			<h1>#{sessionUser.getLabel('createCourse.header')}</h1>
 			<div class="row">
 				<div class="col-lg-12">
 					<p style="font-size: 16px;">
-					   Bitte tragen Sie die Daten des neuen Kurses ein.
+					   #{sessionUser.getLabel('createCourse.welcomeText')}
 				    </p>
 				</div>
 			</div>
@@ -24,27 +24,27 @@
 				        <div class="col-lg-12">
 		                    <div class="panel panel-info">
 		                        <div class="panel-heading">
-		                            <strong>Kursdaten</strong>
+		                            <strong>#{sessionUser.getLabel('createCourse.row.header')}</strong>
 		                        </div>
 		                        <div class="panel-body">
 		                            <h:form class="form-horizontal" id="formCreateCourse" method="post" enctype="multipart/form-data">
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Titel:</span>
+		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.title')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
 		                                        id="courseTitle"></h:inputText>
 		                                    <h:message for="courseTitle" style="color:red" />
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Beschreibung:</span>
+		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.description')}:</span>
 		                                    <h:inputTextarea class="form-control" cols="45" rows="3" value="#{courseManagementBean.course.description}"
 		                                        id="courseDescription"></h:inputTextarea>
 		                                    <h:message for="courseDescription" style="color:red" />
 		                                </div>
                                         <div class="input-group" style="padding-top: 5px;">
                                             <span class="input-group-addon"
-                                                style="width: 160px; text-align: right;">Kursleiter-ID:</span>
+                                                style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.instructorID')}:</span>
                                             <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}" 
                                                 id="IdOfCourseLeader">
                                                 <f:validator validatorId="courseInstructorValidator"/>
@@ -53,7 +53,7 @@
                                         </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">max. Teilnehmerzahl:</span>
+		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.maxParticipants')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.maxUsers}"
 		                                        id="courseParticipants" converterMessage="Bitte positive Zahl eingeben.">
 		                                        <f:convertNumber longOnly="true"/>
@@ -63,7 +63,7 @@
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Startdatum:</span>
+		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.start')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.startdate}"
 		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
 		                                        required="true" requiredMessage="Bitte Startdatum angeben">
@@ -75,7 +75,7 @@
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
-		                                        style="width: 160px; text-align: right;">Enddatum:</span>
+		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.end')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.enddate}"
 		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
 		                                        required="true" requiredMessage="Bitte Enddatum angeben" binding="#{courseEndDate}">
@@ -85,7 +85,7 @@
 		                                </div>
 				                        <div class="input-group" style="padding-top: 5px; width:640px;">
 				                            <span class="input-group-addon"
-                                                style="width: 160px; text-align: right;">Kursbild:</span>
+                                                style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.image')}:</span>
 				                            <h:inputFile class="form-control" id="courseImage" dir = "RTL" value ="#{courseManagementBean.courseImage}">
 				                                <f:validator validatorId="imageValidator"></f:validator>
 				                            </h:inputFile>
@@ -93,7 +93,7 @@
 				                            <h:message for="courseImage" style="color:red" />
 				                        </div>
                                         <br />
-                                        <h:commandButton id="createNewCourse" class="btn btn-info" action="#{courseManagementBean.createCourse}" value="Kurs anlegen" />
+                                        <h:commandButton id="createNewCourse" class="btn btn-info" action="#{courseManagementBean.createCourse}" value="#{sessionUser.getLabel('createCourse.row.createButton')}" />
 		                             </h:form>		                        
 		                        </div>
 		                    </div>      

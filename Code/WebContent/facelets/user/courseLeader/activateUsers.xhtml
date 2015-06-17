@@ -7,11 +7,11 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Benutzer aktivieren</ui:define>
+		<ui:define name="title">#{sessionUser.getLabel('activateUsers.title')}</ui:define>
 		<ui:define name="content">
             <body>
                 <h:form class="form-horizontal" id="formMessages">
-	                 <h1>Liste aller noch nicht aktivierten Benutzer</h1> 
+	                 <h1>#{sessionUser.getLabel('activateUsers.header')}</h1> 
 	                 <div class="row" style="padding-top:20px;">
 	                     <div class="col-lg-12">
 	                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
@@ -30,7 +30,7 @@
                                 <f:facet name="header">
                                      <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="id" />
-                                        BenutzerID
+                                        #{sessionUser.getLabel('activateUsers.table.userID')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.userID}" />
@@ -39,7 +39,7 @@
                                 <f:facet name="header">
                                      <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="nickname" />
-                                        Benutzername
+                                        #{sessionUser.getLabel('activateUsers.table.username')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.username}" />
@@ -48,7 +48,7 @@
                                 <f:facet name="header">
                                      <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="email" />
-                                        Email
+                                        #{sessionUser.getLabel('activateUsers.table.mail')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.email}" />
@@ -57,7 +57,7 @@
                                 <f:facet name="header">
                                       <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="name" />
-                                        Name
+                                        #{sessionUser.getLabel('activateUsers.table.name')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.lastname}" />
@@ -67,7 +67,7 @@
                                 <f:facet name="header">
                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="first_name" />
-                                        Vorname
+                                        #{sessionUser.getLabel('activateUsers.table.prename')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.firstname}" />
@@ -76,7 +76,7 @@
                                 <f:facet name="header">
                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
                                         <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="date_of_birth" />
-                                        Geburtsdatum
+                                        #{sessionUser.getLabel('activateUsers.table.birthday')}
                                     </h:commandLink>
                                 </f:facet>
                                 <h:outputText value="#{user.dateOfBirth}">
@@ -85,7 +85,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header" >
-                                     aktivieren
+                                     #{sessionUser.getLabel('activateUsers.table.activate')}
                                      </f:facet>
                                      <h:selectBooleanCheckbox id="checked" value="#{user.selected}" /> 
                             </h:column>
@@ -93,7 +93,7 @@
                             <f:facet name="footer">
                                     <div class="row" style="text-align: center;">
                                         <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info" value="Zurueck"
+                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.back')}"
                                                     action="#{accountManagementBean.goToSpecificPage}">
                                                     <f:param name="site" value="back" />
                                                 </h:commandButton></li>
@@ -118,7 +118,7 @@
                                                     <f:param name="site"
                                                         value="#{accountManagementBean.pagination.currentPageNumber+1}"/>
                                                 </h:commandButton></li>
-                                            <li><h:commandButton class="btn btn-info" value="Weiter"
+                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.forward')}"
                                                     action="#{accountManagementBean.goToSpecificPage}">
                                                     <f:param name="site" value="forward"/>
                                                 </h:commandButton></li>
@@ -130,7 +130,7 @@
                         
                         
 	                        <h:commandButton id="activate" class="btn btn-info"
-	                                    value="Aktivieren"
+	                                    value="#{sessionUser.getLabel('activateUsers.activateButton')}"
 	                                    action="#{accountManagementBean.activateAccounts}">
 	                        </h:commandButton>
 	                    
