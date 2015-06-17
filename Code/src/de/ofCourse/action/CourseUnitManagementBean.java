@@ -467,10 +467,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			.getIdsCourseUnitsOfCycle(transaction,
 				courseUnit.getCourseUnitID());
 		for (int id : idsToDelete) {
+		    System.out.println(id);
 		    this.deleteSingleUnit(transaction, id);
-		    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+		    List<User> participants =  CourseUnitDAO
 			    .getParticipiantsOfCourseUnit(transaction,
-				    pagination, courseUnit.getCourseUnitID(),
+				    pagination, id,
 				    true);
 		    this.sendMailToSelected(transaction, participants, false);
 		}
@@ -506,8 +507,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     private void deleteSingleUnit(Transaction trans, int unitId) {
+
 	try {
-	    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+	    List<User> participants = CourseUnitDAO
 		    .getParticipiantsOfCourseUnit(trans, pagination,
 			    unitId, true);
 	    for (User user : participants) {
@@ -540,7 +542,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     private void sendMailToSelected(Transaction trans,
-	    ArrayList<User> participants, boolean delete) {
+	    List<User> participants, boolean delete) {
 	int recipientsGroup = this.getSelectedToInform();
 	ArrayList<String> recipients = new ArrayList<String>();
 	User tempUser = new User();

@@ -10,6 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
+import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.BankAccountException;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -83,8 +84,11 @@ public class PaymentOfflineBean implements Serializable {
 	this.transaction.start();
 	try {
 
-	    UserDAO.updateAccountBalanceInOne(transaction,
-		    this.user.getUserID(), getAmountToDeposit());
+	    User tempUser = UserDAO.getUser(transaction, user.getUserID());
+	    float accountBalance = tempUser.getAccountBalance();
+	    float newBalance =accountBalance + amountToDeposit;
+	    UserDAO.updateAccountBalance(transaction,
+		    this.user.getUserID(), newBalance);
 	    transaction.commit();
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney", "Der Account wurde mit "

@@ -162,12 +162,11 @@ public class CycleDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
-	ResultSet res = null;
 	
 	try{
 	int cycle_id = CycleDAO.getCycleId(trans, courseUnitId);
 	stmt = conn.prepareStatement(deleteQuery);
-	stmt.setInt(1, courseUnitId);
+	stmt.setInt(1, cycle_id);
 	
 	stmt.executeUpdate();
 	stmt.close();

@@ -50,6 +50,8 @@ public class CourseUnitManagementBeanTest {
 
     private User part;
     private CourseUnit unit;
+    private CourseUnit unit2;
+    private CourseUnit unit3;
     private Course course;
 
     private Cycle cycle;
@@ -57,6 +59,9 @@ public class CourseUnitManagementBeanTest {
     private PaginationData pagination;
 
     private List<User> participants;
+
+    private List<User> participants2;
+    private List<User> participants3;
 
     private Connection conn;
 
@@ -86,7 +91,7 @@ public class CourseUnitManagementBeanTest {
 
 	// Mock CourseUnitDAO
 	PowerMockito.mockStatic(UserDAO.class);
-	
+
 	// Mock CourseDAO
 	PowerMockito.mockStatic(CourseDAO.class);
 
@@ -125,6 +130,18 @@ public class CourseUnitManagementBeanTest {
 	unit.setCourseID(1);
 	unit.setCycle(cycle);
 
+	unit2 = new CourseUnit();
+	unit2.setCourseUnitID(2);
+	unit2.setPrice(2);
+	unit2.setCourseID(1);
+	unit2.setCycle(cycle);
+
+	unit3 = new CourseUnit();
+	unit3.setCourseUnitID(3);
+	unit3.setPrice(2);
+	unit3.setCourseID(1);
+	unit3.setCycle(cycle);
+
 	pagination = new PaginationData();
 	pagination.setCurrentPageNumber(0);
 	pagination.setElementsPerPage(10);
@@ -136,50 +153,62 @@ public class CourseUnitManagementBeanTest {
 	course.setStartdate(new Date(2015, 1, 1));
 	course.setEnddate(new Date(2015, 12, 12));
 
-	ArrayList<User> participants = new ArrayList<User>();
+	participants = new ArrayList<User>();
 	participants.add(part);
 
-	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(conn,
-		pagination, 
-		1,
-		false))
-		.thenReturn(participants);
+	participants2 = new ArrayList<User>();
+	participants2.add(part);
+
+	participants3 = new ArrayList<User>();
+	participants3.add(part);
+
+	Mockito.when(
+		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1,
+			false)).thenReturn(participants);
 
 	Mockito.when(CourseDAO.getCourse(conn, 1)).thenReturn(course);
 
 	Mockito.when(CycleDAO.createCycle(conn, 1, cycle)).thenReturn(1);
 
+	ArrayList<Integer> idsToDelete = new ArrayList<Integer>();
+	idsToDelete.add(1);
+	idsToDelete.add(2);
+	idsToDelete.add(3);
 
+	Mockito.when(CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1))
+		.thenReturn(idsToDelete);
+
+	Mockito.when(
+		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1,
+			true)).thenReturn(participants);
+	Mockito.when(
+		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2,
+			true)).thenReturn(participants2);
+	Mockito.when(
+		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3,
+			true)).thenReturn(participants2);
+
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 1)).thenReturn(
+		(float) 2.0);
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 2)).thenReturn(
+		(float) 2.0);
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 3)).thenReturn(
+		(float) 2.0);
 
 	// Create the course unit management
 	bean = new CourseUnitManagementBean();
     }
-    
-    
+
     @Test
     public void testAddUserToCourseUnit() {
-	// Initializes the session
-		pm.put("editMode", "true");
-		pm.put("courseID", "1");
-		pm.put("courseUnitID", "1");
-	
-	
-	
-    }
-    
-
-    @Test
-    public void testDeleteCourseUnit() {
-
 	// Initializes the session
 	pm.put("editMode", "true");
 	pm.put("courseID", "1");
 	pm.put("courseUnitID", "1");
 
-
 	// Initializes the Bean
 	bean.init();
-	
+
 	bean.setPagination(pagination);
 	bean.setCourseUnit(unit);
 	bean.setUserToAdd(part);
@@ -201,6 +230,63 @@ public class CourseUnitManagementBeanTest {
 
     }
 
+    @Test
+    public void testDeleteCourseUnit() {
+
+	// Initializes the session
+	pm.put("editMode", "true");
+	pm.put("courseID", "1");
+	pm.put("courseUnitID", "1");
+
+	bean.init();
+	bean.setPagination(pagination);
+	bean.setCourseUnit(unit);
+
+	bean.setCompleteCycle(true);
+
+	String url = bean.deleteCourseUnit();
+
+	// Checks whether the methods were executed
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1);
+
+	// Fetches the participants
+	PowerMockito.verifyStatic(times(2));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, true);
+
+	PowerMockito.verifyStatic(times(2));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2, true);
+
+	PowerMockito.verifyStatic(times(2));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3, true);
+
+	// Removes user from course unit
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 1);
+
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 2);
+
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 3);
+
+	PowerMockito.verifyStatic(times(3));
+	UserDAO.updateAccountBalance(conn, 1, 22);
+
+	// Delete the units
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 1);
+
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 2);
+
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 3);
+
+	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
+
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateCourseUnit() {
@@ -212,7 +298,7 @@ public class CourseUnitManagementBeanTest {
 	bean.init();
 	bean.setCourseUnit(unit);
 
-	//Regular unit
+	// Regular unit
 	bean.setRegularCourseUnit(true);
 
 	// Entered date for unit is in rage of corresponding course
@@ -228,11 +314,10 @@ public class CourseUnitManagementBeanTest {
 
 	PowerMockito.verifyStatic();
 	CycleDAO.createCycle(conn, 1, cycle);
-	
-	//The number of units in the cycle was set to 3
+
+	// The number of units in the cycle was set to 3
 	PowerMockito.verifyStatic(times(3));
 	CourseUnitDAO.createCourseUnit(conn, unit, unit.getCourseID(), true);
-	
 
 	// Entered date for unit is not in rage of corresponding course
 	bean.setDate(new Date(2016, 2, 2));
