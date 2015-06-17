@@ -130,10 +130,9 @@ public class SchedulerBean {
     
     private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
     	Week week = null;
-    	List<CourseUnit> result = new ArrayList<CourseUnit>();
     	
     	for (int i = 0; i < weeklyUnits.size(); i++) {
-    		if (startsAt(weeklyUnits.get(i), hour)) {
+    		if (startsAtRequestedTime(weeklyUnits.get(i), hour)) {
     			
     		}
     	}
@@ -141,9 +140,11 @@ public class SchedulerBean {
     	return week;
     }
     
-    private boolean startsAt(CourseUnit unit, int hour) {
-    	
-    	
+    private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
+    	int hours = unit.getStartime().getHours();
+    	if (hours >= 6 && hours < 8) {
+    		return true;
+    	}
     	return false;
     }
 
