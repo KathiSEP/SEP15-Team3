@@ -347,7 +347,7 @@
 							</div>
 							<div class="panel-body">
 								<h:form
-									rendered="#{courseUnitManagementBean.participants.getRowCount()>0}"
+									rendered="#{courseUnitManagementBean.pagination.numberOfPages>0}"
 									class="form-horizontal" id="formParticipants">
 									<h:dataTable id="participantsTable"
 										value="#{courseUnitManagementBean.participants}" var="user"

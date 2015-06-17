@@ -90,6 +90,8 @@ public class CourseDetailBean implements Pagination {
      * Stores the leader to be add
      */
     private User leaderToAdd;
+    
+    
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -111,6 +113,22 @@ public class CourseDetailBean implements Pagination {
     private int courseID;
     private static int pageElements = 10;
 
+ private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
     /**
      * Saves the edited course data and sets the course details page to its
      * not-editable state. In order to save the edited course, the database
@@ -681,8 +699,7 @@ public class CourseDetailBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-        pagination.actualizeCurrentPageNumber(FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap().get("site"));
+	this.pagination.setCurrentPageNumber(this.currentPage);
         transaction.start();
         try {
             courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);
