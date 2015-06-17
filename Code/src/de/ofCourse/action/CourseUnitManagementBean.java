@@ -467,15 +467,26 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			.getIdsCourseUnitsOfCycle(transaction,
 				courseUnit.getCourseUnitID());
 		for (int id : idsToDelete) {
+		    List<User> participants = CourseUnitDAO
+			    .getParticipiantsOfCourseUnit(transaction,
+				    pagination, id, true);
+
+		    for (User user : participants) {
+			for (int unitId : idsToDelete) {
+			    if (UserDAO.userIsParticipantInCourseUnit(
+				    transaction, user.getUserID(), unitId)) {
+
+				
+				
+			    }
+			}
+
+		    }
 		    System.out.println(id);
 		    this.deleteSingleUnit(transaction, id);
-		    List<User> participants =  CourseUnitDAO
-			    .getParticipiantsOfCourseUnit(transaction,
-				    pagination, id,
-				    true);
+
 		    this.sendMailToSelected(transaction, participants, false);
 		}
-
 	    } else {
 
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
@@ -510,14 +521,14 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	try {
 	    List<User> participants = CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(trans, pagination,
-			    unitId, true);
+		    .getParticipiantsOfCourseUnit(trans, pagination, unitId,
+			    true);
 	    for (User user : participants) {
-		CourseUnitDAO.removeUserFromCourseUnit(trans,
-			user.getUserID(), unitId);
+		CourseUnitDAO.removeUserFromCourseUnit(trans, user.getUserID(),
+			unitId);
 		float newAccountBalance = calculateNewAccountBalance(
-			(CourseUnitDAO.getPriceOfUnit(trans, unitId)),
-			user, false);
+			(CourseUnitDAO.getPriceOfUnit(trans, unitId)), user,
+			false);
 		UserDAO.updateAccountBalance(trans, user.getUserID(),
 			newAccountBalance);
 	    }
@@ -541,8 +552,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @author Tobias Fuchs
      */
-    private void sendMailToSelected(Transaction trans,
-	    List<User> participants, boolean delete) {
+    private void sendMailToSelected(Transaction trans, List<User> participants,
+	    boolean delete) {
 	int recipientsGroup = this.getSelectedToInform();
 	ArrayList<String> recipients = new ArrayList<String>();
 	User tempUser = new User();
@@ -612,9 +623,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    newAccountBalance);
 
 	    // Updates the shown list with the actual data
-	    List<User> temp = CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitID, false);
+	    List<User> temp = CourseUnitDAO.getParticipiantsOfCourseUnit(
+		    transaction, pagination, courseUnitID, false);
 	    this.participants.setWrappedData(temp);
 	    transaction.commit();
 	    userToAdd = new User();
@@ -757,8 +767,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	    // Updates the shown list with the actual data
 	    this.participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, this.getPagination(),
-			    courseUnitID, false));
+		    .getParticipiantsOfCourseUnit(transaction,
+			    this.getPagination(), courseUnitID, false));
 	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
