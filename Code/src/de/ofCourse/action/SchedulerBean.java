@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 
 import de.ofCourse.Database.dao.CourseUnitDAO;
@@ -37,11 +38,13 @@ import de.ofCourse.system.Transaction;
  *
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class SchedulerBean {
 
     
-	private final int NUM_ROWS = 9;
+	
+	private String date;
+	private Date monday;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -58,21 +61,36 @@ public class SchedulerBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
-    @PostConstruct
+
+	@PostConstruct
     public void init() {
+		
+		//
+		setDate("heute");
+		System.out.println("in init");
+		
     	transaction = Connection.create();
     	transaction.start();
     	
     	try {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
+    		
+    		//
+    		setDate(currentDate);
+    		System.out.println("today: " + currentDate);
+    		
     		Date currentMonday = getCurrentMonday(transaction, currentDate);
+    		
+    		//
+    		setMonday(currentMonday);
+    		System.out.println("monday: " + currentMonday);
+    		
     		List<CourseUnit> weeklyUnits =
     				CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
     		List<Week> week = new ArrayList<Week>();
     		int hour = 6;
     		
-    		for (int i = 0; i < NUM_ROWS; i++) {
+    		for (int i = 0; i < 9; i++) {
     			week.add(getWeekTuple(weeklyUnits, hour));
     			hour += 2;
     		}
@@ -193,6 +211,22 @@ public class SchedulerBean {
 
 	public void setWeekDays(Map<Integer, List<List<CourseUnit>>> weekDays) {
 		this.weekDays = weekDays;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public Date getMonday() {
+		return monday;
+	}
+
+	public void setMonday(Date monday) {
+		this.monday = monday;
 	}
 
 }
