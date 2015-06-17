@@ -209,7 +209,7 @@ public class UserProfileBean implements Pagination {
     }
     
     /**
-     * Initializes the profile page page of the user with the details of the
+     * Initializes the profile page of the user with the details of the
      * user.
      */
     public void initialzeUserProfile() {
