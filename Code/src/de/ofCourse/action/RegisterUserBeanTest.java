@@ -43,6 +43,9 @@ public class RegisterUserBeanTest {
     @Mock
     ExternalContext externalContext;
     
+    ArgumentCaptor<String> clientIdCaptor;
+    ArgumentCaptor<FacesMessage> facesMessageCaptor;
+    
     private Map<String, String> requestParameterMap;
     private Connection connection;
     private FacesMessage captured;
@@ -57,10 +60,9 @@ public class RegisterUserBeanTest {
     @Before
     public void setup() {
         PowerMockito.mockStatic(FacesContext.class);
-        //facesContext = mock(FacesContext.class);
+        
         Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
 
-        //externalContext = mock(ExternalContext.class);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         
         requestParameterMap = new HashMap<String, String>();
@@ -88,14 +90,14 @@ public class RegisterUserBeanTest {
         
         generatedUserID = 1;
         Mockito.when(UserDAO.getUserID(eq(connection), anyString())).thenReturn(generatedUserID);
+        
+        clientIdCaptor = ArgumentCaptor.forClass(String.class);
+        facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
     }
     
     @Test
     public void test() {
         requestParameterMap.put("veri", wrongVeriString);
-
-        ArgumentCaptor<String> clientIdCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<FacesMessage> facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
 
         registerUserBean = new RegisterUserBean();
       

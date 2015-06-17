@@ -42,11 +42,6 @@ public class CourseManagementBean {
     private Transaction transaction;
 
     /**
-     * For testing (CourseManagementBeanTest)
-     */
-    private boolean testing = false;
-
-    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
@@ -78,10 +73,6 @@ public class CourseManagementBean {
         this.setCourseLeaderID(null);
     }
 
-    public void activateTesting() {
-        this.testing = true;
-    }
-
     /**
      * Creates a new course with the entered data and returns the courseDetails
      * page.<br>
@@ -93,45 +84,39 @@ public class CourseManagementBean {
     public String createCourse() {
 
         int createdCourseID = 0;
+        this.transaction = Connection.create();
+        transaction.start();
+        try {
+            // Create course.
+            createdCourseID = CourseDAO.createCourse(this.transaction,
+                    this.course, this.courseImage);
+            boolean leaderAddOK = CourseDAO.addLeaderToCourse(
+                    this.transaction, this.getCourseLeaderID(),
+                    createdCourseID);
+          
+            this.transaction.commit();
 
-        if (testing) {
-            return "/facelets/open/courses/courseDetail.xhtml?"
-                    + "faces-redirect=true&courseID=0";
-        } else {
-            this.transaction = Connection.create();
-            transaction.start();
-            try {
-                // Create course.
-                createdCourseID = CourseDAO.createCourse(this.transaction,
-                        this.course, this.courseImage);
-                boolean leaderAddOK = CourseDAO.addLeaderToCourse(
-                        this.transaction, this.getCourseLeaderID(),
-                        createdCourseID);
-              
-                this.transaction.commit();
+            if (createdCourseID < 0 || leaderAddOK == false) {
 
-                if (createdCourseID < 0 || leaderAddOK == false) {
-
-                    // Throwing error message into the faces context.
-                    FacesMessageCreator.createFacesMessage(null,
-                            "Beim Erstellen des Kurses trat ein Fehler auf!");
-
-                    return "/facelets/user/systemAdministrator/"
-                            + "createCourse.xhtml?faces-redirect=false";
-                } else {
-
-                    // Throwing success message into the faces context..
-                    FacesMessageCreator.createFacesMessage(null,
-                            "Kurs wurde erfolgreich angelegt!");
-                    return "/facelets/open/courses/courseDetail.xhtml?"
-                            + "faces-redirect=true&courseID="
-                            + createdCourseID;
-                }
-            } catch (InvalidDBTransferException e) {
-                this.transaction.rollback();
+                // Throwing error message into the faces context.
                 FacesMessageCreator.createFacesMessage(null,
-                        "Problem beim Anlegen des Kurses!");
+                        "Beim Erstellen des Kurses trat ein Fehler auf!");
+
+                return "/facelets/user/systemAdministrator/"
+                        + "createCourse.xhtml?faces-redirect=false";
+            } else {
+
+                // Throwing success message into the faces context..
+                FacesMessageCreator.createFacesMessage(null,
+                        "Kurs wurde erfolgreich angelegt!");
+                return "/facelets/open/courses/courseDetail.xhtml?"
+                        + "faces-redirect=true&courseID="
+                        + createdCourseID;
             }
+        } catch (InvalidDBTransferException e) {
+            this.transaction.rollback();
+            FacesMessageCreator.createFacesMessage(null,
+                    "Problem beim Anlegen des Kurses!");
         }
         return "/facelets/user/systemAdministrator/createCourse.xhtml?"
                 + "faces-redirect=false";
