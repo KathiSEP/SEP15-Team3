@@ -67,7 +67,7 @@ public class SchedulerBean {
 		
 		//
 		setThisDate("heute");
-		System.out.println("in init in SchedulerBean:");
+		System.out.println("in init in SchedulerBean: ");
 		
     	transaction = Connection.create();
     	transaction.start();

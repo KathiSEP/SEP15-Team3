@@ -11,14 +11,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/postgresql-9.4-1200.jdbc41.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/cglib-nodep-2.2.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/javassist-3.19.0-GA.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/junit.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/jwebunit-core-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/jwebunit-htmlunit-plugin-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/mockito-all-1.10.19.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/objenesis-2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kathi/Desktop/OfCourse_MOcking/WebContent/WEB-INF/lib/powermock-mockito-1.6.2-full.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
