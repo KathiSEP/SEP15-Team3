@@ -342,15 +342,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				.getTime()));
 			this.courseUnit.setEndtime(new Date(nextEndDate
 				.getTime()));
-			if (isUnitInRangeOfCourse(
-				transaction,
+			if (isUnitInRangeOfCourse(transaction,
 				courseUnit.getStartime(),
 				courseUnit.getEndtime())) {
-			    
+
 			    CourseUnitDAO.createCourseUnit(transaction,
 				    this.courseUnit, this.courseID, true);
-			}else{
-			    System.out.println("Not Created - Not in Range");
+			} else {
+			    LogHandler
+				    .getInstance()
+				    .debug("Unit "
+					    + "with starttime "
+					    + courseUnit.getStartime().toString()
+					    + " was not edited because it's no "
+					    + "more in range of the corresponding course.");
 			}
 		    }
 		} else {
@@ -434,9 +439,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    pagination, id, true);
 			    this.sendMailToSelected(transaction, participants,
 				    false);
-			}
-			else{
-			    System.out.println("Not Edited - not in Range");
+			} else {
+			    LogHandler
+				    .getInstance()
+				    .debug("Unit "
+					    + tempUnit.getCourseUnitID()
+					    + " was not edited because it's no "
+					    + "more in range of the corresponding course.");
 			}
 		    }
 
@@ -719,7 +728,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    Course tempCourse = CourseDAO.getCourse(transaction,
 		    courseUnit.getCourseID());
 	    long beginCourse = tempCourse.getStartdate().getTime();
-	    long endCourse = tempCourse.getEnddate().getTime()+86400000L;
+	    long endCourse = tempCourse.getEnddate().getTime() + 86400000L;
 	    if (beginCourse > begin.getTime() || end.getTime() > endCourse) {
 		inRange = false;
 	    } else {
