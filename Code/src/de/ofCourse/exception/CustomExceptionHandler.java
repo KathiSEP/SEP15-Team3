@@ -23,7 +23,6 @@ import javax.faces.event.ExceptionQueuedEventContext;
 public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
     private ExceptionHandler wrapped;
-    Iterator<ExceptionQueuedEvent> exceptionList;
     
     /**
      * 
@@ -53,7 +52,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	 */
     @Override
     public void handle() throws FacesException {
-        exceptionList = getUnhandledExceptionQueuedEvents().iterator();
+        Iterator<ExceptionQueuedEvent> exceptionList = getUnhandledExceptionQueuedEvents().iterator();
         while ( exceptionList.hasNext() ) {
     
            ExceptionQueuedEvent event = exceptionList.next();
@@ -61,43 +60,22 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
            Throwable thr = context.getException();
 
            if ( thr instanceof NullPointerException ) {
-              redirectToDefault();
-            } else {
-              redirectTo404();  
+              redirectToDefault(exceptionList);
             }
-           getWrapped().handle();
         }
-        
+        getWrapped().handle();
      }
 
 
     /**
      * @param exceptionList
      */
-    private void redirectTo404() {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        NavigationHandler nav = fc.getApplication().getNavigationHandler();
-        try {
-           fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
-           nav.handleNavigation(fc, null, "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
-           fc.renderResponse();
-        } finally {
-           this.exceptionList.remove();
-        }
-  
-        
-    }
-
-
-    /**
-     * @param exceptionList
-     */
-    private void redirectToDefault() {
+    private void redirectToDefault(Iterator<ExceptionQueuedEvent> exceptionList) {
         FacesContext fc = FacesContext.getCurrentInstance();
           NavigationHandler nav = fc.getApplication().getNavigationHandler();
           try {
              fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
-             nav.handleNavigation(fc, null, "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
+             nav.handleNavigation(fc, null, "facelets/ErrorPages/default.xthml" );
              fc.renderResponse();
           } finally {
              exceptionList.remove();
