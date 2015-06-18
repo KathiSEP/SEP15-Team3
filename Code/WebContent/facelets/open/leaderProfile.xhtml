@@ -25,7 +25,6 @@
                             <div class="panel-body">
                                 <h:form class="form-horizontal" id="formSettings">
 			                        <h:panelGroup rendered="#{userProfileBean.readOnly}">
-			                                
 	                                    <div class="input-group" style="padding-top:25px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.username}" />
@@ -77,7 +76,7 @@
 	                                		<strong>#{sessionUser.getLabel('leaderProfile.row.courses.header')}</strong>
 	                                	</div>
 	                                	<div class="panel-body">
-	                                		<h:dataTable value="#{userProfileBean.managedCourses}" var="course" id="courseTable" class="table table-hover"
+	                                		<h:dataTable value="#{userProfileBean.managedCourses}" var="course" class="table table-hover"
 	                                						cellspacing="0" width="100%">
                            						<h:column>
 		                                			<f:facet name="header">#{sessionUser.getLabel('leaderProfile.row.courses.name')}</f:facet>
@@ -87,13 +86,6 @@
                            							<f:facet name="header">#{sessionUser.getLabel('leaderProfile.row.courses.id')}</f:facet>
                            							<h:outputText class="nowrap" value="#{course.courseID}"/>
                            						</h:column>
-												<h:column>
-													<f:facet name="header" />
-													<h:commandButton id="details" class="btn btn-info" value="#{sessionUser.getLabel('leaderProfile.row.courses.detailButton')}"
-																		action="/facelets/open/courses/courseDetail.xhtml">
-														<f:param name="courseID" value="#{course.courseID}" />
-													</h:commandButton>
-												</h:column>
 												<f:facet name="footer">
 													<h:panelGroup
 														rendered="#{userProfileBean.pagination.numberOfPages>0}">
@@ -137,9 +129,10 @@
 													</h:panelGroup>
 												</f:facet>
 	                                		</h:dataTable>
-											<h:form rendered="#{userProfileBean.managedCourses.size()==0}" class="alert alert-warning">
-												<strong>Hinweis:</strong>Der Nutzer leitet keine Kurse
-							                </h:form>
+	                                		<h:outputText rendered="#{userProfileBean.managedCourses.size() == 0}" class="alert alert-warning">
+	                                			<strong>#{sessionUser.getLabel('leaderProfile.sign')}:</strong>
+	                                			#{sessionUser.getLabel('leaderProfile.row.courses.noCoursesText')}
+	                                		</h:outputText>
 	                                	</div>
 	                                </div>                                           
 	                            </div>
