@@ -101,9 +101,13 @@ public class MailBean {
         smtpSetup();
         
         Authenticator loginAuth = new Authenticator() {
+           
             @Override
             protected PasswordAuthentication getPasswordAuthentication(){
-                PasswordAuthentication loginData = new PasswordAuthentication(smtpServer.getUsername(), smtpServer.getPassword());
+                PasswordAuthentication loginData = 
+                        new PasswordAuthentication
+                        (smtpServer.getUsername(), smtpServer.getPassword());
+                
                 return loginData;
             }          
         };
@@ -112,14 +116,14 @@ public class MailBean {
         // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
         prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
         prop.put("mail.smtph.port", smtpServer.getPort());
+        prop.put("mail.smtp.auth", "true");
         
         if(smtpServer.isSsl()){
             prop.put("mail.smtp.ssl.enable", "true");
         }else{
             prop.put("mail.smtp.starttls.enable", "true"); 
         }                        
-        prop.put("mail.smtp.auth", "true");
-        
+
         
         Session session = Session.getDefaultInstance(prop, loginAuth);
         
@@ -139,9 +143,8 @@ public class MailBean {
                                    
             Transport transport = session.getTransport("smtp");
             
-            // Eingabe von benutzerdaten und password
-            //TODO noch smtp auslesen richtig
-            transport.connect("smtp.gmail.com", smtpServer.getUsername(), smtpServer.getPassword());
+            
+            transport.connect(smtpServer.getHostaddr(), smtpServer.getUsername(), smtpServer.getPassword());
             transport.sendMessage(mail, mail.getAllRecipients());
             transport.close();
             
@@ -308,6 +311,10 @@ public class MailBean {
     }
 
 
+    /**
+     * @param user
+     * @return
+     */
     private String createSalutation(User user){
         String header;
         
@@ -321,7 +328,41 @@ public class MailBean {
         
     }
     
+    /**
+     * @param recipients
+     * @param CourseUnit
+     */
+    public void sendCourseUnitDeleteMail(List<String> recipients, int CourseUnit){
+        Transaction trans = Connection.create();
+        trans.start();
+        try{
+            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(trans, CourseUnit);
+            
+            String subject = "CourseUnit: " +  editCourseUnit.getTitle() + " has been deleted";
+
+            String message = "Dear User, \n \n";
+            
+            message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at" + editCourseUnit.getStartime() + "has been deleted. \n";
+            message += "Please visit the OfCourse WebPage for further Information: \n\n";
+            message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
+            message += createSignature();
+            
+            sendMail(recipients, subject, message);
+        
+        }catch (InvalidDBTransferException e){
+            LogHandler.getInstance().error("Error occured during sendCourseUnitEditMail");
+        }
+            
     
+    }
+    
+    
+    
+    
+    /**
+     * @param recipients
+     * @param CourseUnit
+     */
     public void sendCourseEditUnitMail(List<String> recipients, int CourseUnit){
         Transaction trans = Connection.create();
         trans.start();
