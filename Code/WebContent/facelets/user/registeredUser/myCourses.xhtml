@@ -7,13 +7,12 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">Meine Kurse</ui:define>
+	<ui:define name="title">#{sessionUser.getLabel('myCourses.title')}</ui:define>
 	<ui:define name="content">
-		<h1>Meine Kurse</h1>
+		<h1>#{sessionUser.getLabel('myCourses.header')}</h1>
 		<div class="row">
 			<div class="col-lg-12">
-				<p style="font-size: 16px;">Hier sehen Sie alle Kurse, zu denen
-					Sie eingetragen sind.</p>
+				<p style="font-size: 16px;">#{sessionUser.getLabel('myCourses.welcomeText')}</p>
 			</div>
 		</div>
 		<h:form rendered="#{myCoursesBean.registeredCourses.size() !=0}"
@@ -21,7 +20,7 @@
 			<div class="col-lg-12 ">
 				<div class="panel panel-info">
 					<div class="panel-heading">
-						<strong>Angemeldete Kurse</strong>
+						<strong>#{sessionUser.getLabel('myCourses.row.registeredCourses.header')}</strong>
 					</div>
 					<div class="panel-body">
 						<h:dataTable value="#{myCoursesBean.registeredCourses}"
@@ -29,7 +28,7 @@
 							cellspacing="0" width="100%">
 							<h:column>
 								<f:facet name="header">
-                                               Bild
+                                               #{sessionUser.getLabel('myCourses.row.registeredCourses.table.picture')}
                                             </f:facet>
 								<h:graphicImage value="/image?courseImage=#{course.courseID}"
 									height="25" />
@@ -42,7 +41,7 @@
 										<f:setPropertyActionListener
 											target="#{myCoursesBean.orderParam}"
 											value="id" />
-                                                ID
+                                                 #{sessionUser.getLabel('myCourses.row.registeredCourses.table.id')}
                                             </h:commandLink>
 								</f:facet>
 								<h:outputText value="#{course.courseID}" />
@@ -53,7 +52,7 @@
 										styleClass="theader">
 										<f:setPropertyActionListener
 											target="#{myCoursesBean.orderParam}" value="titel" />
-                                                Titel
+                                                 #{sessionUser.getLabel('myCourses.row.registeredCourses.table.title')}
                                             </h:commandLink>
 								</f:facet>
 								<h:outputText value="#{course.title}" />
@@ -62,7 +61,7 @@
 								<f:facet name="header">
                                     <h:commandLink 
                                         styleClass="theader">
-                                                Ort
+                                                 #{sessionUser.getLabel('myCourses.row.registeredCourses.table.location')}
                                             </h:commandLink>
                                 </f:facet>
 								<h:outputText value="#{course.nextCourseUnit.location}" />
@@ -73,7 +72,7 @@
                                         styleClass="theader">
                                         <f:setPropertyActionListener
                                             target="#{myCoursesBean.orderParam}" value="start_time" />
-                                                Beginn
+                                                 #{sessionUser.getLabel('myCourses.row.registeredCourses.table.start')}
                                             </h:commandLink>
                                 </f:facet>
 								<h:outputText class="nowrap"
@@ -87,7 +86,7 @@
                                         styleClass="theader">
                                         <f:setPropertyActionListener
                                             target="#{myCoursesBean.orderParam}" value="start_time" />
-                                                Datum
+                                                 #{sessionUser.getLabel('myCourses.row.registeredCourses.table.date')}
                                             </h:commandLink>
                                 </f:facet>
 								<h:outputText class="nowrap"
@@ -98,7 +97,7 @@
 							<h:column>
 								<f:facet name="header" />
 								<h:commandButton id="details" class="btn btn-info"
-									value="Details"
+									value=" #{sessionUser.getLabel('myCourses.row.registeredCourses.table.details')}"
 									action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
 									<f:param name="courseID" value="#{course.courseID}" />
 								</h:commandButton>
@@ -110,7 +109,7 @@
 										<ul class="pagination">
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
-													value="Zurueck" action="#{myCoursesBean.goToSpecificPage}">
+													value=" #{sessionUser.getLabel('pagination.back')}" action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
                                             target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
 												</h:commandButton></li>
@@ -137,7 +136,7 @@
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
-													value="Weiter" action="#{myCoursesBean.goToSpecificPage}">
+													value=" #{sessionUser.getLabel('pagination.forward')}"  action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
                                             target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}"  />
 												</h:commandButton></li>

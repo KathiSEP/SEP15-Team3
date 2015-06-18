@@ -264,7 +264,8 @@ public class AccessPhaseListener implements PhaseListener {
     private List<String> fillPageListForAnonymousUsers() {
 	ArrayList<String> listForAnonymousUsers = new ArrayList<String>();
 
-	listForAnonymousUsers.add("/facelets/open/errorPage.xhtml");
+	listForAnonymousUsers.add("/facelets/ErrorPages/404.xhtml");
+	listForAnonymousUsers.add("/facelets/ErrorPages/default.xhtml");
 	listForAnonymousUsers.add("/facelets/open/index.xhtml");
 	listForAnonymousUsers.add("/facelets/open/authenticate.xhtml");
 	listForAnonymousUsers.add("/facelets/open/imprint.xhtml");

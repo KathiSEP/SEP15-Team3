@@ -428,7 +428,7 @@
                                                     <ul class="pagination">
                                                         <li><h:commandButton class="btn btn-info"
                                                                 rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
-                                                                value="Zurueck"
+                                                                value=" #{sessionUser.getLabel('pagination.back')}" 
                                                                 action="#{courseUnitManagementBean.goToSpecificPage}">
                                                                 <f:setPropertyActionListener
                                                                     target="#{courseUnitManagementBean.currentPage}"
@@ -460,7 +460,7 @@
                                                             </h:commandButton></li>
                                                         <li><h:commandButton class="btn btn-info"
                                                                 rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
-                                                                value="Weiter"
+                                                                value=" #{sessionUser.getLabel('pagination.forward')}" 
                                                                 action="#{courseUnitManagementBean.goToSpecificPage}">
                                                                 <f:setPropertyActionListener
                                                                     target="#{courseUnitManagementBean.currentPage}"
