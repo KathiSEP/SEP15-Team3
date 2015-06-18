@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
@@ -96,6 +97,8 @@ public class UserProfileBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+
+    private int currentPage;
     
     @PostConstruct
     public void init() {
@@ -343,6 +346,15 @@ public class UserProfileBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
+        pagination.setCurrentPageNumber(currentPage);
+        transaction.start();
+        try {
+            managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
+            transaction.commit();
+        } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error("Error occured during fetching data for pagination.");
+            this.transaction.rollback();
+        }
     }
 
     /**
@@ -350,7 +362,7 @@ public class UserProfileBean implements Pagination {
      */
     @Override
     public PaginationData getPagination() {
-	return pagination;
+        return pagination;
     }
 
     /**
@@ -358,6 +370,7 @@ public class UserProfileBean implements Pagination {
      */
     @Override
     public void setPagination(PaginationData pagination) {
+        this.pagination = pagination;
     }
 
     /**

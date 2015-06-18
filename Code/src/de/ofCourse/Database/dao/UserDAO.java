@@ -23,6 +23,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Activation;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
@@ -1281,11 +1282,53 @@ public class UserDAO {
      *         user isn't leader of any course
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
      */
-    public static List<Course> getCoursesLeadedBy(Transaction trans,
-	    int userID, PaginationData pagination)
+    public static List<Course> getCoursesLeadedBy(Transaction trans, int userID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-	return null;
+
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        PreparedStatement statement = null;
+        ResultSet resultSet;
+        ArrayList<Course> courses = new ArrayList<Course>();
+
+        String direction = getSortDirection(pagination.isSortAsc());
+        int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();
+    
+        String courseQuery = "SELECT * FROM \"courses\" WHERE courses.id IN "
+            + "(SELECT course_id FROM \"course_instructors\" where course_instructor_id = ?) "
+            + " ORDER BY %s %s LIMIT ? OFFSET ?";
+    
+    
+        courseQuery = String.format(courseQuery, "titel", direction);
+    
+        try {
+            statement = conn.prepareStatement(courseQuery);
+            statement.setInt(1, userID);
+            statement.setInt(2, pagination.getElementsPerPage());
+            statement.setInt(3, offset);
+            resultSet = statement.executeQuery();
+    
+            while (resultSet.next()) {
+            Course course = CourseDAO.getCourse(trans, resultSet.getInt("id"));
+            courses.add(course);
+            }
+            statement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured in getCoursesLeadedBy from UserDAO");
+            throw new InvalidDBTransferException();
+        }
+        return courses;
+    }
+
+    private static String getSortDirection(boolean isSortAsc) {
+        if (isSortAsc) {
+            return "ASC";
+        } else {
+            return "DESC";
+        }
     }
 
     /**
