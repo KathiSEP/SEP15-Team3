@@ -97,7 +97,7 @@ public class UserManagementBean {
 	            this.transaction.rollback();
 	        } else {
 	        	setEnums();
-	        	String salt = String.valueOf(System.currentTimeMillis() * Math.random());
+	        	String salt = PasswordHash.getSalt();
 	        	String pwHash = PasswordHash.hash(password, salt);
 	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
 	        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());

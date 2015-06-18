@@ -46,4 +46,8 @@ public class PasswordHash {
 		}
     	return null;
     }
+    
+    public static String getSalt() {
+    	return String.valueOf(System.currentTimeMillis() * Math.random());
+    }
 }
