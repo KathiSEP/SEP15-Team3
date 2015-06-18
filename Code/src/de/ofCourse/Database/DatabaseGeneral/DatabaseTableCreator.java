@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -280,13 +281,19 @@ public class DatabaseTableCreator {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during buildUpDatabase()");
+	    throw new InvalidDBTransferException();
 		} finally {
 			if (count != null) {
 				try {
 					count.close();
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing ResultSet in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -294,7 +301,10 @@ public class DatabaseTableCreator {
 				try {
 					check.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}	
 			}
 			
@@ -302,7 +312,10 @@ public class DatabaseTableCreator {
 				try {
 					formOfAddress.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -310,7 +323,10 @@ public class DatabaseTableCreator {
 				try {
 					role.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -318,7 +334,10 @@ public class DatabaseTableCreator {
 				try {
 					status.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -326,7 +345,10 @@ public class DatabaseTableCreator {
 				try {
 					period.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -334,7 +356,10 @@ public class DatabaseTableCreator {
 				try {
 					activation.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -342,7 +367,10 @@ public class DatabaseTableCreator {
 				try {
 					users.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -350,7 +378,10 @@ public class DatabaseTableCreator {
 				try {
 					courses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -358,7 +389,10 @@ public class DatabaseTableCreator {
 				try {
 					courseUnits.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -366,7 +400,10 @@ public class DatabaseTableCreator {
 				try {
 					userAddresses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -374,7 +411,10 @@ public class DatabaseTableCreator {
 				try {
 					courseUnitAddresses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -382,7 +422,10 @@ public class DatabaseTableCreator {
 				try {
 					cycles.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -390,7 +433,10 @@ public class DatabaseTableCreator {
 				try {
 					informUsers.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -398,7 +444,10 @@ public class DatabaseTableCreator {
 				try {
 					courseInstructors.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -406,7 +455,10 @@ public class DatabaseTableCreator {
 				try {
 					courseParticipants.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -414,7 +466,10 @@ public class DatabaseTableCreator {
 				try {
 					courseUnitParticipants.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -422,7 +477,10 @@ public class DatabaseTableCreator {
 				try {
 					systemAttributes.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			

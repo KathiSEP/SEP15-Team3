@@ -5,6 +5,7 @@ import java.sql.Statement;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -131,13 +132,19 @@ public class DatabaseTableDestroyer {
 			activation.execute(DROP_ACTIVATION);
 			trans.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during dropTables()");
+			throw new InvalidDBTransferException();
 		} finally {
 			if (users != null) {
 				try {
 					users.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -145,7 +152,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -153,7 +163,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courseUnits.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -161,7 +174,10 @@ public class DatabaseTableDestroyer {
 				try {
 					userAddresses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -169,7 +185,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courseUnitAddresses.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -177,7 +196,10 @@ public class DatabaseTableDestroyer {
 				try {
 					cycles.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -185,7 +207,10 @@ public class DatabaseTableDestroyer {
 				try {
 					informUsers.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -193,7 +218,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courseInstructors.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -201,7 +229,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courseParticipants.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -209,7 +240,10 @@ public class DatabaseTableDestroyer {
 				try {
 					courseUnitParticipants.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -217,7 +251,10 @@ public class DatabaseTableDestroyer {
 				try {
 					systemAttributes.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -225,7 +262,10 @@ public class DatabaseTableDestroyer {
 				try {
 					customizationData.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -233,7 +273,10 @@ public class DatabaseTableDestroyer {
 				try {
 					formOfAddress.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -241,7 +284,10 @@ public class DatabaseTableDestroyer {
 				try {
 					role.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -249,7 +295,10 @@ public class DatabaseTableDestroyer {
 				try {
 					status.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -257,7 +306,10 @@ public class DatabaseTableDestroyer {
 				try {
 					period.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -265,7 +317,10 @@ public class DatabaseTableDestroyer {
 				try {
 					activation.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in dropTables()");
+					throw new InvalidDBTransferException();
 				}
 			}
 		}

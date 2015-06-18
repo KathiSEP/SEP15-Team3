@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -63,13 +64,19 @@ public class SetupAdmin {
     		}
     		trans.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LogHandler
+		    .getInstance()
+		    .error("SQL Exception occoured during createInitialAdmin()");
+			throw new InvalidDBTransferException();
 		} finally {
 			if (rst != null) {
 				try {
 					rst.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing ResultSet in createInitialAdmin()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -77,7 +84,10 @@ public class SetupAdmin {
 				try {
 					check.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in createInitialAdmin()");
+					throw new InvalidDBTransferException();
 				}
 			}
 			
@@ -85,7 +95,10 @@ public class SetupAdmin {
 				try {
 					init.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LogHandler
+				    .getInstance()
+				    .error("SQL Exception occoured during closing PreparedStatement in createInitialAdmin()");
+					throw new InvalidDBTransferException();
 				}
 			}
 		}
