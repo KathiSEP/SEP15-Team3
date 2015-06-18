@@ -7,7 +7,7 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html">
     <ui:composition template="/WEB-INF/template.xhtml">
-        <ui:define name="title">Wochenplan</ui:define>
+        <ui:define name="title">#{sessionUser.getLabel('scheduler.title')}</ui:define>
         <ui:define name="content">
         
             <body>
@@ -43,7 +43,7 @@
 	                                
 	                                <h:column> 
                                         <f:facet name="header">
-                                            Begin
+                                            #{sessionUser.getLabel('scheduler.begin')}
                                         </f:facet>
                                         #{week.hour}
                                      </h:column>
@@ -51,7 +51,7 @@
                                      
                                      <h:column>  
                                          <f:facet name="header">
-                                             Monday
+                                             #{sessionUser.getLabel('scheduler.monday')}
                                          </f:facet>  
                                         <!-- <h:link outcome="courseDetail" value="#{course.courseID}" >
                                              <f:param name="courseID" value="#{course.courseID}" />
@@ -61,42 +61,42 @@
                                      
                                      <h:column>  
                                          <f:facet name="header">
-                                             Tuesday
+                                             #{sessionUser.getLabel('scheduler.tuesday')}
                                          </f:facet>
                                          #{week.tuesday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                             Wednesday
+                                             #{sessionUser.getLabel('scheduler.wednesday')}
                                          </f:facet>
                                          #{week.wednesday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                             Thursday
+                                             #{sessionUser.getLabel('scheduler.thursday')}
                                          </f:facet>
                                          #{week.thursday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                             Friday
+                                             #{sessionUser.getLabel('scheduler.friday')}
                                          </f:facet>
                                          #{week.friday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                             Saturday
+                                             #{sessionUser.getLabel('scheduler.saturday')}
                                          </f:facet>
                                          #{week.saturday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                             Sunday
+                                             #{sessionUser.getLabel('scheduler.sunday')}
                                          </f:facet>
                                          #{week.sunday}
                                      </h:column>
@@ -105,12 +105,12 @@
                                     <div class="row" style="text-align:center;">
                                     <ul class="pagination">
                                     
-                                        <li><h:commandButton class="btn btn-info" value="Zurück"
+                                        <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.back')}"
                                                 action="#{schedulerBean.displayPreviousWeek()}">
                                                 <f:param name="page" value="back" />
                                             </h:commandButton></li>
                                             
-                                        <li><h:commandButton class="btn btn-info" value="Weiter"
+                                        <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.forward')}"
                                                 action="#{schedulerBean.displayNextWeek()}">
                                                 <f:param name="page" value="forward" />
                                             </h:commandButton></li>
