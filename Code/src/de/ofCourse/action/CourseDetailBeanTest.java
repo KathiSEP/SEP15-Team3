@@ -112,7 +112,7 @@ public class CourseDetailBeanTest {
         
         Mockito.when(CourseUnitDAO.getCourseUnitsOf(connection, userToSignUp.getUserID())).thenReturn(resultList);
         
-        Mockito.when(CourseUnitDAO.getResult(resultSet)).thenReturn(resultList);
+        //Mockito.when(CourseUnitDAO.getResult(resultSet)).thenReturn(resultList);
         
         
     }

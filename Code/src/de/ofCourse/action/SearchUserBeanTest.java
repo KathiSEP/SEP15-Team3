@@ -145,19 +145,19 @@ public class SearchUserBeanTest {
                 UserDAO.getUsers(conn, pagination, bean.getSearchParam(),
                         bean.getSearchString())).thenReturn(searchResult);
         System.out.println("TEst");
-        Mockito.when(
-                UserDAO.getAllUsers(conn, pagination, "testSQLBefehl" , bean
-                        .getPagination().getElementsPerPage(), 0)).thenReturn(
-                searchResult);
-        
-        Mockito.when(
-                UserDAO.getUsers(conn, pagination, "testSQLBefehl" , bean.getSearchString(), bean
-                        .getPagination().getElementsPerPage(), 0)).thenReturn(
-                searchResult);
-        
-        Mockito.when(UserDAO.getResult(resultSet)).thenReturn(searchResult2);
-        System.out.println("TEst");
-        Mockito.when(UserDAO.getOrderParam(bean.getOrderParam())).thenReturn("ASC");
+//        Mockito.when(
+//                UserDAO.getAllUsers(conn, pagination, "testSQLBefehl" , bean
+//                        .getPagination().getElementsPerPage(), 0)).thenReturn(
+//                searchResult);
+//        
+//        Mockito.when(
+//                UserDAO.getUsers(conn, pagination, "testSQLBefehl" , bean.getSearchString(), bean
+//                        .getPagination().getElementsPerPage(), 0)).thenReturn(
+//                searchResult);
+//        
+//        Mockito.when(UserDAO.getResult(resultSet)).thenReturn(searchResult2);
+//        System.out.println("TEst");
+//        Mockito.when(UserDAO.getOrderParam(bean.getOrderParam())).thenReturn("ASC");
         
     }
 
