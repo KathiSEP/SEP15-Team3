@@ -243,7 +243,7 @@ public class MailBean {
     }
     
     
-    private void sendSingleMail(String maildaddress, String subject, String messenge){
+    public void sendSingleMail(String maildaddress, String subject, String messenge){
         List<String> recipients = new ArrayList<String>();
         recipients.add(maildaddress);
         sendMail(recipients, subject, messenge);            

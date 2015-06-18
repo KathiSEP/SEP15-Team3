@@ -28,10 +28,7 @@
     <url-pattern>/image</url-pattern>  
 </servlet-mapping>
 
-
-
-  
-  
+ 
   <filter>
 
 	<filter-name>EncodingFilter</filter-name>

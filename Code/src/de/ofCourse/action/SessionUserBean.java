@@ -48,7 +48,7 @@ public class SessionUserBean implements Serializable {
     /**
      * The current language
      */
-    private Language language;
+    private Language language = Language.DE;
 
     /**
      * Returns the ID of the current logged in user.
