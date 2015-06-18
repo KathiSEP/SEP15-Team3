@@ -966,32 +966,32 @@ public class CourseUnitDAO {
      * 
      * @param trans
      * @param courseID
-     * @return
+     * @return the number of course units
      * @throws InvalidDBTransferException
      * @author Ricky Strohmeier
      */
     public static int getNumberOfCourseUnits(Transaction trans, int courseID)
 	    throws InvalidDBTransferException {
-	int numberOfCourseUnits = 0;
-	String courseUnitQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
+    	int numberOfCourseUnits = 0;
+    	String courseUnitQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
+    
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    
+    	PreparedStatement statement = null;
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	PreparedStatement statement = null;
-	try {
-	    statement = conn.prepareStatement(courseUnitQuery);
-	    statement.setInt(1, courseID);
-	    ResultSet resultSet = statement.executeQuery();
-	    resultSet.next();
-	    numberOfCourseUnits = resultSet.getInt(1);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured during fetching the number of courses of a certain user.");
-	    throw new InvalidDBTransferException();
-	}
-	return numberOfCourseUnits;
+    	try {
+    	    statement = conn.prepareStatement(courseUnitQuery);
+    	    statement.setInt(1, courseID);
+    	    ResultSet resultSet = statement.executeQuery();
+    	    resultSet.next();
+    	    numberOfCourseUnits = resultSet.getInt(1);
+    	} catch (SQLException e) {
+    	    LogHandler
+    		    .getInstance().error("Error occoured during fetching the number of courses of a certain user.");
+    	    throw new InvalidDBTransferException();
+    	}
+    	return numberOfCourseUnits;
     }
 
     /**
