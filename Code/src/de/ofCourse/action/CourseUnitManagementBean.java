@@ -342,8 +342,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				.getTime()));
 			this.courseUnit.setEndtime(new Date(nextEndDate
 				.getTime()));
-			CourseUnitDAO.createCourseUnit(transaction,
-				this.courseUnit, this.courseID, true);
+			if (isUnitInRangeOfCourse(
+				transaction,
+				courseUnit.getStartime(),
+				courseUnit.getEndtime())) {
+			    
+			    CourseUnitDAO.createCourseUnit(transaction,
+				    this.courseUnit, this.courseID, true);
+			}else{
+			    System.out.println("Not Created - Not in Range");
+			}
 		    }
 		} else {
 		    CourseUnitDAO.createCourseUnit(transaction, courseUnit,
@@ -414,15 +422,22 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
 			tempUnit.setAddress(courseUnit.getAddress());
 
-			// update tempUnit
-			CourseUnitDAO.updateCourseUnit(transaction, tempUnit);
+			if (isUnitInRangeOfCourse(transaction,
+				tempUnit.getStartime(), tempUnit.getEndtime())) {
+			    // update tempUnit
+			    CourseUnitDAO.updateCourseUnit(transaction,
+				    tempUnit);
 
-			// Send info mail
-			ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
-				.getParticipiantsOfCourseUnit(transaction,
-					pagination, id, true);
-			this.sendMailToSelected(transaction, participants,
-				false);
+			    // Send info mail
+			    ArrayList<User> participants = (ArrayList<User>) CourseUnitDAO
+				    .getParticipiantsOfCourseUnit(transaction,
+					    pagination, id, true);
+			    this.sendMailToSelected(transaction, participants,
+				    false);
+			}
+			else{
+			    System.out.println("Not Edited - not in Range");
+			}
 		    }
 
 		} else {
@@ -476,17 +491,21 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			for (int unitId : idsToDelete) {
 			    if (UserDAO.userIsParticipantInCourseUnit(
 				    transaction, user.getUserID(), unitId)) {
-                               amount+=CourseUnitDAO.getPriceOfUnit(transaction, unitId);	
-                               CourseUnitDAO.removeUserFromCourseUnit(transaction, user.getUserID(), unitId);
+				amount += CourseUnitDAO.getPriceOfUnit(
+					transaction, unitId);
+				CourseUnitDAO.removeUserFromCourseUnit(
+					transaction, user.getUserID(), unitId);
 			    }
 			}
 			float newBalance = amount + user.getAccountBalance();
-			UserDAO.updateAccountBalance(transaction, user.getUserID(), newBalance);
+			UserDAO.updateAccountBalance(transaction,
+				user.getUserID(), newBalance);
 		    }
-		    CourseUnitDAO.deleteCourseUnit(transaction, id);		    
+		    CourseUnitDAO.deleteCourseUnit(transaction, id);
 
 		    this.sendMailToSelected(transaction, participants, false);
 		}
+		CycleDAO.deleteCycle(transaction, courseUnit.getCourseUnitID());
 	    } else {
 
 		this.deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
@@ -665,22 +684,24 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	} else {
 	    transaction.start();
 	    try {
-		Course tempCourse = CourseDAO.getCourse(transaction,
-			courseUnit.getCourseID());
-		transaction.commit();
-		long beginCourse = tempCourse.getStartdate().getTime();
-		long endCourse = tempCourse.getEnddate().getTime();
-		if (beginCourse > tempDateBegin.getTime()
-			|| tempDateEnd.getTime() > endCourse) {
+		boolean inRange = isUnitInRangeOfCourse(transaction,
+			tempDateBegin, tempDateEnd);
+
+		// Creating the FacesMessage
+		if (!inRange) {
+		    Course tempCourse = CourseDAO.getCourse(transaction,
+			    courseUnit.getCourseID());
+		    long beginCourse = tempCourse.getStartdate().getTime();
+		    long endCourse = tempCourse.getEnddate().getTime();
 		    FacesMessageCreator.createFacesMessage(null,
 			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
 				    + dateAsString(new Date(beginCourse))
 				    + " bis zum "
 				    + dateAsString(new Date(endCourse)) + " !");
-		    return false;
-		} else {
-		    return true;
 		}
+
+		transaction.commit();
+		return inRange;
 	    } catch (InvalidDBTransferException e) {
 		LogHandler.getInstance().error(
 			"Error occured during fetching a course");
@@ -688,6 +709,30 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		return false;
 	    }
 	}
+    }
+
+    private boolean isUnitInRangeOfCourse(Transaction transaction, Date begin,
+	    Date end) {
+	boolean inRange = false;
+
+	try {
+	    Course tempCourse = CourseDAO.getCourse(transaction,
+		    courseUnit.getCourseID());
+	    long beginCourse = tempCourse.getStartdate().getTime();
+	    long endCourse = tempCourse.getEnddate().getTime()+86400000L;
+	    if (beginCourse > begin.getTime() || end.getTime() > endCourse) {
+		inRange = false;
+	    } else {
+		inRange = true;
+	    }
+	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(
+		    "Error occured during checking whether"
+			    + " the unit is in rage of course.");
+	    throw e;
+
+	}
+	return inRange;
     }
 
     /**

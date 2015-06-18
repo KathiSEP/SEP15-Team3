@@ -195,6 +195,13 @@ public class CourseUnitManagementBeanTest {
 	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 3)).thenReturn(
 		(float) 2.0);
 
+	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 1))
+		.thenReturn(true);
+	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 2))
+		.thenReturn(true);
+	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 3))
+		.thenReturn(true);
+
 	// Create the course unit management
 	bean = new CourseUnitManagementBean();
     }
@@ -250,38 +257,55 @@ public class CourseUnitManagementBeanTest {
 	PowerMockito.verifyStatic();
 	CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1);
 
-//	// Fetches the participants
-//	PowerMockito.verifyStatic(times(1));
-//	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, true);
-//
-//	PowerMockito.verifyStatic(times(1));
-//	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2, true);
-//
-//	PowerMockito.verifyStatic(times(1));
-//	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3, true);
-//
-//	// Removes user from course unit
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 1);
-//
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 2);
-//
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 3);
-//
-//	PowerMockito.verifyStatic(times(3));
-//	UserDAO.updateAccountBalance(conn, 1, 22);
-//
-//	// Delete the units
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.deleteCourseUnit(conn, 1);
-//
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.deleteCourseUnit(conn, 2);
-//
-//	PowerMockito.verifyStatic();
-//	CourseUnitDAO.deleteCourseUnit(conn, 3);
+	// Fetches the participants of unit
+	PowerMockito.verifyStatic(times(1));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, true);
+
+	// Fetches the participants of unit1
+	PowerMockito.verifyStatic(times(1));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2, true);
+
+	// Fetches the participants of unit2
+	PowerMockito.verifyStatic(times(1));
+	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3, true);
+
+	// Removes user part from course unit unit
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+	PowerMockito.verifyStatic(times(3));
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 1);
+
+	// Removes user part from course unit unit1
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+	PowerMockito.verifyStatic(times(3));
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 2);
+
+	// Removes user part from course unit unit2
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+	PowerMockito.verifyStatic(times(3));
+	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 3);
+	// Updates the account balance of the user with the sum of all prices of
+	// all signed off units
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+	PowerMockito.verifyStatic(times(3));
+	UserDAO.updateAccountBalance(conn, 1, 26);
+
+	// Delete the units
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 1);
+	
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 2);
+
+	PowerMockito.verifyStatic();
+	CourseUnitDAO.deleteCourseUnit(conn, 3);
+	
+	//Deletes the corresponding cycle
+	PowerMockito.verifyStatic();
+	CycleDAO.deleteCycle(conn, 1);
 
 	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
 
@@ -309,7 +333,10 @@ public class CourseUnitManagementBeanTest {
 	String url = bean.createCourseUnit();
 	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
 
-	PowerMockito.verifyStatic();
+	// Check whether the entered dates are in course range
+	// Check whether the automatically created cycle units are in course
+	// range
+	PowerMockito.verifyStatic(times(4));
 	CourseDAO.getCourse(conn, 1);
 
 	PowerMockito.verifyStatic();

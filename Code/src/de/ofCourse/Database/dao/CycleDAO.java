@@ -81,46 +81,7 @@ public class CycleDAO {
 	return cycleID;
     }
 
-    /**
-     * Updates the cycle of a course unit.
-     * 
-     * @param trans
-     *            the Transaction object which contains the connection to the
-     *            database
-     * @param cycle
-     *            the cycle to update
-     * @throws InvalidDBTransferException
-     *             if any error occurred during the execution of the method
-     * @author Tobias Fuchs
-     */
-    public void updateCycle(Transaction trans, Cycle cycle)
-	    throws InvalidDBTransferException {
-	String query = "UPDATE \"cycles\" "
-		+ "SET course=? period=? cycle_end=? " + "WHERE id = ?";
-
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-
-	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setInt(1, cycle.getCourseID());
-	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "DAYS");
-	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "WEEKS");
-	    }
-	    stmt.setInt(3, cycle.getNumberOfUnits());
-	    stmt.executeUpdate();
-	    stmt.close();
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during updating a cycle.");
-	    throw new InvalidDBTransferException();
-	}
-
-    }
-
+  
     /**
      * Fetches the id of a cycle by a passed course unit id.
      * 
@@ -156,7 +117,7 @@ public class CycleDAO {
 	return cycleID;
     }
     
-    public void deleteCycle(Transaction trans, int courseUnitId)  throws InvalidDBTransferException {
+    public static void deleteCycle(Transaction trans, int courseUnitId)  throws InvalidDBTransferException {
 	
 	String deleteQuery="DELETE FROM \"cycles\" WHERE id=?";
 	Connection connection = (Connection) trans;
