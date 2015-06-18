@@ -12,7 +12,7 @@
 </head>
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">#{sessionUser.getLabel('title')}</ui:define>
+	<ui:define name="title">#{sessionUser.getLabel('searchUser.title')}</ui:define>
 	<ui:define name="content">
 		<body>
 			<h1>#{sessionUser.getLabel('searchUser.header')}</h1>
@@ -40,7 +40,7 @@
 											<h:selectOneMenu class="form-control"
 												value="#{searchUserBean.searchParam}" id="filterSearchParam">
 												<f:selectItem itemValue="name" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.name')}" />
-												<f:selectItem itemValue="email" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.email')}" />
+												<f:selectItem itemValue="email" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.mail')}" />
 												<f:selectItem itemValue="nickname" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.username')}" />
 
 											</h:selectOneMenu>
@@ -56,7 +56,7 @@
 
 									<div class="col-lg-3">
 										<h:commandButton id="searchUser" class="btn btn-default"
-											value="#{sessionUser.getLabel('searchUser.row.filter.searchButton')}" action="#{searchUserBean.search()}" />
+											value="#{sessionUser.getLabel('searchUser.row.searchButton')}" action="#{searchUserBean.search()}" />
 									</div>
 
 									<div class="col-lg-1">
@@ -94,7 +94,7 @@
 													styleClass="theader">
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}" value="nickname" />
-                                                #{seasionUser.getLabel('searchUser.row.filter.username')
+                                                #{sessionUser.getLabel('searchUser.table.username')}
                                             </h:commandLink>
 											</f:facet>
 											#{user.username}
@@ -163,7 +163,7 @@
                                             
                                          </f:facet>
 											<h:commandButton id="details" class="btn btn-info"
-												value="Bearbeiten" action="#{searchUserBean.loadProfil}">
+												value="#{sessionUser.getLabel('searchUser.table.editButton')}" action="#{searchUserBean.loadProfil}">
 												<f:param name="userID" value="#{user.userID}" />
 											</h:commandButton>
 										</h:column>
