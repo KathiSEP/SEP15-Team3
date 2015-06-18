@@ -7,38 +7,38 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">Adminverwaltung</ui:define>
+	<ui:define name="title">#{sessionUser.getLabel('adminManagement.title')}</ui:define>
 	<ui:define name="content">
 		<body>
-			<h1>Adminverwaltung</h1>
+			<h1>#{sessionUser.getLabel('adminManagement.header')}</h1>
 			<div class="row" style="padding-top: 20px;">
 				<div class="col-lg-6">
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">Allgemein</h3>
+							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.common.header')}</h3>
 						</div>
 						<div class="panel-body">
 							<h:form>
-								<h4>Benutzer</h4>
+								<h4>#{sessionUser.getLabel('adminManagement.row.common.user')}</h4>
 								<h:commandButton id="createNewUser" class="btn btn-info"
 									style="width:200px;"
 									action="#{systemConfigurationBean.loadCreateNewUserPage}"
-									value="Neuen Benutzer anlegen" />
+									value="#{sessionUser.getLabel('adminManagement.row.common.createUser')}" />
 									&nbsp;
 									&nbsp;
 									&nbsp;
                                     &nbsp;
 									<h:commandButton id="manageUsers" class="btn btn-info"
-									style="width:200px;" value="Benutzer verwalten"
+									style="width:200px;" value="#{sessionUser.getLabel('adminManagement.row.common.manageUser')}"
 									action="#{systemConfigurationBean.loadManageUserPage}" />
 							</h:form>
 							<br /> <br />
 							<h:form>
-								<h4>Kurse</h4>
+								<h4>#{sessionUser.getLabel('adminManagement.row.common.courses')}</h4>
 								<h:commandButton id="createNewCourse" class="btn btn-info"
 									style="width:200px;"
 									action="#{systemConfigurationBean.loadCreateNewCoursePage}"
-									value="Neuen Kurs erstellen" />
+									value="#{sessionUser.getLabel('adminManagement.row.common.courses.createCourse')}" />
                                     &nbsp;
                                     &nbsp;
                                     &nbsp;
@@ -46,27 +46,26 @@
                                 <h:commandButton id="manageCourses"
 									class="btn btn-info" style="width:200px;"
 									action="#{systemConfigurationBean.loadManageCoursesPage}"
-									value="Kurse verwalten" />
+									value="#{sessionUser.getLabel('adminManagement.row.common.courses.manageCourses')}" />
 							</h:form>
 						</div>
 					</div>
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">Allgemeine Kurseinstellungen</h3>
+							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.settings.header')}</h3>
 						</div>
 						<div class="panel-body">
 							<h:form>
-								Hier können Sie die Abmeldefrist für Kurseinheiten festlegen.
+								#{sessionUser.getLabel('adminManagement.row.settings.text')}
 								<br />
 								<br />
 								<div class="input-group">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Abmeldefrist
-										in h:</span>
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('adminManagement.row.settings.time')}:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										value="#{systemConfigurationBean.signOffLimit}"
 										id="signOffLimit" reuqired="true"
-										requiredMessage="Bitte geben Sie die Abmeldefrist ein."></h:inputText>
+										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.signOffLimit')}"></h:inputText>
 									<h:message for="signOffLimit" style="color:red" />
 								</div>
 								<div>
@@ -74,7 +73,7 @@
 									<h:commandButton id="saveSignOffLimit"
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineSignOffLimit}"
-										value="Speichern" />
+										value="#{sessionUser.getLabel('adminManagement.row.settings.saveButton')}" />
 								</div>
 							</h:form>
 						</div>
@@ -83,20 +82,20 @@
 				<div class="col-lg-6">
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">Bezahlung</h3>
+							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.payment.header')}</h3>
 						</div>
 						<div class="panel-body">
 							<h:form class="form-horizontal" id="formToUpAccount">
-								<h4>Benutzerkonto aufladen</h4>
+								<h4>#{sessionUser.getLabel('adminManagement.row.payment.chargeText')}</h4>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">ID des
-										Benutzers:</span>
+										style="width: 160px; text-align: right;">
+										#{sessionUser.getLabel('adminManagement.row.payment.userID')}:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										id="userIDToTopUp"
 										value="#{paymentOfflineBean.user.userID}"
 										reuqired="true"
-										requiredMessage="Bitte geben Sie die ID eines Benutzers ein.">
+										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositID')}">
 										<f:attribute name="userNameToTopUp" value="#{userNameToTopUp}" />
 										<f:validator validatorId="offlineTransactionValidator" />
 									</h:inputText>
@@ -104,22 +103,24 @@
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Benutzername:</span>
+										style="width: 160px; text-align: right;">
+										#{sessionUser.getLabel('adminManagement.row.payment.username')}:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										value="#{paymentOfflineBean.user.username}"
 										id="userNameToTopUp" required="true"
-										requiredMessage="Bitte geben Sie den Benutzernamen Benutzers ein."
+										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositUsername')}"
 										binding="#{userNameToTopUp}"/>
 									<h:message for="userNameToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Betrag:</span>
+										style="width: 160px; text-align: right;">
+										#{sessionUser.getLabel('adminManagement.row.payment.deposit')}:</span>
 									<h:inputText class="form-control" style="width:340px;"
 										value="#{paymentOfflineBean.amountToDeposit}"
 										id="amountToTopUp" reuqired="true"
-										requiredMessage="Bitte geben Sie den aufzuladenden Betrag ein."
-										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
+										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositAmount')}"
+										converterMessage="#{sessionUser.getLabel('adminManagement.converterMessage.depositAmount')}">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
@@ -130,21 +131,21 @@
 									<h:commandButton id="spendMoney"
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{paymentOfflineBean.depositAmountOnUserAccount}"
-										value="Konto aufladen"/>
+										value="#{sessionUser.getLabel('adminManagement.row.payment.chargeButton')}"/>
 										<h:message id="moneyMessage" for="spendMoney" style="color:red" />
 								</div>
 							</h:form>
 							<br /> <br />
 							<h:form class="form-horizontal" id="formGiveCredit">
-								<h4>Überziehungskredit festlegen</h4>
+								<h4>#{sessionUser.getLabel('adminManagement.row.payment.overdraftText')}</h4>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;"> Gewährter
-										Kredit:</span>
+										style="width: 160px; text-align: right;"> 
+										#{sessionUser.getLabel('adminManagement.row.payment.credit')}:</span>
 									<h:inputText class="form-control"
 										value="#{systemConfigurationBean.overdraftCredit}"
 										style="width:340px;" id="amountGivenCredit"
-										converterMessage="Der eingegebene Betrag entspricht nicht den Vorgaben. ">
+										converterMessage="#{sessionUser.getLabel('adminManagement.converterMessage.depositAmount')}">
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
@@ -155,31 +156,32 @@
 									<h:commandButton id="giveCredit"
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineOverdraftCredit}"
-										value="Speichern" />
+										value="#{sessionUser.getLabel('adminManagement.row.payment.saveButton')}" />
 								</div>
 							</h:form>
 						</div>
 					</div>
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">Account</h3>
+							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.account.header')}</h3>
 						</div>
 						<div class="panel-body">
 							<h:form>
-								<h4>Art der Accountaktivierung festlegen</h4>
+								<h4>#{sessionUser.getLabel('adminManagement.row.account.text')}</h4>
 								<div class="input-group">
 									<span class="input-group-addon"
-										style="width: 160px; text-align: right;">Accountaktivierung
-										durch:</span>
+										style="width: 160px; text-align: right;">
+										#{sessionUser.getLabel('adminManagement.row.account.activate')}:</span>
 									<div>
 										<h:selectOneMenu class="form-control"
 											value="#{systemConfigurationBean.accountActivationType}"
 											id="accountActivationSelection">
-											<f:selectItem itemValue="EMAIL" itemLabel="E-Mailverifikation" />
+											<f:selectItem itemValue="EMAIL" 
+											itemLabel="#{sessionUser.getLabel('adminManagement.row.account.mail')}" />
 											<f:selectItem itemValue="EMAIL_COURSE_LEADER"
-												itemLabel="E-Mailverifikation und Aktivierung durch Kursleiter" />
+												itemLabel="#{sessionUser.getLabel('adminManagement.row.account.instructor')}" />
 											<f:selectItem itemValue="EMAIL_ADMIN"
-												itemLabel="E-Mailverifikation und Aktivierung durch Administrator" />
+												itemLabel="#{sessionUser.getLabel('adminManagement.row.account.admin')}" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -188,7 +190,7 @@
 									<h:commandButton id="saveAccountActivation"
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineAccountActivationType}"
-										value="Speichern" />
+										value="#{sessionUser.getLabel('adminManagement.row.account.saveButton')}" />
 								</div>
 							</h:form>
 						</div>

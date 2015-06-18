@@ -91,8 +91,8 @@ public class PaymentOfflineBean implements Serializable {
 		    this.user.getUserID(), newBalance);
 	    transaction.commit();
 	    FacesMessageCreator.createFacesMessage(
-		    "formToUpAccount:spendMoney", "Der Account wurde mit "
-			    + this.amountToDeposit + " Euro aufgeladen.");
+		    "formToUpAccount:spendMoney", sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit1")
+			    + this.amountToDeposit + sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit2"));
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();
 	    LogHandler.getInstance().error(
@@ -100,7 +100,7 @@ public class PaymentOfflineBean implements Serializable {
 			    + this.user.getUserID());
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney",
-		    "Fehler beim Aufladen des Benutzeraccounts.");
+		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit3"));
 	}
 
     }

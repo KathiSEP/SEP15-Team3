@@ -374,7 +374,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			"Error occured during creating the"
 				+ " a new course unit.");
 		FacesMessageCreator.createFacesMessage(null,
-			"Problem beim Anlegen der Kurseinheit!");
+			sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem"));
 		this.transaction.rollback();
 	    }
 	}
@@ -484,7 +484,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    } catch (InvalidDBTransferException e) {
 		transaction.rollback();
 		FacesMessageCreator.createFacesMessage(null,
-			"Problem beim Bearbeiten der Kurseinheit!");
+			sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.edit"));
 		LogHandler.getInstance().error(
 			"Error occured during deleting" + " a course unit.");
 	    }
@@ -786,9 +786,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    long endCourse = tempCourse.getEnddate().getTime();
 		    
 		    FacesMessageCreator.createFacesMessage(null,
-			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
+			    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
 				    + dateAsString(new Date(beginCourse))
-				    + " bis zum "
+				    + sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check2")
 				    + dateAsString(new Date(endCourse)) + " !");
 		}
 
