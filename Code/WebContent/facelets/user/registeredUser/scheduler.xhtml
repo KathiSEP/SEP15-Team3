@@ -13,7 +13,18 @@
             <body>
         
                 <h:form class="form-horizontal" id="scheduler">
-                    <div class="panel panel-info">
+                    <div class="panel panel-info" align="center">
+                    
+                        <h2>
+	                        <h:outputLabel value="#{schedulerBean.currentMonday}"> -
+	                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+	                        </h:outputLabel>
+	                        <h:outputText value="&#160;" />
+	                        <h:outputLabel value="#{schedulerBean.currentSunday}">
+	                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
+	                        </h:outputLabel>
+                        </h2>
+                    
                         <div class="panel-body">
                             <h:dataTable value="#{schedulerBean.weekDays}" var="week"
                                 styleClass="order-table"

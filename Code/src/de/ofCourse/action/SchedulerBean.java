@@ -48,6 +48,8 @@ public class SchedulerBean implements Pagination {
     
     private java.sql.Date currentMonday;
     
+    private java.sql.Date currentSunday;
+    
     private List<Week> weekDays;
     
     /**
@@ -67,29 +69,33 @@ public class SchedulerBean implements Pagination {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		currentMonday = getCurrentMonday(transaction, currentDate);
     		
-    		
-    		
-    		
-    		
     		Calendar cal = Calendar.getInstance();
+    		cal.setTime(currentMonday);
+    		cal.add(Calendar.DATE, +6);
+    		currentSunday = new Date(cal.getTime().getTime());
+    		
+    		
+    		
+    		Calendar cale = Calendar.getInstance();
 
     		// Set the Calendar object to your date
-    		cal.setTime(currentMonday);
+    		cale.setTime(currentMonday);
 
     		// Subtracts 5 days from the date
     		// cal.add(Calendar.DATE, -5);
 
     		// Increments the date by one
-    		cal.roll(Calendar.DATE, true);
+    		cale.roll(Calendar.DATE, true);
 
     		// Decrements the date by one
     		// cal.roll(Calendar.DATE, false);
 
     		// Convert the Calendar object back to a Date
-    		Date newDate = new Date(cal.getTime().getTime());
+    		Date newDate = new Date(cale.getTime().getTime());
     		
     		System.out.println("monday: " + currentMonday);
     		System.out.println("tuesday: " + newDate);
+    		System.out.println("sunday: " + currentSunday);
     		System.out.println("monday after increment: " + currentMonday);
     		
     		
@@ -308,6 +314,14 @@ public class SchedulerBean implements Pagination {
 
 	public void setCurrentMonday(Date currentMonday) {
 		this.currentMonday = currentMonday;
+	}
+
+	public java.sql.Date getCurrentSunday() {
+		return currentSunday;
+	}
+
+	public void setCurrentSunday(java.sql.Date currentSunday) {
+		this.currentSunday = currentSunday;
 	}
 
 	public List<Week> getWeekDays() {
