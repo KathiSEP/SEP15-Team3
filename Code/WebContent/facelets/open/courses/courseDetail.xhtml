@@ -11,34 +11,34 @@
 		<ui:define name="title"><h:outputText value="#{courseDetailBean.getCourse().title}"/></ui:define>
 		<body>
 			<ui:define name="content">
-				<h1>Kursdetails</h1>
+				<h1>#{sessionUser.getLabel('courseDetail.header')}</h1>
 				<div class="row">
 					<div class="col-lg-12">
-						<p style="font-size:16px;">Hier finden Sie alle Informationen zum Kurs <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
+						<p style="font-size:16px;">#{sessionUser.getLabel('courseDetail.welcomeText')} <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
 					</div>
 				</div>
 				<h:form>
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
 						<div class="panel panel-info">
-							<div class="panel-heading"><strong>Details</strong></div>
+							<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.details.header')}</strong></div>
 							<div class="panel-body">
 								<div class="input-group">
-									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Kurs-ID:</strong></span>
+									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.id')}</strong></span>
 									<h:inputText class="form-control" readonly="true" style="width:170px;" id="idCourse" value="#{courseDetailBean.courseID}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
-									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Max. Teilnehmer:</strong></span>
+									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.maxParticipants')}</strong></span>
 									<h:inputText class="form-control" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.maxUsers}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
-									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Startdatum:</strong></span>
+									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.start')}</strong></span>
 									<h:inputText class="form-control" id="startDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.startdate}">
                                     	<f:convertDateTime pattern="dd.MM.yyyy"/>
 									</h:inputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
-									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>Enddatum:</strong></span>
+									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.end')}</strong></span>
 									<h:inputText class="form-control" id="endDateCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.enddate}">
                                     	<f:convertDateTime pattern="dd.MM.yyyy"/>
                                     </h:inputText>
@@ -46,29 +46,30 @@
 							</div>
 						</div>
 						<div class="panel panel-info">
-							<div class="panel-heading"><strong>Kursleiter</strong></div>
+							<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.leader.header')}</strong></div>
 							<div class="panel-body">
 								<h:dataTable value="#{courseDetailBean.leadersOfCourse}" var="user" class="table table-hover">
 									<h:column>
-		                            	<f:facet name="header">Name</f:facet>
+		                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.leader.name')}</f:facet>
 		                                <h:outputText value="#{user.lastname}"/>
 		                            </h:column>
 		                            <h:column>
-		                            	<f:facet name="header">Vorname</f:facet>
+		                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.leader.prename')}</f:facet>
 		                            	<h:outputText value="#{user.firstname}"/>
 		                            </h:column>
            							<h:column>
-                		            	<f:facet name="header">E-Mail</f:facet>
+                		            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.leader.mail')}</f:facet>
                         		        <h:outputText value="#{user.email}"/>
                             		</h:column>
    		                            <h:column>	                            
            			                    <f:facet name="header"/>
-                    		            <h:commandButton id="löschen" class="btn btn-xs btn-danger" value="Löschen" action="#{courseDetailBean.removeCourseLeaders}"
-                    		            					rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
+                    		            <h:commandButton id="löschen" class="btn btn-xs btn-danger" value="#{sessionUser.getLabel('courseDetail.row.leader.deleteButton')}"
+                    		            					action="#{courseDetailBean.removeCourseLeaders}" rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                             	        	<f:param name="leaderID" value="#{user.userID}"/>
                                 		</h:commandButton>
                                 		<f:facet name="header"/>
-                                		<h:commandButton id="profil" class="btn btn-xs btn-info" value="Profil" action="/facelets/user/registeredUser/adminProfile.xhtml">
+                                		<h:commandButton id="profil" class="btn btn-xs btn-info" value="#{sessionUser.getLabel('courseDetail.row.leader.profileButton')}"
+                                							action="/facelets/user/registeredUser/adminProfile.xhtml">
                                 			<f:param name="userID" value="#{user.userID}"/>
                                			</h:commandButton>
                             		</h:column>
@@ -78,7 +79,7 @@
 					</div>
 					<div class="col-lg-7">
 						<div class="panel panel-info">
-							<div class="panel-heading"><strong>Beschreibung</strong></div>
+							<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.description')}</strong></div>
 							<div class="panel-body">
 								<div class="row" style="text-align:center;"></div>
 								<h:graphicImage value="/image?courseImage=#{courseDetailBean.courseID}" width="200" height="200" ></h:graphicImage>
@@ -92,22 +93,25 @@
 						</div>
 						<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'REGISTERED_USER' || courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 							<div class="panel panel-info">
-								<div class="panel-heading"><strong>Verwaltung</strong></div>
+								<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.management.header')}</strong></div>
 								<div class="panel-body">
 									<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 									<div class="container">
-										<h:commandButton class="btn btn-warning" value="Bearbeiten" rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
-										<h:commandButton class="btn btn-success" value="Speichern" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
+										<h:commandButton class="btn btn-warning" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
+															rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
+										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
+															rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
 									</div>
 									<div class="container">
 										<p/>
-										<h:commandButton class="btn btn-success" value="Kurseinheit anlegen" rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
-														action="#{courseDetailBean.loadEditCourseUnitPage}">
+										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.createUnit')}"
+															rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
+															action="#{courseDetailBean.loadEditCourseUnitPage}">
 										<f:param name="editMode" value="false"/>
 										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 										<p/>
 										</h:commandButton>
-										<h:commandButton class="btn btn-info" value="Kursteilnehmer anzeigen" action="#{courseDetailBean.loadParticipantsPage}"/>
+										<h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}"/>
 										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 									</div>
 									</h:panelGroup>
@@ -116,17 +120,18 @@
 										<h:form>
 											<h:panelGroup rendered="#{!courseDetailBean.isRegistered}">
 												<h:selectBooleanCheckbox id="cNews" value="#{courseDetailBean.registeredForCourseNews}"/>
-											    <h:outputLabel value="Bei Anmeldung Kursnews erhalten" for="cNews"/>
+											    <h:outputLabel value="#{sessionUser.getLabel('courseDetail.row.management.newsCheckbox')}" for="cNews"/>
 											    <p/>
 											</h:panelGroup>
-											<h:commandButton class="btn btn-success" value="Zum Kurs anmelden" rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-											<h:commandButton class="btn btn-danger" value="Vom Kurs abmelden" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
+											<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.signUp')}"
+																rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
 										</h:form>
 									</div>
 									<div class="container">
 									<p/>
 										<h:inputText rendered="#{courseDetailBean.editMode}" class="form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"/>
-										<h:commandButton class="btn btn-success form-group" value="Kursleiter hinzufügen" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}"/>
+										<h:commandButton class="btn btn-success form-group" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}"/>
 									</div>
 								</div>
 							</div>
@@ -136,49 +141,51 @@
 				</h:form>
 				<h:form>
 					<div class="panel panel-info">
-						<div class="panel-heading"><strong>Kurseinheiten</strong></div>
+						<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.units.header')}</strong></div>
 						<div class="panel-body">
 							<h:dataTable value="#{courseDetailBean.courseUnitsOfCourse}" var="courseUnit" class="table table-hover">
 								<h:column>
-	                            	<f:facet name="header">Startdatum</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.start')}</f:facet>
 	                                <h:outputText value="#{courseUnit.startime}">
 	                                    <f:convertDateTime pattern="dd.MM.yyyy"/>
 	                                </h:outputText> 
 	                            </h:column>
 	                            <h:column>
-	                           		<f:facet name="header">Uhrzeit</f:facet>
+	                           		<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.startTime')}</f:facet>
 	                                <h:outputText value="#{courseUnit.startime}">
 	                                    <f:convertDateTime pattern="HH:mm"/>
 	                                </h:outputText>
 	                            </h:column>
 	                            <h:column>
-	                            	<f:facet name="header">Endzeitpunkt</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.end')}</f:facet>
 	                            	<h:outputText value="#{courseUnit.endtime}"/>
 	                            </h:column>
 	                            <h:column>
-	                            	<f:facet name="header">Beschreibung</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.description')}</f:facet>
 	                            	<h:outputText value="#{courseUnit.description}"/>
 	                            </h:column>
 	                            <h:column>
-	                            	<f:facet name="header">Status</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.state')}</f:facet>
 	                            	<h:outputText class="badge" value="#{courseUnit.numberOfUsers}/#{courseUnit.maxUsers}"/>
 	                            </h:column>
 	                            <h:column>
-	                            	<f:facet name="header">Ort</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.location')}</f:facet>
 	                            	<h:outputText value="#{courseUnit.address.location}"/>
 	                            </h:column>
 	                            <h:column>
-	                            	<f:facet name="header">Preis</f:facet>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.price')}</f:facet>
 	                            	<h:outputText class="badge" value="#{courseUnit.price}€"/>
 	                            </h:column>
 	                            <h:column>
 	                                <f:facet name="header"/>
-   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="Anmelden" action="#{courseDetailBean.signUpForCourseUnits}"
+   	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.units.signUp')}"
+   	    	                        					action="#{courseDetailBean.signUpForCourseUnits}"
    	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
-   	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+   	                        							|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
             	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
                    	            	</h:commandButton>
-                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="Abmelden" action="#{courseDetailBean.signOffFromCourseUnits}"
+                   	            	<h:commandButton id="abmelden" class="btn btn-warning" value="#{sessionUser.getLabel('courseDetail.row.units.signOff')}"
+                   	            						action="#{courseDetailBean.signOffFromCourseUnits}"
                  	            						rendered="#{courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'
    	    	                        					|| courseDetailBean.sessionUser.userRole == 'COURSE_LEADER' || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
            	                        	<f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
@@ -186,8 +193,9 @@
 	                            </h:column>
 	                            <h:column>
 	                                <f:facet name="header"/>
-   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="Bearbeiten" action="#{courseDetailBean.loadEditCourseUnitPage}"
-   	    	                        				rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+   	    	                        <h:commandButton id="bearbeiten" class="btn btn-warning" value="#{sessionUser.getLabel('courseDetail.row.units.edit')}"
+   	    	                        					action="#{courseDetailBean.loadEditCourseUnitPage}"
+   	    	                        					rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
    	    	                        	<f:param name="editMode" value="true"/>
             	                        <f:param name="courseUnitID" value="#{courseUnit.courseUnitID}"/>
             	                        <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
@@ -200,7 +208,7 @@
                                         <ul class="pagination">
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{courseDetailBean.pagination.currentPageNumber>=1}"
-                                                    value="Zurueck" action="#{courseDetailBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{courseDetailBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
@@ -227,7 +235,7 @@
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}"
-                                                    value="Weiter" action="#{courseDetailBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{courseDetailBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber+1}"  />
                                                 </h:commandButton></li>

@@ -8,12 +8,12 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	  xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">OfCourse :: AGB</ui:define>
+		<ui:define name="title">#{sessionUser.getLabel('agb.title')}</ui:define>
 		<body>
 			<ui:define name="content">
-			<h1>Allgemeine Geschäftsbedingungen</h1>
+			<h1>#{sessionUser.getLabel('agb.header')}</h1>
 			<div class="container col-xs-3 col-xs-offset-4" align="center">
-				<h:outputText value="Hier könnten Ihre AGBs stehen"/>
+				<h:outputText value="#{sessionUser.getLabel('agb.welcomeText')}"/>
 			</div>
 			</ui:define>
 		</body>
