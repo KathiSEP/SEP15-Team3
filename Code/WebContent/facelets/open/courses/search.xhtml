@@ -13,44 +13,44 @@
     </head>
     
     <ui:composition template="/WEB-INF/template.xhtml">
-        <ui:define name="title">Kursangebot</ui:define>
+        <ui:define name="title">#{sessionUser.getLabel('search.title')}</ui:define>
         <ui:define name="content">
             <body>
-                <h1>Kursangebot</h1>
+                <h1>#{sessionUser.getLabel('search.header')}</h1>
                 <div class="row">
                     <div class="col-lg-12">
-                        <p style="font-size:16px;">Sie können auf dieser Seite das Kursangebot von <strong>OfCourse</strong> durchsuchen. Hier werden alle verfügbaren Kurse angezeigt.</p>
+                        <p style="font-size:16px;">#{sessionUser.getLabel('search.welcomeText')}</p>
                     </div>
                 </div>
                 <div class="row" style="padding-top:20px;">
                     <div class="col-lg-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading"><strong>Kurse filtern</strong></div>
+                            <div class="panel-heading"><strong>#{sessionUser.getLabel('search.row.filterCourses.header')}</strong></div>
                             <div class="panel-body">
                             
                                 <h:form class="form-horizontal" id="formFilterCourses">
                                     <div class="row">
                                         <div class="col-lg-4">
                                             <div class="input-group">
-                                                <span class="input-group-addon" style="width:80px; text-align:right;">Zeitraum:</span>
+                                                <span class="input-group-addon" style="width:80px; text-align:right;">#{sessionUser.getLabel('search.row.filterCourses.period')}:</span>
                                                 <h:selectOneMenu class="form-control" value="#{searchCourseBean.displayPeriod}" id="filterDate">
-                                                    <f:selectItem itemValue="day" itemLabel="Tagesangebot" />
-                                                    <f:selectItem itemValue="week" itemLabel="Wochenangebot" />
-                                                    <f:selectItem itemValue="total" itemLabel="Gesamtes Angebot" />
+                                                    <f:selectItem itemValue="day" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.daily')}" />
+                                                    <f:selectItem itemValue="week" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.weekly')}" />
+                                                    <f:selectItem itemValue="total" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.total')}" />
                                                 </h:selectOneMenu>
-                                                <h:commandButton id="courseOffers" class="btn btn-default" value="Anzeigen" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
+                                                <h:commandButton id="courseOffers" class="btn btn-default" value="#{sessionUser.getLabel('search.row.filterCourses.viewButton')}" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
                                             </div>
                                             <br/>
                                         </div>
                                         <h:panelGroup rendered="#{(searchCourseBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER'  || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
                                         <div class="col-lg-3" >
                                             <div class="input-group">
-                                                <span class="input-group-addon" style="width:100px; text-align:right;">Filtereigenschaft:</span>
+                                                <span class="input-group-addon" style="width:100px; text-align:right;">#{sessionUser.getLabel('search.row.filterCourses.param')}:</span>
                                                 <h:selectOneMenu class="form-control" id="filterProperty" value="#{searchCourseBean.searchParam}">
-                                                    <f:selectItem itemValue="title" itemLabel="Titel" />
-                                                    <f:selectItem itemValue="courseID" itemLabel="Kurs-ID" />
-                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-                                                    <f:selectItem itemValue="date" itemLabel="Datum" />
+                                                    <f:selectItem itemValue="title" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.title')}" />
+                                                    <f:selectItem itemValue="courseID" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.id')}" />
+                                                    <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.leader')}" />
+                                                    <f:selectItem itemValue="date" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.date')}" />
                                                 </h:selectOneMenu>
                                             </div>
                                         </div>
@@ -63,7 +63,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
-                                            <h:commandButton id="searchCourses" class="btn btn-default" value="Suchen" action="#{searchCourseBean.search()}"/>
+                                            <h:commandButton id="searchCourses" class="btn btn-default" value="#{sessionUser.getLabel('search.row.filterCourses.searchButton')}" action="#{searchCourseBean.search()}"/>
                                         </div>
                                     </div>                                                                  
                                 </h:form>
@@ -92,7 +92,7 @@
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
                                                 <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="courseID" />
-                                                ID
+                                                #{sessionUser.getLabel('search.table.id')}
                                             </h:commandLink>
                                          </f:facet>  
                                          <h:link outcome="courseDetail" value="#{course.courseID}" >
@@ -104,7 +104,7 @@
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
                                                 <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="title" />
-                                                Titel
+                                                #{sessionUser.getLabel('search.table.title')}
                                             </h:commandLink>
                                          </f:facet>  
                                          <h:link outcome="courseDetail" value="#{course.title}" >
@@ -116,7 +116,7 @@
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
                                                 <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="maxUsers" />
-                                                Max. Teilnehmer
+                                                #{sessionUser.getLabel('search.table.maxParticipants')}
                                             </h:commandLink>
                                          </f:facet>
                                          #{course.maxUsers}
@@ -126,7 +126,7 @@
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
                                                 <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="starts" />
-                                                Beginnt
+                                                #{sessionUser.getLabel('search.table.start')}
                                             </h:commandLink>
                                          </f:facet>
                                          #{course.startdate}
@@ -136,7 +136,7 @@
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
                                                 <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="ends" />
-                                                Endet
+                                                #{sessionUser.getLabel('search.table.end')}
                                             </h:commandLink>
                                          </f:facet>
                                          #{course.enddate}
@@ -149,7 +149,7 @@
                                         <ul class="pagination">
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchCourseBean.pagination.currentPageNumber>=1}"
-                                                    value="Zurueck" action="#{searchCourseBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{searchCourseBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
@@ -176,7 +176,7 @@
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchCourseBean.pagination.numberOfPages>=searchCourseBean.pagination.currentPageNumber+1}"
-                                                    value="Weiter" action="#{searchCourseBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{searchCourseBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber+1}"  />
                                                 </h:commandButton></li>

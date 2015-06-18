@@ -109,8 +109,8 @@
 	                                    <div class="input-group" >
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.salutation')}:</span>
 	                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.salutation}" >
-	                                            <f:selectItem itemValue="mr" itemLabel="Herr" />
-	                                            <f:selectItem itemValue="ms" itemLabel="Frau" />
+	                                            <f:selectItem itemValue="mr" itemLabel="#{sessionUser.getLabel('profile.row.userData.mr')}" />
+	                                            <f:selectItem itemValue="ms" itemLabel="#{sessionUser.getLabel('profile.row.userData.ms')}" />
 	                                        </h:selectOneMenu>
 	                                    </div>
 	                                
