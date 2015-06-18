@@ -305,7 +305,7 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
 		\hline   LanguageManager.java                                  & 16.06.2015 \ \ 14:00        & 16.06.2015 \ \ 16:00       & Patrick Cretu  &  2h                 & \\ 
-		\hline   language\_de.properties                               & 16.06.2015 \ \ 09:00        & 16.06.2015 \ \ 12:00       & Ricky Strohmeier &  3h                 & \\
+		\hline   language\_de.properties                               & 16.06.2015 \ \ 09:00        & 16.06.2015 \ \ 12:00       & Ricky Strohmeier &  3h    & 5h \\
 		\hline   language\_en.properties                               & 17.06.2015 \ \ 09:00        & 17.06.2015 \ \ 12:00       & Patrick Cretu  &  3h                 & \\ 
 		\hline 
 	\end{tabular} \ \\
@@ -324,13 +324,14 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\end{tabular} \ \\
 	\ \\
 	
-	\subsection{Teilnehmerliste}
+	\subsection{Trainerprofil}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\
-		\hline   leaderProfile.xhtml                      & 15.06.2015 \ \ 08:00        & 15.06.2015 \ \ 10:00        & Ricky Strohmeier &  2h                 &\\
-		\hline   UserProfileBean.initializeLeaderProfile()& 15.06.2015 \ \ 13:00        & 15.06.2015 \ \ 14:30        & Ricky Strohmeier &  1,5h                 &\\
-		\hline   UserDAO.getCoursesLeadedBy(Transaction trans, int userID, PaginationData pagination)  & 15.06.2015 \ \ 14:30        & 15.06.2015 \ \ 16:00   &  Ricky &  1,5h                 & Strohmeier\\
-		\hline   TrainerProfileTest.java  & 17.06.2015 \ \ 08:00        & 17.06.2015 \ \ 10:00        & Ricky Strohmeier &  2h                 &\\
+		\hline   leaderProfile.xhtml                      & 15.06.2015 \ \ 08:00        & 15.06.2015 \ \ 10:00        & Ricky Strohmeier &  2h                 &   3h\\
+		\hline   Initialisierung des Trainerprofils& 15.06.2015 \ \ 13:00        & 15.06.2015 \ \ 14:30        & Ricky Strohmeier &  1,5h       & 1,5h \\
+		\hline   UserDAO.getCoursesLeadedBy(Transaction trans, int userID, PaginationData pagination)  & 15.06.2015 \ \ 14:30        & 15.06.2015 \ \ 16:00   &  Ricky  Strohmeier &  1,5h  & 2h\\
+		\hline   UserDAO.getNumberOfCoursesLeadedBy(Transaction trans, int userID, PaginationData pagination)  &      &    &  Ricky  Strohmeier &   & 0,5h\\
+		\hline   TrainerProfileTest.java  & 17.06.2015 \ \ 08:00        & 17.06.2015 \ \ 10:00        & Ricky Strohmeier &  2h  &    \\
 		\hline 
 	\end{tabular} \ \\
 	\ \\
@@ -372,7 +373,7 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 		\hline   SystemDAO.setActivationType(Transaction trans, String type)  & 16.06.2015 \ \ 10:00       & 16.06.2015  \ \  11:00      & Tobias Fuchs &  1h   & 1h\\
 		\hline   SystemDAO.setSignOffLimit(Transaction trans, int limit)      & 16.06.2015 \ \ 11:00       & 16.06.2015  \ \  12:00      & Tobias Fuchs &  1h   & 1h\\
 		\hline   CourseUnitManagementTest.java                           & 11.06.2015 \ \ 08:00       & 11.06.2015  \ \  10:00       &  Tobias Fuchs &   2h     & 9h\\
-		\hline   Überarbeitungen(Pagination,...)        &  &    &  Tobias Fuchs &    & 8h\\
+		\hline   Überarbeitungen Pagination,...                     &      &                     &  Tobias Fuchs &    & 6h\\
 		\hline 
 	\end{tabular} \ \\
 	\ \\
@@ -380,9 +381,9 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{AGB, Impressum, Hilfe}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\
-		\hline   agb.xhtml          & 16.06.2015 \ \ 13:00        & 16.06.2015 \ \ 15:00        & Ricky Strohmeier &  2h                 &\\
-		\hline   imprint.xhtml      & 16.06.2015 \ \ 15:00        & 16.06.2015 \ \ 16:00        & Ricky Strohmeier &  1h                 &\\
-		\hline   help.xhtml         & 16.06.2015 \ \ 16:00        & 16.06.2015 \ \ 18:00        & Ricky Strohmeier &  2h                 &\\
+		\hline   agb.xhtml          & 16.06.2015 \ \ 13:00        & 16.06.2015 \ \ 15:00        & Ricky Strohmeier &  2h                 & 0,5h\\
+		\hline   imprint.xhtml      & 16.06.2015 \ \ 15:00        & 16.06.2015 \ \ 16:00        & Ricky Strohmeier &  1h                 & 0,5\\
+		\hline   help.xhtml         & 16.06.2015 \ \ 16:00        & 16.06.2015 \ \ 18:00        & Ricky Strohmeier &  2h                 & \\
 		\hline 
 	\end{tabular} \ \\
 	\ \\	
@@ -393,5 +394,8 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 		\hline   Maintenance.java         & 16.06.2015 \ \ 16:30       & 16.06.2015  \ \  18:00        & Kathi Hölzl &  3h  &  1,5h \\
 		\hline   CourseDAO.doCourseMaintenance(Transaction trans)         & 16.06.2015 \ \ 16:00       & 16.06.2015  \ \  16:30        & Kathi Hölzl &  0,5 h  &  0,5h \\
 		\hline
-	\end{tabular}				
+	\end{tabular}	
+	
+
+				
 \end{landscape}
