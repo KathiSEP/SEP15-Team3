@@ -7,84 +7,84 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html">
     <ui:composition template="/WEB-INF/template.xhtml">
-        <ui:define name="title">Benutzerprofil</ui:define>
+        <ui:define name="title">#{sessionUser.getLabel('profile.title')}</ui:define>
         <ui:define name="content">
             <body>
-                <h1>Benutzerprofil</h1>
+                <h1>#{sessionUser.getLabel('profile.header')}</h1>
                 <div class="row">
                     <div class="col-lg-12">
-                        <p style="font-size:16px;">Hier haben Sie die Möglichkeit Ihre persönlichen Daten einzusehen und zu ändern.</p>
+                        <p style="font-size:16px;">#{sessionUser.getLabel('profile.welcomeText')}</p>
                     </div>
                 </div>
                 <div class="row" style="padding-top:20px;">
                     <div class="col-lg-6">
                         <div class="panel panel-info">
                             <div class="panel-heading">
-                                <strong>Benutzerdaten</strong>
+                                <strong>#{sessionUser.getLabel('profile.row.userData.header')}</strong>
                             </div>
                             <div class="panel-body">
                                 
                                 <h:form class="form-horizontal" id="formSettings">
 			                        <h:panelGroup rendered="#{userProfileBean.readOnly}">
 			                            <div class="input-group">
-			                                <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
+			                                <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.salutation')}:</span>
 			                                <h:outputLabel class="form-control" value="#{userProfileBean.user.salutation}" />
 			                            </div>
 			                                
 	                                    <div class="input-group" style="padding-top:25px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.username}" />
 	                                    </div>
 	                                
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.prename')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.firstname}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.name')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.lastname}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.birthday')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.dateOfBirth}" >
 	                                            <f:convertDateTime pattern="dd.MM.yyyy" timeZone="CET" />
 	                                        </h:outputLabel>
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.street')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.street}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.houseNumber')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.houseNumber}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Stadt:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.city')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.city}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.zip')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.zipCode}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.country')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.address.country}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.email}" />
 	                                    </div>
 	                                    <br/>
 	                                    
-	                                    <h:commandButton id="changeSettings" class="btn btn-info" value="Bearbeiten" action="#{userProfileBean.setReadOnly(false)}" />
+	                                    <h:commandButton id="changeSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.editButton')}" action="#{userProfileBean.setReadOnly(false)}" />
 			                        </h:panelGroup>
                                 </h:form>
                                 
@@ -107,7 +107,7 @@
                                 <h:form class="form-horizontal" id="formChangeSettings">
                                     <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
 	                                    <div class="input-group" >
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Anrede:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.salutation')}:</span>
 	                                        <h:selectOneMenu class="form-control" id="titleRegister" value="#{userProfileBean.salutation}" >
 	                                            <f:selectItem itemValue="mr" itemLabel="Herr" />
 	                                            <f:selectItem itemValue="ms" itemLabel="Frau" />
@@ -115,7 +115,7 @@
 	                                    </div>
 	                                
 	                                    <div class="input-group" style="padding-top:25px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Benutzername:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
 	                                            value="#{userProfileBean.user.username}" 
 	                                            required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein.">
@@ -123,7 +123,7 @@
 	                                    </div>
 	                                
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Vorname:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.prename')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="firstnameRegister"
 	                                            value="#{userProfileBean.user.firstname}" 
 	                                            validatorMessage="Ihr Vorname darf höchstens 100 Zeichen lang sein.">
@@ -132,7 +132,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Name:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.name')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="lastnameRegister"
 	                                            value="#{userProfileBean.user.lastname}" 
 	                                            validatorMessage="Ihr Nachname darf höchstens 100 Zeichen lang sein.">
@@ -141,7 +141,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Geburtstag:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.birthday')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="birthdateRegister"
 	                                            value="#{userProfileBean.user.dateOfBirth}" 
 	                                            converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.">
@@ -151,7 +151,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Straße:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.street')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="streetRegister"
 	                                            value="#{userProfileBean.user.address.street}" 
 	                                            validatorMessage="Ihre Straße darf höchstens 100 Zeichen lang sein.">
@@ -160,7 +160,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Hausnummer:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.houseNumber')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="houseNumberRegister"
 	                                            value="#{userProfileBean.user.address.houseNumber}" 
 	                                            validatorMessage="Ihre Hausnummer darf höchstens 9 Zeichen lang sein.">
@@ -169,7 +169,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Stadt:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.city')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="locationRegister"
 	                                            value="#{userProfileBean.user.address.city}" 
 	                                            validatorMessage="Ihre Stadt muss zwischen 1 und 100 Zeichen lang sein.">
@@ -178,7 +178,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Postleitzahl:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.zip')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="zipcodeRegister"
 	                                            value="#{userProfileBean.user.address.zipCode}" 
 	                                            validatorMessage="Ihre Postleitzahl muss zwischen 1 und 10 Zeichen lang sein.">
@@ -187,7 +187,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.country')}:</span>
 	                                        <h:inputText class="form-control" style="width:300px;" id="countryRegister"
 	                                            value="#{userProfileBean.user.address.country}" 
 	                                            validatorMessage="Ihr Land muss zwischen 1 und 100 Zeichen lang sein.">
@@ -196,7 +196,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">E-Mail-Adresse:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister"
 	                                            value="#{userProfileBean.user.email}" 
 	                                            required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein.">
@@ -205,7 +205,7 @@
 	                                    </div>
 	                                    
                                         <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.password')}:</span>
 	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister"
 	                                            value="#{userProfileBean.password}" 
 	                                            required="true" requiredMessage="Bitte geben Sie ein Passwort ein.">
@@ -215,7 +215,7 @@
                                         </div>
                                         
                                         <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">Passwort bestätigen:</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.passwordConfirmation')}:</span>
 	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"
 	                                            value="#{userProfileBean.confirmPassword}" 
 	                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein." binding="#{confirmPassword}">
@@ -224,17 +224,22 @@
                                         
                                         <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
 	                                        <div class="input-group" style="padding-top:5px;">
-	                                            <span class="input-group-addon" style="width: 160px; text-align: right;">Benutzerrolle:</span>
+	                                            <span class="input-group-addon" style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.role')}:</span>
 	                                                <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
 	                                                    <f:selectItem itemValue="registered" itemLabel="Benutzer" />
 	                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
 	                                                    <f:selectItem itemValue="admin" itemLabel="Administrator" />
 	                                                </h:selectOneMenu>
 	                                        </div>
+	                                        <br/>
+	                                        
+	                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"/>
+	                                        
                                         </h:panelGroup>
                                         <br/>
+                                        <br/>
 	                                    
-	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="Speichern" action="#{userProfileBean.saveSettings()}" />
+	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.saveButton')}" action="#{userProfileBean.saveSettings()}" />
                                     </h:panelGroup>
                                 </h:form>
                                 <br/>
@@ -250,7 +255,7 @@
                             <div class="col-lg-12">
                                 <div class="panel panel-info">
                                     <div class="panel-heading">
-                                        <strong>Profilbild</strong>
+                                        <strong>#{sessionUser.getLabel('profile.row.picture.header')}</strong>
                                     </div>
                                     
                                     <div class="panel-body">
@@ -262,19 +267,24 @@
                                             </div>
                                             <br/>
                                             
-                                            <h:inputFile class="btn btn-default" id="userImage" value="#{userProfileBean.image}" rendered="#{userProfileBean.readOnly == false}">
-                                                <f:validator validatorId="imageValidator"></f:validator>
-                                            </h:inputFile>
-                                            <h:message for="userImage" style="color:red" />
-                                            <br/>
+                                            <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
                                             
-                                            <div class="col-lg-4" style="text-align:right;">
-                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="Profilbild speichern" action="#{userProfileBean.uploadProfilePic()}" rendered="#{userProfileBean.readOnly == false}"/>
-                                            </div>
+	                                            <h:inputFile class="btn btn-default" id="userImage" value="#{userProfileBean.image}">
+	                                                <f:validator validatorId="imageValidator"></f:validator>
+	                                            </h:inputFile>
+	                                            <h:message for="userImage" style="color:red" />
+	                                            <br/>
+	                                            
+	                                            <div class="col-lg-4" style="text-align:right;">
+	                                                <h:commandButton id="editProfilePicture" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.picture.savePictureButton')}" action="#{userProfileBean.uploadProfilePic()}"/>
+	                                            </div>
+	                                            
+	                                            <div class="col-lg-4" style="text-align:right;">
+	                                                <h:commandButton id="deleteProfilePicture" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.picture.deletePictureButton')}" action="#{userProfileBean.deleteProfilePic()}"/>
+	                                            </div>
                                             
-                                            <div class="col-lg-4" style="text-align:right;">
-                                                <h:commandButton id="deleteProfilePicture" class="btn btn-info" value="Profilbild löschen" action="#{userProfileBean.deleteProfilePic()}" rendered="#{userProfileBean.readOnly == false}"/>
-                                            </div>
+                                            </h:panelGroup>
+                                            
                                         </div>
                                     </div>
                                 </div>                                              
@@ -282,10 +292,10 @@
                             <div class="col-lg-12">
                                 <div class="panel panel-info">
                                     <div class="panel-heading">
-                                        <strong>Kontostand</strong>
+                                        <strong>#{sessionUser.getLabel('profile.row.creditBalance.header')}</strong>
                                     </div>
                                     <div class="panel-body">
-                                        Ihr aktueller Kontostand beträgt:
+                                        #{sessionUser.getLabel('profile.row.creditBalance.text')}:
                                         <h:outputLabel value="#{userProfileBean.user.accountBalance}"/>
                                         €
                                     </div>

@@ -215,6 +215,26 @@ public class UserProfileBean implements Pagination {
     	return check;
     }
     
+    public String deleteUser() {
+    	String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+    	transaction = Connection.create();
+    	transaction.start();
+    	
+    	try {
+    		UserDAO.delete(transaction, userID, true);
+    		transaction.commit();
+    		
+    		goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=true";
+    	} catch (InvalidDBTransferException e) {
+    		LogHandler
+            .getInstance()
+            .error("SQL Exception occoured during executing "
+                    + "deleteUser()");
+    		transaction.rollback();
+    	}
+    	return goToPage;
+    }
+    
     /**
      * Initializes the profile page of the user with the details of the
      * user.
