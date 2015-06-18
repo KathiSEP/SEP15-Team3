@@ -80,7 +80,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         FacesContext fc = FacesContext.getCurrentInstance();
         NavigationHandler nav = fc.getApplication().getNavigationHandler();
         try {
-           fc.addMessage("exceptionForm:CourseRegistration", new FacesMessage("Dear User that shouldnt have happened") );
+           fc.addMessage(null, new FacesMessage("Dear User that shouldnt have happened") );
            nav.handleNavigation(fc, null, "/facelets/ErrorPages/CourseRegistrationException.xthml?faces-redirect=true" );
            fc.renderResponse();
         } finally {

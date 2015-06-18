@@ -9,22 +9,22 @@
 	<ui:define name="content">
 		<h1>Error</h1>
 		<body>
-		<h:form class="form-horizontal" id="exceptionForm" >
-        
-        <h:commandButton id="exceptionButton"
-                                        class="btn btn-success pull-right" style="width:135px;"                                        
-                                        value="Test"/>
-                                        
-        <h:message id="CourseRegistration" for="exceptionButton" style="color:red" />
-        
-        
-        <img src="#{request.contextPath}/resources/img/Money.jpg"></img>
-        
-        </h:form>
-        
-	
+			<h:form class="form-horizontal" id="exceptionForm">
+
+				
+
+				<p class="lead">A Error occured during signing up for a Course/CourseUnit. The problems could be: 
+				The Course/CourseUnit reached their maximal amount of participants 
+				or you dont have enough money to sign up for the courseUnit </p>
+				
+
+				<img src="#{request.contextPath}/resources/img/Money.jpg"></img>
+
+			</h:form>
+
+
 		</body>
-		
+
 	</ui:define>
 	<ui:define name="footer">
 	</ui:define>
