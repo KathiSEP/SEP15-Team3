@@ -61,7 +61,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
            Throwable thr = context.getException();
 
            if ( thr.getMessage() == "java.lang.NullPointerException" ) {
-              redirectToDefault();
+              redirectToDefault();              
+            } else if( thr.getMessage().contains("de.ofCourse.exception.CourseRegistrationException")){
+                redirectToCourseRegistration(thr);  
             } else {
               redirectTo404();  
             }
@@ -69,6 +71,22 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         }
         
      }
+
+
+    /**
+     * 
+     */
+    private void redirectToCourseRegistration(Throwable thr) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        NavigationHandler nav = fc.getApplication().getNavigationHandler();
+        try {
+           fc.addMessage("exceptionForm:CourseRegistration", new FacesMessage("Dear User that shouldnt have happened") );
+           nav.handleNavigation(fc, null, "/facelets/ErrorPages/CourseRegistrationException.xthml?faces-redirect=true" );
+           fc.renderResponse();
+        } finally {
+           this.exceptionList.remove();
+        }
+    }
 
 
     /**
@@ -96,8 +114,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         FacesContext fc = FacesContext.getCurrentInstance();
           NavigationHandler nav = fc.getApplication().getNavigationHandler();
           try {
-             fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
-             nav.handleNavigation(fc, null, "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
+             fc.addMessage( null , new FacesMessage("Dear User that shouldnt have happened") );
+             nav.handleNavigation(fc, null , "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
              fc.renderResponse();
           } finally {
              exceptionList.remove();

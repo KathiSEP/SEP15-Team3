@@ -462,18 +462,24 @@ public class CourseDetailBean implements Pagination, Serializable {
     public void signUpForCourseUnits() throws CourseRegistrationException {
 	Transaction trans = Connection.create();
 	trans.start();
+	
+	
 	// TODO an rickys faclet anpassen
 	if (UserDAO.userIsParticpant(trans, sessionUser.getUserID(), courseID)) {
 	    int courseUnitID = Integer.parseInt(FacesContext
 		    .getCurrentInstance().getExternalContext()
 		    .getRequestParameterMap().get("courseUnitID"));
 	    try {
-		// Instanziere alle Models aus der Datenbank die gebraucht
+		
+	        
+	        // Instanziere alle Models aus der Datenbank die gebraucht
 		// werden
 		CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(
 			trans, courseUnitID);
+		
 		User userWhoTryToSignUp = UserDAO.getUser(trans,
 			sessionUser.getUserID());
+		
 		int currentAmountOfParticipants = CourseUnitDAO
 			.getNumberOfParticipants(trans, courseUnitID);
 
@@ -523,14 +529,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 		trans.rollback();
 		throw new CourseRegistrationException();
 
-	    } catch (CourseRegistrationException e) {
-		trans.rollback();
-		// TODO Faclet Messenge not enough money
-		LogHandler.getInstance().error(
-			"Not enough Money on the Account. User:"
-				+ sessionUser.getUserID()
-				+ "couldnt sign up for courseUnit:"
-				+ courseUnitID);
+	    
 	    }
 	} else {
 	    // TODO FacletMessege
