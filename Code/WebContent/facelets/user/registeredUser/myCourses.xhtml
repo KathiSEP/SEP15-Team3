@@ -97,7 +97,7 @@
 							<h:column>
 								<f:facet name="header" />
 								<h:commandButton id="details" class="btn btn-info"
-									value=" #{sessionUser.getLabel('myCourses.row.registeredCourses.table.details')}"
+									value="#{sessionUser.getLabel('myCourses.row.registeredCourses.table.details')}"
 									action="#{myCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
 									<f:param name="courseID" value="#{course.courseID}" />
 								</h:commandButton>
@@ -109,7 +109,7 @@
 										<ul class="pagination">
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
-													value=" #{sessionUser.getLabel('pagination.back')}" action="#{myCoursesBean.goToSpecificPage}">
+													value="#{sessionUser.getLabel('pagination.back')}" action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
                                             target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
 												</h:commandButton></li>
@@ -136,7 +136,7 @@
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
-													value=" #{sessionUser.getLabel('pagination.forward')}"  action="#{myCoursesBean.goToSpecificPage}">
+													value="#{sessionUser.getLabel('pagination.forward')}"  action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
                                             target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}"  />
 												</h:commandButton></li>
