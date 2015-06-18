@@ -28,7 +28,7 @@
 							cellspacing="0" width="100%">
 							<h:column>
 								<f:facet name="header">
-                                               Bild
+                                              #{sessionUser.getLabel('myCourses.row.registeredCourses.table.picture')}
                                             </f:facet>
 								<h:graphicImage value="/image?courseImage=#{course.courseID}"
 									height="25" />
@@ -151,7 +151,7 @@
 		</h:form>
 		<h:form rendered="#{myCoursesBean.registeredCourses.size()==0}"
 			class="alert alert-warning">
-			<strong>Hinweis:</strong> Sie sind zu keinen Veranstaltungen angemeldet.
+			<strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong>#{sessionUser.getLabel('myCourses.infoText')}
                 </h:form>
 	</ui:define>
 </ui:composition>
