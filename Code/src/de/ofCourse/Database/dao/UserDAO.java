@@ -1130,13 +1130,17 @@ public class UserDAO {
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
     
-    	String sql = "UPDATE \"users\" "
+    	String updateQuery = "UPDATE \"users\" "
     		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, pw_hash = ?, "
     		+ "pw_salt = ?, form_of_address = ?::form_of_address, date_of_birth = ? "
-    		+ "WHERE id = ?";
+    		+ "WHERE id = ?;"
+    		+ "UPDATE \"user_addresses\" "
+    		+ "SET country = ?, city = ?, zip_code = ?, street = ?, house_nr = ? "
+    		+ "WHERE user_id = ?";
     
     	try {
-    	    statement = conn.prepareStatement(sql);
+    	    //Update User Dates
+    	    statement = conn.prepareStatement(updateQuery);
     	    statement.setString(1, user.getFirstname());
     	    statement.setString(2, user.getLastname());
     	    statement.setString(3, user.getUsername());
@@ -1151,6 +1155,14 @@ public class UserDAO {
     	    statement.setDate(8, birthday);
 
     	    statement.setInt(9, user.getUserID());
+
+    	    //Update Address
+    	    statement.setString(10, user.getAddress().getCountry());
+    	    statement.setString(11, user.getAddress().getCity());
+    	    statement.setInt(12, user.getAddress().getZipCode());
+    	    statement.setString(13, user.getAddress().getStreet());
+    	    statement.setInt(14, user.getAddress().getHouseNumber());
+    	    statement.setInt(15, user.getUserID());
     	    statement.executeUpdate();
     	    statement.close();
     	} catch (SQLException e) {
