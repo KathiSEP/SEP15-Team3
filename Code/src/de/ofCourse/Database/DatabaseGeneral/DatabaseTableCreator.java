@@ -88,7 +88,7 @@ public class DatabaseTableCreator {
     			"id SERIAL PRIMARY KEY," +
     			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
     			"cycle_id INTEGER REFERENCES \"cycles\"(id) ON DELETE SET NULL," +
-    			"course_instructor_id INTEGER REFERENCES \"course_instructors\"(id) ON DELETE CASCADE NOT NULL," +
+    			"course_instructor_id INTEGER REFERENCES \"course_instructors\"(course_instructor_id) ON DELETE CASCADE NOT NULL," +
     			"max_participants INTEGER NOT NULL " +
     			"CHECK (max_participants > 0)," +
     			"title TEXT," +
@@ -167,13 +167,6 @@ public class DatabaseTableCreator {
     			"application_hours INTEGER NOT NULL," +
     			"overdraft_credit INTEGER NOT NULL" +
     		")";
-    
-    private static final String CREATE_CUSTOMIZATION_DATA =
-    		"CREATE TABLE customization_data (" +
-    			"row_lock CHAR(1) PRIMARY KEY DEFAULT 'X' CHECK (row_lock = 'X')," +
-    			"css VARCHAR(30) NOT NULL," +
-    			"title VARCHAR(30) NOT NULL" +
-    		")";
 	
     /**
      * Checks whether or not the required tables in the database have been
@@ -207,7 +200,6 @@ public class DatabaseTableCreator {
     	Statement courseParticipants = null;
     	Statement courseUnitParticipants = null;
     	Statement systemAttributes = null;
-    	Statement customizationData = null;
     	Statement check = null;
     	ResultSet count = null;
     	try {
@@ -249,6 +241,10 @@ public class DatabaseTableCreator {
 				cycles.execute(CREATE_CYCLES);
 				conn.commit();
 				
+				courseInstructors = conn.createStatement();
+				courseInstructors.execute(CREATE_COURSE_INSTRUCTORS);
+				conn.commit();
+				
 				courseUnits = conn.createStatement();
 				courseUnits.execute(CREATE_COURSE_UNITS);
 				conn.commit();
@@ -265,10 +261,6 @@ public class DatabaseTableCreator {
 				informUsers.execute(CREATE_INFORM_USERS);
 				conn.commit();
 				
-				courseInstructors = conn.createStatement();
-				courseInstructors.execute(CREATE_COURSE_INSTRUCTORS);
-				conn.commit();
-				
 				courseParticipants = conn.createStatement();
 				courseParticipants.execute(CREATE_COURSE_PARTICIPANTS);
 				conn.commit();
@@ -280,10 +272,6 @@ public class DatabaseTableCreator {
 				
 				systemAttributes = conn.createStatement();
 				systemAttributes.execute(CREATE_SYSTEM_ATTRIBUTES);
-				conn.commit();
-
-				customizationData = conn.createStatement();
-				customizationData.execute(CREATE_CUSTOMIZATION_DATA);
 				trans.commit();
 				
 				System.out.println("Erstellen der Datenbank fertig");
@@ -438,13 +426,6 @@ public class DatabaseTableCreator {
 				}
 			}
 			
-			if (customizationData != null) {
-				try {
-					customizationData.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
     } 
     
