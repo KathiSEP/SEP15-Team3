@@ -112,10 +112,10 @@ public class UserProfileBean implements Pagination {
 
     	try {
     	    transaction.start();
+    	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
+    	            .getExternalContext().getRequestParameterMap().get("userID"));
             pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));
             managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
-    		userID = Integer.parseInt(FacesContext.getCurrentInstance()
-                    .getExternalContext().getRequestParameterMap().get("userID"));
     		user = UserDAO.getUser(transaction, userID);
     	} catch (InvalidDBTransferException e) {
     		LogHandler.getInstance().error("SQL Exception occoured during executing init() in UserProfileBean");
