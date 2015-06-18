@@ -66,6 +66,23 @@ public class SearchCourseBean implements Pagination {
     
     private String orderParam;
     
+  private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
+    
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -395,9 +412,7 @@ public class SearchCourseBean implements Pagination {
 	    transaction.start();
 	    
 	    try {
-    		this.pagination.actualizeCurrentPageNumber(FacesContext
-				.getCurrentInstance().getExternalContext()
-				.getRequestParameterMap().get("page"));
+		this.pagination.setCurrentPageNumber(this.currentPage);
 	    	String period;
 	    	String param;
 	    	String term;
