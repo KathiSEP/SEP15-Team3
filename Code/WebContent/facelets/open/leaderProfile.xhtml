@@ -81,11 +81,11 @@
 	                                						cellspacing="0" width="100%">
                            						<h:column>
 		                                			<f:facet name="header">#{sessionUser.getLabel('leaderProfile.row.courses.name')}</f:facet>
-													<h:outputText class="nowrap" value="#{course.name}"/>
+													<h:outputText class="nowrap" value="#{course.title}"/>
                            						</h:column>
                            						<h:column>
                            							<f:facet name="header">#{sessionUser.getLabel('leaderProfile.row.courses.id')}</f:facet>
-                           							<h:outputText class="nowrap" value="#{course.id}"/>
+                           							<h:outputText class="nowrap" value="#{course.courseID}"/>
                            						</h:column>
 												<h:column>
 													<f:facet name="header" />
