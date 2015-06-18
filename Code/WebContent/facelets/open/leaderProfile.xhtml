@@ -137,15 +137,15 @@
 													</h:panelGroup>
 												</f:facet>
 	                                		</h:dataTable>
+											<h:form rendered="#{userProfileBean.managedCourses.size()==0}" class="alert alert-warning">
+												<strong>Hinweis:</strong>Der Nutzer leitet keine Kurse
+							                </h:form>
 	                                	</div>
 	                                </div>                                           
 	                            </div>
 	                        </div>          
 	                    </div>
                     </h:form>
-					<h:form rendered="#{userProfileBean.registeredCourses.size()==0}" class="alert alert-warning">
-						<strong>Hinweis:</strong> Sie sind zu keinen Veranstaltungen angemeldet.
-	                </h:form>
                 </div>          		
 	        </ui:define>
         </body>

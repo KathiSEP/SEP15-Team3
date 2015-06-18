@@ -1332,6 +1332,36 @@ public class UserDAO {
     }
 
     /**
+     * Fetches the number of courses leaded by a course leader.
+     * @param trans the transaction
+     * @param userID the leader's id
+     * @return the number of courses
+     * @throws InvalidDBTransferException
+     */
+    public static int getNumberOfCoursesLeadedBy(Transaction trans, int userID) throws InvalidDBTransferException {
+
+        int numberOfCourses = 0;
+        String courseQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
+    
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+    
+        PreparedStatement statement = null;
+
+        try {
+            statement = conn.prepareStatement(courseQuery);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            numberOfCourses = resultSet.getInt(1);
+        } catch (SQLException e) {
+            LogHandler.getInstance().error("Error occoured during fetching the number of courses of a certain user.");
+            throw new InvalidDBTransferException();
+        }
+        return numberOfCourses;
+    }
+
+    /**
      * Returns a list of participants of the the selected course.
      * 
      * @param trans

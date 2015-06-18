@@ -12,15 +12,14 @@
 </head>
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">Benutzersuche</ui:define>
+	<ui:define name="title">#{sessionUser.getLabel('searchUser.title')}</ui:define>
 	<ui:define name="content">
 		<body>
-			<h1>Benutzersuche</h1>
+			<h1>#{sessionUser.getLabel('searchUser.header')}</h1>
 			<div class="row">
 				<div class="col-lg-12">
 					<p style="font-size: 16px;">
-						Sie können auf dieser Seite das Kursangebot von <strong>OfCourse</strong>
-						durchsuchen. Hier werden alle verfügbaren Kurse angezeigt.
+						#{sessionUser.getLabel('searchUser.welcomeText')}
 					</p>
 				</div>
 			</div>
@@ -28,7 +27,7 @@
 				<div class="col-lg-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<strong>Benutzer filtern</strong>
+							<strong>#{sessionUser.getLabel('searchUser.row.header')}</strong>
 						</div>
 						<div class="panel-body">
 
@@ -37,12 +36,12 @@
 									<div class="col-lg-4">
 										<div class="input-group">
 											<span class="input-group-addon"
-												style="width: 80px; text-align: right;">Suchparameter:</span>
+												style="width: 80px; text-align: right;">#{sessionUser.getLabel('searchUser.row.filter')}</span>
 											<h:selectOneMenu class="form-control"
 												value="#{searchUserBean.searchParam}" id="filterSearchParam">
-												<f:selectItem itemValue="name" itemLabel="Nachname" />
-												<f:selectItem itemValue="email" itemLabel="E-Mail Adresse" />
-												<f:selectItem itemValue="nickname" itemLabel="Benutzername" />
+												<f:selectItem itemValue="name" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.name')}" />
+												<f:selectItem itemValue="email" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.mail')}" />
+												<f:selectItem itemValue="nickname" itemLabel="#{sessionUser.getLabel('searchUser.row.filter.username')}" />
 
 											</h:selectOneMenu>
 											<h:inputText class="form-control" id="filterInput"
@@ -57,12 +56,12 @@
 
 									<div class="col-lg-3">
 										<h:commandButton id="searchUser" class="btn btn-default"
-											value="Suchen" action="#{searchUserBean.search()}" />
+											value="#{sessionUser.getLabel('searchUser.row.searchButton')}" action="#{searchUserBean.search()}" />
 									</div>
 
 									<div class="col-lg-1">
 										<h:commandButton id="courseOffers" class="btn btn-default"
-											value="Alle Benutzer Anzeigen"
+											value="#{sessionUser.getLabel('searchUser.row.viewAllButton')}"
 											action="#{searchUserBean.displayAllUsers()}" />
 									</div>
 								</div>
@@ -81,7 +80,7 @@
 										<h:column>
 											<f:facet name="header">
                                             
-                                                Profilbild
+                                                #{sessionUser.getLabel('searchUser.table.image')}
                                             
                                          </f:facet>
 											<h:graphicImage value="/image?profilImage=#{user.userID}"
@@ -95,7 +94,7 @@
 													styleClass="theader">
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}" value="nickname" />
-                                                Benutzername
+                                                #{sessionUser.getLabel('searchUser.table.username')}
                                             </h:commandLink>
 											</f:facet>
 											#{user.username}
@@ -109,7 +108,7 @@
 													styleClass="theader">
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}" value="name" />
-                                                Name
+                                                #{sessionUser.getLabel('searchUser.table.name')}
                                             </h:commandLink>
 											</f:facet>
 											#{user.lastname}
@@ -123,7 +122,7 @@
 													styleClass="theader">
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}" value="first_name" />
-                                                Vorname
+                                                #{sessionUser.getLabel('searchUser.table.prename')}
                                             </h:commandLink>
 											</f:facet>
                                          #{user.firstname}
@@ -137,7 +136,7 @@
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}"
 														value="date_of_birth" />
-                                                Geburtsdatum
+                                                #{sessionUser.getLabel('searchUser.table.birthday')}
                                             </h:commandLink>
 											</f:facet>
 											<h:outputText class="nowrap" value="#{user.dateOfBirth}">
@@ -152,7 +151,7 @@
 													styleClass="theader">
 													<f:setPropertyActionListener
 														target="#{searchUserBean.orderParam}" value="email" />
-                                                E-Mail Adresse
+                                                #{sessionUser.getLabel('searchUser.table.mail')}
                                             </h:commandLink>
 											</f:facet>
                                          #{user.email}
@@ -160,11 +159,11 @@
 										<h:column>
 											<f:facet name="header">
                                             
-                                                Button
+                                                #{sessionUser.getLabel('searchUser.table.button')}
                                             
                                          </f:facet>
 											<h:commandButton id="details" class="btn btn-info"
-												value="Bearbeiten" action="#{searchUserBean.loadProfil}">
+												value="#{sessionUser.getLabel('searchUser.table.editButton')}" action="#{searchUserBean.loadProfil}">
 												<f:param name="userID" value="#{user.userID}" />
 											</h:commandButton>
 										</h:column>
@@ -176,7 +175,7 @@
                                         <ul class="pagination">
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchUserBean.pagination.currentPageNumber>=1}"
-                                                    value="Zurueck" action="#{searchUserBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{searchUserBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{searchUserBean.currentPage}" value="#{searchUserBean.pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
@@ -203,7 +202,7 @@
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchUserBean.pagination.numberOfPages>=searchUserBean.pagination.currentPageNumber+1}"
-                                                    value="Weiter" action="#{searchUserBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{searchUserBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
                                             target="#{searchUserBean.currentPage}" value="#{searchUserBean.pagination.currentPageNumber+1}"  />
                                                 </h:commandButton></li>
