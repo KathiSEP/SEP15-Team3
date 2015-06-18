@@ -8,12 +8,107 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	  xmlns:f="http://java.sun.com/jsf/core">
 	<ui:composition template="/WEB-INF/template.xhtml">
-		<ui:define name="title">Hilfe</ui:define>
+		<ui:define name="title">#{sessionUser.getLabel('help.title')}</ui:define>
 		<body>
 			<ui:define name="content">
-			<h1>Hilfe</h1>
-				<div class="container col-xs-3 col-xs-offset-4" align="center">
-					<h:outputText value="Hier folgt die Hilfe" />
+			<h1>#{sessionUser.getLabel('help.header')}</h1>
+				<div class="col-lg-10 col-lg-offset-1">
+					<div class="row">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="basic"><strong><h:outputText value="#{sessionUser.getLabel('help.basic.header')}"/></strong></span>
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.basic.description')}"/>
+								<p/>
+								<h:link value="#{sessionUser.getLabel('help.basic.header')}" fragment="basic"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.authenticate.header')}" fragment="register"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.search.header')}" fragment="search"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.myCourses.header')}" fragment="myCourses"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.scheduler.header')}" fragment="scheduler"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.profile.header')}" fragment="profile"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.courseDetail.header')}" fragment="courseDetail"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.activateUsers.header')}" fragment="activateUsers"/>
+								<br/>
+								<h:link value="#{sessionUser.getLabel('help.management.header')}" fragment="management"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="register"><strong><h:outputText value="#{sessionUser.getLabel('help.authenticate.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.authenticate.registerText')}"/>
+								<p/>
+								<h:outputText value="#{sessionUser.getLabel('help.authenticate.loginText')}"/>
+								<p/>
+								<h:outputText value="#{sessionUser.getLabel('help.authenticate.passwordText')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="search"><strong><h:outputText value="#{sessionUser.getLabel('help.search.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.search.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="myCourses"><strong><h:outputText value="#{sessionUser.getLabel('help.myCourses.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.myCourses.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="scheduler"><strong><h:outputText value="#{sessionUser.getLabel('help.scheduler.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.scheduler.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="profile"><strong><h:outputText value="#{sessionUser.getLabel('help.profile.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.profile.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="courseDetail"><strong><h:outputText value="#{sessionUser.getLabel('help.courseDetail.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.courseDetail.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="activateUsers"><strong><h:outputText value="#{sessionUser.getLabel('help.activateUsers.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.activateUsers.description')}"/>
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<span id="management"><strong><h:outputText value="#{sessionUser.getLabel('help.management.header')}"/></strong></span>							
+							</div>
+							<div class="panel-body">
+								<h:outputText value="#{sessionUser.getLabel('help.management.description')}"/>
+							</div>
+						</div>
+					</div>
 				</div>
 			</ui:define>
 		</body>
