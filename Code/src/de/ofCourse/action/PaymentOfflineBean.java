@@ -10,9 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
-import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.Database.dao.UserDAO;
-import de.ofCourse.exception.BankAccountException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
@@ -78,28 +76,37 @@ public class PaymentOfflineBean implements Serializable {
      * amount is deposited on the users account, that means the account balance
      * of the user is updated in the database.<br>
      * 
-     * 
+     * @author Tobias Fuchs
      */
     public void depositAmountOnUserAccount() {
 	this.transaction.start();
+	
 	try {
-
 	    User tempUser = UserDAO.getUser(transaction, user.getUserID());
 	    float accountBalance = tempUser.getAccountBalance();
 	    float newBalance =accountBalance + amountToDeposit;
-	    UserDAO.updateAccountBalance(transaction,
-		    this.user.getUserID(), newBalance);
+	    
+	    //Update 
+	    UserDAO.updateAccountBalance(
+		    transaction,
+		    this.user.getUserID(), 
+		    newBalance);
 	    transaction.commit();
+	    
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney",
-		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit1")
-			    + this.amountToDeposit 
-			    + sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit2"));
+		    sessionUser.getLabel(
+			    "paymentOfflineBean.FacesMessage.deposit1")
+			    + amountToDeposit 
+			    + sessionUser
+			    .getLabel("paymentOfflineBean.FacesMessage.deposit2"));
+	    
 	} catch (InvalidDBTransferException e) {
+	    
 	    this.transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during depositing money on the account of user: "
-			    + this.user.getUserID());
+			    + user.getUserID());
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney",
 		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit3"));

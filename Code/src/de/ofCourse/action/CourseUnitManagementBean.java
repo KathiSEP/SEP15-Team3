@@ -786,9 +786,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    long endCourse = tempCourse.getEnddate().getTime();
 		    
 		    FacesMessageCreator.createFacesMessage(null,
-			    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
+			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
 				    + dateAsString(new Date(beginCourse))
-				    + sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check2")
+				    + " bis zum "
 				    + dateAsString(new Date(endCourse)) + " !");
 		}
 
