@@ -38,7 +38,7 @@ import de.ofCourse.system.Transaction;
  */
 @ManagedBean
 @ViewScoped
-public class SchedulerBean implements Pagination {
+public class SchedulerBean {
 
 	
     /**
@@ -68,11 +68,7 @@ public class SchedulerBean implements Pagination {
     	try {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		currentMonday = getCurrentMonday(transaction, currentDate);
-    		
-    		Calendar cal = Calendar.getInstance();
-    		cal.setTime(currentMonday);
-    		cal.add(Calendar.DATE, +6);
-    		currentSunday = new Date(cal.getTime().getTime());
+    		calcCurrentSunday();
     		
     		
     		
@@ -98,21 +94,7 @@ public class SchedulerBean implements Pagination {
     		System.out.println("sunday: " + currentSunday);
     		System.out.println("monday after increment: " + currentMonday);
     		
-    		
-    		
-    		
-    		
-    		List<CourseUnit> weeklyUnits =
-    				CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
-    		List<Week> week = new ArrayList<Week>();
-    		int hour = 6;
-    		
-    		for (int i = 0; i < 9; i++) {
-    			week.add(getWeekTuple(weeklyUnits, hour));
-    			hour += 2;
-    		}
-    		
-    		weekDays = week;
+    		transaction.commit();
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
@@ -120,6 +102,7 @@ public class SchedulerBean implements Pagination {
                     + "init()");
     		transaction.rollback();
     	}
+    	getSchedule();
     }
     
     private Date getCurrentMonday(Transaction trans, String currentDate) {
@@ -162,6 +145,13 @@ public class SchedulerBean implements Pagination {
     	}
 		return currentMonday;
 	}
+    
+    private void calcCurrentSunday() {
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(currentMonday);
+		cal.add(Calendar.DATE, +6);
+		currentSunday = new Date(cal.getTime().getTime());
+    }
     
     private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
     	List<CourseUnit> weekRow = new ArrayList<CourseUnit>();
@@ -266,10 +256,6 @@ public class SchedulerBean implements Pagination {
     		break;
     	}
     }
-    
-	public void getUnit(String day, int hour) {
-    	
-    }
 	
     /**
      * Swaps the actual displayed week in the scheduler to the following week.
@@ -277,17 +263,53 @@ public class SchedulerBean implements Pagination {
      * true, it displays the scheduler of the following week.
      */
     public void displayNextWeek() {
+    	calcWeek(currentSunday, +1);
     }
-
+    
     /**
      * Swaps the actual displayed week in the scheduler to the previous week.
      * The method checks whether there is a previous week to display. If this is
      * true, it displays the scheduler of the previous week.
      */
     public void displayPreviousWeek() {
+    	calcWeek(currentMonday, -7);
+    }
+    
+    private void calcWeek(Date date, int interval) {
+    	Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, interval);
+		currentMonday = new Date(cal.getTime().getTime());
+		calcCurrentSunday();
+		getSchedule();
     }
 
-    
+    private void getSchedule() {
+    	transaction = Connection.create();
+    	transaction.start();
+    	
+	    try {	
+	    	List<CourseUnit> weeklyUnits =
+					CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
+			List<Week> week = new ArrayList<Week>();
+			int hour = 6;
+			
+			for (int i = 0; i < 9; i++) {
+				week.add(getWeekTuple(weeklyUnits, hour));
+				hour += 2;
+			}
+			
+			weekDays = week;
+			transaction.commit();
+		} catch (InvalidDBTransferException e) {
+			LogHandler
+	        .getInstance()
+	        .error("SQL Exception occoured during executing "
+	                + "init()");
+			transaction.rollback();
+		}
+    	
+    }
 
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
@@ -330,30 +352,6 @@ public class SchedulerBean implements Pagination {
 
 	public void setWeekDays(List<Week> weekDays) {
 		this.weekDays = weekDays;
-	}
-
-	@Override
-	public void goToSpecificPage() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void sortBySpecificColumn() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public PaginationData getPagination() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPagination(PaginationData pagination) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

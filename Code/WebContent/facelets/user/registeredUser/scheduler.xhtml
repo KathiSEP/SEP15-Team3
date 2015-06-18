@@ -43,7 +43,7 @@
 	                                
 	                                <h:column> 
                                         <f:facet name="header">
-                                            
+                                            Begin
                                         </f:facet>
                                         #{week.hour}
                                      </h:column>
@@ -51,7 +51,7 @@
                                      
                                      <h:column>  
                                          <f:facet name="header">
-                                            Monday
+                                             Monday
                                          </f:facet>  
                                         <!-- <h:link outcome="courseDetail" value="#{course.courseID}" >
                                              <f:param name="courseID" value="#{course.courseID}" />
@@ -61,42 +61,42 @@
                                      
                                      <h:column>  
                                          <f:facet name="header">
-                                            Tuesday
+                                             Tuesday
                                          </f:facet>
                                          #{week.tuesday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                            Wednesday
+                                             Wednesday
                                          </f:facet>
                                          #{week.wednesday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                            Thursday
+                                             Thursday
                                          </f:facet>
                                          #{week.thursday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                            Friday
+                                             Friday
                                          </f:facet>
                                          #{week.friday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                            Saturday
+                                             Saturday
                                          </f:facet>
                                          #{week.saturday}
                                      </h:column>
                                      
                                      <h:column>
                                          <f:facet name="header">
-                                            Sunday
+                                             Sunday
                                          </f:facet>
                                          #{week.sunday}
                                      </h:column>
@@ -106,12 +106,12 @@
                                     <ul class="pagination">
                                     
                                         <li><h:commandButton class="btn btn-info" value="Zurück"
-                                                action="#{schedulerBean.goToSpecificPage()}">
+                                                action="#{schedulerBean.displayPreviousWeek()}">
                                                 <f:param name="page" value="back" />
                                             </h:commandButton></li>
                                             
                                         <li><h:commandButton class="btn btn-info" value="Weiter"
-                                                action="#{scheduler.goToSpecificPage()}">
+                                                action="#{schedulerBean.displayNextWeek()}">
                                                 <f:param name="page" value="forward" />
                                             </h:commandButton></li>
                                     </ul>
