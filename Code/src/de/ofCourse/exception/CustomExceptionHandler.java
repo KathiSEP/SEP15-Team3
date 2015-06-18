@@ -60,7 +60,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
            ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
            Throwable thr = context.getException();
 
-           if ( thr instanceof NullPointerException ) {
+           if ( thr.getMessage() == "java.lang.NullPointerException" ) {
               redirectToDefault();
             } else {
               redirectTo404();  
@@ -79,7 +79,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         NavigationHandler nav = fc.getApplication().getNavigationHandler();
         try {
            fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
-           nav.handleNavigation(fc, null, "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
+           nav.handleNavigation(fc, null, "/facelets/ErrorPages/404.xthml?faces-redirect=true" );
            fc.renderResponse();
         } finally {
            this.exceptionList.remove();
