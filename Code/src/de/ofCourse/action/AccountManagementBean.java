@@ -75,6 +75,27 @@ public class AccountManagementBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
+    
+    /**
+     * Param by which is sorted
+     */
+    private String orderParam;
+
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 
     @PostConstruct
     private void init() {
@@ -172,9 +193,7 @@ public class AccountManagementBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-        this.getPagination().actualizeCurrentPageNumber(FacesContext
-                .getCurrentInstance().getExternalContext()
-                .getRequestParameterMap().get("site"));
+	this.pagination.setCurrentPageNumber(this.currentPage);
         
         transaction.start();
         

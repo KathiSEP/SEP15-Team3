@@ -91,40 +91,47 @@
                             </h:column>
                         
                             <f:facet name="footer">
+                                <h:panelGroup
+                                    rendered="#{accountManagementBean.pagination.numberOfPages>0}">
                                     <div class="row" style="text-align: center;">
                                         <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.back')}"
-                                                    action="#{accountManagementBean.goToSpecificPage}">
-                                                    <f:param name="site" value="back" />
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
+                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{accountManagementBean.currentPage}" value="#{accountManagementBean.pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
                                                     value="#{accountManagementBean.pagination.currentPageNumber}"
-                                                    action="#{accountManagementBean.goToSpecificPage}"
-                                                    rendered="#{accountManagementBean.pagination.currentPageNumber>=1}">
-                                                    <f:param name="site"
-                                                        value="#{accountManagementBean.pagination.currentPageNumber-1}" />
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{accountManagementBean.currentPage}" value="#{accountManagementBean.pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton style="font-weight:bold;"
-                                                    class="btn btn-primary" 
+                                                    class="btn btn-primary"
                                                     value="#{accountManagementBean.pagination.currentPageNumber +1}"
                                                     action="#{accountManagementBean.goToSpecificPage}">
-                                                    <f:param name="site"
-                                                        value="#{accountManagementBean.pagination.currentPageNumber}" />
+                                                    <f:setPropertyActionListener
+                                            target="#{accountManagementBean.currentPage}" value="#{accountManagementBean.pagination.currentPageNumber}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
                                                     value="#{accountManagementBean.pagination.currentPageNumber+2}"
-                                                    action="#{accountManagementBean.goToSpecificPage}"
-                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}">
-                                                    <f:param name="site"
-                                                        value="#{accountManagementBean.pagination.currentPageNumber+1}"/>
-                                                </h:commandButton></li>
-                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.forward')}"
                                                     action="#{accountManagementBean.goToSpecificPage}">
-                                                    <f:param name="site" value="forward"/>
+                                                    <f:setPropertyActionListener
+                                            target="#{accountManagementBean.currentPage}" value="#{accountManagementBean.pagination.currentPageNumber+1}" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
+                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{accountManagementBean.currentPage}" value="#{accountManagementBean.pagination.currentPageNumber+1}"  />
                                                 </h:commandButton></li>
                                         </ul>
                                     </div>
-                                </f:facet>
+                                </h:panelGroup>
+                            </f:facet>
                         
                             </h:dataTable>
                         
