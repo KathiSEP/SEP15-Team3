@@ -36,7 +36,7 @@ public class SetupAdmin {
 			"VALUES ('admin1', 'bazinga@gmail.com', 'password', 'pwsalt', 0, TRUE, " +
 			"TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')";
 	
-	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) FROM \"system_attributes\" WHERE activation_type <> NULL";
+	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) FROM \"system_attributes\"";
 	
 	private static final String INIT_ATTRIBUTES = "INSERT INTO \"system_attributes\"(row_lock, activation_type, " +
 			"withdrawal_hours, overdraft_credit) " +
