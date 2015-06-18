@@ -27,6 +27,10 @@
     <servlet-name>UserPictureHandler</servlet-name>   
     <url-pattern>/image</url-pattern>  
 </servlet-mapping>
+
+
+
+  
   
   <filter>
 

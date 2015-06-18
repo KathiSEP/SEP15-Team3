@@ -3,9 +3,16 @@
  */
 package de.ofCourse.exception;
 
+import java.util.Iterator;
+
 import javax.faces.FacesException;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationHandler;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ExceptionQueuedEvent;
+import javax.faces.event.ExceptionQueuedEventContext;
 
 /**
  * Handles all occuring exceptions concerning the OfCourse system.
@@ -18,6 +25,14 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
     private ExceptionHandler wrapped;
     
     /**
+     * 
+     */
+    public CustomExceptionHandler(ExceptionHandler wrapped) {
+        this.wrapped = wrapped;
+    }
+    
+
+    /**
 	 * Wraps the exception handler.
 	 *
 	 * @return the instance of the wrapped exception handler
@@ -25,8 +40,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	 */
     @Override
     public ExceptionHandler getWrapped() {
-	// TODO Auto-generated method stub
-	return null;
+
+	return wrapped;
     }
 
 	/**
@@ -37,6 +52,34 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	 */
     @Override
     public void handle() throws FacesException {
+        Iterator<ExceptionQueuedEvent> exceptionList = getUnhandledExceptionQueuedEvents().iterator();
+        while ( exceptionList.hasNext() ) {
+    
+           ExceptionQueuedEvent event = exceptionList.next();
+           ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
+           Throwable thr = context.getException();
 
+           if ( thr instanceof NullPointerException ) {
+              redirectToDefault(exceptionList);
+            }
+        }
+        getWrapped().handle();
+     }
+
+
+    /**
+     * @param exceptionList
+     */
+    private void redirectToDefault(Iterator<ExceptionQueuedEvent> exceptionList) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+          NavigationHandler nav = fc.getApplication().getNavigationHandler();
+          try {
+             fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
+             nav.handleNavigation(fc, null, "facelets/ErrorPages/default.xthml" );
+             fc.renderResponse();
+          } finally {
+             exceptionList.remove();
+          }
     }
+    
 }

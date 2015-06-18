@@ -15,6 +15,10 @@
         </phase-listener>
     </lifecycle>
     
+    <factory>
+   <exception-handler-factory>de.ofCourse.exception.CustomExceptionHandlerFactory</exception-handler-factory>
+</factory>
+    
     <validator>
         <validator-id>emailValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.EmailValidator</validator-class>
