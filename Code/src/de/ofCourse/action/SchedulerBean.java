@@ -6,9 +6,7 @@ package de.ofCourse.action;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -161,6 +159,7 @@ public class SchedulerBean implements Pagination {
     
     private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
     	List<CourseUnit> weekRow = new ArrayList<CourseUnit>();
+    	String hourString  = hour + ":00 - \n" + (hour + 2) + ":00";
     	
     	for (CourseUnit unit : weeklyUnits) {
     		if (startsAtRequestedTime(unit, hour)) {
@@ -168,13 +167,13 @@ public class SchedulerBean implements Pagination {
     		}
     	}
     	
-    	return createWeek(weekRow);
+    	Week week = createWeek(weekRow);
+    	week.setHour(hourString);
+    	return week;
     }
     
     private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
     	int hours = unit.getStartime().getHours();
-    	
-    	System.out.println("unit stunde: " + hours);
     	
     	if (hours >= hour && hours < (hour + 2)) {
     		return true;

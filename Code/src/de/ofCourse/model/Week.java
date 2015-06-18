@@ -2,6 +2,8 @@ package de.ofCourse.model;
 
 public class Week {
 
+	private String hour;
+	
 	private String monday;
 	
 	private String tuesday;
@@ -15,6 +17,14 @@ public class Week {
 	private String saturday;
 	
 	private String sunday;
+
+	public String getHour() {
+		return hour;
+	}
+
+	public void setHour(String hour) {
+		this.hour = hour;
+	}
 
 	public String getMonday() {
 		return monday;
