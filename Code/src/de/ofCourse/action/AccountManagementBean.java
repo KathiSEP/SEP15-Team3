@@ -105,7 +105,7 @@ public class AccountManagementBean implements Pagination {
         transaction = Connection.create();
         transaction.start();
         try {
-            this.pagination.actualizeNumberOfPages(UserDAO
+            this.pagination.refreshNumberOfPages(UserDAO
                     .getNumberOfNotAdminActivatedUsers(this.transaction));
             this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
             this.transaction.commit();
@@ -147,7 +147,7 @@ public class AccountManagementBean implements Pagination {
                             "Error occured during adminActivateUsers().");
                     } else {
                         //Activate Users
-                        this.pagination.actualizeNumberOfPages(UserDAO
+                        this.pagination.refreshNumberOfPages(UserDAO
                                 .getNumberOfNotAdminActivatedUsers(this.transaction));
                         this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers
                                 (this.transaction, 

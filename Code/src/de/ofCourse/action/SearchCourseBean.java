@@ -145,7 +145,7 @@ public class SearchCourseBean implements Pagination {
     	pagination.setSortColumn("courseID");
     	
     	try {
-    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
+    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
 	    	List<Course> result = CourseDAO.getCourses(transaction, pagination,
 	    			displayPeriod);
 	    	
@@ -235,7 +235,7 @@ public class SearchCourseBean implements Pagination {
 		pagination.setSortAsc(true);
 		pagination.setSortColumn(searchParam);
 		try {
-    		pagination.actualizeNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
+    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
     		

@@ -271,7 +271,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		if (courseUnit.getCycle() == null) {
 		    courseUnit.setCycle(new Cycle());
 		}
-		this.pagination.actualizeNumberOfPages(CourseUnitDAO
+		this.pagination.refreshNumberOfPages(CourseUnitDAO
 			.getNumberOfParticipants(transaction, courseUnitID));
 		this.participants.setWrappedData(CourseUnitDAO
 			.getParticipiantsOfCourseUnit(transaction, pagination,

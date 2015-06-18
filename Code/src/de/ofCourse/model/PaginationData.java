@@ -80,30 +80,6 @@ public class PaginationData implements Serializable {
     }
     
 
-    /**
-     * Actualizes the number of the current displayed page.
-     * 
-     * @param site
-     *            the selected page number<br>
-     *            <code>forward</code>, the forward button was selected<br>
-     *            <code>back</code>, the back button was selected
-     */
-    public void actualizeCurrentPageNumber(String site) {
-	switch (site) {
-	case "back":
-	    if (getCurrentPageNumber() > 0) {
-		setCurrentPageNumber(getCurrentPageNumber() - 1);
-	    }
-	    break;
-	case "forward":
-	    if (getCurrentPageNumber()  < getNumberOfPages()) {
-		setCurrentPageNumber(getCurrentPageNumber() + 1);
-	    }
-	    break;
-	default:
-	    setCurrentPageNumber(Integer.parseInt(site));
-	}
-    }
 
     /**
      * Actualizes the number of pages of the pagination.
@@ -111,7 +87,7 @@ public class PaginationData implements Serializable {
      * @param numberOfAllItems
      *            number of elements that are to display(with pagination)
      */
-    public void actualizeNumberOfPages(int numberOfAllItems) {
+    public void refreshNumberOfPages(int numberOfAllItems) {
 	int calculatedNumberOfPages = 0;
 
 	if (numberOfAllItems % this.getElementsPerPage() == 0

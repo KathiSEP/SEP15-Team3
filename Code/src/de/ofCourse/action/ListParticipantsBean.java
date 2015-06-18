@@ -125,7 +125,7 @@ public class ListParticipantsBean implements Pagination {
             transaction.start();
             
             try {
-                this.pagination.actualizeNumberOfPages(CourseDAO
+                this.pagination.refreshNumberOfPages(CourseDAO
                       .getNumberOfParticipants(transaction, this.getCourseID()));
                 this.participants.setWrappedData
                         (UserDAO.getParticipantsOfCourse
@@ -169,7 +169,7 @@ public class ListParticipantsBean implements Pagination {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
             } else {
-                this.pagination.actualizeNumberOfPages(CourseDAO
+                this.pagination.refreshNumberOfPages(CourseDAO
                         .getNumberOfParticipants(transaction, this.getCourseID()));
                 this.participants.setWrappedData(UserDAO.
                         getParticipantsOfCourse(

@@ -108,7 +108,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 	transaction.start();
 
 	try {
-	    this.pagination.actualizeNumberOfPages(CourseDAO
+	    this.pagination.refreshNumberOfPages(CourseDAO
 		    .getNumberOfMyCourses(transaction,
 			    this.sessionUser.getUserID()));
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO

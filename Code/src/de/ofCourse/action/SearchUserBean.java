@@ -166,7 +166,7 @@ private int currentPage;
         ArrayList<User> result;
         if (searchParam.equals("name")) {
             pagination
-                    .actualizeNumberOfPages(UserDAO
+                    .refreshNumberOfPages(UserDAO
                             .getNumberOfUsersWithThisName(transaction,
                                     searchParam));
             result = UserDAO.getUsers(transaction,
@@ -362,7 +362,7 @@ private int currentPage;
         pagination.setSortColumn("name");
 
         try {
-            pagination.actualizeNumberOfPages(UserDAO
+            pagination.refreshNumberOfPages(UserDAO
                     .getNumberOfUsers(transaction));
             ArrayList<User> result = getResultArray();
 

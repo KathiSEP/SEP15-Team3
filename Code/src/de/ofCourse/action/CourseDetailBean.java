@@ -179,7 +179,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    if (courseID > 0) {
 		transaction.start();
 		course = CourseDAO.getCourse(transaction, courseID);
-		pagination.actualizeNumberOfPages(CourseUnitDAO
+		pagination.refreshNumberOfPages(CourseUnitDAO
 			.getNumberOfCourseUnits(transaction, courseID));
 		leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
 		courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
