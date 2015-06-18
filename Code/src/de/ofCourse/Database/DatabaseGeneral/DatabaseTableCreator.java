@@ -162,7 +162,7 @@ public class DatabaseTableCreator {
 
     private static final String CREATE_SYSTEM_ATTRIBUTES =
     		"CREATE TABLE system_attributes (" +
-    			"row_lock CHAR(1) PRIMARY KEY DEFAULT 'X' CHECK (row_lock = 'X')," +
+    			"row_lock CHAR(1) PRIMARY KEY CHECK (row_lock = 'X')," +
     			"activation_type ACTIVATION NOT NULL," +
     			"withdrawal_hours INTEGER NOT NULL," +
     			"overdraft_credit INTEGER NOT NULL" +

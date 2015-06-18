@@ -29,11 +29,18 @@ public class SetupAdmin {
 	
 	private static final String CHECK_ADMIN =
 			"SELECT COUNT(*) FROM \"users\" WHERE role = 'SYSTEM_ADMINISTRATOR'";
+	
 	private static final String INIT_ADMIN =
 			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, credit_balance," +
-			"email_verification, admin_verification, veri_string, role, status)" +
-			"VALUES ('admin1', 'bazinga@gmail.com', 'password', 'pwsalt', 0, TRUE," +
+			"email_verification, admin_verification, veri_string, role, status) " +
+			"VALUES ('admin1', 'bazinga@gmail.com', 'password', 'pwsalt', 0, TRUE, " +
 			"TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')";
+	
+	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) FROM \"system_attributes\" WHERE activation_type <> NULL";
+	
+	private static final String INIT_ATTRIBUTES = "INSERT INTO \"system_attributes\"(row_lock, activation_type, " +
+			"withdrawal_hours, overdraft_credit) " +
+			"VALUES('X', 'EMAIL', 3, 0)";
 	
     /**
      * Checks whether or not the table of users in the database contains an
@@ -44,6 +51,14 @@ public class SetupAdmin {
      * execution of the method
      */
     public static void createInitialAdmin() throws InvalidDBTransferException {
+    	executeInitialization(CHECK_ADMIN, INIT_ADMIN);
+    }
+    
+    public static void setSystemAttributes() throws InvalidDBTransferException {
+    	executeInitialization(CHECK_ATTRIBUTES, INIT_ATTRIBUTES);
+    }
+    
+    private static void executeInitialization(String checkQuery, String initQuery) {
     	Transaction trans = new Connection();
     	trans.start();
     	Connection connection = (Connection) trans;
@@ -55,18 +70,18 @@ public class SetupAdmin {
     	
     	try {
     		check = conn.createStatement();
-    		rst = check.executeQuery(CHECK_ADMIN);
+    		rst = check.executeQuery(checkQuery);
     		rst.next();
     		
     		if ((Long) rst.getObject(1) < 1) {
     			init = conn.createStatement();
-    			init.execute(INIT_ADMIN);
+    			init.execute(initQuery);
     		}
     		trans.commit();
 		} catch (SQLException e) {
 			LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during createInitialAdmin()");
+		    .error("SQL Exception occoured during executeInitialization(String checkQuery, String initQuery)");
 			throw new InvalidDBTransferException();
 		} finally {
 			if (rst != null) {
@@ -75,7 +90,7 @@ public class SetupAdmin {
 				} catch (SQLException e) {
 					LogHandler
 				    .getInstance()
-				    .error("SQL Exception occoured during closing ResultSet in createInitialAdmin()");
+				    .error("SQL Exception occoured during closing ResultSet in executeInitialization(String checkQuery, String initQuery)");
 					throw new InvalidDBTransferException();
 				}
 			}
@@ -86,7 +101,7 @@ public class SetupAdmin {
 				} catch (SQLException e) {
 					LogHandler
 				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in createInitialAdmin()");
+				    .error("SQL Exception occoured during closing PreparedStatement in executeInitialization(String checkQuery, String initQuery)");
 					throw new InvalidDBTransferException();
 				}
 			}
@@ -97,7 +112,7 @@ public class SetupAdmin {
 				} catch (SQLException e) {
 					LogHandler
 				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in createInitialAdmin()");
+				    .error("SQL Exception occoured during closing PreparedStatement in executeInitialization(String checkQuery, String initQuery)");
 					throw new InvalidDBTransferException();
 				}
 			}
