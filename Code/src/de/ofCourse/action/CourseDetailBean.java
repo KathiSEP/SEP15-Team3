@@ -958,11 +958,11 @@ System.out.println(delLeaderString);
 	    if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,
 		    this.course.getCourseID())) {
 		FacesMessageCreator.createFacesMessage(null,
-			"Der Kursleiter wurde erfolgreich hinzugefügt!");
+			"Der Kursleiter wurde erfolgreich gelöscht!");
 		this.transaction.commit();
 	    } else {
 		FacesMessageCreator.createFacesMessage(null,
-			"Hinzufügen des Kursleiters fehlgeschlagen!");
+			"Löschen des Kursleiters fehlgeschlagen!");
 		this.transaction.rollback();
 	    }
 	} catch (NumberFormatException e) {

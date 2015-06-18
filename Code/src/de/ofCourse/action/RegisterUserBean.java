@@ -166,8 +166,7 @@ public class RegisterUserBean {
             try {
                 // Hash the inserted password.
                 // Generate the salt.
-                Date currentTime = new Date();
-                String salt = currentTime.getTime() * Math.random() + "";
+                String salt = PasswordHash.getSalt();
                 String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
                         salt);
                 // Check if the inserted mail already exists in the system.
