@@ -13,5 +13,19 @@ package de.ofCourse.exception;
 public class InvalidDBTransferException extends RuntimeException {
 
     private static final long serialVersionUID = -5414704117180836087L;
+    
+    /**
+     * 
+     */
+    public InvalidDBTransferException(){
+        super("A Error occured during process on Database");
+    }
+    
+    /**
+     * @param message
+     */
+    public InvalidDBTransferException(String message){
+        super(message);
+    }
 
 }
