@@ -53,6 +53,28 @@ public class ListParticipantsBean implements Pagination {
     private int courseID;
 
     /**
+     * Param by which is sorted
+     */
+    private String orderParam;
+
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
+    
+    /**
      * Stores the the list of participants that is displayed on the page.
      */
     private DataModel<User> participants;
@@ -200,9 +222,7 @@ public class ListParticipantsBean implements Pagination {
     @Override
     public void goToSpecificPage() {
         
-        this.getPagination().actualizeCurrentPageNumber(FacesContext
-                .getCurrentInstance().getExternalContext()
-                .getRequestParameterMap().get("site"));
+	this.pagination.setCurrentPageNumber(this.currentPage);
         transaction.start();
         
         try {

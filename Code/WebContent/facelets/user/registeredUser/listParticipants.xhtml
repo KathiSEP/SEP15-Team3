@@ -72,41 +72,48 @@
                                      <h:selectBooleanCheckbox id="checked" value="#{participant.selected}"/>
                             </h:column>
                         
-                            <f:facet name="footer">
+                       <f:facet name="footer">
+                                <h:panelGroup
+                                    rendered="#{listParticipantsBean..pagination.numberOfPages>0}">
                                     <div class="row" style="text-align: center;">
                                         <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.back')}"
-                                                    action="#{listParticipantsBean.goToSpecificPage}">
-                                                    <f:param name="site" value="back" />
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{listParticipantsBean..pagination.currentPageNumber>=1}"
+                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{listParticipantsBean..goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{listParticipantsBean..currentPage}" value="#{listParticipantsBean..pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
-                                                    value="#{listParticipantsBean.pagination.currentPageNumber}"
-                                                    action="#{listParticipantsBean.goToSpecificPage}"
-                                                    rendered="#{listParticipantsBean.pagination.currentPageNumber>=1}">
-                                                    <f:param name="site"
-                                                        value="#{listParticipantsBean.pagination.currentPageNumber-1}" />
+                                                    rendered="#{listParticipantsBean..pagination.currentPageNumber>=1}"
+                                                    value="#{listParticipantsBean..pagination.currentPageNumber}"
+                                                    action="#{listParticipantsBean..goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{listParticipantsBean..currentPage}" value="#{listParticipantsBean..pagination.currentPageNumber-1}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton style="font-weight:bold;"
-                                                    class="btn btn-primary" 
-                                                    value="#{listParticipantsBean.pagination.currentPageNumber +1}"
-                                                    action="#{listParticipantsBean.goToSpecificPage}">
-                                                    <f:param name="site"
-                                                        value="#{listParticipantsBean.pagination.currentPageNumber}" />
+                                                    class="btn btn-primary"
+                                                    value="#{listParticipantsBean..pagination.currentPageNumber +1}"
+                                                    action="#{listParticipantsBean..goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{listParticipantsBean..currentPage}" value="#{listParticipantsBean..pagination.currentPageNumber}"  />
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
-                                                    value="#{listParticipantsBean.pagination.currentPageNumber+2}"
-                                                    action="#{listParticipantsBean.goToSpecificPage}"
-                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=listParticipantsBean.pagination.currentPageNumber+1}">
-                                                    <f:param name="site"
-                                                        value="#{listParticipantsBean.pagination.currentPageNumber+1}"/>
+                                                    rendered="#{listParticipantsBean..pagination.numberOfPages>=listParticipantsBean..pagination.currentPageNumber+1}"
+                                                    value="#{listParticipantsBean..pagination.currentPageNumber+2}"
+                                                    action="#{listParticipantsBean..goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean..pagination.currentPageNumber+1}" />
                                                 </h:commandButton></li>
-                                            <li><h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('pagination.forward')}"
-                                                    action="#{listParticipantsBean.goToSpecificPage}">
-                                                    <f:param name="site" value="forward"/>
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{listParticipantsBean..pagination.numberOfPages>=listParticipantsBean..pagination.currentPageNumber+1}"
+                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{listParticipantsBean..goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                            target="#{listParticipantsBean..currentPage}" value="#{listParticipantsBean..pagination.currentPageNumber+1}"  />
                                                 </h:commandButton></li>
                                         </ul>
                                     </div>
-                                </f:facet>
+                                </h:panelGroup>
+                            </f:facet>
                         
                         </h:dataTable>
                         
