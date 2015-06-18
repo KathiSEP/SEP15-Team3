@@ -91,8 +91,10 @@ public class PaymentOfflineBean implements Serializable {
 		    this.user.getUserID(), newBalance);
 	    transaction.commit();
 	    FacesMessageCreator.createFacesMessage(
-		    "formToUpAccount:spendMoney", sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit1")
-			    + this.amountToDeposit + sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit2"));
+		    "formToUpAccount:spendMoney",
+		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit1")
+			    + this.amountToDeposit 
+			    + sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit2"));
 	} catch (InvalidDBTransferException e) {
 	    this.transaction.rollback();
 	    LogHandler.getInstance().error(
