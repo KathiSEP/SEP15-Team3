@@ -1124,46 +1124,48 @@ public class UserDAO {
      *             if any error occurred during the execution of the method
      * @author Ricky Strohmeier
      */
-    public static void updateUser(Transaction trans, User user, String pwHash)
+    public static void updateUser(Transaction trans, User user, String pwHash, String salt)
 	    throws InvalidDBTransferException {
-	PreparedStatement statement = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+    	PreparedStatement statement = null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    
+    	String sql = "UPDATE \"users\" "
+    		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, pw_hash = ?, "
+    		+ "pw_salt = ?, form_of_address = ?::form_of_address, date_of_birth = ? "
+    		+ "WHERE id = ?";
+    
+    	try {
+    	    statement = conn.prepareStatement(sql);
+    	    statement.setString(1, user.getFirstname());
+    	    statement.setString(2, user.getLastname());
+    	    statement.setString(3, user.getUsername());
+    	    statement.setString(4, user.getEmail());
+    	    statement.setString(5, pwHash);
+    	    statement.setString(6, salt);
+    	    statement.setString(7, user.getSalutation().toString());
 
-	String sql = "UPDATE \"users\" "
-		+ "SET first_name = ?, name = ?, email = ?, pw_hash = ?, "
-		+ "date_of_birth = ?, form_of_address = ?, nickname = ? "
-		+ "WHERE id = ?";
+    	    java.sql.Date birthday = new java.sql.Date(user.getDateOfBirth()
+    	            .getTime());
+    	    
+    	    statement.setDate(8, birthday);
 
-	try {
-	    statement = conn.prepareStatement(sql);
-	    statement.setString(1, user.getFirstname());
-	    statement.setString(2, user.getLastname());
-	    statement.setString(3, user.getEmail());
-	    statement.setString(4, pwHash);
-
-	    java.sql.Date date = new java.sql.Date(user.getDateOfBirth()
-		    .getTime());
-
-	    statement.setDate(5, date);
-	    statement.setString(6, user.getSalutation().toString());
-	    statement.setString(7, user.getUsername());
-	    statement.setInt(8, user.getUserID());
-	    statement.executeUpdate();
-	    statement.close();
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured in updateUser from UserDAO");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    try {
-		statement.close();
-	    } catch (SQLException e) {
-		LogHandler
-			.getInstance()
-			.error("Exception occoured in updateUser statment.close from UserDAO");
-	    }
-	}
+    	    statement.setInt(9, user.getUserID());
+    	    statement.executeUpdate();
+    	    statement.close();
+    	} catch (SQLException e) {
+    	    LogHandler.getInstance().error(
+    		    "SQL Exception occoured in updateUser from UserDAO");
+    	    throw new InvalidDBTransferException();
+    	} finally {
+    	    try {
+    		statement.close();
+    	    } catch (SQLException e) {
+    		LogHandler
+    			.getInstance()
+    			.error("Exception occoured in updateUser statment.close from UserDAO");
+    	    }
+    	}
     }
 
     /**
@@ -1178,25 +1180,25 @@ public class UserDAO {
      */
     public static void overridePassword(Transaction trans, String mail,
 	    String password) throws InvalidDBTransferException {
-	PreparedStatement statement = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	String sql = "UPDATE \"users\" " + "SET pw_hash = ? "
-		+ "WHERE email = ?";
-
-	try {
-	    statement = conn.prepareStatement(sql);
-	    statement.setString(1, password);
-	    statement.setString(2, mail);
-	    statement.executeUpdate();
-	    statement.close();
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing overridePassword(Transaction trans, String mail, String password");
-	    throw new InvalidDBTransferException();
-	}
+    	PreparedStatement statement = null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
+    
+    	String sql = "UPDATE \"users\" " + "SET pw_hash = ? "
+    		+ "WHERE email = ?";
+    
+    	try {
+    	    statement = conn.prepareStatement(sql);
+    	    statement.setString(1, password);
+    	    statement.setString(2, mail);
+    	    statement.executeUpdate();
+    	    statement.close();
+    	} catch (SQLException e) {
+    	    LogHandler
+    		    .getInstance()
+    		    .error("SQL Exception occoured during executing overridePassword(Transaction trans, String mail, String password");
+    	    throw new InvalidDBTransferException();
+    	}
     }
 
     /**

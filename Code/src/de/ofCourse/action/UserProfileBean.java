@@ -147,11 +147,12 @@ public class UserProfileBean implements Pagination {
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
+    			String salt = null;
     			if (password != null) {
-    				String salt = String.valueOf(System.currentTimeMillis() * Math.random());
+    				salt = String.valueOf(System.currentTimeMillis() * Math.random());
     				pwHash = PasswordHash.hash(password, salt);
     			}
-    			UserDAO.updateUser(transaction, user, pwHash);
+    			UserDAO.updateUser(transaction, user, pwHash, salt);
     			transaction.commit();
     			readOnly = true;
     		} else {
