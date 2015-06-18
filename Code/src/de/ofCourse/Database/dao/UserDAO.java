@@ -1337,11 +1337,12 @@ public class UserDAO {
      * @param userID the leader's id
      * @return the number of courses
      * @throws InvalidDBTransferException
+     * @author Ricky Strohmeier
      */
     public static int getNumberOfCoursesLeadedBy(Transaction trans, int userID) throws InvalidDBTransferException {
 
         int numberOfCourses = 0;
-        String courseQuery = "SELECT COUNT(*) FROM \"course_units\" WHERE course_id = ?";
+        String courseQuery = "SELECT COUNT(*) FROM \"course_instructors\" WHERE course_instructor_id = ?";
     
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();

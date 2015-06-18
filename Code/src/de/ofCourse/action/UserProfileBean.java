@@ -99,6 +99,7 @@ public class UserProfileBean implements Pagination {
     private SessionUserBean sessionUser;
 
     private int currentPage;
+
     private static int pageElements = 10;
     
     @PostConstruct
@@ -444,8 +445,6 @@ public class UserProfileBean implements Pagination {
      * @return the userID
      */
     public String getUserIDString() {
-        
-       
         return "" + userID;
     }
 
@@ -464,7 +463,12 @@ public class UserProfileBean implements Pagination {
 	public void setRole(String role) {
 		this.role = role;
 	}
-    
-    
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 }
