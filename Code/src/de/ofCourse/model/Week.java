@@ -2,74 +2,74 @@ package de.ofCourse.model;
 
 public class Week {
 
-	private String Monday;
+	private String monday;
 	
-	private String Tuesday;
+	private String tuesday;
 	
-	private String Wednesay;
+	private String wednesday;
 	
-	private String Thursday;
+	private String thursday;
 	
-	private String Friday;
+	private String friday;
 	
-	private String Saturday;
+	private String saturday;
 	
-	private String Sunday;
-	
+	private String sunday;
+
 	public String getMonday() {
-		return Monday;
+		return monday;
 	}
 
 	public void setMonday(String monday) {
-		Monday = monday;
+		this.monday = monday;
 	}
 
 	public String getTuesday() {
-		return Tuesday;
+		return tuesday;
 	}
 
 	public void setTuesday(String tuesday) {
-		Tuesday = tuesday;
+		this.tuesday = tuesday;
 	}
 
-	public String getWednesay() {
-		return Wednesay;
+	public String getWednesday() {
+		return wednesday;
 	}
 
-	public void setWednesay(String wednesay) {
-		Wednesay = wednesay;
+	public void setWednesday(String wednesday) {
+		this.wednesday = wednesday;
 	}
 
 	public String getThursday() {
-		return Thursday;
+		return thursday;
 	}
 
 	public void setThursday(String thursday) {
-		Thursday = thursday;
+		this.thursday = thursday;
 	}
 
 	public String getFriday() {
-		return Friday;
+		return friday;
 	}
 
 	public void setFriday(String friday) {
-		Friday = friday;
+		this.friday = friday;
 	}
 
 	public String getSaturday() {
-		return Saturday;
+		return saturday;
 	}
 
 	public void setSaturday(String saturday) {
-		Saturday = saturday;
+		this.saturday = saturday;
 	}
 
 	public String getSunday() {
-		return Sunday;
+		return sunday;
 	}
 
 	public void setSunday(String sunday) {
-		Sunday = sunday;
+		this.sunday = sunday;
 	}
-
+	
 }

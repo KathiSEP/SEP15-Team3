@@ -5,6 +5,7 @@ package de.ofCourse.action;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +13,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
-
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
 
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Week;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -41,19 +39,18 @@ import de.ofCourse.system.Transaction;
  *
  */
 @ManagedBean
-@RequestScoped
-public class SchedulerBean {
+@ViewScoped
+public class SchedulerBean implements Pagination {
 
-	
-	private java.sql.Date currentMonday;
 	
     /**
      * Stores the transaction that is used for database interaction.
      */
     private Transaction transaction;
     
-    private Map<Integer, List<List<CourseUnit>>> weekDays
-	  = new HashMap<Integer, List<List<CourseUnit>>>(7);
+    private java.sql.Date currentMonday;
+    
+    private List<Week> weekDays;
     
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -73,11 +70,32 @@ public class SchedulerBean {
     		currentMonday = getCurrentMonday(transaction, currentDate);
     		
     		
-    		LocalDate date = new LocalDate(currentMonday.getTime(), DateTimeZone.UTC);
-    		LocalDate tomorrow = date.plusDays(1);
+    		
+    		
+    		
+    		Calendar cal = Calendar.getInstance();
+
+    		// Set the Calendar object to your date
+    		cal.setTime(currentMonday);
+
+    		// Subtracts 5 days from the date
+    		// cal.add(Calendar.DATE, -5);
+
+    		// Increments the date by one
+    		cal.roll(Calendar.DATE, true);
+
+    		// Decrements the date by one
+    		// cal.roll(Calendar.DATE, false);
+
+    		// Convert the Calendar object back to a Date
+    		Date newDate = new Date(cal.getTime().getTime());
+    		
     		System.out.println("monday: " + currentMonday);
-    		System.out.println("monday + 1: " + tomorrow);
+    		System.out.println("tuesday: " + newDate);
     		System.out.println("monday after increment: " + currentMonday);
+    		
+    		
+    		
     		
     		
     		List<CourseUnit> weeklyUnits =
@@ -89,6 +107,8 @@ public class SchedulerBean {
     			week.add(getWeekTuple(weeklyUnits, hour));
     			hour += 2;
     		}
+    		
+    		weekDays = week;
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
@@ -140,15 +160,15 @@ public class SchedulerBean {
 	}
     
     private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
-    	Week week = null;
+    	List<CourseUnit> weekRow = new ArrayList<CourseUnit>();
     	
-    	for (int i = 0; i < weeklyUnits.size(); i++) {
-    		if (startsAtRequestedTime(weeklyUnits.get(i), hour)) {
-    			
+    	for (CourseUnit unit : weeklyUnits) {
+    		if (startsAtRequestedTime(unit, hour)) {
+    			weekRow.add(unit);
     		}
     	}
     	
-    	return week;
+    	return createWeek(weekRow);
     }
     
     private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
@@ -156,16 +176,96 @@ public class SchedulerBean {
     	
     	System.out.println("unit stunde: " + hours);
     	
-    	if (hours >= hour && hours < hour) {
+    	if (hours >= hour && hours < (hour + 2)) {
     		return true;
     	}
     	return false;
     }
-
+    
+    private Week createWeek(List<CourseUnit> weekRow) {
+    	Week week = new Week();
+    	Date date = new Date(currentMonday.getTime());
+    	
+    	for (int i = 0; i < 7; i++) {
+    		for (CourseUnit unit : weekRow) {
+    			if (unit.getStartime().getDay() == date.getDay()) {
+    				String content = String.valueOf(unit.getCourseUnitID()) +
+    						" " + unit.getTitle() + ": " + String.valueOf(unit.getStartime().getHours()) +
+    						":" + String.valueOf(unit.getStartime().getMinutes()) +
+    						" - " + String.valueOf(unit.getEndtime().getHours()) + ":" +
+    						String.valueOf(unit.getEndtime().getMinutes());
+    				addContent(week, content, i);
+    			}
+    		}
+    		
+    		Calendar cal = Calendar.getInstance();
+    		cal.setTime(date);
+    		cal.roll(Calendar.DATE, true);
+    		date = new Date(cal.getTime().getTime());
+    		// Subtracts 5 days from the date
+    		// cal.add(Calendar.DATE, -5);
+    	}
+    	return week;
+    }
+    
+    private void addContent(Week week, String content, int numDay) {
+    	switch (numDay) {
+    	case 0:
+    		String mon = week.getMonday();
+    		if (mon != null) {
+    			content = mon + "\n" + content;
+    		}
+    		week.setMonday(content);
+    		break;
+    	case 1:
+    		String tue = week.getTuesday();
+    		if (tue != null) {
+    			content = tue + "\n" + content;
+    		}
+    		week.setTuesday(content);
+    		break;
+    	case 2:
+    		String wed = week.getWednesday();
+    		if (wed != null) {
+    			content = wed + "\n " + content;
+    		}
+    		week.setWednesday(content);
+    		break;
+    	case 3:
+    		String thu = week.getThursday();
+    		if (thu != null) {
+    			content = thu + "\n" + content;
+    		}
+    		week.setThursday(content);
+    		break;
+    	case 4:
+    		String fri = week.getFriday();
+    		if (fri != null) {
+    			content = fri + "\n" + content;
+    		}
+    		week.setFriday(content);
+    		break;
+    	case 5:
+    		String sat = week.getSaturday();
+    		if (sat != null) {
+    			content = sat + "\n" + content;
+    		}
+    		week.setSaturday(content);
+    		break;
+    	case 6:
+    		String sun = week.getSunday();
+    		if (sun != null) {
+    			content = sun + "\n" + content;
+    		}
+    		week.setSunday(content);
+    		break;
+    	}
+    }
+    
 	public void getUnit(String day, int hour) {
     	
     }
-
+	
     /**
      * Swaps the actual displayed week in the scheduler to the following week.
      * The method checks whether there is a next week to display. If this is
@@ -203,20 +303,44 @@ public class SchedulerBean {
     	this.sessionUser = sessionUser;
     }
 
-	public Map<Integer, List<List<CourseUnit>>> getWeekDays() {
-		return weekDays;
-	}
-
-	public void setWeekDays(Map<Integer, List<List<CourseUnit>>> weekDays) {
-		this.weekDays = weekDays;
-	}
-
 	public Date getCurrentMonday() {
 		return currentMonday;
 	}
 
 	public void setCurrentMonday(Date currentMonday) {
 		this.currentMonday = currentMonday;
+	}
+
+	public List<Week> getWeekDays() {
+		return weekDays;
+	}
+
+	public void setWeekDays(List<Week> weekDays) {
+		this.weekDays = weekDays;
+	}
+
+	@Override
+	public void goToSpecificPage() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void sortBySpecificColumn() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PaginationData getPagination() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPagination(PaginationData pagination) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

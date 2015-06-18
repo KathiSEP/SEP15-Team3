@@ -12,14 +12,97 @@
         
             <body>
         
-            <h:form class="form-horizontal" id="schedule">
-            
-                <h:inputText value="#{schedulerBean.currentMonday}"></h:inputText>
-            
-	            <br/>
-            
-            
-            </h:form>
+                <h:form class="form-horizontal" id="scheduler">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <h:dataTable value="#{schedulerBean.weekDays}" var="week"
+                                styleClass="order-table"
+                                headerClass="order-table-header"
+                                rowClasses="order-table-odd-row,order-table-even-row"
+                                class="table table-bordered table-hover">
+                        
+                                     
+	                                <!-- <h:column> -->
+	                                    <!-- column header -->
+	                                 <!--   <f:facet name="header">ID</f:facet> -->
+	                                    <!-- row record -->
+	                                <!--    #{course.courseID} -->
+	                                <!-- </h:column> -->
+                                     
+                                     
+                                     <h:column>  
+                                         <f:facet name="header">
+                                            Monday
+                                         </f:facet>  
+                                        <!-- <h:link outcome="courseDetail" value="#{course.courseID}" >
+                                             <f:param name="courseID" value="#{course.courseID}" />
+                                         </h:link> -->
+                                         #{week.monday}
+                                     </h:column>
+                                     
+                                     <h:column>  
+                                         <f:facet name="header">
+                                            Tuesday
+                                         </f:facet>
+                                         #{week.tuesday}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">
+                                            Wednesday
+                                         </f:facet>
+                                         #{week.wednesday}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">
+                                            Thursday
+                                         </f:facet>
+                                         #{week.thursday}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">
+                                            Friday
+                                         </f:facet>
+                                         #{week.friday}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">
+                                            Saturday
+                                         </f:facet>
+                                         #{week.saturday}
+                                     </h:column>
+                                     
+                                     <h:column>
+                                         <f:facet name="header">
+                                            Sunday
+                                         </f:facet>
+                                         #{week.sunday}
+                                     </h:column>
+                                     
+                                     <f:facet name="footer">
+                                    <div class="row" style="text-align:center;">
+                                    <ul class="pagination">
+                                    
+                                        <li><h:commandButton class="btn btn-info" value="Zurück"
+                                                action="#{schedulerBean.goToSpecificPage()}">
+                                                <f:param name="page" value="back" />
+                                            </h:commandButton></li>
+                                            
+                                        <li><h:commandButton class="btn btn-info" value="Weiter"
+                                                action="#{scheduler.goToSpecificPage()}">
+                                                <f:param name="page" value="forward" />
+                                            </h:commandButton></li>
+                                    </ul>
+                                </div>
+                            </f:facet>
+                                    
+                                 </h:dataTable>
+                            </div>
+                        </div>  
+                </h:form>  
         
             </body>
         
