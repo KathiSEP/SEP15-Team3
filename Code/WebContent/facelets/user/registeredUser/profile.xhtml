@@ -221,28 +221,30 @@
 	                                            required="true" requiredMessage="Bitte bestätigen Sie ihr Passwort ein." binding="#{confirmPassword}">
 	                                        </h:inputSecret>
                                         </div>
-                                        
-                                        <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
-	                                        <div class="input-group" style="padding-top:5px;">
-	                                            <span class="input-group-addon" style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.role')}:</span>
-	                                                <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
-	                                                    <f:selectItem itemValue="registered" itemLabel="Benutzer" />
-	                                                    <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-	                                                    <f:selectItem itemValue="admin" itemLabel="Administrator" />
-	                                                </h:selectOneMenu>
-	                                        </div>
-	                                        <br/>
-	                                        
-	                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"/>
-	                                        
-                                        </h:panelGroup>
-                                        <br/>
                                         <br/>
 	                                    
 	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.saveButton')}" action="#{userProfileBean.saveSettings()}" />
                                     </h:panelGroup>
                                 </h:form>
                                 <br/>
+                                
+                                <h:form class="form-horizontal" id="formAdmin">
+                                    <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR' and userProfileBean.readOnly == false}">
+                                            <div class="input-group" style="padding-top:5px;">
+                                                <span class="input-group-addon" style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.role')}:</span>
+                                                    <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
+                                                        <f:selectItem itemValue="registered" itemLabel="#{sessionUser.getLabel('profile.row.userData.registered')}" />
+                                                        <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('profile.row.userData.leader')}" />
+                                                        <f:selectItem itemValue="admin" itemLabel="#{sessionUser.getLabel('profile.row.userData.admin')}" />
+                                                    </h:selectOneMenu>
+                                            </div>
+                                            <br/>
+                                            
+                                            <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"/>
+                                            
+                                        </h:panelGroup>
+                                        <br/>
+                                </h:form>
                                 
                             </div>
                         </div>                  
