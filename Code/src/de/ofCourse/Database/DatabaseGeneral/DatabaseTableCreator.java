@@ -165,7 +165,6 @@ public class DatabaseTableCreator {
     			"row_lock CHAR(1) PRIMARY KEY DEFAULT 'X' CHECK (row_lock = 'X')," +
     			"activation_type ACTIVATION NOT NULL," +
     			"withdrawal_hours INTEGER NOT NULL," +
-    			"application_hours INTEGER NOT NULL," +
     			"overdraft_credit INTEGER NOT NULL" +
     		")";
 	
