@@ -1163,6 +1163,7 @@ public class UserDAO {
     	    statement.setString(13, user.getAddress().getStreet());
     	    statement.setInt(14, user.getAddress().getHouseNumber());
     	    statement.setInt(15, user.getUserID());
+
     	    statement.executeUpdate();
     	    statement.close();
     	} catch (SQLException e) {
