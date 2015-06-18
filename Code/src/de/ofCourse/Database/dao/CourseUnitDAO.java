@@ -1072,7 +1072,7 @@ public class CourseUnitDAO {
 	    throws InvalidDBTransferException {
 	String direction = getSortDirection(pagination.isSortAsc());
 	ArrayList<User> participants = new ArrayList<User>();
-	String query = "SELECT id, name, first_name, nickname FROM"
+	String query = "SELECT id, name, first_name, nickname, credit_balance FROM"
 		+ " users WHERE users.id IN"
 		+ " (SELECT participant_id FROM course_unit_participants"
 		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
@@ -1119,6 +1119,7 @@ public class CourseUnitDAO {
 		}
 		fetchedUser.setUsername(fetchedParticipants
 			.getString("nickname"));
+		fetchedUser.setAccountBalance(fetchedParticipants.getFloat("credit_balance"));
 		participants.add(fetchedUser);
 	    }
 	    stmt.close();

@@ -120,7 +120,7 @@ public class DatabaseConnectionManager {
 	} else {
 	    // There's no free connection
 	    try {
-		wait(1000);
+		wait(2000);
 	    } catch (InterruptedException e) {
 		if (debug) {
 		    System.out.println("LOGGING MESSAGE:   "
