@@ -12,9 +12,6 @@ import java.util.ArrayList;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +34,11 @@ import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
+
+/**
+ * @author Tobias Fuchs
+ *
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
 	CourseUnitDAO.class, CourseDAO.class, CycleDAO.class,

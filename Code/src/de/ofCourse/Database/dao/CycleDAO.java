@@ -95,20 +95,20 @@ public class CycleDAO {
      */
     public static int getCycleId(Transaction trans, int courseUnitId)  throws InvalidDBTransferException { 
 	int cycleID = 0;
-	String query = "SELECT cycle_id FROM course_units WHERE id=?";
+	String query = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 	PreparedStatement stmt = null;
-	ResultSet res = null;
+	ResultSet res2 = null;
 
 	try {
 	    stmt = conn.prepareStatement(query);
 	    stmt.setInt(1, courseUnitId);
 
-	    res = stmt.executeQuery();
-	    res.next();
-	    cycleID = res.getInt("id");
-	    stmt.close();
+	    res2 = stmt.executeQuery();
+	    res2.next();
+	    cycleID = res2.getInt(1);
+	   
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during fetching the cycle id.");
@@ -117,7 +117,7 @@ public class CycleDAO {
 	return cycleID;
     }
     
-    public static void deleteCycle(Transaction trans, int courseUnitId)  throws InvalidDBTransferException {
+    public static void deleteCycle(Transaction trans, int cycleId)  throws InvalidDBTransferException {
 	
 	String deleteQuery="DELETE FROM \"cycles\" WHERE id=?";
 	Connection connection = (Connection) trans;
@@ -125,9 +125,9 @@ public class CycleDAO {
 	PreparedStatement stmt = null;
 	
 	try{
-	int cycle_id = CycleDAO.getCycleId(trans, courseUnitId);
+	
 	stmt = conn.prepareStatement(deleteQuery);
-	stmt.setInt(1, cycle_id);
+	stmt.setInt(1, cycleId);
 	
 	stmt.executeUpdate();
 	stmt.close();

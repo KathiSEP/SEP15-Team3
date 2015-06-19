@@ -1964,35 +1964,6 @@ public class UserDAO {
 	}
 	return notAdminActivatedUsers;
     }
-
-    /**
-     * @param trans
-     * @param userID
-     * @param amount
-     * @throws InvalidDBTransferException
-     * @author evtl TF
-     */
-    public static void updateAccountBalanceInOne(Transaction trans, int userID,
-	    float amount) throws InvalidDBTransferException {
-
-	String balanceQuery = "UPDATE users SET credit_balance = credit_balance + ? WHERE id=?";
-
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	try (PreparedStatement stmt = conn.prepareStatement(balanceQuery)) {
-
-	    stmt.setFloat(1, amount);
-	    stmt.setInt(2, userID);
-	    stmt.executeUpdate();
-
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during updating account balance of "
-			    + userID + ".");
-	    throw new InvalidDBTransferException();
-	}
-    }
     
     
     /**
