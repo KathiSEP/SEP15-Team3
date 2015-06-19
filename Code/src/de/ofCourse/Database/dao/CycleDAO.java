@@ -75,7 +75,6 @@ public class CycleDAO {
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during creating a new cycle.");
-	    e.printStackTrace();
 	    throw new InvalidDBTransferException();
 	}
 	return cycleID;
