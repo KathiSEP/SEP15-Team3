@@ -7,21 +7,20 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-    <ui:define name="title">Neuen Benutzer anlegen</ui:define>
+    <ui:define name="title">#{sessionUser.getLabel('createUser.title')}</ui:define>
     <ui:define name="content">
         <body>
-            <h1>Neuen Benutzer anlegen</h1>
+            <h1>#{sessionUser.getLabel('createUser.header')}</h1>
             <div class="row">
                 <div class="col-lg-12">
-                    <p style="font-size: 16px;">Bitte tragen Sie die Daten des
-                        neuen Benutzers ein.</p>
+                    <p style="font-size: 16px;">#{sessionUser.getLabel('createUser.welcomeText')}</p>
                 </div>
             </div>
             <div class="row" style="padding-top: 20px;">
                 <div class="col-lg-6">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <strong>Benutzerdaten</strong>
+                            <strong>#{sessionUser.getLabel('createUser.createUser.row.userData.header')}</strong>
                         </div>
                         <div class="panel-body">
                             <h:form enctype="multipart/form-data" class="form-horizontal" id="formCreateUser">
@@ -44,16 +43,16 @@
                             
                                 <div class="input-group">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Anrede:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.salutation')}:</span>
                                     <h:selectOneMenu class="form-control" id="titleRegister" value="#{userManagementBean.salutation}">
-                                        <f:selectItem itemValue="mr" itemLabel="Herr" />
-                                        <f:selectItem itemValue="ms" itemLabel="Frau" />
+                                        <f:selectItem itemValue="mr" itemLabel="#{sessionUser.getLabel('profile.row.userData.mr')}" />
+                                        <f:selectItem itemValue="ms" itemLabel="#{sessionUser.getLabel('profile.row.userData.ms')}" />
                                     </h:selectOneMenu>
                                 </div>
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Vorname:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.prename')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="firstnameRegister" value="#{userManagementBean.user.firstname}"
                                         validatorMessage="Der Vorname darf höchstens 100 Zeichen lang sein.">
@@ -63,7 +62,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Name:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.name')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="lastnameRegister" value="#{userManagementBean.user.lastname}"
                                         validatorMessage="Der Nachname darf höchstens 100 Zeichen lang sein.">
@@ -73,7 +72,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Geburtstag:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.birthday')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="birthdateRegister" value="#{userManagementBean.user.dateOfBirth}"
                                         converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.">
@@ -84,7 +83,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Straße:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.street')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="streetRegister" value="#{userManagementBean.user.address.street}"
                                         validatorMessage="Die Straße darf höchstens 100 Zeichen lang sein. ">
@@ -94,7 +93,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Hausnummer:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.houseNumber')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="housenumberRegister" value="#{userManagementBean.user.address.houseNumber}"
                                         validatorMessage="Die Hausnummer darf höchstens 9 Zeichen lang sein. ">
@@ -104,7 +103,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Stadt</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.city')}</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="locationRegister" value="#{userManagementBean.user.address.city}"
                                         validatorMessage="Die Stadt muss zwischen 1 und 100 Zeichen lang sein. ">
@@ -114,7 +113,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Postleitzahl:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.zip')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="zipcodeRegister" value="#{userManagementBean.user.address.zipCode}"
                                         validatorMessage="Die Postleitzahl muss zwischen 1 und 10 Zeichen lang sein. ">
@@ -123,7 +122,7 @@
                                 </div>
                                 
                                 <div class="input-group" style="padding-top:5px;">
-                                    <span class="input-group-addon" style="width:160px; text-align:right;">Land:</span>
+                                    <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.country')}:</span>
                                     <h:inputText class="form-control" style="width:300px;" id="countryRegister"
                                         value="#{userManagementBean.user.address.country}" 
                                         validatorMessage="Das Land muss zwischen 1 und 100 Zeichen lang sein.">
@@ -133,7 +132,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">E-Mail-Adresse:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.mail')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="emailRegister" value="#{userManagementBean.user.email}"
                                         required="true" requiredMessage="Bitte geben Sie eine E-Mail-Adresse ein. ">
@@ -143,7 +142,7 @@
                                 
                                 <div class="input-group" style="padding-top: 25px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Benutzername:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
                                         id="usernameRegister" value="#{userManagementBean.user.username}"
                                         required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein. ">
@@ -153,7 +152,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Passwort:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.password')}:</span>
                                     <h:inputSecret class="form-control" style="width:340px;"
                                         id="passwordRegister" value="#{userManagementBean.password}"
                                         required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
@@ -164,8 +163,7 @@
                                 
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Passwort
-                                        bestätigen:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.passwordConfirmation')}:</span>
                                     <h:inputSecret class="form-control" style="width:340px;"
                                         id="passwordConfirmRegister" value="#{userManagementBean.confirmPassword}"
                                                        required="true"  requiredMessage="Bitte bestätigen Sie Ihr Passwort."
@@ -176,12 +174,12 @@
                                 <br />
                                 <div class="input-group">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">Benutzerrolle:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createUser.createUser.row.userData.role.header')}:</span>
                                     <div>
                                         <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userManagementBean.role}">
-                                            <f:selectItem itemValue="registered" itemLabel="Benutzer" />
-                                            <f:selectItem itemValue="leader" itemLabel="Kursleiter" />
-                                            <f:selectItem itemValue="admin" itemLabel="Administrator" />
+                                            <f:selectItem itemValue="registered" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.registered')}" />
+                                            <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.leader')}" />
+                                            <f:selectItem itemValue="admin" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.admin')}" />
                                         </h:selectOneMenu>
                                     </div>
                                 </div>
@@ -189,7 +187,7 @@
                                 
                                 <div class="panel panel-info">
                                     <div class="panel-heading">
-                                        <strong>Profilbild</strong>
+                                        <strong>#{sessionUser.getLabel('createUser.createUser.row.image.header')}</strong>
                                     </div>
                                     <div class="panel-body">
                                         <div class="input-group">
@@ -203,7 +201,7 @@
                                 <br/>
                                 
                                 <h:commandButton id="createNewUser"
-                                    class="btn btn-info pull-right" value="Benutzer anlegen" action="#{userManagementBean.createUser()}"/>
+                                    class="btn btn-info pull-right" value="#{sessionUser.getLabel('createUser.createButton')}" action="#{userManagementBean.createUser()}"/>
                             </h:form>
                         </div>
                     </div>

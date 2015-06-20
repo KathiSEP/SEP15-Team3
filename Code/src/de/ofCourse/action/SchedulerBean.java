@@ -95,6 +95,8 @@ public class SchedulerBean {
     		System.out.println("monday after increment: " + currentMonday);
     		
     		transaction.commit();
+    		
+    		getSchedule();
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
@@ -102,7 +104,6 @@ public class SchedulerBean {
                     + "init()");
     		transaction.rollback();
     	}
-    	getSchedule();
     }
     
     private Date getCurrentMonday(Transaction trans, String currentDate) {
@@ -184,11 +185,12 @@ public class SchedulerBean {
     	for (int i = 0; i < 7; i++) {
     		for (CourseUnit unit : weekRow) {
     			if (unit.getStartime().getDay() == date.getDay()) {
-    				String content = String.valueOf(unit.getCourseUnitID()) +
+    				/*String content = String.valueOf(unit.getCourseUnitID()) +
     						" " + unit.getTitle() + ": " + String.valueOf(unit.getStartime().getHours()) +
     						":" + String.valueOf(unit.getStartime().getMinutes()) +
     						" - " + String.valueOf(unit.getEndtime().getHours()) + ":" +
-    						String.valueOf(unit.getEndtime().getMinutes());
+    						String.valueOf(unit.getEndtime().getMinutes());*/
+    				String content = getString(unit);
     				addContent(week, content, i);
     			}
     		}
@@ -201,6 +203,26 @@ public class SchedulerBean {
     		// cal.add(Calendar.DATE, -5);
     	}
     	return week;
+    }
+    
+    private String getString(CourseUnit unit) {
+    	String unitID = String.valueOf(unit.getCourseUnitID());
+    	String title = unit.getTitle();
+    	String startHours = String.valueOf(unit.getStartime().getHours());
+    	int startMinutesInt = unit.getStartime().getMinutes();
+    	String startMinutes = String.valueOf(startMinutesInt);
+    	String endHours = String.valueOf(unit.getEndtime().getHours());
+    	int endMinutesInt = unit.getEndtime().getMinutes();
+    	String endMinutes = String.valueOf(endMinutesInt);
+    	
+    	if (startMinutesInt < 10) {
+    		startMinutes += "0";
+    	}
+    	if (endMinutesInt < 10) {
+    		endMinutes += "0";
+    	}
+    	//return unitID + " " + title + ": " + "\n" + startHours + ":" + startMinutes + " - " + endHours + ":" + endMinutes;
+    	return startHours + ":" + startMinutes + " - " + endHours + ":" + endMinutes + ": " + "\n" + unitID + " " + title;
     }
     
     private void addContent(Week week, String content, int numDay) {

@@ -17,6 +17,7 @@ import org.powermock.api.mockito.PowerMockito;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.PaginationData;
 import de.ofCourse.system.Connection;
 
 public class SearchCourseBeanTest {
@@ -26,16 +27,13 @@ public class SearchCourseBeanTest {
 	
 	private SearchCourseBean bean;
 	
+	private PaginationData pagination;
+	
 	private Connection conn;
 	
 	@SuppressWarnings("deprecation")
     @Before
     public void setup() {
-		
-	}
-
-	@Test
-	public void testSearch() {
 		PowerMockito.mockStatic(FacesContext.class);
 		FacesContext fc = mock(FacesContext.class);
 		Mockito.when(FacesContext.getCurrentInstance()).thenReturn(fc);
@@ -56,10 +54,17 @@ public class SearchCourseBeanTest {
 		// Mock CourseDAO
 		PowerMockito.mockStatic(CourseDAO.class);
 		
-		// Create courseUnit
-		CourseUnit cu1 = new CourseUnit();
-		cu1.setStartime(new GregorianCalendar(2015, 6, 1).getTime());
-		cu1.setEndtime(new GregorianCalendar(2015, 6, 2).getTime());
+		pagination = new PaginationData();
+    	pagination.setElementsPerPage(10);
+    	pagination.setSortAsc(true);
+	}
+
+	@Test
+	public void testSearch() {
+		// Initializes the session
+		pm.put("searchParam", "title");
+		pm.put("searchString", "test");
+		
 		
 	}
 

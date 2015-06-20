@@ -155,7 +155,7 @@ public class UserProfileBean implements Pagination {
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
     			String salt = null;
-    			if (password != null) {
+    			if (password.trim().length() > 0) {
     				salt = PasswordHash.getSalt();
     				pwHash = PasswordHash.hash(password, salt);
     			}
