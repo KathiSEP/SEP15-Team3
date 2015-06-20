@@ -111,7 +111,7 @@ public class UserManagementBean {
                 .createFacesMessage(
                         null,
                         "Der Nutzer wurde erfolgreich im System registriert.");
-	        	goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=true";
+	        	goToPage = "/facelets/user/systemAdministrator/activateUsers.xhtml?faces-redirect=true";
 	        }
 	        transaction.commit();
         } catch (InvalidDBTransferException e) {
