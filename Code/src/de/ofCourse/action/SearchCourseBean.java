@@ -205,7 +205,7 @@ public class SearchCourseBean implements Pagination {
     			if (isValidDate(searchString)) {
     				executeSearch();
     			} else {
-    				FacesMessageCreator.createFacesMessage(null, "Das eingegebene Format ist ungültig (dd.MM.yyyy)");
+    				FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("search.message"));
     			}
     		} else {
     			executeSearch();
