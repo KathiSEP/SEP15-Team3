@@ -949,8 +949,6 @@ public class CourseUnitDAO {
 			stmt.setDate(3, monday);
 			
 			rst = stmt.executeQuery();
-			
-			//muss noch angepasst werden, einfach select * und dann setProperties anpassen
 			result = getResult(rst);
 		} catch (SQLException e) {
 			LogHandler.getInstance().

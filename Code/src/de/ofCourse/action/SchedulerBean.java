@@ -285,7 +285,7 @@ public class SchedulerBean {
      * true, it displays the scheduler of the following week.
      */
     public void displayNextWeek() {
-    	calcWeek(currentSunday, +1);
+    	computeWeek(currentSunday, +1);
     }
     
     /**
@@ -294,10 +294,10 @@ public class SchedulerBean {
      * true, it displays the scheduler of the previous week.
      */
     public void displayPreviousWeek() {
-    	calcWeek(currentMonday, -7);
+    	computeWeek(currentMonday, -7);
     }
     
-    private void calcWeek(Date date, int interval) {
+    private void computeWeek(Date date, int interval) {
     	Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(Calendar.DATE, interval);

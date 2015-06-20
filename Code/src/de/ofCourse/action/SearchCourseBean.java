@@ -66,7 +66,7 @@ public class SearchCourseBean implements Pagination {
     
     private String orderParam;
     
-  private int currentPage;
+    private int currentPage;
     
     /**
      * @return the currentPage
@@ -412,7 +412,7 @@ public class SearchCourseBean implements Pagination {
 	    transaction.start();
 	    
 	    try {
-		this.pagination.setCurrentPageNumber(this.currentPage);
+	    	this.pagination.setCurrentPageNumber(this.currentPage);
 	    	String period;
 	    	String param;
 	    	String term;

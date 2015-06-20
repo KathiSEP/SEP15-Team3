@@ -31,15 +31,6 @@
                                 headerClass="order-table-header"
                                 rowClasses="order-table-odd-row,order-table-even-row"
                                 class="table table-bordered table-hover">
-                        
-                                     
-	                                <!-- <h:column> -->
-	                                    <!-- column header -->
-	                                 <!--   <f:facet name="header">ID</f:facet> -->
-	                                    <!-- row record -->
-	                                <!--    #{course.courseID} -->
-	                                <!-- </h:column> -->
-	                                
 	                                
 	                                <h:column> 
                                         <f:facet name="header">
@@ -52,10 +43,7 @@
                                      <h:column>  
                                          <f:facet name="header">
                                              #{sessionUser.getLabel('scheduler.monday')}
-                                         </f:facet>  
-                                        <!-- <h:link outcome="courseDetail" value="#{course.courseID}" >
-                                             <f:param name="courseID" value="#{course.courseID}" />
-                                         </h:link> -->
+                                         </f:facet>
                                          #{week.monday}
                                      </h:column>
                                      
