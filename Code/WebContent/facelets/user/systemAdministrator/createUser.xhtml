@@ -20,7 +20,7 @@
                 <div class="col-lg-6">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <strong>#{sessionUser.getLabel('createUser.createUser.row.userData.header')}</strong>
+                            <strong>#{sessionUser.getLabel('createUser.row.userData.header')}</strong>
                         </div>
                         <div class="panel-body">
                             <h:form enctype="multipart/form-data" class="form-horizontal" id="formCreateUser">
@@ -95,7 +95,7 @@
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.houseNumber')}:</span>
                                     <h:inputText class="form-control" style="width:340px;"
-                                        id="housenumberRegister" value="#{userManagementBean.user.address.houseNumber}"
+                                        id="houseNumberRegister" value="#{userManagementBean.user.address.houseNumber}"
                                         validatorMessage="Die Hausnummer darf höchstens 9 Zeichen lang sein. ">
                                                      <f:validateLength maximum="9" />
                                     </h:inputText>
@@ -174,12 +174,12 @@
                                 <br />
                                 <div class="input-group">
                                     <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createUser.createUser.row.userData.role.header')}:</span>
+                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createUser.row.userData.role.header')}:</span>
                                     <div>
                                         <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userManagementBean.role}">
-                                            <f:selectItem itemValue="registered" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.registered')}" />
-                                            <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.leader')}" />
-                                            <f:selectItem itemValue="admin" itemLabel="#{sessionUser.getLabel('createUser.createUser.row.userData.role.admin')}" />
+                                            <f:selectItem itemValue="registered" itemLabel="#{sessionUser.getLabel('createUser.row.userData.role.registered')}" />
+                                            <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('createUser.row.userData.role.leader')}" />
+                                            <f:selectItem itemValue="admin" itemLabel="#{sessionUser.getLabel('createUser.row.userData.role.admin')}" />
                                         </h:selectOneMenu>
                                     </div>
                                 </div>
@@ -187,7 +187,7 @@
                                 
                                 <div class="panel panel-info">
                                     <div class="panel-heading">
-                                        <strong>#{sessionUser.getLabel('createUser.createUser.row.image.header')}</strong>
+                                        <strong>#{sessionUser.getLabel('createUser.row.image.header')}</strong>
                                     </div>
                                     <div class="panel-body">
                                         <div class="input-group">
