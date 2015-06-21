@@ -1,10 +1,11 @@
 package de.ofCourse.action;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
@@ -16,7 +17,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 
 import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.system.Connection;
 
@@ -29,10 +30,11 @@ public class SearchCourseBeanTest {
 	
 	private PaginationData pagination;
 	
+	private String displayPeriod;
+	
 	private Connection conn;
 	
-	@SuppressWarnings("deprecation")
-    @Before
+	@Before
     public void setup() {
 		PowerMockito.mockStatic(FacesContext.class);
 		FacesContext fc = mock(FacesContext.class);
@@ -56,7 +58,7 @@ public class SearchCourseBeanTest {
 		
 		pagination = new PaginationData();
     	pagination.setElementsPerPage(10);
-    	pagination.setSortAsc(true);
+    	displayPeriod = "total";
 	}
 
 	@Test
@@ -65,7 +67,39 @@ public class SearchCourseBeanTest {
 		pm.put("searchParam", "title");
 		pm.put("searchString", "test");
 		
+		bean.init();
 		
+		pagination.setSortColumn("title");
+		pagination.setSortAsc(true);
+		pagination.setCurrentPageNumber(0);
+		
+		// Determine the return value of getNumberOfCourses
+		Mockito.when(CourseDAO.getNumberOfCourses(conn, "title", "yoga")).thenReturn(1);
+		
+		pagination.refreshNumberOfPages(1);
+		
+		//Create course dates
+		Date startDate = new Date();
+		startDate.setDate(2015-06-15);
+		Date endDate = new Date();
+		endDate.setDate(2016-06-15);
+		
+		// Create course
+		Course course = new Course();
+		course.setCourseID(10051);
+		course.setTitle("Yoga234");
+		course.setMaxUsers(35);
+		course.setStartdate(startDate);
+		course.setEnddate(endDate);
+		
+		//Add course to result list
+		List<Course> searchResult = new ArrayList<Course>();
+		searchResult.add(course);
+		
+		// Determine the return value of getCourses
+		Mockito.when(CourseDAO.getCourses(conn, pagination, "title", "yoga")).thenReturn(searchResult);
+		
+		bean.search();
 	}
 
 }

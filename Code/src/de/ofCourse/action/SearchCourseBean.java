@@ -126,7 +126,6 @@ public class SearchCourseBean implements Pagination {
     	searchParam = "title";
     	pagination = new PaginationData();
     	pagination.setElementsPerPage(10);
-    	pagination.setSortAsc(true);
     }
 
     /**
