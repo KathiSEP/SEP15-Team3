@@ -35,7 +35,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet
  * <code>activateUsers</code>.
  * 
- * @author Tobias Fuchs
+ * @author Katharina Hölzl
  *
  */
 @ManagedBean

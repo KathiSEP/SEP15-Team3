@@ -213,7 +213,8 @@ public class ListParticipantsBean implements Pagination {
      */
     public String backToDetails() {
         System.out.println("hier");
-        return "/facelets/open/courses/courseDetail.xhtml?courseID=" + this.getCourseID() + "faces-redirect=true";
+        return "/facelets/open/courses/courseDetail.xhtml?courseID=" + 
+                this.getCourseID() + "faces-redirect=true";
     }
 
     /**
