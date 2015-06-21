@@ -1467,7 +1467,6 @@ public class UserDAO {
 		    pS.setInt(counter, user.getUserID());
 		    counter++;
 		}
-		System.out.println(pS.toString());
 		if (pS.executeUpdate() > 0) {
 		    success = true;
 		} else {

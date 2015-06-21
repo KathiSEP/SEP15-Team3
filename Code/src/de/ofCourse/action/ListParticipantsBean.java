@@ -52,11 +52,6 @@ public class ListParticipantsBean implements Pagination {
     
     private int courseID;
 
-    /**
-     * Param by which is sorted
-     */
-    private String orderParam;
-
     private int currentPage;
     
     /**

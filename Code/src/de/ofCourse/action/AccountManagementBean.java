@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -75,11 +74,6 @@ public class AccountManagementBean implements Pagination {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
-    /**
-     * Param by which is sorted
-     */
-    private String orderParam;
 
     private int currentPage;
     
@@ -146,7 +140,7 @@ public class AccountManagementBean implements Pagination {
                     LogHandler.getInstance().error(
                             "Error occured during adminActivateUsers().");
                     } else {
-                        //Activate Users
+                        //Refresh page content
                         this.pagination.refreshNumberOfPages(UserDAO
                                 .getNumberOfNotAdminActivatedUsers(this.transaction));
                         this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers
@@ -155,8 +149,8 @@ public class AccountManagementBean implements Pagination {
                         
                         FacesMessageCreator.createFacesMessage(
                                  null, "Benutzer erfolgreich aktiviert!");
-                        }
-                        this.transaction.commit();
+                    }
+                    this.transaction.commit();
                 
             } catch (InvalidDBTransferException e) {
                 LogHandler.getInstance().error(

@@ -8,7 +8,6 @@ import java.util.TimerTask;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
-import de.ofCourse.utilities.PropertyManager;
 
 /**
  * Provides the maintenance service of the system which is responsible for
