@@ -268,7 +268,6 @@ public class CourseDAO {
 			    + "createCourse(Transaction trans, Course course, "
 			    + "Part courseImage)");
 	    throw new InvalidDBTransferException();
-  // TODO Klammer zu hier ???
 	} catch (IOException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
