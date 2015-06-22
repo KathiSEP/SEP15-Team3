@@ -1,24 +1,38 @@
 package de.ofCourse.model;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
+/**
+ * JUnit test for the PaginationData class.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class PaginationDataTest {
 
     /**
+     * Test method that checks whether the PaginationData calculates
+     * the corrext values.
+     * 
      * @author Fuchs Tobias
      */
     @Test
     public void test() {
 
+	//Create the pagination data objects
 	PaginationData pagination = new PaginationData();
+	PaginationData paginationConstruct = new PaginationData(
+		5, 
+		0, 
+		SortColumn.TITEL,
+		SortDirection.ASC);
+	pagination.setNumberOfPages(0);
+	
 	// Check creation
 	assertNotNull(pagination);
 
-	PaginationData paginationConstruct = new PaginationData(5, 0, SortColumn.TITEL,
-		SortDirection.ASC);
-	pagination.setNumberOfPages(0);
+	
 	// Check creation
 	assertNotNull(paginationConstruct);
 
@@ -27,7 +41,6 @@ public class PaginationDataTest {
 	pagination.setElementsPerPage(5);
 	pagination.setCurrentPageNumber(0);
 	pagination.setSortColumn(SortColumn.fromString("titel"));
-	System.out.println(SortColumn.fromString("titel").toString());
 	pagination.setSortDirection(SortDirection.ASC);
 	pagination.setNumberOfPages(0);
 
@@ -54,8 +67,5 @@ public class PaginationDataTest {
 	// 50==> 10 pages
 	pagination.refreshNumberOfPages(3);
 	assertSame(0, pagination.getNumberOfPages());
-
-
     }
-
 }
