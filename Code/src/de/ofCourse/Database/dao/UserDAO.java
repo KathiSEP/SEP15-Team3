@@ -965,9 +965,24 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT * "
-	           + "FROM \"users\" "
-	           + "WHERE nickname=?";
+	String sql = "SELECT DISTINCT u.id as user_id, "
+	                           + "u.first_name, "
+	                           + "u.name, "
+	                           + "u.nickname, "
+	                           + "u.email, "
+	                           + "u.date_of_birth, "
+	                           + "u.form_of_address, "
+	                           + "u.credit_balance, "
+	                           + "u.role, "
+	                           + "u.status, "
+	                           + "a.id as address_id, "
+	                           + "a.city, "
+	                           + "a.country, "
+	                           + "a.zip_code, "
+	                           + "a.street, "
+	                           + "a.house_nr "
+	            + "FROM users u, user_addresses a "
+	            + "WHERE u.nickname = ? AND a.user_id = u.id";
 
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
@@ -1001,32 +1016,15 @@ public class UserDAO {
         		user.setUserStatus(UserStatus.fromString(
         		                              res.getString("status")));
         
-        		conn.commit();
-        
-        		sql = "SELECT * "
-        		    + "FROM \"user_addresses\" "
-        		    + "WHERE user_id=?";
+        		address.setId(res.getInt("id"));
+        		address.setCity(res.getString("city"));
+        		address.setCountry(res.getString("country"));
+        		address.setZipCode(res.getInt("zip_code"));
+        		address.setStreet(res.getString("street"));
+        		address.setHouseNumber(res.getInt("house_nr"));
         		
-        		PreparedStatement pr = null;
-        		pr = conn.prepareStatement(sql);
-        		pr.setInt(1, user.getUserID());
-        
-        		ResultSet res2 = pr.executeQuery();
-        
-        		if (res2.next()) {
-        		    address.setId(res2.getInt("id"));
-        		    address.setCity(res2.getString("city"));
-        		    address.setCountry(res2.getString("country"));
-        		    address.setZipCode(res2.getInt("zip_code"));
-        		    address.setStreet(res2.getString("street"));
-        		    address.setHouseNumber(res2.getInt("house_nr"));
-        		} else {
-        		    address = null;
-        		}
-        		// Assign the address object to the user object.
         		user.setAddress(address);
         	    } else {
-        
         		user = null;
         	    }
         	    
