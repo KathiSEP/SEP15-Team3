@@ -20,7 +20,7 @@ public enum SortDirection {
      */
     @Override
     public String toString() {
-        return this.name();
+        return sortDirection;
     }
     
     public static SortDirection fromBoolean(boolean sortAsc) {
@@ -34,7 +34,7 @@ public enum SortDirection {
     public static SortDirection fromString(String directionString) {
         if (directionString != null) {
           for (SortDirection direction : SortDirection.values()) {
-              if (directionString.equalsIgnoreCase(direction.name())) {
+              if (directionString.equalsIgnoreCase(direction.sortDirection)) {
                   return direction;
               }
           }

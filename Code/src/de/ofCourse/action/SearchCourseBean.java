@@ -377,11 +377,8 @@ public class SearchCourseBean implements Pagination {
     public void sortBySpecificColumn() {
     	transaction = Connection.create();
 	    transaction.start();
+	    
     	//pagination.setSortColumn(orderParam);
-	    pagination.setSortColumn(SortColumn.fromString(orderParam));
-    	columnSort = true;
-    	List<Course> result;
-    	
     	/*if (pagination.isSortAsc()) {
     		pagination.setSortAsc(false);
     	} else {
@@ -393,7 +390,9 @@ public class SearchCourseBean implements Pagination {
     	} else {
     		pagination.setSortDirection(SortDirection.ASC);
     	}
-    	
+    	pagination.setSortColumn(SortColumn.fromString(orderParam));
+    	columnSort = true;
+    	List<Course> result;
     	
     	try {
     		if (pagingSearchTerm) {
