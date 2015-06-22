@@ -5,13 +5,12 @@ package de.ofCourse.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -59,29 +58,23 @@ public class MyCoursesBean implements Pagination, Serializable {
     /**
      * List of courses that the user attends
      */
-    private ArrayList<Course> registeredCourses;
+    private List<Course> registeredCourses;
 
     /**
-     * Param by which is sorted
+     * Parameter by which is sorted
      */
     private String orderParam;
 
+    /**
+     * Represents the fetched number of the current displayed page.
+     */
     private int currentPage;
+
+    /**
+     * Represents the url to the course detail page
+     */
+    private final static String URL_COURSE_DETAIL = "/facelets/open/courses/courseDetail.xhtml";
     
-    /**
-     * @return the currentPage
-     */
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    /**
-     * @param currentPage the currentPage to set
-     */
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
     /**
      * This attribute represents a pagination object. It stores all the
      * information that is necessary for pagination, e.g. the number of elements
@@ -103,26 +96,35 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @PostConstruct
     private void init() {
-	this.registeredCourses = new ArrayList<Course>();
-	pagination = new PaginationData(elementsPerPage, 0, SortColumn.TITEL, SortDirection.ASC);
+	registeredCourses = new ArrayList<Course>();
+	pagination = new PaginationData(
+		elementsPerPage,
+		0,
+		SortColumn.TITEL,
+		SortDirection.ASC);
 
+	//Setting up transaction
 	transaction = Connection.create();
 	transaction.start();
 
+	//Initializing the page
 	try {
-	    this.pagination.refreshNumberOfPages(CourseDAO
-		    .getNumberOfMyCourses(transaction,
-			    this.sessionUser.getUserID()));
-	    this.registeredCourses = (ArrayList<Course>) CourseDAO
-		    .getCoursesOf(transaction, this.getPagination(),
-			    this.sessionUser.getUserID());
-	    this.transaction.commit();
+	    pagination.refreshNumberOfPages(
+		    CourseDAO.getNumberOfMyCourses(
+			    transaction,
+			    sessionUser.getUserID()));
+	    
+	    registeredCourses = CourseDAO.getCoursesOf(
+		    	    transaction, 
+		    	    getPagination(),
+		    	    sessionUser.getUserID());
+	    transaction.commit();
 
 	} catch (InvalidDBTransferException e) {
+	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during updating the"
 			    + " page with elements from database.");
-	    this.transaction.rollback();
 	}
 
     }
@@ -134,7 +136,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      * @return link to the <code>courseDetail</code> page
      */
     public String loadCourseDetailsPageOfSelectedCourse() {
-	return "/facelets/open/courses/courseDetail.xhtml";
+	return URL_COURSE_DETAIL;
     }
 
     /**
@@ -142,17 +144,20 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.setCurrentPageNumber(this.currentPage);
+	pagination.setCurrentPageNumber(currentPage);
+	
 	transaction.start();
 	try {
-	    this.registeredCourses = (ArrayList<Course>) CourseDAO
-		    .getCoursesOf(transaction, this.getPagination(),
-			    this.sessionUser.getUserID());
-	    this.transaction.commit();
+	    registeredCourses = CourseDAO.getCoursesOf(
+		    		transaction, 
+		    		getPagination(),
+		    		sessionUser.getUserID());
+	    transaction.commit();
+	    
 	} catch (InvalidDBTransferException e) {
+	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during fetching data for pagination.");
-	    this.transaction.rollback();
 	}
     }
 
@@ -161,27 +166,33 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void sortBySpecificColumn() {
-	this.transaction.start();
-	if(getPagination().getSortColumn().equals(SortColumn.fromString(orderParam))) {
-            getPagination().changeSortDirection();
-            
-        } else {
-            getPagination().setSortColumn(SortColumn.fromString(orderParam));
-        }
 	
+	//Compute sort direction
+	 if(getPagination().getSortColumn().
+		 equals(SortColumn.fromString(orderParam))) {
+	     
+	            getPagination().changeSortDirection();
+	            
+	        } else {
+	            getPagination().setSortColumn(SortColumn.fromString(orderParam));
+	        }
+	
+	//Fetch the needed courses
+	this.transaction.start();
 	try {
-	    this.registeredCourses = (ArrayList<Course>) CourseDAO
-		    .getCoursesOf(transaction, getPagination(),
-			    this.sessionUser.getUserID());
+	    
+	    registeredCourses =  CourseDAO.getCoursesOf(
+		    		transaction, 
+		    		getPagination(),
+		    		sessionUser.getUserID());
 	    transaction.commit();
+	    
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during sorting my courses");
 	}
-    }
-    
-    
+    }  
 
     /**
      * {@inheritDoc}
@@ -204,7 +215,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      * 
      * @return list of courses the user attends
      */
-    public ArrayList<Course> getRegisteredCourses() {
+    public List<Course> getRegisteredCourses() {
 	return registeredCourses;
     }
 
@@ -214,7 +225,7 @@ public class MyCoursesBean implements Pagination, Serializable {
      * @param registeredCourses
      *            list of courses the user attends
      */
-    public void setRegisteredCourses(ArrayList<Course> registeredCourses) {
+    public void setRegisteredCourses(List<Course> registeredCourses) {
 	this.registeredCourses = registeredCourses;
     }
 
@@ -256,6 +267,21 @@ public class MyCoursesBean implements Pagination, Serializable {
 	this.sessionUser = userSession;
     }
 
-    
+    /**
+     * Returns the current displayed page number.
+     * 
+     * @return the page number
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
+    /**
+     * Set the current displayed page number. 
+     * 
+     * @param currentPage the page number to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 }
