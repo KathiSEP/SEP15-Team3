@@ -22,6 +22,8 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
 import de.ofCourse.model.UserStatus;
@@ -102,36 +104,32 @@ public class UserProfileBean implements Pagination {
 
     private static int pageElements = 10;
     
+    /**
+     * Init-method for the User or Leader Profile Page.
+     * 
+     * @author Ricky Strohmeier
+     */
     @PostConstruct
-    public void init() {
-        pagination = new PaginationData(pageElements, 0, "title", true);
+    private void init() {
+        pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
     	readOnly = true;
     	password = null;
-    	
+
     	transaction = Connection.create();
 
     	try {
     	    transaction.start();
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
-    	            .getExternalContext().getRequestParameterMap().get("userID"));
+    	                .getExternalContext().getRequestParameterMap().get("userID"));
             pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));
             managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
     		user = UserDAO.getUser(transaction, userID);
-    		
+
     		transaction.commit();
     	} catch (InvalidDBTransferException e) {
     		LogHandler.getInstance().error("SQL Exception occoured during executing init() in UserProfileBean");
     		transaction.rollback();
     	}
-    }
-    
-    /**
-     * Returns the user profile page in its editable state.
-     * 
-     * @return link to the next page
-     */
-    public String editUserdata() {
-	return null;
     }
 
     /**
@@ -139,8 +137,6 @@ public class UserProfileBean implements Pagination {
      * not-editable state. In order to save the edited user, the database entry
      * of the user is updated with the new data and the <code>userProfil</code>
      * page is returned.
-     * 
-     * @return link to the next page
      */
     public void saveSettings() {
     	setEnums();
@@ -235,13 +231,6 @@ public class UserProfileBean implements Pagination {
     	}
     	return goToPage;
     }
-    
-    /**
-     * Initializes the profile page of the user with the details of the
-     * user.
-     */
-    public void initialzeUserProfile() {
-    }
 
     /**
      * Uploads a selected picture file from the local system to the server. The
@@ -289,7 +278,7 @@ public class UserProfileBean implements Pagination {
      * @return the new user status
      */
     public UserStatus setUserInactive() {
-	return null;
+        return null;
     }
 
     /**
@@ -298,7 +287,7 @@ public class UserProfileBean implements Pagination {
      * @return the actual displayed user
      */
     public User getUser() {
-	return user;
+        return user;
     }
 
     /**
@@ -308,6 +297,7 @@ public class UserProfileBean implements Pagination {
      *            the displayed user
      */
     public void setUser(User userToSet) {
+        this.user = userToSet;
     }
 
     /**
@@ -316,7 +306,7 @@ public class UserProfileBean implements Pagination {
      * @return list of courses that are managed by a course leader
      */
     public List<Course> getManagedCourses() {
-	return managedCourses;
+        return managedCourses;
     }
 
     /**
@@ -327,6 +317,7 @@ public class UserProfileBean implements Pagination {
      *            list of courses that are managed by a course leader
      */
     public void setManagedCourses(List<Course> managedCourses) {
+        this.managedCourses = managedCourses;
     }
 
 	public boolean isReadOnly() {
@@ -354,10 +345,6 @@ public class UserProfileBean implements Pagination {
 	}
 
 	public Part getImage() {
-	    
-	    
-	    
-	    
 		return image;
 	}
 
@@ -429,8 +416,6 @@ public class UserProfileBean implements Pagination {
      * @return the userID
      */
     public int getUserID() {
-        
-       
         return userID;
     }
 

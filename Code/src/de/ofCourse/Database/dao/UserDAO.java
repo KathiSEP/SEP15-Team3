@@ -1271,11 +1271,10 @@ public class UserDAO {
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement = null;
+        PreparedStatement statement;
         ResultSet resultSet;
         ArrayList<Course> courses = new ArrayList<Course>();
 
-        String direction = getSortDirection(pagination.isSortAsc());
         int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();
     
         String courseQuery = "SELECT * FROM \"courses\" WHERE courses.id IN "
@@ -1283,7 +1282,8 @@ public class UserDAO {
             + " ORDER BY %s %s LIMIT ? OFFSET ?";
     
     
-        courseQuery = String.format(courseQuery, "titel", direction);
+        courseQuery = String.format(courseQuery, pagination.getSortColumn().toString(),
+                                                        pagination.getSortDirection().toString());
     
         try {
             statement = conn.prepareStatement(courseQuery);
@@ -1305,14 +1305,6 @@ public class UserDAO {
         return courses;
     }
 
-    private static String getSortDirection(boolean isSortAsc) {
-        if (isSortAsc) {
-            return "ASC";
-        } else {
-            return "DESC";
-        }
-    }
-
     /**
      * Fetches the number of courses leaded by a course leader.
      * @param trans the transaction
@@ -1329,7 +1321,7 @@ public class UserDAO {
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
     
-        PreparedStatement statement = null;
+        PreparedStatement statement;
 
         try {
             statement = conn.prepareStatement(courseQuery);
