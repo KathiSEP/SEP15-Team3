@@ -16,8 +16,8 @@ public class PaginationDataTest {
 	// Check creation
 	assertNotNull(pagination);
 
-	PaginationData paginationConstruct = new PaginationData(5, 0, "test",
-		true);
+	PaginationData paginationConstruct = new PaginationData(5, 0, SortColumn.TITEL,
+		SortDirection.ASC);
 	pagination.setNumberOfPages(0);
 	// Check creation
 	assertNotNull(paginationConstruct);
@@ -26,7 +26,8 @@ public class PaginationDataTest {
 	assertNotSame(pagination, paginationConstruct);
 	pagination.setElementsPerPage(5);
 	pagination.setCurrentPageNumber(0);
-	pagination.setSortColumn(SortColumn.fromString("test"));
+	pagination.setSortColumn(SortColumn.fromString("titel"));
+	System.out.println(SortColumn.fromString("titel").toString());
 	pagination.setSortDirection(SortDirection.ASC);
 	pagination.setNumberOfPages(0);
 

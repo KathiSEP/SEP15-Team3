@@ -104,7 +104,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
-	pagination = new PaginationData(elementsPerPage, 0, SortColumn.TITLE, SortDirection.ASC);
+	pagination = new PaginationData(elementsPerPage, 0, SortColumn.TITEL, SortDirection.ASC);
 
 	transaction = Connection.create();
 	transaction.start();

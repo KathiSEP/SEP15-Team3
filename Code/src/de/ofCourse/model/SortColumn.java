@@ -9,7 +9,7 @@ public enum SortColumn {
     FIRST_NAME("first_name"), 
     NAME("name"), 
     DATE_OF_BIRTH("date_of_birth"),
-    TITLE("titel"),
+    TITEL("title"),
     LOCATION("location"),
     START_TIME("start_time");
     
