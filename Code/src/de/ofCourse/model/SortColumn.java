@@ -11,7 +11,10 @@ public enum SortColumn {
     DATE_OF_BIRTH("date_of_birth"),
     TITEL("title"),
     LOCATION("location"),
-    START_TIME("start_time");
+    START_TIME("start_time"),
+    MAX_USERS("max_participants"),
+    START_DATE("start_date"),
+    END_DATE("end_date");
     
     private String sortColumn;
     

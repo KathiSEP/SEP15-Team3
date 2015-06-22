@@ -142,10 +142,6 @@ public class SearchCourseBeanTest {
 		// Determine the return value of getCourses
 		Mockito.when(CourseDAO.getCourses(conn, pagination, searchParam, searchString)).thenReturn(searchResult);
 		
-		this.searchResult = searchResult;
-		bean.setPagingSearchTerm(true);
-		bean.setRenderTable(true);
-		
 		bean.search();
 	}
 	

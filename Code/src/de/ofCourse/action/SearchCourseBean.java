@@ -16,6 +16,8 @@ import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -144,8 +146,10 @@ public class SearchCourseBean implements Pagination {
     	transaction = Connection.create();
     	transaction.start();
     	pagination.setCurrentPageNumber(0);
-    	pagination.setSortAsc(true);
-    	pagination.setSortColumn("courseID");
+    	//pagination.setSortAsc(true);
+    	pagination.setSortDirection(SortDirection.ASC);
+    	//pagination.setSortColumn("courseID");
+    	pagination.setSortColumn(SortColumn.ID);
     	
     	try {
     		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
@@ -235,8 +239,10 @@ public class SearchCourseBean implements Pagination {
 		transaction.start();
 		
 		pagination.setCurrentPageNumber(0);
-		pagination.setSortAsc(true);
-		pagination.setSortColumn(searchParam);
+		//pagination.setSortAsc(true);
+		pagination.setSortDirection(SortDirection.ASC);
+		//pagination.setSortColumn(searchParam);
+		pagination.setSortColumn(SortColumn.valueOf(searchParam));
 		try {
     		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
@@ -371,15 +377,23 @@ public class SearchCourseBean implements Pagination {
     public void sortBySpecificColumn() {
     	transaction = Connection.create();
 	    transaction.start();
-    	pagination.setSortColumn(orderParam);
+    	//pagination.setSortColumn(orderParam);
+	    pagination.setSortColumn(SortColumn.fromString(orderParam));
     	columnSort = true;
     	List<Course> result;
     	
-    	if (pagination.isSortAsc()) {
+    	/*if (pagination.isSortAsc()) {
     		pagination.setSortAsc(false);
     	} else {
     		pagination.setSortAsc(true);
+    	}*/
+    	
+    	if (pagination.getSortColumn().toString().equals(orderParam)) {
+    		pagination.changeSortDirection();
+    	} else {
+    		pagination.setSortDirection(SortDirection.ASC);
     	}
+    	
     	
     	try {
     		if (pagingSearchTerm) {
