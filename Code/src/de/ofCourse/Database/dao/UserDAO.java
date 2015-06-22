@@ -82,31 +82,35 @@ public class UserDAO {
 	String pwSalt = "";
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	// database request
-	String sql = "SELECT pw_salt FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT pw_salt "
+	           + "FROM \"users\" "
+	           + "WHERE nickname=?";
 
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
-	    pS.setString(1, username);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
+	     pS.setString(1, username);
+	     
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
-	    ResultSet res = pS.executeQuery();
+	    try (ResultSet res = pS.executeQuery()){
 
-	    // execute next entry, return true if there is another entry,
-	    // else false.
-	    if (res.next()) {
-		// Fill the id with the associated value from the database.
-		pwSalt = res.getString("pw_salt");
-	    } else {
-		pwSalt = null;
+        	    // execute next entry, return true if there is another 
+	            //entry, else false.
+                    if (res.next()) {
+                        // Fill the id with the associated value from the 
+                        // database.
+                	pwSalt = res.getString("pw_salt");
+                	} else {
+                		pwSalt = null;
+                	}
+	    }  catch (SQLException e) {
+	        throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -134,32 +138,34 @@ public class UserDAO {
      */
     public static boolean emailExists(Transaction trans, String email)
 	    throws InvalidDBTransferException {
+        
 	boolean exists = false;
 
 	// prepare SQL- request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id FROM \"users\" WHERE email=?";
+	String sql = "SELECT id "
+	           + "FROM \"users\" "
+	           + "WHERE email=?";
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setString(1, email);
 
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the email is unique)
-	    ResultSet res = pS.executeQuery();
+	    try(ResultSet res = pS.executeQuery()){
 
-	    // execute next entry, return true if there is another entry,
-	    // else false.
-	    if (res.next()) {
-		exists = true;
-	    } else {
-		exists = false;
-	    }
-	    pS.close();
-	    res.close();
+        	    // execute next entry, return true if there is another 
+        	    // entry, else false.
+        	    if (res.next()) {
+        		exists = true;
+        	    } else {
+        		exists = false;
+        	    }
+	    } catch (SQLException e) {
+                throw new SQLException();
+            }
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -303,7 +309,9 @@ public class UserDAO {
 	try {
 	    ResultSet res = null;
 
-	    String sql = "SELECT id FROM \"users\" WHERE veri_string = ?";
+	    String sql = "SELECT id "
+	               + "FROM \"users\" "
+	               + "WHERE veri_string = ?";
 	    do {
 		SecureRandom random = new SecureRandom();
 		veriString = new BigInteger(130, random).toString();
@@ -313,11 +321,13 @@ public class UserDAO {
 	    } while (res.next());
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
-		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-		    + "email_verification, admin_verification, role, status, "
-		    + "veri_string, pw_salt) "
+	                                + "pw_hash, date_of_birth, "
+	                                + "form_of_address, credit_balance, "
+	                                + "email_verification, "
+	                                + "admin_verification, role, status, "
+	                                + "veri_string, pw_salt) "
 		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, "
-		    + "?::role, ?::status, ?, ?)";
+		                        + "?::role, ?::status, ?, ?)";
 
 	    // Filling PreparedStatement, check in optional fields if the user
 	    // has inserted the data or if the value null must be written into
@@ -362,7 +372,8 @@ public class UserDAO {
 	    pS.executeUpdate();
 
 	    sql = "Insert into \"user_addresses\" (user_id, country, "
-		    + "city, zip_code, street, house_nr) "
+	                                        + "city, zip_code, street, "
+	                                        + "house_nr) "
 		    + "values (?, ?, ?, ?, ?, ?)";
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, UserDAO.getUserID(trans, user.getUsername()));
@@ -683,47 +694,37 @@ public class UserDAO {
 	UserStatus userStatus = null;
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT status FROM \"users\" WHERE id=?";
+	String sql = "SELECT status "
+	           + "FROM \"users\""
+	           + " WHERE id=?";
+	
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setInt(1, userID);
 
 	    // /execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the id is unique).
-	    ResultSet res = pS.executeQuery();
+	    try(ResultSet res = pS.executeQuery()){
 
 	    // Execute next entry, return true if there is another entry,
 	    // else false.
-	    if (res.next()) {
-		String userStatusString = res.getString("status");
-		switch (userStatusString) {
-		case "ANONYMOUS":
-		    userStatus = UserStatus.ANONYMOUS;
-		    break;
-		case "NOT_ACTIVATED":
-		    userStatus = UserStatus.NOT_ACTIVATED;
-		    break;
-		case "REGISTERED":
-		    userStatus = UserStatus.REGISTERED;
-		    break;
-		case "INACTIVE":
-		    userStatus = UserStatus.INACTIVE;
-		    break;
-		}
-	    } else {
-		userStatus = null;
+	            if (res.next()) {
+        	       userStatus = UserStatus.fromString(
+        	                                   res.getString("status"));
+        	    } else {
+        		userStatus = null;
+        	    }
+        	    
+	    } catch (SQLException e) {
+	            throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
+		    "Exception occoured during executing "
 			    + "getUserStatus(Transaction trans, int userID)");
 	    throw new InvalidDBTransferException();
 	}
@@ -749,40 +750,31 @@ public class UserDAO {
 	UserRole userRole = null;
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT role FROM \"users\" WHERE id=?";
+	String sql = "SELECT role "
+	           + "FROM \"users\" "
+	           + "WHERE id=?";
+	
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, userID);
 
 	    // /execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the id is unique).
-	    ResultSet res = pS.executeQuery();
+	    try(ResultSet res = pS.executeQuery()){
 
-	    // Execute next entry, return true if there is another entry,
-	    // else false.
-	    if (res.next()) {
-		String userRoleString = res.getString("role");
-		switch (userRoleString) {
-		case "REGISTERED_USER":
-		    userRole = UserRole.REGISTERED_USER;
-		    break;
-		case "COURSE_LEADER":
-		    userRole = UserRole.COURSE_LEADER;
-		    break;
-		case "SYSTEM_ADMINISTRATOR":
-		    userRole = UserRole.SYSTEM_ADMINISTRATOR;
-		    break;
-		}
-	    } else {
-		userRole = null;
-	    }
-	    pS.close();
-	    res.close();
+        	    // Execute next entry, return true if there is another 
+        	    // entry, else false.
+        	    if (res.next()) {
+        	        userRole =UserRole.fromString(res.getString("role"));
+        	    } else {
+        		userRole = null;
+        	    }
+	    }catch (SQLException e) {
+                throw new SQLException();
+            }
 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
@@ -808,28 +800,31 @@ public class UserDAO {
      */
     public static boolean verifyUser(Transaction trans, String veriString)
 	    throws InvalidDBTransferException {
+        
 	boolean success = false;
 
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "UPDATE \"users\" SET email_verification=?, "
-		+ "veri_string=?, status=?::status WHERE veri_string=?";
+	String sql = "UPDATE \"users\" "
+	        + "SET email_verification=?, "
+	                + "veri_string=?, "
+	                + "status=?::status "
+		+ "WHERE veri_string=?";
+	
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setBoolean(1, true);
 	    pS.setString(2, null);
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
 
-	    if (pS.executeUpdate() == 1) {
-		success = true;
-	    } else {
-		success = false;
-	    }
-	    pS.close();
+    	    if (pS.executeUpdate() == 1) {
+    		success = true;
+    	    } else {
+    		success = false;
+    	    }
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -842,18 +837,18 @@ public class UserDAO {
     }
 
     /**
-     * Returns 0, if username or password is wrong or the inserted user does not
+     * Returns 0, if user name or password is wrong or the inserted user does not
      * exist in the database. Otherwise returns the id of the user.
      * 
      * 
      * @param trans
      *            transaction object
      * @param username
-     *            the username inserted by the user
+     *            the user name inserted by the user
      * @param passwordHash
      *            the password inserted by the user, which is hashed in the bean
      * @return the id of the user <br>
-     *         or 0 if the username or password is wrong
+     *         or 0 if the user name or password is wrong
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
      * 
@@ -868,63 +863,69 @@ public class UserDAO {
 	int id = wrongUsernameOrPassword;
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id, nickname, pw_hash, status, email_verification, admin_verification FROM \"users\" "
-		+ " WHERE nickname=?";
+	String sql = "SELECT id, "
+	                   + "nickname, "
+	                   + "pw_hash, "
+	                   + "status, "
+	                   + "email_verification,"
+	                   + " admin_verification "
+	           + "FROM \"users\" "
+	           + " WHERE nickname=?";
+	
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setString(1, username);
 
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
-	    ResultSet res = pS.executeQuery();
-
-	    // execute next entry, return true if there is another entry,
-	    // else false.
-	    if (res.next()) {
-		// Execute passwort from the Resultset.
-		String pwHashFromDB = res.getString("pw_hash");
-
-		// Compare the saved password with the inserted one.
-		if (passwordHash.equals(pwHashFromDB)) {
-
-		    boolean emailVerification = res
-			    .getBoolean("email_verification");
-		    boolean adminVerification = res
-			    .getBoolean("admin_verification");
-
-		    // Check if the user is activated.
-		    if (res.getString("status").equals(
-			    UserStatus.REGISTERED.toString())) {
-			if (emailVerification == true) {
-			    if (SystemDAO.getActivationType(trans).equals(
-				    Activation.EMAIL)) {
-				id = res.getInt("id");
-			    } else {
-				if (adminVerification == true) {
-				    id = res.getInt("id");
-				} else {
-				    id = accountNotActivated;
-				}
-			    }
-			} else {
-			    id = accountNotActivated;
-			}
-		    } else {
-			id = accountNotActivated;
-		    }
-		} else {
-		    id = wrongUsernameOrPassword;
-		}
-	    } else {
-		id = wrongUsernameOrPassword;
+	    try(ResultSet res = pS.executeQuery()){
+        	    // execute next entry, return true if there is another entry,
+        	    // else false.
+        	    if (res.next()) {
+        		// Execute passwort from the Resultset.
+        		String pwHashFromDB = res.getString("pw_hash");
+        
+        		// Compare the saved password with the inserted one.
+        		if (passwordHash.equals(pwHashFromDB)) {
+        
+        		    boolean emailVerification = res
+        			    .getBoolean("email_verification");
+        		    boolean adminVerification = res
+        			    .getBoolean("admin_verification");
+        
+        		    // Check if the user is activated.
+        		    if (res.getString("status").equals(
+        			    UserStatus.REGISTERED.toString())) {
+        			if (emailVerification == true) {
+        			    if (SystemDAO.getActivationType(trans).equals(
+        				    Activation.EMAIL)) {
+        				id = res.getInt("id");
+        			    } else {
+        				if (adminVerification == true) {
+        				    id = res.getInt("id");
+        				} else {
+        				    id = accountNotActivated;
+        				}
+        			    }
+        			} else {
+        			    id = accountNotActivated;
+        			}
+        		    } else {
+        			id = accountNotActivated;
+        		    }
+        		} else {
+        		    id = wrongUsernameOrPassword;
+        		}
+        	    } else {
+        		id = wrongUsernameOrPassword;
+        	    }
+	    
+	    } catch (SQLException e){
+	        throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -961,67 +962,76 @@ public class UserDAO {
 	Address address = new Address();
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT * FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT DISTINCT u.id as user_id, "
+	                           + "u.first_name, "
+	                           + "u.name, "
+	                           + "u.nickname, "
+	                           + "u.email, "
+	                           + "u.date_of_birth, "
+	                           + "u.form_of_address, "
+	                           + "u.credit_balance, "
+	                           + "u.role, "
+	                           + "u.status, "
+	                           + "a.id as address_id, "
+	                           + "a.city, "
+	                           + "a.country, "
+	                           + "a.zip_code, "
+	                           + "a.street, "
+	                           + "a.house_nr "
+	            + "FROM users u, user_addresses a "
+	            + "WHERE u.nickname = ? AND a.user_id = u.id";
 
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setString(1, username);
 
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
-	    ResultSet res = pS.executeQuery();
-	    if (res.next()) {
-
-		// Fill the user object with values from the database.
-		user.setUserId(res.getInt("id"));
-		user.setFirstname(res.getString("first_name"));
-		user.setLastname(res.getString("name"));
-		user.setEmail(res.getString("email"));
-		if(res.getDate("date_of_birth") == null) {
-		    user.setDateOfBirth(null);
-		} else {
-		    user.setDateOfBirth(new java.util.Date(res.getDate(
-			"date_of_birth").getTime()));
-		}
-
-		user.setSalutation(Salutation.fromString(res.getString("form_of_address")));
-		float accountBalance = res.getFloat("credit_balance");
-		user.setAccountBalance(accountBalance);
-		user.setUserRole(UserRole.fromString(res.getString("role")));
-		user.setUserStatus(UserStatus.fromString(res.getString("status")));
-
-		conn.commit();
-
-		sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
-		PreparedStatement pr = null;
-		pr = conn.prepareStatement(sql);
-		pr.setInt(1, user.getUserID());
-
-		ResultSet res2 = pr.executeQuery();
-
-		if (res2.next()) {
-		    address.setId(res2.getInt("id"));
-		    address.setCity(res2.getString("city"));
-		    address.setCountry(res2.getString("country"));
-		    address.setZipCode(res2.getInt("zip_code"));
-		    address.setStreet(res2.getString("street"));
-		    address.setHouseNumber(res2.getInt("house_nr"));
-		} else {
-		    address = null;
-		}
-		// Assign the address object to the user object.
-		user.setAddress(address);
-	    } else {
-
-		user = null;
+	    try(ResultSet res = pS.executeQuery()){
+	        
+        	    if (res.next()) {
+        
+        		// Fill the user object with values from the database.
+        		user.setUserId(res.getInt("id"));
+        		user.setFirstname(res.getString("first_name"));
+        		user.setLastname(res.getString("name"));
+        		user.setEmail(res.getString("email"));
+        		
+        		if(res.getDate("date_of_birth") == null) {
+        		    user.setDateOfBirth(null);
+        		} else {
+        		    user.setDateOfBirth(new java.util.Date(res.getDate(
+        			"date_of_birth").getTime()));
+        		}
+        
+        		user.setSalutation(Salutation.fromString(
+        		                    res.getString("form_of_address")));
+        		float accountBalance = res.getFloat("credit_balance");
+        		user.setAccountBalance(accountBalance);
+        		user.setUserRole(UserRole.fromString(
+        		                              res.getString("role")));
+        		user.setUserStatus(UserStatus.fromString(
+        		                              res.getString("status")));
+        
+        		address.setId(res.getInt("id"));
+        		address.setCity(res.getString("city"));
+        		address.setCountry(res.getString("country"));
+        		address.setZipCode(res.getInt("zip_code"));
+        		address.setStreet(res.getString("street"));
+        		address.setHouseNumber(res.getInt("house_nr"));
+        		
+        		user.setAddress(address);
+        	    } else {
+        		user = null;
+        	    }
+        	    
+	    } catch (SQLException e) {
+	            throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -1054,23 +1064,26 @@ public class UserDAO {
 
 	int id = userDoesNotExist;
 
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT id "
+	           + "FROM \"users\" "
+	           + "WHERE nickname=?";
 
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setString(1, username);
-	    ResultSet res = pS.executeQuery();
-	    if (res.next()) {
-		id = res.getInt("id");
-	    } else {
-		id = userDoesNotExist;
+	    
+	    try(ResultSet res = pS.executeQuery()){
+        	    if (res.next()) {
+        		id = res.getInt("id");
+        	    } else {
+        		id = userDoesNotExist;
+        	    }
+	    } catch (SQLException e) {
+	            throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
+
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -1358,9 +1371,18 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT DISTINCT u.id, u.nickname, u.email, u.profile_image, "
-		+ "(SELECT EXISTS(SELECT * FROM inform_users WHERE user_id = cP.participant_id AND course_id = cP.course_id)) "
-		+ "AS courseNews FROM course_participants cP, users u, inform_users iU "
+	String sql = "SELECT DISTINCT "
+	                                + "u.id, "
+	                                + "u.nickname, "
+	                                + "u.email, "
+	                                + "u.profile_image, "
+		+ "(SELECT EXISTS(SELECT * FROM inform_users "
+		               + "WHERE user_id = cP.participant_id "
+		               + "AND course_id = cP.course_id)) "
+		     + "AS courseNews "
+		     + "FROM course_participants cP, "
+		               + "users u, "
+		               + "inform_users iU "
 		+ "WHERE cP.course_id = ? AND u.id = cP.participant_id "
 		+ "ORDER BY %s %s LIMIT ? OFFSET ?;";
 
@@ -1375,17 +1397,21 @@ public class UserDAO {
 		    pagination.getCurrentPageNumber()
 			    * pagination.getElementsPerPage());
 
-	    ResultSet res = pS.executeQuery();
-	    while (res.next()) {
-		User user = new User();
-		user.setUserId(res.getInt("id"));
-		user.setEmail(res.getString("email"));
-		user.setUsername(res.getString("nickname"));
-		user.setCourseNewsSubscribed(res.getBoolean("courseNews"));
-		user.setProfilImage(res.getBytes("profile_image"));
-		userList.add(user);
+	    try(ResultSet res = pS.executeQuery()){
+        	    while (res.next()) {
+        		User user = new User();
+        		user.setUserId(res.getInt("id"));
+        		user.setEmail(res.getString("email"));
+        		user.setUsername(res.getString("nickname"));
+        		user.setCourseNewsSubscribed(
+        		                         res.getBoolean("courseNews"));
+        		user.setProfilImage(res.getBytes("profile_image"));
+        		userList.add(user);
+        	    }
+	    }catch (SQLException e) {
+	            throw new SQLException();
 	    }
-	    res.close();
+	    
 	} catch (SQLException e) {
 	    LogHandler
                 .getInstance()
@@ -1424,6 +1450,7 @@ public class UserDAO {
 
 	    String sql = "DELETE FROM course_participants WHERE course_id = ? "
 	            + "and participant_id IN (?";
+	    
 	    for (int i = 1; i < usersToRemove.size(); i++) {
 		sql += ",?";
 	    }
@@ -1432,10 +1459,12 @@ public class UserDAO {
 	    try (PreparedStatement pS = conn.prepareStatement(sql)) {
 		pS.setInt(1, courseID);
 		int counter = 2;
+		
 		for (User user : usersToRemove) {
 		    pS.setInt(counter, user.getUserID());
 		    counter++;
 		}
+		
 		if (pS.executeUpdate() > 0) {
 		    success = true;
 		} else {
@@ -1474,7 +1503,7 @@ public class UserDAO {
 
 	int numberOfParticipants = 0;
 
-	// prepare SQL- request and database connection.
+	// Prepare SQL- request and database connection.
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -1485,10 +1514,14 @@ public class UserDAO {
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);
-	    ResultSet res = pS.executeQuery();
-	    res.next();
-	    numberOfParticipants = res.getInt("courseParticipantNumber");
-	    res.close();
+	    
+	    try(ResultSet res = pS.executeQuery()){
+	        res.next();
+	        numberOfParticipants = res.getInt("courseParticipantNumber");
+	    } catch (SQLException e) {
+	            throw new SQLException();
+	        }
+
 	} catch (SQLException e) {
 	    LogHandler
                 .getInstance()
@@ -1808,20 +1841,23 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	ResultSet res = null;
-	String sql = "SELECT COUNT (*) AS numberOfNotAdminActivatedUsers FROM "
-	        + "users where admin_verification = ?";
+	String sql = "SELECT COUNT (*) AS numberOfNotAdminActivatedUsers "
+	            + "FROM users "
+	            + "WHERE admin_verification = ?";
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setBoolean(1, false);
 
-	    res = pS.executeQuery();
-	    if (res.next()) {
-		numberOfNotAdminActivatedUsers = res.getInt(1);
-	    } else {
-		numberOfNotAdminActivatedUsers = -1;
+	    try( ResultSet res = pS.executeQuery()){
+        	    if (res.next()) {
+        		numberOfNotAdminActivatedUsers = res.getInt(1);
+        	    } else {
+        		numberOfNotAdminActivatedUsers = -1;
+        	    }
+	    } catch (SQLException e) {
+                throw new SQLException();
 	    }
-
+	    
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
@@ -1858,10 +1894,15 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	ResultSet res = null;
-	String sql = "SELECT id, first_name, name, email, nickname, date_of_birth "
-		+ "FROM users WHERE admin_verification = ? "
-		+ "ORDER BY %s %s LIMIT ? OFFSET ?;";
+	String sql = "SELECT id, "
+	                    + "first_name, "
+	                    + "name, "
+	                    + "email, "
+	                    + "nickname, "
+	                    + "date_of_birth "
+	             + "FROM users "
+	             + "WHERE admin_verification = ? "
+	             + "ORDER BY %s %s LIMIT ? OFFSET ?;";
 
 	sql = String.format(sql, pagination.getSortColumn().toString(),
 		pagination.getSortDirection().toString());
@@ -1872,25 +1913,28 @@ public class UserDAO {
 	    pS.setInt(3, pagination.getCurrentPageNumber()
 			    * pagination.getElementsPerPage());
 
-	    res = pS.executeQuery();
+	    try(ResultSet res = pS.executeQuery()){
 
-	    while (res.next()) {
-		User user = new User();
-		user.setUserId(res.getInt("id"));
-		user.setFirstname(res.getString("first_name"));
-		user.setLastname(res.getString("name"));
-		user.setEmail(res.getString("email"));
-		user.setUsername(res.getString("nickname"));
-		
-		if(res.getDate("date_of_birth") == null) {
-		    user.setDateOfBirth(null);
-		} else {
-		    user.setDateOfBirth(new java.util.Date(res.getDate(
-			"date_of_birth").getTime()));
-		}
-		notAdminActivatedUsers.add(user);
-	    }
-
+        	    while (res.next()) {
+        		User user = new User();
+        		user.setUserId(res.getInt("id"));
+        		user.setFirstname(res.getString("first_name"));
+        		user.setLastname(res.getString("name"));
+        		user.setEmail(res.getString("email"));
+        		user.setUsername(res.getString("nickname"));
+        		
+        		if(res.getDate("date_of_birth") == null) {
+        		    user.setDateOfBirth(null);
+        		} else {
+        		    user.setDateOfBirth(new java.util.Date(res.getDate(
+        			"date_of_birth").getTime()));
+        		}
+        		notAdminActivatedUsers.add(user);
+        	    }
+	    }catch (SQLException e) {
+                throw new SQLException();
+            }
+	    
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
@@ -1928,7 +1972,9 @@ public class UserDAO {
             Connection connection = (Connection) trans;
             java.sql.Connection conn = connection.getConn();
 
-            String sql = "UPDATE users SET admin_verification = ? WHERE id "
+            String sql = "UPDATE users "
+                    + "SET admin_verification = ? "
+                    + "WHERE id "
                     + "IN (?";
             
             for (int i = 1; i < usersToActivate.size(); i++) {
@@ -1959,9 +2005,11 @@ public class UserDAO {
                             + "List<User> usersToActivate)");
                 throw new InvalidDBTransferException();
             }
+            
         } else {
             success = true;
         }
+        
         return success;
     }
     

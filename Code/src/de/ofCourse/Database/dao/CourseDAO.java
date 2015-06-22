@@ -123,7 +123,8 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "DELETE FROM courses WHERE end_date < CURRENT_TIMESTAMP";
+	String sql = "DELETE FROM courses "
+	           + "WHERE end_date < CURRENT_TIMESTAMP";
 
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
@@ -158,32 +159,33 @@ public class CourseDAO {
 	boolean courseLeaderExists = false;
 
 	// Prepare SQL- INSERT and database connection
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT * FROM users WHERE id = ? AND role != ?::role";
+	String sql = "SELECT * "
+	           + "FROM users "
+	           + "WHERE id = ? AND role != ?::role";
 
 	// catch potential SQL-Injection
-	try {
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 
 	    // Filling PreparedStatement.
-	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, courseLeaderID);
 	    pS.setString(2, UserRole.REGISTERED_USER.toString());
 
-	    ResultSet res = pS.executeQuery();
-	    courseLeaderExists = res.next();
+	    try(ResultSet res = pS.executeQuery()){
+	        courseLeaderExists = res.next();
 
-	    pS.close();
-	    res.close();
+	    }catch (SQLException e) {
+	            throw new SQLException();
+	        }
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
 			    + "courseLeaderExists(Transaction trans, "
 			    + "int courseLeaderID)");
 	    throw new InvalidDBTransferException();
-
 	}
 	return courseLeaderExists;
     }
@@ -209,57 +211,64 @@ public class CourseDAO {
 	int generatedCourseID = errorGeneratingCourse;
 
 	// Prepare SQL- INSERT and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
 	String sql = "Insert into \"courses\" (titel, max_participants, "
-		+ "start_date, end_date, description, image) "
-		+ "values (?, ?, ?, ?, ?, ?) RETURNING id";
+	                                    + "start_date, end_date, "
+	                                    + "description, image) "
+	           + "values (?, ?, ?, ?, ?, ?) "
+	           + "RETURNING id";
 
 	// catch potential SQL-Injection
-	try {
+	try (PreparedStatement pS = conn.prepareStatement(sql)){
 
 	    // Filling PreparedStatement, check in optional fields if the user
 	    // has inserted the data or if the value null must be written into
 	    // the database.
-	    pS = conn.prepareStatement(sql);
 	    if (course.getTitle() == null || course.getTitle().length() < 1) {
 		pS.setString(1, null);
 	    } else {
 		pS.setString(1, course.getTitle());
 	    }
+	    
 	    if (course.getMaxUsers() == null) {
 		pS.setInt(2, 1);
 	    } else {
 		pS.setInt(2, course.getMaxUsers());
 	    }
+	    
 	    pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));
 	    pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));
+	    
 	    if (course.getDescription() == null
 		    || course.getDescription().length() < 1) {
 		pS.setString(5, null);
 	    } else {
 		pS.setString(5, course.getDescription());
 	    }
+	    
 	    if (courseImage != null && courseImage.getInputStream() != null) {
 		InputStream inputStream = courseImage.getInputStream();
 		pS.setBinaryStream(6, inputStream, courseImage.getSize());
 	    } else {
 		pS.setBinaryStream(6, null, 0);
 	    }
-	    ResultSet res = pS.executeQuery();
-	    res.next();
-	    generatedCourseID = res.getInt("id");
-	    pS.close();
-	    res.close();
+	    
+	    try(ResultSet res = pS.executeQuery()){
+	        res.next();
+	        generatedCourseID = res.getInt("id");
+	    } catch (SQLException e) {
+                throw new SQLException();
+            }
+	    
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
 			    + "createCourse(Transaction trans, Course course, "
 			    + "Part courseImage)");
 	    throw new InvalidDBTransferException();
-
+  // TODO Klammer zu hier ???
 	} catch (IOException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -1084,14 +1093,13 @@ public class CourseDAO {
 	boolean successful = false;
 
 	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "DELETE FROM \"courses\" WHERE id = ?";
+	String sql = "DELETE FROM \"courses\" "
+	           + " WHERE id = ?";
 	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);
 
 	    // execute preparedStatement, return resultSet as a list
@@ -1101,7 +1109,6 @@ public class CourseDAO {
 	    } else {
 		successful = false;
 	    }
-	    pS.close();
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "SQL Exception occoured during executing "
@@ -1223,8 +1230,9 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "Insert into \"course_instructors\" "
-		+ "(course_instructor_id, course_id) " + "values (?, ?)";
+	String sql = "INSERT into \"course_instructors\" "
+	            + "(course_instructor_id, course_id) " 
+	            + "values (?, ?)";
 
 	// catch potential SQL-Injection
 	try {
@@ -1275,8 +1283,10 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "DELETE FROM \"course_instructors\" WHERE course_id = ? "
-		+ "AND course_instructor_id = ?";
+	String sql = "DELETE FROM \"course_instructors\" "
+	           + "WHERE course_id = ? "
+	           + "AND course_instructor_id = ?";
+	
 	// catch potential SQL-Injection
 	try {
 	    if (setRelationMethode(courseID, userID, conn, sql) == 1) {
