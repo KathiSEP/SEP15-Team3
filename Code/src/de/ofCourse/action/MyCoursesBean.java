@@ -166,28 +166,27 @@ public class MyCoursesBean implements Pagination, Serializable {
      */
     @Override
     public void sortBySpecificColumn() {
-	
 	//Compute sort direction
-	 if(getPagination().getSortColumn().
-		 equals(SortColumn.fromString(orderParam))) {
+	if(getPagination().getSortColumn().
+		equals(SortColumn.fromString(orderParam))) {
 	     
-	            getPagination().changeSortDirection();
-	            
-	        } else {
-	            getPagination().setSortColumn(SortColumn.fromString(orderParam));
-	        }
+	    getPagination().changeSortDirection();
+    
+	} else {
+	    getPagination().setSortColumn(SortColumn.fromString(orderParam));
+	}
 	
 	//Fetch the needed courses
-	this.transaction.start();
-	try {
+	transaction.start();
+    	try {
 	    
-	    registeredCourses =  CourseDAO.getCoursesOf(
+    	    registeredCourses =  CourseDAO.getCoursesOf(
 		    		transaction, 
 		    		getPagination(),
 		    		sessionUser.getUserID());
-	    transaction.commit();
+    	    transaction.commit();
 	    
-	} catch (InvalidDBTransferException e) {
+    	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during sorting my courses");
