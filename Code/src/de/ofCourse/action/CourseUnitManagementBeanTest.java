@@ -121,7 +121,7 @@ public class CourseUnitManagementBeanTest {
 	part.setAccountBalance(20);
 
 	cycle = new Cycle();
-	cycle.setCycleID(1);
+	cycle.setCycleID(0);
 	cycle.setCourseID(1);
 	cycle.setNumberOfUnits(3);
 	cycle.setTurnus(7);
@@ -307,7 +307,7 @@ public class CourseUnitManagementBeanTest {
 	
 	//Deletes the corresponding cycle
 	PowerMockito.verifyStatic();
-	CycleDAO.deleteCycle(conn, 1);
+	CycleDAO.deleteCycle(conn, 0);
 
 	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
 

@@ -252,8 +252,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			.getNumberOfParticipants(transaction, courseUnitID));
 
 		participants.setWrappedData(CourseUnitDAO
-			.getParticipiantsOfCourseUnit(transaction, pagination,
-				courseUnitID, false));
+			.getParticipiantsOfCourseUnit(
+				transaction, 
+				pagination,
+				courseUnitID,
+				false));
 		transaction.commit();
 
 	    } catch (InvalidDBTransferException e) {
@@ -296,7 +299,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		if (regularCourseUnit) {
 
 		    courseUnit.getCycle().setCycleID(
-			    CycleDAO.createCycle(transaction, courseID,
+			    CycleDAO.createCycle(
+				    transaction, 
+				    courseID,
 				    courseUnit.getCycle()));
 
 		    Date actualStartDate = courseUnit.getStartime();
@@ -396,7 +401,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    try {
 		if (completeCycle && courseUnit.getCycle() != null) {
 		    List<Integer> idsToEdit = CourseUnitDAO
-			    .getIdsCourseUnitsOfCycle(transaction,
+			    .getIdsCourseUnitsOfCycle(
+				    transaction,
 				    courseUnit.getCourseUnitID());
 
 		    for (int id : idsToEdit) {
@@ -506,9 +512,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				    transaction, user.getUserID(), unitId)) {
 
 				amount += CourseUnitDAO.getPriceOfUnit(
-					transaction, unitId);
+					transaction,
+					unitId);
 				CourseUnitDAO.removeUserFromCourseUnit(
-					transaction, user.getUserID(), unitId);
+					transaction,
+					user.getUserID(),
+					unitId);
 				 sendMailToSelected(transaction, Arrays.asList(user), true);
 			    }
 			}
@@ -519,7 +528,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    }
 		    // Delete the unit
 		    CourseUnitDAO.deleteCourseUnit(transaction, id);
-		    System.out.println("Deleted " + id);
 		}
 		// Delete the cycle
 		CycleDAO.deleteCycle(transaction, cycleId);
@@ -527,8 +535,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    } else {
 
 		List<User> participants = CourseUnitDAO
-			.getParticipiantsOfCourseUnit(transaction, pagination,
-				courseUnit.getCourseUnitID(), true);
+			.getParticipiantsOfCourseUnit(
+				transaction, 
+				pagination,
+				courseUnit.getCourseUnitID(),
+				true);
 		deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 
 		sendMailToSelected(transaction, participants, true);
@@ -663,10 +674,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	try {
 	    float newAccountBalance = calculateNewAccountBalance(
-		    courseUnit.getPrice(), userToAdd, true);
-	    CourseUnitDAO.addUserToCourseUnit(transaction,
-		    userToAdd.getUserID(), courseUnit.getCourseUnitID());
-	    UserDAO.updateAccountBalance(transaction, userToAdd.getUserID(),
+		    courseUnit.getPrice(), 
+		    userToAdd, 
+		    true);
+	    CourseUnitDAO.addUserToCourseUnit(
+		    transaction,
+		    userToAdd.getUserID(),
+		    courseUnit.getCourseUnitID());
+	    UserDAO.updateAccountBalance(
+		    transaction, 
+		    userToAdd.getUserID(),
 		    newAccountBalance);
 
 	    // Updates the shown list with the actual data
@@ -837,21 +854,31 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	try {
 
 	    for (int i = 0; i < usersToDelete.size(); ++i) {
-		CourseUnitDAO.removeUserFromCourseUnit(transaction,
+		CourseUnitDAO.removeUserFromCourseUnit(
+			transaction,
 			usersToDelete.get(i).getUserID(),
 			courseUnit.getCourseUnitID());
 
 		float newAccountBalance = calculateNewAccountBalance(
-			courseUnit.getPrice(), usersToDelete.get(i), false);
+			courseUnit.getPrice(), 
+			usersToDelete.get(i), 
+			false);
 
-		UserDAO.updateAccountBalance(transaction, usersToDelete.get(i)
-			.getUserID(), newAccountBalance);
+		UserDAO.updateAccountBalance(
+			transaction,
+			usersToDelete.get(i)
+			.getUserID(),
+			newAccountBalance);
 	    }
 
 	    // Updates the shown list with the actual data
 	    participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, getPagination(),
-			    courseUnitID, false));
+		    .getParticipiantsOfCourseUnit(
+			    transaction,
+			    getPagination(),
+			    courseUnitID,
+			    false));
+	    
 	    transaction.commit();
 
 	} catch (InvalidDBTransferException e) {

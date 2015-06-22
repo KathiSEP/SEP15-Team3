@@ -6,6 +6,9 @@ import org.junit.Test;
 
 public class PaginationDataTest {
 
+    /**
+     * @author Fuchs Tobias
+     */
     @Test
     public void test() {
 
