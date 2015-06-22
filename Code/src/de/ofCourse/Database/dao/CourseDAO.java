@@ -19,6 +19,7 @@ import java.util.List;
 import javax.servlet.http.Part;
 
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
@@ -102,7 +103,19 @@ public class CourseDAO {
 	    + "courses.end_date FROM \"courses\", \"course_units\" "
 	    + "WHERE \"courses\".id = \"course_units\".course_id "
 	    + "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    
+    
+    private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id, courses.titel, (SELECT DISTINCT course_units.start_time " 
+            + "FROM course_units WHERE courses.id = course_units.course_id AND course_units.start_time > CURRENT_TIMESTAMP " 
+	    + "ORDER BY course_units.start_time LIMIT 1), (SELECT course_unit_addresses.location FROM course_units, " 
+            + "course_unit_addresses WHERE course_units.id = course_unit_addresses.course_unit_id "
+	    + "AND courses.id = course_units.course_id AND course_units.start_time > CURRENT_TIMESTAMP ORDER BY course_units.start_time LIMIT 1) " 
+            + "FROM courses, course_units WHERE courses.id IN (SELECT course_id FROM course_participants WHERE participant_id = ?) "
+	    + "ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    private final static String COUNT_MY_COURSES =  "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN (SELECT course_id " 
+	    + "FROM \"course_participants\" WHERE participant_id = ?)";
+    
     /**
      * Deletes all the courses from the system where the end date is before 
      * the actual date
@@ -874,120 +887,87 @@ public class CourseDAO {
      * 
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *            
+     * @author Fuchs Tobias
      */
+    @SuppressWarnings("deprecation")
     public static List<Course> getCoursesOf(Transaction trans,
 	    PaginationData pagination, int userID)
 	    throws InvalidDBTransferException {
-	String direction = getSortDirection(pagination.isSortAsc());
-	ArrayList<Course> coursesOf = new ArrayList<Course>();
-	String getCourseQuery = "SELECT DISTINCT courses.id, courses.titel,"
-		+ " (SELECT DISTINCT start_time FROM course_units"
-		+ " WHERE courses.id = course_units.course_id AND"
-		+ " course_units.start_time > CURRENT_DATE LIMIT 1)"
-		+ " FROM courses, course_units WHERE courses.id IN"
-		+ " (SELECT course_id"
-		+ " FROM course_participants WHERE participant_id = ?)"
-		+ " ORDER BY %s %s" + " LIMIT ? OFFSET ?";
-	String getNextCourseUnitQuery = "SELECT course_unit_addresses.location"
-		+ " FROM course_units, course_unit_addresses WHERE"
-		+ " course_units.course_id =? "
-		+ " AND course_units.start_time >= CURRENT_DATE"
-		+ " AND course_unit_addresses.course_unit_id = course_units.id"
-		+ " ORDER BY course_units.start_time ASC LIMIT 1";
-
-	getCourseQuery = String.format(getCourseQuery,
+	
+	String direction = pagination.getSortDirection().toString();
+	List<Course> coursesOf = new ArrayList<Course>();
+	
+	//Formats the SQL - Statement
+	String getMyCoursesQuery = String.format(GET_MY_COURSES,
 		pagination.getSortColumn(), direction);
+	
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
+	//Calculates the offset
 	int calculateOffset = pagination.getElementsPerPage()
 		* pagination.getCurrentPageNumber();
+	
+	//Fetch the courses of a user
+	try (PreparedStatement stmt = conn.prepareStatement(getMyCoursesQuery)) {
 
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(getCourseQuery);
 	    stmt.setInt(1, userID);
 	    stmt.setInt(2, pagination.getElementsPerPage());
 	    stmt.setInt(3, calculateOffset);
-	    ResultSet fetchedCourses = stmt.executeQuery();
-
-	    Timestamp stamp;
-	    Date date;
-	    CourseUnit courseUnit;
-
-	    // Fills the list coursesOf with courses from the database.
-	    // At this time only id an title is set
-	    while (fetchedCourses.next()) {
-		Course fetchedCourse = new Course();
-		fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
-		// fetchedCourse.setCourseImage(fetchedCourses.getBytes("image"));
-		if (fetchedCourses.getString("titel") != null) {
-		    fetchedCourse.setTitle(fetchedCourses.getString("titel"));
-		} else {
-		    fetchedCourse.setTitle("Nicht angegeben");
-		}
-		courseUnit = new CourseUnit();
-		stamp = fetchedCourses.getTimestamp("start_time");
-		if (stamp != null) {
-		    date = new Date(stamp.getYear(), stamp.getMonth(),
-			    stamp.getDate(), stamp.getHours(),
-			    stamp.getMinutes());
+	   
+	    try(ResultSet fetchedCourses = stmt.executeQuery()){
+	    
+		Timestamp stamp;
+		Date date;
+		Course fetchedCourse;
+		CourseUnit courseUnit;
+		Address unitAddress;
+		// Fills the list coursesOf with courses from the database.
+		// At this time only id an title is set
+		while (fetchedCourses.next()) {
+		    fetchedCourse = new Course();
+		    courseUnit = new CourseUnit();
+		    
+		    fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
+		
+		    if (fetchedCourses.getString("titel") != null) {
+			fetchedCourse.setTitle(fetchedCourses.getString("titel"));
+		    } else {
+			fetchedCourse.setTitle("Nicht angegeben");
+		    }
+		
+		    
+		    stamp = fetchedCourses.getTimestamp("start_time");
+		    if (stamp != null) {
+			date = new Date(stamp.getYear(),
+				stamp.getMonth(),
+				stamp.getDate(), 
+				stamp.getHours(),
+				stamp.getMinutes());
 		    courseUnit.setStartime(date);
-		}
+		    }
+		    
+		    unitAddress = new Address();
+		    if(fetchedCourses.getString("location")!= null){
+			    unitAddress.setLocation(
+				    fetchedCourses.getString("location"));
+		    }
+		    else{
+			    unitAddress.setLocation("Nicht angegeben");
+		    }
+		courseUnit.setAddress(unitAddress);
 		fetchedCourse.setNextCourseUnit(courseUnit);
 		coursesOf.add(fetchedCourse);
-
 	    }
-
-	    if (coursesOf.size() > 0) {
-
-		// Fetches the leaders of a course
-		ResultSet fetchedLocation;
-
-		for (int i = 0; i < coursesOf.size(); ++i) {
-		    stmt = conn.prepareStatement(getNextCourseUnitQuery);
-		    stmt.setInt(1, coursesOf.get(i).getCourseID());
-		    fetchedLocation = stmt.executeQuery();
-		    while (fetchedLocation.next()) {
-
-			if (fetchedLocation.getString("location") != null) {
-			    coursesOf
-				    .get(i)
-				    .getNextCourseUnit()
-				    .setLocation(
-					    fetchedLocation
-						    .getString("location"));
-			} else {
-			    coursesOf.get(i).getNextCourseUnit()
-				    .setLocation("Nicht angegeben");
-			}
-		    }
-		}
-	    }
+	  }
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("Error occoured during fetching the next set of courses of a user.");
-	    e.printStackTrace();
+	    LogHandler.getInstance().error("Error occoured during fetching" 
+	                     + " the next set of courses of a user.");
 	    throw new InvalidDBTransferException();
 	}
 	return coursesOf;
-    }
-
-    /**
-     * Returns the sort direction as String so it can easiley be added to the
-     * SQL statement.
-     * 
-     * @param isSortAsc
-     *            whether the sort direction is ascending order
-     * @return the sort direction as String
-     */
-    private static String getSortDirection(boolean isSortAsc) {
-	if (isSortAsc) {
-	    return "ASC";
-	} else {
-	    return "DESC";
-	}
     }
 
     /**
@@ -1002,28 +982,29 @@ public class CourseDAO {
      * @return the number of courses the user participates in
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     *             
+     * @author Fuchs Tobias
      */
     public static int getNumberOfMyCourses(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
 	int numberOfCourses = 0;
-	String countQuery = "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN "
-		+ "(SELECT course_id FROM \"course_participants\" WHERE participant_id = ?)";
-
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(countQuery);
+	try (PreparedStatement  stmt = conn.prepareStatement(COUNT_MY_COURSES)) {
 	    stmt.setInt(1, userID);
-	    ResultSet resultSet = stmt.executeQuery();
+	    
+	    try(ResultSet resultSet = stmt.executeQuery()){
 	    resultSet.next();
 	    numberOfCourses = resultSet.getInt(1);
+	    }
+	    
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("Error occoured during fetching the number of courses of a certain user.");
-	    e.printStackTrace();
+		    .error("Error occoured during fetching the number of" 
+			    + " courses of a certain user.");
 	    throw new InvalidDBTransferException();
 	}
 	return numberOfCourses;
