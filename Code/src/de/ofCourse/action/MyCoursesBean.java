@@ -17,6 +17,8 @@ import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -102,7 +104,7 @@ public class MyCoursesBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
 	this.registeredCourses = new ArrayList<Course>();
-	pagination = new PaginationData(elementsPerPage, 0, "titel", true);
+	pagination = new PaginationData(elementsPerPage, 0, SortColumn.TITLE, SortDirection.ASC);
 
 	transaction = Connection.create();
 	transaction.start();
@@ -160,8 +162,12 @@ public class MyCoursesBean implements Pagination, Serializable {
     @Override
     public void sortBySpecificColumn() {
 	this.transaction.start();
-	this.refreshDirection();
-	this.pagination.setSortColumn(getOrderParam());
+	if(getPagination().getSortColumn().equals(SortColumn.fromString(orderParam))) {
+            getPagination().changeSortDirection();
+            
+        } else {
+            getPagination().setSortColumn(SortColumn.fromString(orderParam));
+        }
 	
 	try {
 	    this.registeredCourses = (ArrayList<Course>) CourseDAO
@@ -175,20 +181,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 	}
     }
     
-    /**
-     * Refreshes the sort direction.
-     */
-    private void refreshDirection(){
-	if(this.orderParam.equals(pagination.getSortColumn())){
-	    if(pagination.isSortAsc()){
-		pagination.setSortAsc(false);
-	    }else{
-		pagination.setSortAsc(true);
-	    }
-	}else{
-	    this.pagination.setSortAsc(true);
-	}
-    }
+    
 
     /**
      * {@inheritDoc}

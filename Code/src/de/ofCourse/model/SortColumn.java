@@ -8,7 +8,10 @@ public enum SortColumn {
     ID("id"),
     FIRST_NAME("first_name"), 
     NAME("name"), 
-    DATE_OF_BIRTH("date_of_birth");
+    DATE_OF_BIRTH("date_of_birth"),
+    TITLE("titel"),
+    LOCATION("location"),
+    START_TIME("start_time");
     
     private String sortColumn;
     

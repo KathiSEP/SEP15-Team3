@@ -39,6 +39,111 @@ public class AccessPhaseListener implements PhaseListener {
      * Default serial version id
      */
     private static final long serialVersionUID = -5454041563674183939L;
+    
+    /**
+     * Represents the url to the index page
+     */
+    private static final String URL_INDEX = "/facelets/open/index.xhtml";
+    
+    /**
+     * Represents the url to the login page
+     */
+    private static final String URL_AUTHENTICATE = "/facelets/open/authenticate.xhtml";
+    
+    /**
+     * Represents the url to the course registration error page
+     */
+    private final static String URL_COURSE_REGISTRATION_ERROR = "/facelets/ErrorPages/CourseRegistrationException.xhtml";
+    
+    /**
+     * Represents the url to the 404 error page
+     */
+    private final static String URL_404_ERROR = "/facelets/ErrorPages/404.xhtml";
+    
+    /**
+     * Represents the url to the default error page
+     */
+    private final static String URL_DEFAULT_ERROR = "/facelets/ErrorPages/default.xhtml";
+    
+    /**
+     * Represents the url to the imprint page
+     */
+    private final static String URL_IMPRINT = "/facelets/open/imprint.xhtml";
+    
+    /**
+     * Represents the url to the agb page
+     */
+    private final static String URL_AGB = "/facelets/open/agb.xhtml";
+    
+    /**
+     * Represents the url to the help page
+     */
+    private final static String URL_HELP = "/facelets/open/help.xhtml";
+        
+    /**
+     * Represents the url to the page where you can search for courses
+     */
+    private final static String URL_SEARCH = "/facelets/open/courses/search.xhtml";
+    
+    /**
+     * Represents the url to the course detail page
+     */
+    private final static String URL_COURSE_DETAIL = "/facelets/open/courses/courseDetail.xhtml";
+    
+    /**
+     * Represents the url to the page where the courses of the user are listed
+     */
+    private final static String URL_MY_COURSES = "/facelets/user/registeredUser/myCourses.xhtml";
+    
+    /**
+     * Represents the url to the profile page
+     */
+    private final static String URL_PROFILE = "/facelets/user/registeredUser/profile.xhtml";
+    
+    /**
+     * Represents the url to the scheduler page
+     */
+    private final static String URL_SCHEDULER= "/facelets/user/registeredUser/scheduler.xhtml";
+        
+    /**
+     * Represents the url to the profile page of a course leader
+     */
+    private final static String URL_LEADER_PROFILE = "/facelets/user/registeredUser/leaderProfile.xhtml";
+    
+    /**
+     * Represents the url to the participants list page of a course
+     */
+    private final static String URL_PARTICIPANTS_LIST = "/facelets/user/registeredUser/listParticipants.xhtml";   
+    
+    /**
+     * Represents the url to the profile page where a course leader create/edit/delete course units
+     */
+    private final static String URL_EDIT_COURSE_UNIT = "/facelets/user/courseLeader/editCourseUnit.xhtml";
+    
+    /**
+     * Represents the url to the user activation page
+     */
+    private final static String URL_ACTIVATE_USERS = "/facelets/user/courseLeader/activateUsers.xhtml";
+    
+    /**
+     * Represents the url to the administrator page
+     */
+    private final static String URL_ADMIN_MANAGEMENT = "/facelets/user/systemAdministrator/adminManagement.xhtml";
+    
+    /**
+     * Represents the url to the page where a administrator can search for users
+     */
+    private final static String URL_SEARCH_USER = "/facelets/user/systemAdministrator/searchUser.xhtml";   
+    
+    /**
+     * Represents the url to the page where a new user can be created
+     */
+    private final static String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml";
+    
+    /**
+     * Represents the url to the page where a new course can be created
+     */
+    private final static String URL_CREATE_COURSE = "/facelets/user/systemAdministrator/createCourse.xhtml";
 
     /**
      * List that contains the pages accessible for an anonymous user.
@@ -74,11 +179,10 @@ public class AccessPhaseListener implements PhaseListener {
      * allowed to access.
      */
     public AccessPhaseListener() {
-	this.anonymousUsers = this.fillPageListForAnonymousUsers();
-	this.registeredUsers = this.fillPageListForRegisteredUsers();
-	this.courseLeaders = this.fillPageListForCourseLeaders();
-	this.administrators = this.fillPageListForAdministrators();
-
+	anonymousUsers = fillPageListForAnonymousUsers();
+	registeredUsers = fillPageListForRegisteredUsers();
+	courseLeaders = fillPageListForCourseLeaders();
+	administrators = fillPageListForAdministrators();
     }
 
     /**
@@ -101,6 +205,7 @@ public class AccessPhaseListener implements PhaseListener {
 	// Is the user on the login page?
 	boolean loginPage = false;
 	UIViewRoot viewRoot = fctx.getViewRoot();
+	
 	if (viewRoot != null) {
 	    loginPage = fctx.getViewRoot().getViewId()
 		    .endsWith("authenticate.xhtml");
@@ -110,7 +215,7 @@ public class AccessPhaseListener implements PhaseListener {
 	boolean loggedIn = sessionMap.containsKey("loggedin");
 
 	// Fetch data from session
-	this.sessionUser = new SessionUserBean();
+	sessionUser = new SessionUserBean();
 	String role ="";
 	if (sessionMap.containsKey("userID")
 		&& sessionMap.containsKey("userRole")) {
@@ -123,25 +228,26 @@ public class AccessPhaseListener implements PhaseListener {
 
 	if (!loginPage && !loggedIn) {
 	    if (!this.isPermitted(fctx,"")) {
-		this.redirect(ctx, "/facelets/open/authenticate.xhtml");
+		this.redirect(ctx, URL_AUTHENTICATE);
 	    }
 	} else {
+	    
 	    switch (role) {
 	    case "REGISTERED_USER":
 		if (!isPermitted(fctx, "REGISTERED_USER")) {
-		    this.redirect(ctx, "/facelets/open/index.xhtml");
+		    redirect(ctx, URL_INDEX);
 		}
 		break;
 
 	    case "COURSE_LEADER":
 		if (!isPermitted(fctx, "COURSE_LEADER")) {
-		    this.redirect(ctx, "/facelets/open/index.xhtml");
+		    redirect(ctx, URL_INDEX);
 		}
 		break;
 
 	    case "SYSTEM_ADMINISTRATOR":
 		if (!isPermitted(fctx, "SYSTEM_ADMINISTRATOR")) {
-		    this.redirect(ctx, "/facelets/open/index.xhtml");
+		    redirect(ctx, URL_INDEX);
 		}
 		break;
 	    }
@@ -202,8 +308,9 @@ public class AccessPhaseListener implements PhaseListener {
 	boolean isPermitted = false;
 
 	switch (role) {
+	
 	case "SYSTEM_ADMINISTRATOR":
-	    for (int i = 0; i < this.administrators.size() && !isPermitted; ++i) {
+	    for (int i = 0; i < administrators.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId()
 			.equals(administrators.get(i))) {
 		    isPermitted = true;
@@ -211,14 +318,14 @@ public class AccessPhaseListener implements PhaseListener {
 	    }
 
 	case "COURSE_LEADER":
-	    for (int i = 0; i < this.courseLeaders.size() && !isPermitted; ++i) {
+	    for (int i = 0; i < courseLeaders.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId().equals(courseLeaders.get(i))) {
 		    isPermitted = true;
 		}
 	    }
 
 	case "REGISTERED_USER":
-	    for (int i = 0; i < this.registeredUsers.size() && !isPermitted; ++i) {
+	    for (int i = 0; i < registeredUsers.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId()
 			.equals(registeredUsers.get(i))) {
 		    isPermitted = true;
@@ -226,7 +333,7 @@ public class AccessPhaseListener implements PhaseListener {
 	    }
 
 	default:
-	    for (int i = 0; i < this.anonymousUsers.size() && !isPermitted; ++i) {
+	    for (int i = 0; i < anonymousUsers.size() && !isPermitted; ++i) {
 		if (fctx.getViewRoot().getViewId()
 			.equals(anonymousUsers.get(i))) {
 		    isPermitted = true;
@@ -264,19 +371,19 @@ public class AccessPhaseListener implements PhaseListener {
     private List<String> fillPageListForAnonymousUsers() {
 	ArrayList<String> listForAnonymousUsers = new ArrayList<String>();
 	
-	listForAnonymousUsers.add("/facelets/ErrorPages/CourseRegistrationException.xhtml");
-	listForAnonymousUsers.add("/facelets/ErrorPages/404.xhtml");
-	listForAnonymousUsers.add("/facelets/ErrorPages/default.xhtml");
-	listForAnonymousUsers.add("/facelets/open/index.xhtml");
-	listForAnonymousUsers.add("/facelets/open/authenticate.xhtml");
-	listForAnonymousUsers.add("/facelets/open/imprint.xhtml");
-	listForAnonymousUsers.add("/facelets/open/agb.xhtml");
-	listForAnonymousUsers.add("/facelets/open/help.xhtml");
-	listForAnonymousUsers.add("/facelets/open/courses/search.xhtml");
-	listForAnonymousUsers.add("/facelets/open/courses/courseDetail.xhtml");
+	listForAnonymousUsers.add(URL_COURSE_REGISTRATION_ERROR);
+	listForAnonymousUsers.add(URL_404_ERROR);
+	listForAnonymousUsers.add(URL_DEFAULT_ERROR);
+	listForAnonymousUsers.add(URL_INDEX);
+	listForAnonymousUsers.add(URL_AUTHENTICATE);
+	listForAnonymousUsers.add(URL_IMPRINT);
+	listForAnonymousUsers.add(URL_AGB);
+	listForAnonymousUsers.add(URL_HELP);
+	listForAnonymousUsers.add(URL_SEARCH);
+	listForAnonymousUsers.add(URL_COURSE_DETAIL);
 	return listForAnonymousUsers;
     }
-
+       
     /**
      * Returns a list that contains the pages a user who is registered in the
      * system is allowed to access.
@@ -286,18 +393,13 @@ public class AccessPhaseListener implements PhaseListener {
     private List<String> fillPageListForRegisteredUsers() {
 	ArrayList<String> listForRegisteredUsers = new ArrayList<String>();
 
-	listForRegisteredUsers
-		.add("/facelets/user/registeredUser/myCourses.xhtml");
-	listForRegisteredUsers
-		.add("/facelets/user/registeredUser/profile.xhtml");
-	listForRegisteredUsers
-		.add("/facelets/user/registeredUser/scheduler.xhtml");
-	listForRegisteredUsers
-		.add("/facelets/user/registeredUser/leaderProfile.xhtml");
-	listForRegisteredUsers
-		.add("/facelets/user/registeredUser/listParticipants.xhtml");
+	listForRegisteredUsers.add(URL_MY_COURSES);
+	listForRegisteredUsers.add(URL_PROFILE);
+	listForRegisteredUsers.add(URL_SCHEDULER);
+	listForRegisteredUsers.add(URL_LEADER_PROFILE);
+	listForRegisteredUsers.add(URL_PARTICIPANTS_LIST);
 	return listForRegisteredUsers;
-    }
+    }   
 
     /**
      * Returns a list that contains the pages a course leader is allowed to
@@ -308,10 +410,8 @@ public class AccessPhaseListener implements PhaseListener {
     private List<String> fillPageListForCourseLeaders() {
 	ArrayList<String> listForCourseLeaders = new ArrayList<String>();
 
-	listForCourseLeaders
-		.add("/facelets/user/courseLeader/editCourseUnit.xhtml");
-	listForCourseLeaders
-		.add("/facelets/user/courseLeader/activateUsers.xhtml");
+	listForCourseLeaders.add(URL_EDIT_COURSE_UNIT);
+	listForCourseLeaders.add(URL_ACTIVATE_USERS);
 	return listForCourseLeaders;
     }
 
@@ -324,15 +424,10 @@ public class AccessPhaseListener implements PhaseListener {
     private List<String> fillPageListForAdministrators() {
 	ArrayList<String> listForAdministrators = new ArrayList<String>();
 
-	listForAdministrators
-		.add("/facelets/user/systemAdministrator/adminManagement.xhtml");
-	listForAdministrators
-		.add("/facelets/user/systemAdministrator/searchUser.xhtml");
-	listForAdministrators
-		.add("/facelets/user/systemAdministrator/createUser.xhtml");
-	listForAdministrators
-		.add("/facelets/user/systemAdministrator/createCourse.xhtml");
+	listForAdministrators.add(URL_ADMIN_MANAGEMENT);
+	listForAdministrators.add(URL_SEARCH_USER);
+	listForAdministrators.add(URL_CREATE_USER);
+	listForAdministrators.add(URL_CREATE_COURSE);
 	return listForAdministrators;
     }
-
 }
