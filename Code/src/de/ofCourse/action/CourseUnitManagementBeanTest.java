@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,8 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
@@ -148,8 +151,8 @@ public class CourseUnitManagementBeanTest {
 	pagination.setCurrentPageNumber(0);
 	pagination.setElementsPerPage(10);
 	pagination.setNumberOfPages(1);
-	pagination.setSortAsc(true);
-	pagination.setSortColumn("name");
+	pagination.setSortDirection(SortDirection.ASC);
+	pagination.setSortColumn(SortColumn.TITEL);
 
 	course = new Course();
 	course.setStartdate(new Date(2015, 1, 1));
