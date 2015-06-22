@@ -13,7 +13,6 @@ import javax.faces.bean.RequestScoped;
 import de.ofCourse.Database.dao.SystemDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Activation;
-import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -42,6 +41,26 @@ public class SystemConfigurationBean implements Serializable {
      * Serial id
      */
     private static final long serialVersionUID = 3365915734550887541L;
+    
+    /**
+     * Represents the url to the page where a administrator can search for users
+     */
+    private final static String URL_SEARCH_USER = "/facelets/user/systemAdministrator/searchUser.xhtml";   
+    
+    /**
+     * Represents the url to the page where a new user can be created
+     */
+    private final static String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml";
+    
+    /**
+     * Represents the url to the page where a new course can be created
+     */
+    private final static String URL_CREATE_COURSE = "/facelets/user/systemAdministrator/createCourse.xhtml";
+    
+    /**
+     * Represents the url to the page where you can search for courses
+     */
+    private final static String URL_SEARCH = "/facelets/open/courses/search.xhtml";
 
     /**
      * Stores the overdraft credit that was granted by the administrator
@@ -80,16 +99,19 @@ public class SystemConfigurationBean implements Serializable {
     @PostConstruct
     private void init() {
 	
-	this.transaction = Connection.create();
+	transaction = Connection.create();
 	transaction.start();
+	
 	try{
-	this.overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
-	this.signOffLimit = SystemDAO.getSignOffLimit(transaction);
-	this.transaction.commit();
+	    
+	    overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
+	    signOffLimit = SystemDAO.getSignOffLimit(transaction);
+	    transaction.commit();
 	}
 	catch(InvalidDBTransferException e){
-	    LogHandler.getInstance().error("Error during initializing admin managements page");
-	    this.transaction.rollback();
+	    LogHandler.getInstance().error("Error during initializing"
+		    				+ " admin managements page");
+	    transaction.rollback();
 	}
 	
     }
@@ -99,27 +121,20 @@ public class SystemConfigurationBean implements Serializable {
      * setting relating to account activation in the database.
      */
     public void determineAccountActivationType() {
-	this.transaction.start();
+	transaction.start();
 	
-	try {
-	    switch(this.accountActivationType){
-	    case "EMAIL":
-		SystemDAO.setActivationType(transaction, Activation.EMAIL);
-		break;
-	    case "EMAIL_COURSE_LEADER":
-		SystemDAO.setActivationType(transaction, Activation.EMAIL_COURSE_LEADER);
-		break;
-	    case "EMAIL_ADMIN":
-		SystemDAO.setActivationType(transaction, Activation.EMAIL_ADMIN);
-		break;
-	    }
+	try {    
 	    
-	    this.transaction.commit();
+	    SystemDAO.setActivationType(
+		    transaction, 
+		    Activation.fromString(getAccountActivationType()));    
+	    transaction.commit();
+	    
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during setting"
 			    + " the granted overdraft credit.");
-	    this.transaction.rollback();
+	    transaction.rollback();
 	}
     }
 
@@ -149,17 +164,17 @@ public class SystemConfigurationBean implements Serializable {
      * setting relating to overdraft credit in the database.
      */
     public void determineOverdraftCredit() {
-	this.transaction.start();
+	transaction.start();
 
 	try {
-	    SystemDAO.setOverdraftCredit(transaction, this.overdraftCredit);
-	    this.transaction.commit();
+	    SystemDAO.setOverdraftCredit(transaction, overdraftCredit);
+	    transaction.commit();
 	    
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during setting"
 			    + " the granted overdraft credit.");
-	    this.transaction.rollback();
+	    transaction.rollback();
 	}
     }
 
@@ -189,17 +204,17 @@ public class SystemConfigurationBean implements Serializable {
      * setting relating to overdraft credit in the database.
      */
     public void determineSignOffLimit() {
-	this.transaction.start();
+	transaction.start();
 
 	try {
-	    SystemDAO.setSignOffLimit(transaction, this.signOffLimit);
-	    this.transaction.commit();
+	    SystemDAO.setSignOffLimit(transaction, signOffLimit);
+	    transaction.commit();
 	    
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during setting"
 			    + " the sign off limit for course units.");
-	    this.transaction.rollback();
+	    transaction.rollback();
 	}
     }
 
@@ -228,7 +243,7 @@ public class SystemConfigurationBean implements Serializable {
      * @return link to <code>createUser</code> page
      */
     public String loadCreateNewUserPage() {
-	return "/facelets/user/systemAdministrator/createUser.xhtml";
+	return URL_CREATE_USER;
     }
 
     /**
@@ -238,7 +253,7 @@ public class SystemConfigurationBean implements Serializable {
      * @return link to next page
      */
     public String loadManageUserPage() {
-	return "/facelets/user/systemAdministrator/searchUser.xhtml";
+	return URL_SEARCH_USER;
     }
 
     /**
@@ -247,7 +262,7 @@ public class SystemConfigurationBean implements Serializable {
      * @return link to <code>createCourse</code> page
      */
     public String loadCreateNewCoursePage() {
-	return "/facelets/user/systemAdministrator/createCourse.xhtml";
+	return URL_CREATE_COURSE;
     }
 
     /**
@@ -257,7 +272,7 @@ public class SystemConfigurationBean implements Serializable {
      * @return link to next page
      */
     public String loadManageCoursesPage() {
-	return "/facelets/open/courses/search.xhtml";
+	return  URL_SEARCH;
     }
 
     /**

@@ -79,17 +79,17 @@ public class PaymentOfflineBean implements Serializable {
      * @author Tobias Fuchs
      */
     public void depositAmountOnUserAccount() {
-	this.transaction.start();
+	transaction.start();
 	
 	try {
 	    User tempUser = UserDAO.getUser(transaction, user.getUserID());
 	    float accountBalance = tempUser.getAccountBalance();
 	    float newBalance =accountBalance + amountToDeposit;
 	    
-	    //Update 
+	    //Updates the account balance 
 	    UserDAO.updateAccountBalance(
 		    transaction,
-		    this.user.getUserID(), 
+		    user.getUserID(), 
 		    newBalance);
 	    transaction.commit();
 	    
@@ -102,8 +102,7 @@ public class PaymentOfflineBean implements Serializable {
 			    .getLabel("paymentOfflineBean.FacesMessage.deposit2"));
 	    
 	} catch (InvalidDBTransferException e) {
-	    
-	    this.transaction.rollback();
+	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during depositing money on the account of user: "
 			    + user.getUserID());
@@ -111,14 +110,15 @@ public class PaymentOfflineBean implements Serializable {
 		    "formToUpAccount:spendMoney",
 		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit3"));
 	}
-
     }
 
+    /**
+     * Initializes the bean
+     */
     @PostConstruct
     private void init() {
 	user = new User();
-	this.transaction = Connection.create();
-
+	transaction = Connection.create();
     }
 
     /**
