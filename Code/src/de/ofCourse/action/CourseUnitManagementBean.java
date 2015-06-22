@@ -28,6 +28,7 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Period;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
@@ -85,6 +86,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * All participants of a course unit are informed in case of changes.
      */
     private static final int informParticipantsOfUnit = 1;
+    
+    /**
+     * Represents the url to the course detail page
+     */
+    private final static String URL_COURSE_DETAIL = "/facelets/open/courses/courseDetail.xhtml";
 
     /**
      * Stores the selected inform status
@@ -175,6 +181,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * Represents the current displayed page number.
      */
     private int currentPage;
+    
+    /**
+     * Represents the entered turnus.
+     */
+    private String enteredTurnus;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -307,6 +318,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		calculateStartAndEndTime(courseUnit);
 		if (regularCourseUnit) {
 
+		    courseUnit.getCycle().setTurnus(
+			    Period.fromString(enteredTurnus));
 		    courseUnit.getCycle().setCycleID(
 			    CycleDAO.createCycle(
 				    transaction, 
@@ -322,14 +335,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    for (int i = 0; i < courseUnit.getCycle()
 			    .getNumberOfUnits(); ++i) {
 
-			if (courseUnit.getCycle().getTurnus() == day) {
-
+			if (courseUnit.getCycle().getTurnus().equals(Period.DAYS)) {
 			    nextStartDate = calculateDate(actualStartDate, i
 				    * day);
 			    nextEndDate = calculateDate(actualEndDate, i * day);
 
-			} else if (courseUnit.getCycle().getTurnus() == week) {
-
+			} else if (courseUnit.getCycle().getTurnus().equals(Period.WEEKS)) {
 			    nextStartDate = calculateDate(actualStartDate, i
 				    * week);
 			    nextEndDate = calculateDate(actualEndDate, i * week);
@@ -364,7 +375,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    false);
 		}
 		transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml";
+		return URL_COURSE_DETAIL;
 
 	    } catch (InvalidDBTransferException e) {
 		LogHandler.getInstance().error(
@@ -469,7 +480,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    sendMailToSelected(transaction, participants, false);
 		}
 		transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml";
+		return URL_COURSE_DETAIL;
 		
 	    } catch (InvalidDBTransferException e) {
 		transaction.rollback();
@@ -574,7 +585,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    LogHandler.getInstance().error(
 		    "Error occured during deleting" + " a course unit.");
 	}
-	return "/facelets/open/courses/courseDetail.xhtml";
+	return URL_COURSE_DETAIL;
     }
 
     /**
@@ -1367,5 +1378,24 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public void setCompleteCycle(boolean completeCycle) {
 	this.completeCycle = completeCycle;
+    }
+
+    /**
+     * Returns the value of <code>enteredTurnus</code>
+     * 
+     * @return the entered turnus
+     */
+    public String getEnteredTurnus() {
+	return enteredTurnus;
+    }
+
+    /**
+     * Sets the value of <code>eneteredTurnus</code>.
+     * 
+     * @param enteredTurnus 
+     * 		the entered turnus
+     */
+    public void setEnteredTurnus(String enteredTurnus) {
+	this.enteredTurnus = enteredTurnus;
     }
 }

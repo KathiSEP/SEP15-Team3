@@ -59,8 +59,10 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                    <h:commandLink 
+                                    <h:commandLink  action="#{myCoursesBean.sortBySpecificColumn()}"
                                         styleClass="theader">
+                                        <f:setPropertyActionListener
+                                            target="#{myCoursesBean.orderParam}" value="location" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.location')}
                                             </h:commandLink>
                                 </f:facet>

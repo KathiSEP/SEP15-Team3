@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Cycle;
+import de.ofCourse.model.Period;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -30,10 +31,14 @@ import de.ofCourse.system.Transaction;
  */
 public class CycleDAO {
 
-    private static final String createQuery = "INSERT INTO \"cycles\""
-		+ " (course_id, period, cycle_end)" + " VALUES"
-		+ " (?, ?::period, ?) RETURNING id";
+    private static final String CREATE_QUERY = "INSERT INTO \"cycles\""
+	    + " (course_id, period, cycle_end)" + " VALUES"
+	    + " (?, ?::period, ?) RETURNING id";
+
+    private static final String ID_QUERY = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
     
+    private static final String DELETE_QUERY = "DELETE FROM \"cycles\" WHERE id=?";
+
     /**
      * Creates a new cycle an returns the id of the created cycle.
      * 
@@ -52,26 +57,18 @@ public class CycleDAO {
     public static int createCycle(Transaction trans, int courseID, Cycle cycle)
 	    throws InvalidDBTransferException {
 	int cycleID = 0;
-	
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	
 
-
-	try (PreparedStatement stmt = conn.prepareStatement(createQuery)) {
+	try (PreparedStatement stmt = conn.prepareStatement(CREATE_QUERY)) {
 	    stmt.setInt(1, courseID);
-	    if (cycle.getTurnus() == 1) {
-		stmt.setString(2, "DAYS");
-	    } else if (cycle.getTurnus() == 7) {
-		stmt.setString(2, "WEEKS");
-	    }
+	    stmt.setString(2, cycle.getTurnus().toString());
 	    stmt.setInt(3, cycle.getNumberOfUnits());
-	    try(ResultSet res =  stmt.executeQuery()){
 	    
-	    res.next();
-	    cycleID = res.getInt("id");
-	  
+	    try (ResultSet res = stmt.executeQuery()) {
+		res.next();
+		cycleID = res.getInt("id");
 	    }
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
@@ -90,24 +87,24 @@ public class CycleDAO {
      * @param courseUnitId
      *            the id of the course unit
      * @return the id of the cycle
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * @author Tobias Fuchs
      */
     public static int getCycleId(Transaction trans, int courseUnitId)
 	    throws InvalidDBTransferException {
 	int cycleID = 0;
-	String query = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
+
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	ResultSet res2 = null;
-
-	try (PreparedStatement stmt = conn.prepareStatement(query)) {
+	try (PreparedStatement stmt = conn.prepareStatement(ID_QUERY)) {
 	    stmt.setInt(1, courseUnitId);
-
-	    res2 = stmt.executeQuery();
-	    res2.next();
-	    cycleID = res2.getInt(1);
-
+	    
+	    try (ResultSet res = stmt.executeQuery()) {
+		res.next();
+		cycleID = res.getInt(1);
+	    }
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during fetching the cycle id.");
@@ -117,20 +114,23 @@ public class CycleDAO {
     }
 
     /**
-     * @param trans
-     * @param cycleId
+     * Deletes the cycle with the given id from database.
+     * 
+     * @param trans the Transaction object which contains the connection to the
+     *            database
+     * @param cycleId 
+     * 		the id of the cylce
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Tobias Fuchs
      */
     public static void deleteCycle(Transaction trans, int cycleId)
 	    throws InvalidDBTransferException {
 
-	String deleteQuery = "DELETE FROM \"cycles\" WHERE id=?";
-
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
-
+	try (PreparedStatement stmt = conn.prepareStatement(DELETE_QUERY)) {
 	    stmt.setInt(1, cycleId);
 	    stmt.executeUpdate();
 

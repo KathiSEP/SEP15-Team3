@@ -31,6 +31,7 @@ import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Period;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
@@ -59,6 +60,7 @@ public class CourseUnitManagementBeanTest {
     private CourseUnit unit3;
     private Course course;
 
+    private String enteredTurnus;
     private Cycle cycle;
 
     private PaginationData pagination;
@@ -127,7 +129,7 @@ public class CourseUnitManagementBeanTest {
 	cycle.setCycleID(0);
 	cycle.setCourseID(1);
 	cycle.setNumberOfUnits(3);
-	cycle.setTurnus(7);
+	cycle.setTurnus(Period.DAYS);
 
 	unit = new CourseUnit();
 	unit.setCourseUnitID(1);
@@ -326,6 +328,7 @@ public class CourseUnitManagementBeanTest {
 
 	bean.init();
 	bean.setCourseUnit(unit);
+	bean.setEnteredTurnus("WEEKS");
 
 	// Regular unit
 	bean.setRegularCourseUnit(true);

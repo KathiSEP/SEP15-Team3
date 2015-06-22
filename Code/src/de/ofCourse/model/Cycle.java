@@ -3,8 +3,6 @@
  */
 package de.ofCourse.model;
 
-import java.util.Date;
-
 /**
  * This class contains the information of courseunits which will take place
  * regulary
@@ -26,7 +24,7 @@ public class Cycle {
     /**
      * stores the days till the next unit should take place
      */
-    private int turnus;
+    private Period turnus;
     /**
      * stores the amount of units which should take place
      */
@@ -46,7 +44,7 @@ public class Cycle {
      * 
      * @return the turnus till the next unit should take place
      */
-    public int getTurnus() {
+    public Period getTurnus() {
 	return this.turnus;
     }
 
@@ -75,7 +73,7 @@ public class Cycle {
      * @param turnus
      *            new turnus to set
      */
-    public void setTurnus(int turnus) {
+    public void setTurnus(Period turnus) {
 	this.turnus = turnus;
     }
 

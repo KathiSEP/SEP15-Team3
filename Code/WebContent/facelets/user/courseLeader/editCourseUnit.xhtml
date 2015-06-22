@@ -265,9 +265,9 @@
                                         <span class="input-group-addon"
                                             style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.cycle')}:</span>
                                         <h:selectOneMenu class="form-control" id="turnusCourseUnit"
-                                            value="#{courseUnitManagementBean.courseUnit.cycle.turnus}">
-                                            <f:selectItem itemValue="1" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.daily')}" />
-                                            <f:selectItem itemValue="7" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.weekly')}" />
+                                            value="#{courseUnitManagementBean.enteredTurnus}">
+                                            <f:selectItem itemValue="DAYS" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.daily')}" />
+                                            <f:selectItem itemValue="WEEKS" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.weekly')}" />
                                         </h:selectOneMenu>
                                     </div>
                                     <div class="input-group" style="padding-top: 5px;">
