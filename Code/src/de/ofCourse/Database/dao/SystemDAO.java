@@ -108,7 +108,6 @@ public class SystemDAO {
 	Activation activation = null;
 
 	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
-	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -116,39 +115,28 @@ public class SystemDAO {
 	String sql = "SELECT activation_type FROM \"system_attributes\"";
 
 	// mögliche SQL-Injektion abfangen
-	try {
-	    pS = conn.prepareStatement(sql);
+	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 
 	    // preparedStatement ausführen, gibt resultSet als Liste zurück
 	    // (hier ein Eintrag in der Liste, da Aktivierung einzigartig).
-	    ResultSet res = pS.executeQuery();
+	    try(ResultSet res = pS.executeQuery()){
 
-	    // Nächten Eintrag aufrufen, gibt true zurück, falls es weiteren
-	    // Eintrag gibt, ansonsten null. 
-	    if (res.next()) {
-
-		String activationString = res.getString("activation_type");
-		switch (activationString) {
-		case "EMAIL":
-		    activation = Activation.EMAIL;
-		    break;
-		case "EMAIL_ADMIN":
-		    activation = Activation.EMAIL_ADMIN;
-		    break;
-		case "EMAIL_COURSE_LEADER":
-		    activation = Activation.EMAIL_COURSE_LEADER;
-		    break;
-		}
-
-	    } else {
-		return null;
+        	    // Nächten Eintrag aufrufen, gibt true zurück, falls es 
+        	    // weiteren Eintrag gibt, ansonsten null. 
+        	    if (res.next()) {
+        	        activation = Activation.fromString(
+        	                             res.getString("activation_type"));
+        	    } else {
+        		return null;
+        	    }
+	    }catch (SQLException e) {
+                throw new SQLException();
 	    }
-	    pS.close();
-	    res.close();
 	} catch (SQLException e) {
 	    LogHandler
 		    .getInstance()
-		    .error("SQL Exception occoured during executing getActivationType(Transaction trans)");
+		    .error("SQL Exception occoured during executing "
+		            + "getActivationType(Transaction trans)");
 	    throw new InvalidDBTransferException();
 	}
 	// gibt die Aktivierungsmethode zurück.

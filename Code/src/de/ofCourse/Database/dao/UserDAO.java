@@ -86,7 +86,9 @@ public class UserDAO {
 	java.sql.Connection conn = connection.getConn();
 
 	// database request
-	String sql = "SELECT pw_salt FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT pw_salt "
+	           + "FROM \"users\" "
+	           + "WHERE nickname=?";
 
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
@@ -143,7 +145,9 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id FROM \"users\" WHERE email=?";
+	String sql = "SELECT id "
+	           + "FROM \"users\" "
+	           + "WHERE email=?";
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setString(1, email);
@@ -305,7 +309,9 @@ public class UserDAO {
 	try {
 	    ResultSet res = null;
 
-	    String sql = "SELECT id FROM \"users\" WHERE veri_string = ?";
+	    String sql = "SELECT id "
+	               + "FROM \"users\" "
+	               + "WHERE veri_string = ?";
 	    do {
 		SecureRandom random = new SecureRandom();
 		veriString = new BigInteger(130, random).toString();
@@ -315,11 +321,13 @@ public class UserDAO {
 	    } while (res.next());
 
 	    sql = "Insert into \"users\" (first_name, name, nickname, email, "
-		    + "pw_hash, date_of_birth, form_of_address, credit_balance, "
-		    + "email_verification, admin_verification, role, status, "
-		    + "veri_string, pw_salt) "
+	                                + "pw_hash, date_of_birth, "
+	                                + "form_of_address, credit_balance, "
+	                                + "email_verification, "
+	                                + "admin_verification, role, status, "
+	                                + "veri_string, pw_salt) "
 		    + "values (?, ?, ?, ?, ?, ?, ?::form_of_address, ?, ?, ?, "
-		    + "?::role, ?::status, ?, ?)";
+		                        + "?::role, ?::status, ?, ?)";
 
 	    // Filling PreparedStatement, check in optional fields if the user
 	    // has inserted the data or if the value null must be written into
@@ -364,7 +372,8 @@ public class UserDAO {
 	    pS.executeUpdate();
 
 	    sql = "Insert into \"user_addresses\" (user_id, country, "
-		    + "city, zip_code, street, house_nr) "
+	                                        + "city, zip_code, street, "
+	                                        + "house_nr) "
 		    + "values (?, ?, ?, ?, ?, ?)";
 	    pS = conn.prepareStatement(sql);
 	    pS.setInt(1, UserDAO.getUserID(trans, user.getUsername()));
@@ -688,7 +697,10 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT status FROM \"users\" WHERE id=?";
+	String sql = "SELECT status "
+	           + "FROM \"users\""
+	           + " WHERE id=?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setInt(1, userID);
@@ -741,7 +753,10 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT role FROM \"users\" WHERE id=?";
+	String sql = "SELECT role "
+	           + "FROM \"users\" "
+	           + "WHERE id=?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, userID);
@@ -791,8 +806,11 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "UPDATE \"users\" SET email_verification=?, "
-		+ "veri_string=?, status=?::status WHERE veri_string=?";
+	String sql = "UPDATE \"users\" "
+	        + "SET email_verification=?, "
+	                + "veri_string=?, "
+	                + "status=?::status "
+		+ "WHERE veri_string=?";
 	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
@@ -848,10 +866,15 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id, nickname, pw_hash, status, email_verification,"
-	        + " admin_verification "
-	        + "FROM \"users\" "
-		+ " WHERE nickname=?";
+	String sql = "SELECT id, "
+	                   + "nickname, "
+	                   + "pw_hash, "
+	                   + "status, "
+	                   + "email_verification,"
+	                   + " admin_verification "
+	           + "FROM \"users\" "
+	           + " WHERE nickname=?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setString(1, username);
@@ -942,7 +965,9 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT * FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT * "
+	           + "FROM \"users\" "
+	           + "WHERE nickname=?";
 
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
@@ -978,7 +1003,10 @@ public class UserDAO {
         
         		conn.commit();
         
-        		sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
+        		sql = "SELECT * "
+        		    + "FROM \"user_addresses\" "
+        		    + "WHERE user_id=?";
+        		
         		PreparedStatement pr = null;
         		pr = conn.prepareStatement(sql);
         		pr.setInt(1, user.getUserID());
@@ -1041,7 +1069,9 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT id FROM \"users\" WHERE nickname=?";
+	String sql = "SELECT id "
+	           + "FROM \"users\" "
+	           + "WHERE nickname=?";
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
 	    pS.setString(1, username);

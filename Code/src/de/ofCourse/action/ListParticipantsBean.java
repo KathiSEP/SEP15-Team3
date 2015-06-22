@@ -19,6 +19,7 @@ import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -106,7 +107,7 @@ public class ListParticipantsBean implements Pagination {
                     .getRequestParameterMap()
                     .get("courseID")));
             
-            pagination = new PaginationData(elementsPerPage, 0, "nickname", true);
+            pagination = new PaginationData(elementsPerPage, 0, SortColumn.NICKNAME, SortDirection.ASC);
         }
         catch (Exception e) {
             FacesMessageCreator.createFacesMessage
