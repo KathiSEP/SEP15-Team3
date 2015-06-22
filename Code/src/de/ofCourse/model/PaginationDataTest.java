@@ -26,8 +26,8 @@ public class PaginationDataTest {
 	assertNotSame(pagination, paginationConstruct);
 	pagination.setElementsPerPage(5);
 	pagination.setCurrentPageNumber(0);
-	pagination.setSortColumn("test");
-	pagination.setSortAsc(true);
+	pagination.setSortColumn(SortColumn.fromString("test"));
+	pagination.setSortDirection(SortDirection.ASC);
 	pagination.setNumberOfPages(0);
 
 	// Check setter

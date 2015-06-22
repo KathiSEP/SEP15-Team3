@@ -16,6 +16,8 @@ import javax.faces.model.ListDataModel;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -94,7 +96,7 @@ public class AccountManagementBean implements Pagination {
     @PostConstruct
     private void init() {
         this.users = new ListDataModel<User>();
-        pagination = new PaginationData(elementsPerPage, 0, "nickname", true);
+        pagination = new PaginationData(elementsPerPage, 0, SortColumn.NICKNAME, SortDirection.ASC);
         
         transaction = Connection.create();
         transaction.start();
@@ -211,11 +213,11 @@ public class AccountManagementBean implements Pagination {
     @Override
     public void sortBySpecificColumn() {
         
-        if(this.getPagination().getSortColumn().equals(this.getSortColumn())) {
-            this.getPagination().setSortAsc(!this.getPagination().isSortAsc());
+        if(this.getPagination().getSortColumn().equals(SortColumn.fromString(this.sortColumn))) {
+            this.getPagination().changeSortDirection();
             
         } else {
-            this.getPagination().setSortColumn(this.getSortColumn());
+            this.getPagination().setSortColumn(SortColumn.fromString(this.sortColumn));
         }
         
         transaction.start();

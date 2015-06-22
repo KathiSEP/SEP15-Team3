@@ -350,7 +350,11 @@ public class UserDAO {
 	    }
 	    pS.setDouble(8, user.getAccountBalance());
 	    pS.setBoolean(9, false);
-	    pS.setBoolean(10, false);
+	    if(SystemDAO.getActivationType(trans) == Activation.EMAIL) {
+	        pS.setBoolean(10, true);	        
+	    } else {
+	        pS.setBoolean(10, false);
+	    }
 	    pS.setString(11, UserRole.REGISTERED_USER.toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
@@ -985,46 +989,11 @@ public class UserDAO {
 			"date_of_birth").getTime()));
 		}
 
-		String salutation = res.getString("form_of_address");
-		switch (salutation) {
-		case "MR":
-		    user.setSalutation(Salutation.MR);
-		    break;
-		case "MS":
-		    user.setSalutation(Salutation.MS);
-		    break;
-		}
+		user.setSalutation(Salutation.fromString(res.getString("form_of_address")));
 		float accountBalance = res.getFloat("credit_balance");
 		user.setAccountBalance(accountBalance);
-
-		String userRole = res.getString("role");
-		switch (userRole) {
-		case "REGISTERED_USER":
-		    user.setUserRole(UserRole.REGISTERED_USER);
-		    break;
-		case "COURSE_LEADER":
-		    user.setUserRole(UserRole.COURSE_LEADER);
-		    break;
-		case "SYSTEM_ADMINISTRATOR":
-		    user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
-		    break;
-		}
-
-		String userStatus = res.getString("status");
-		switch (userStatus) {
-		case "ANONYMOUS":
-		    user.setUserStatus(UserStatus.ANONYMOUS);
-		    break;
-		case "NOT_ACTIVATED":
-		    user.setUserStatus(UserStatus.NOT_ACTIVATED);
-		    break;
-		case "REGISTERED":
-		    user.setUserStatus(UserStatus.REGISTERED);
-		    break;
-		case "INACTIVE":
-		    user.setUserStatus(UserStatus.INACTIVE);
-		    break;
-		}
+		user.setUserRole(UserRole.fromString(res.getString("role")));
+		user.setUserStatus(UserStatus.fromString(res.getString("status")));
 
 		conn.commit();
 
@@ -1395,8 +1364,8 @@ public class UserDAO {
 		+ "WHERE cP.course_id = ? AND u.id = cP.participant_id "
 		+ "ORDER BY %s %s LIMIT ? OFFSET ?;";
 
-	sql = String.format(sql, getSortColumn(pagination.getSortColumn()),
-		pagination.getSQLSortDirection());
+	sql = String.format(sql, pagination.getSortColumn().toString(),
+		pagination.getSortDirection().toString());
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);
@@ -1530,37 +1499,6 @@ public class UserDAO {
 	}
 
 	return numberOfParticipants;
-    }
-
-    /**
-     * Avoids SQL-Injection with a switch case
-     * 
-     * @param sortColumn
-     *                the selected column  
-     * @return the name of the selected column, if no column is selected 
-     *         return 'nickname'
-     * @author Katharina Hölzl
-     */
-    private static String getSortColumn(String sortColumn) {
-	switch (sortColumn) {
-	
-	case "nickname":
-	    return "nickname";
-	case "email":
-	    return "email";
-	case "courseNews":
-	    return "courseNews";
-	case "id":
-	    return "id";
-	case "first_name":
-	    return "first_name";
-	case "name":
-	    return "name";
-	case "date_of_birth":
-	    return "date_of_birth";
-	default:
-	    return "nickname";
-	}
     }
 
     public static List<User> getParticipiantsOfCourseUnit(Transaction trans,
@@ -1925,8 +1863,8 @@ public class UserDAO {
 		+ "FROM users WHERE admin_verification = ? "
 		+ "ORDER BY %s %s LIMIT ? OFFSET ?;";
 
-	sql = String.format(sql, getSortColumn(pagination.getSortColumn()),
-		pagination.getSQLSortDirection());
+	sql = String.format(sql, pagination.getSortColumn().toString(),
+		pagination.getSortDirection().toString());
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setBoolean(1, false);

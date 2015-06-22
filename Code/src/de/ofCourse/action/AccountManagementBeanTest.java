@@ -35,6 +35,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.system.Connection;
 import de.ofCourse.model.User;
 
@@ -122,8 +124,8 @@ public class AccountManagementBeanTest {
         pagination.setCurrentPageNumber(0);
         pagination.setElementsPerPage(10);
         pagination.setNumberOfPages(1);
-        pagination.setSortAsc(true);
-        pagination.setSortColumn("nickname");
+        pagination.setSortDirection(SortDirection.ASC);
+        pagination.setSortColumn(SortColumn.NICKNAME);
         
         Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).thenReturn(notAdminActivatedUsers);
         

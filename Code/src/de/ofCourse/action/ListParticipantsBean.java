@@ -18,6 +18,7 @@ import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -242,11 +243,11 @@ public class ListParticipantsBean implements Pagination {
     @Override
     public void sortBySpecificColumn() {
         
-        if(this.getPagination().getSortColumn().equals(this.getSortColumn())) {
-            this.getPagination().setSortAsc(!this.getPagination().isSortAsc());
+        if(this.getPagination().getSortColumn().equals(SortColumn.fromString(this.sortColumn))) {
+            this.getPagination().changeSortDirection();
             
         } else {
-            this.getPagination().setSortColumn(this.getSortColumn());
+            this.getPagination().setSortColumn(SortColumn.fromString(this.sortColumn));
         }
         transaction.start();
         

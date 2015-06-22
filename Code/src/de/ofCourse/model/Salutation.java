@@ -11,10 +11,42 @@ public enum Salutation {
     /**
      * The user can have the salutation Mister.
      */
-    MR,
+    MR("mr."),
     
     /**
      * Or the user can have the salutation Misses.
      */
-    MS;
+    MS("ms.");
+    
+    private String salutation;
+    
+    private Salutation(String salutationString) {
+        this.salutation = salutationString;
+    }
+    
+    public String getSalutation() {
+        return this.salutation;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Enum#toString()
+     */
+    @Override
+    public String toString() {
+        return this.name();
+    }
+    
+    public static Salutation fromString(String salutationString) {
+        if (salutationString != null) {
+          for (Salutation salutation : Salutation.values()) {
+              if (salutationString.equalsIgnoreCase(salutation.name())) {
+                  return salutation;
+              }
+          }
+          return null;
+        }
+        else {
+            return null;
+        }
+    }
 }

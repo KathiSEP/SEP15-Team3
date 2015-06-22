@@ -29,11 +29,11 @@ public class PaginationData implements Serializable {
     /**
      * Stores the displayed column name the page is sorted
      */
-    private String sortColumn;
+    private SortColumn sortColumn;
     /**
      * Stores whether the displayed data in ascending order
      */
-    private boolean sortAsc;
+    private SortDirection sortDirection;
     
     /**
      * Number of pages to display
@@ -55,30 +55,27 @@ public class PaginationData implements Serializable {
      *            the number of pages to display
      */
     public PaginationData(int elementsPerPage, int currentPageNumber,
-	    String sortCoulmn, boolean sortAsc) {
+	    String sortCoulmn, boolean sortDirection) {
 	this.elementsPerPage = elementsPerPage;
 	this.currentPageNumber = currentPageNumber;
-	this.sortColumn = sortCoulmn;
-	this.sortAsc = sortAsc;
+	this.sortColumn = SortColumn.fromString(sortCoulmn);
+	this.sortDirection = SortDirection.fromBoolean(sortDirection);
     }
-
-   
+    
+    public PaginationData(int elementsPerPage, int currentPageNumber,
+            SortColumn sortCoulmn, SortDirection sortAsc) {
+        this.elementsPerPage = elementsPerPage;
+        this.currentPageNumber = currentPageNumber;
+        this.sortColumn = sortCoulmn;
+        this.sortDirection = sortAsc;
+    } 
 
     /**
      * Default constructor
      */
     public PaginationData() {
-    }
-
-
-    public String getSQLSortDirection() {
-        if (this.isSortAsc()) {
-            return "ASC";
-        } else {
-            return "DESC";
-        }
-    }
-    
+        
+    }   
 
 
     /**
@@ -107,7 +104,11 @@ public class PaginationData implements Serializable {
      * the other way round. That depends on the current sort direction.
      */
     public void changeSortDirection() {
-	setSortAsc(!isSortAsc());
+	if(this.sortDirection.equals(SortDirection.ASC)) {
+	    this.sortDirection = SortDirection.DESC;
+	} else {
+	    this.sortDirection = SortDirection.ASC;
+	}
     }
 
     /**
@@ -167,90 +168,65 @@ public class PaginationData implements Serializable {
 	this.currentPageNumber = currentPageNum;
     }
 
-    /**
-     * Returns the value of the attribute <code>sortColumn</code>.
-     * 
-     * @return the displayed column name the page is sorted
-     */
-    public String getSortColumn() {
-	return sortColumn;
+    public SortColumn getSortColumn() {
+        return sortColumn;
     }
 
-    /**
-     * Sets the value of the attribute <code>sortColumn</code>.
-     * 
-     * @param sortColumn
-     *            new column name the page should sort
-     */
-    public void setSortColumn(String sortColumn) {
-	this.sortColumn = sortColumn;
+    public void setSortColumn(SortColumn sortColumn) {
+        this.sortColumn = sortColumn;
+    }
+    
+    public void setSortColumn(String columnString) {
+        this.sortColumn = SortColumn.fromString(columnString);
     }
 
-    /**
-     * Returns the value of the attribute <code>sortAsc</code>.
-     * 
-     * @return whether the displayed data in ascending order or not
-     */
-    public boolean isSortAsc() {
-	return sortAsc;
+    public SortDirection getSortDirection() {
+        return sortDirection;
     }
 
-    /**
-     * Sets the value of the attribute <code>sortAsc</code>.
-     * 
-     * @param sortAsc
-     *            whether the data is sorted ascending or not
-     */
-    public void setSortAsc(boolean sortAsc) {
-	this.sortAsc = sortAsc;
+    public void setSortDirection(SortDirection sortDirection) {
+        this.sortDirection = sortDirection;
+    }
+    
+    public void setSortDirection(boolean sortAsc) {
+        this.sortDirection = SortDirection.fromBoolean(sortAsc);
     }
 
-
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + currentPageNumber;
-	result = prime * result + elementsPerPage;
-	result = prime * result + numberOfPages;
-	result = prime * result + (sortAsc ? 1231 : 1237);
-	result = prime * result
-		+ ((sortColumn == null) ? 0 : sortColumn.hashCode());
-	return result;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + currentPageNumber;
+        result = prime * result + elementsPerPage;
+        result = prime * result + numberOfPages;
+        result = prime * result
+                + ((sortColumn == null) ? 0 : sortColumn.hashCode());
+        result = prime * result
+                + ((sortDirection == null) ? 0 : sortDirection.hashCode());
+        return result;
     }
 
-
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	PaginationData other = (PaginationData) obj;
-	if (currentPageNumber != other.currentPageNumber)
-	    return false;
-	if (elementsPerPage != other.elementsPerPage)
-	    return false;
-	if (numberOfPages != other.numberOfPages)
-	    return false;
-	if (sortAsc != other.sortAsc)
-	    return false;
-	if (sortColumn == null) {
-	    if (other.sortColumn != null)
-		return false;
-	} else if (!sortColumn.equals(other.sortColumn))
-	    return false;
-	return true;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PaginationData other = (PaginationData) obj;
+        if (currentPageNumber != other.currentPageNumber)
+            return false;
+        if (elementsPerPage != other.elementsPerPage)
+            return false;
+        if (numberOfPages != other.numberOfPages)
+            return false;
+        if (sortColumn != other.sortColumn)
+            return false;
+        if (sortDirection != other.sortDirection)
+            return false;
+        return true;
     }
+
 
 }

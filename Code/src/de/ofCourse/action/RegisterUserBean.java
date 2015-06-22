@@ -3,8 +3,6 @@
  */
 package de.ofCourse.action;
 
-import java.util.Date;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -147,15 +145,7 @@ public class RegisterUserBean {
      */
     public String registerUser() {
         if(agbAccepted == true) {
-            if(this.saluString == null) {
-                this.getUserToRegistrate().setSalutation(null);
-            } else if (this.saluString.equals("mr.")) {
-                this.getUserToRegistrate().setSalutation(Salutation.MR);
-            } else if (this.saluString.equals("ms.")) {
-                this.getUserToRegistrate().setSalutation(Salutation.MS);
-            } else {
-                this.getUserToRegistrate().setSalutation(null);
-            }
+            this.getUserToRegistrate().setSalutation(Salutation.fromString(this.saluString));
         
             String veriString = "";
             
