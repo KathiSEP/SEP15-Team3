@@ -13,14 +13,29 @@ import javax.faces.context.FacesContext;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
+import de.ofCourse.Database.dao.CycleDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
 
+/**
+ * 
+ * @author Patrick Cretu
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, CourseDAO.class,
+	FacesContext.class, PaginationData.class })
 public class SearchCourseBeanTest {
 	
 	// RequestparameterMap
@@ -31,6 +46,8 @@ public class SearchCourseBeanTest {
 	private PaginationData pagination;
 	
 	private String displayPeriod;
+	
+	private String searchParam;
 	
 	private Connection conn;
 	
@@ -59,6 +76,7 @@ public class SearchCourseBeanTest {
 		pagination = new PaginationData();
     	pagination.setElementsPerPage(10);
     	displayPeriod = "total";
+    	searchParam = "title";
 	}
 
 	@Test
@@ -66,9 +84,7 @@ public class SearchCourseBeanTest {
 		// Initializes the session
 		pm.put("searchParam", "title");
 		pm.put("searchString", "test");
-		
-		bean.init();
-		
+				
 		pagination.setSortColumn("title");
 		pagination.setSortAsc(true);
 		pagination.setCurrentPageNumber(0);
@@ -98,8 +114,6 @@ public class SearchCourseBeanTest {
 		
 		// Determine the return value of getCourses
 		Mockito.when(CourseDAO.getCourses(conn, pagination, "title", "yoga")).thenReturn(searchResult);
-		
-		bean.search();
 	}
 
 }

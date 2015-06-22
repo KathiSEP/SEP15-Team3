@@ -16,7 +16,6 @@ import javax.faces.bean.ViewScoped;
 import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
-import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Week;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -40,6 +39,11 @@ import de.ofCourse.system.Transaction;
 @ViewScoped
 public class SchedulerBean {
 
+	
+	/**
+     * Stores the number of days that are in one week
+     */
+    private static final int WEEK_DAYS = 7;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -182,7 +186,7 @@ public class SchedulerBean {
     	Week week = new Week();
     	Date date = new Date(currentMonday.getTime());
     	
-    	for (int i = 0; i < 7; i++) {
+    	for (int i = 0; i < WEEK_DAYS; i++) {
     		for (CourseUnit unit : weekRow) {
     			if (unit.getStartime().getDay() == date.getDay()) {
     				/*String content = String.valueOf(unit.getCourseUnitID()) +

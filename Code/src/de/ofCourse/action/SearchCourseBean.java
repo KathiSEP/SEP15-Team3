@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -41,6 +40,11 @@ import de.ofCourse.system.Transaction;
 @ViewScoped
 public class SearchCourseBean implements Pagination {
     
+	/**
+     * Stores the number of elements that are displayed by pagination at once
+     */
+    private static final int ELEMENTS_PER_PAGE = 10;
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -125,7 +129,7 @@ public class SearchCourseBean implements Pagination {
     	displayPeriod = "total";
     	searchParam = "title";
     	pagination = new PaginationData();
-    	pagination.setElementsPerPage(10);
+    	pagination.setElementsPerPage(ELEMENTS_PER_PAGE);
     }
 
     /**
