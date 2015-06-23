@@ -918,12 +918,14 @@ public class CourseDetailBean implements Pagination, Serializable {
 		FacesMessageCreator.createFacesMessage(null,
 			"Der Kursleiter wurde erfolgreich hinzugefügt!");
 		this.transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID="+ courseID;
+		return "/facelets/open/courses/courseDetail.xhtml"
+		                  + "?faces-redirect=true&courseID="+ courseID;
 	    }else{
                 FacesMessageCreator.createFacesMessage(null,
                         "Hinzufügen des Kursleiters fehlgeschlagen!");
                 this.transaction.rollback();
-                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+                return "/facelets/open/courses/courseDetail.xhtml"
+                                                     + "?faces-redirect=false";
 	    }
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(e.getMessage());
@@ -975,12 +977,14 @@ public class CourseDetailBean implements Pagination, Serializable {
 		FacesMessageCreator.createFacesMessage(null,
 			"Der Kursleiter wurde erfolgreich gelöscht!");
 		this.transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID="+ courseID;
+		return "/facelets/open/courses/courseDetail.xhtml"
+		                  + "?faces-redirect=true&courseID="+ courseID;
 	    } else {
 		FacesMessageCreator.createFacesMessage(null,
 			"Löschen des Kursleiters fehlgeschlagen!");
 		this.transaction.rollback();
-		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+		return "/facelets/open/courses/courseDetail.xhtml"
+		                                      + "?faces-redirect=false";
 	    }
 	} catch (NumberFormatException e) {
 	    // ID is no number
