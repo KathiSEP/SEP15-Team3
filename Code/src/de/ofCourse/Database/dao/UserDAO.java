@@ -112,10 +112,8 @@ public class UserDAO {
 	    }
 	    
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "getPWSalt(Transaction trans, String username)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during getPWSalt", e);
 	}
 
 	return pwSalt;
@@ -167,10 +165,8 @@ public class UserDAO {
                 throw new SQLException();
             }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "emailExists(Transaction trans, String email)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during emailExists", e);
 	}
 	return exists;
     }
@@ -395,11 +391,8 @@ public class UserDAO {
 
 	    pS.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "createUser(Transaction trans, User user, "
-			    + "String pwHash, String salt)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during createUser", e);
 	}
 
 	return veriString;
@@ -723,10 +716,8 @@ public class UserDAO {
 	    }
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Exception occoured during executing "
-			    + "getUserStatus(Transaction trans, int userID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                            "Error occured during getUserStatus", e);
 	}
 	return userStatus;
     }
@@ -777,10 +768,8 @@ public class UserDAO {
             }
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "getUserRole(Transaction trans, int userID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during getUserRole", e);
 	}
 	return userRole;
     }
@@ -826,11 +815,8 @@ public class UserDAO {
     	    }
 	    
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "verifyUser(Transaction trans, "
-			    + "String veriString)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during verifyUser", e);
 	}
 
 	return success;
@@ -882,8 +868,8 @@ public class UserDAO {
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
 	    try(ResultSet res = pS.executeQuery()){
-        	    // execute next entry, return true if there is another entry,
-        	    // else false.
+        	    // execute next entry, return true if there is another 
+        	    // entry, else false.
         	    if (res.next()) {
         		// Execute passwort from the Resultset.
         		String pwHashFromDB = res.getString("pw_hash");
@@ -900,8 +886,8 @@ public class UserDAO {
         		    if (res.getString("status").equals(
         			    UserStatus.REGISTERED.toString())) {
         			if (emailVerification == true) {
-        			    if (SystemDAO.getActivationType(trans).equals(
-        				    Activation.EMAIL)) {
+        			    if (SystemDAO.getActivationType(trans).
+        			            equals(Activation.EMAIL)) {
         				id = res.getInt("id");
         			    } else {
         				if (adminVerification == true) {
@@ -927,11 +913,8 @@ public class UserDAO {
 	        throw new SQLException();
 	    }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "proveLogin(Transaction trans, String username, "
-			    + "String passwordHash)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during proveLogin", e);
 
 	}
 	return id;
@@ -1033,10 +1016,8 @@ public class UserDAO {
 	    }
 	    
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "getUser(Transaction trans, String username)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error occured during "
+	                    + "getUser(Transaction trans, String username)", e);
 
 	}
 	// Returns the filled user object.
@@ -1085,10 +1066,8 @@ public class UserDAO {
 	    }
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "getUserID(Transaction trans, String username)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during getUserID", e);
 	}
 
 	return id;
@@ -1405,12 +1384,8 @@ public class UserDAO {
 	    }
 	    
 	} catch (SQLException e) {
-	    LogHandler
-                .getInstance()
-                .error("SQL Exception occoured during executing "
-                    + "getParticipantsOfCourse(Transaction trans, "
-                    + "PaginationData pagination, int courseID)");
-            throw new InvalidDBTransferException();
+            throw new InvalidDBTransferException(
+                            "Error occured during getParticipantsOfCourse", e);
 	}
 
 	return userList;
@@ -1464,12 +1439,8 @@ public class UserDAO {
 		}
 
 	    } catch (SQLException e) {
-	        LogHandler
-                    .getInstance()
-                    .error("SQL Exception occoured during executing "
-                            + "removeParticipantsFromCourse(Transaction trans, "
-                            + "int courseID, List<User> usersToRemove)");
-	        throw new InvalidDBTransferException();
+	        throw new InvalidDBTransferException(
+	                "Error occured during removeParticipantsFromCourse", e);
 	    }
 	} else {
 	    success = true;
@@ -1515,12 +1486,8 @@ public class UserDAO {
 	        }
 
 	} catch (SQLException e) {
-	    LogHandler
-                .getInstance()
-                .error("SQL Exception occoured during executing "
-                        + "getNumberOfParticipants(Transaction trans, "
-                        + "int courseID)");
-            throw new InvalidDBTransferException();
+            throw new InvalidDBTransferException(
+                            "Error occured during getNumberOfParticipants", e);
 	}
 
 	return numberOfParticipants;
@@ -1851,12 +1818,8 @@ public class UserDAO {
 	    }
 	    
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "getNumberOfNotAdminActivatedUsers(Transaction "
-		            + "trans)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	           "Error occured during getNumberOfNotAdminActivatedUsers", e);
 	}
 	return numberOfNotAdminActivatedUsers;
     }
@@ -1928,12 +1891,8 @@ public class UserDAO {
             }
 	    
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "getNotAdminActivatedUsers(Transaction trans, "
-		            + "PaginationData pagination)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                "Error occured during getNotAdminActivatedUsers", e);
 	}
 	return notAdminActivatedUsers;
     }
@@ -1990,12 +1949,8 @@ public class UserDAO {
                 }
 
             } catch (SQLException e) {
-                LogHandler
-                    .getInstance()
-                    .error("SQL Exception occoured during executing "
-                            + "AdminActivateUsers(Transaction trans, "
-                            + "List<User> usersToActivate)");
-                throw new InvalidDBTransferException();
+                throw new InvalidDBTransferException(
+                                "Error occured during AdminActivateUsers", e);
             }
             
         } else {

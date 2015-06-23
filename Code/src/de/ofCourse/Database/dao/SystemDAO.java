@@ -133,11 +133,8 @@ public class SystemDAO {
                 throw new SQLException();
 	    }
 	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing "
-		            + "getActivationType(Transaction trans)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+                                "Error occured during getActivationType", e);
 	}
 	// gibt die Aktivierungsmethode zurück.
 	return activation;

@@ -16,6 +16,7 @@ import de.ofCourse.model.Address;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -125,9 +126,11 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             if (UserDAO.verifyUser(this.transaction, veriString)) {
-                FacesMessageCreator.createFacesMessage("verifizierungString", "Ihr Account wurde erfolgreich freigeschaltet!");
+                FacesMessageCreator.createFacesMessage("verifizierungString", 
+                            "Ihr Account wurde erfolgreich freigeschaltet!");
             } else {
-                FacesMessageCreator.createFacesMessage("verifizierungString", "Der Verifizierungsstring existiert nicht!");
+                FacesMessageCreator.createFacesMessage("verifizierungString", 
+                            "Der Verifizierungsstring existiert nicht!");
             }
             this.transaction.commit();
         }
@@ -186,22 +189,21 @@ public class RegisterUserBean {
         
                 }
             } catch (InvalidDBTransferException e) {
+                LogHandler.getInstance().error(e.getMessage());
                 this.transaction.rollback();
             }
         
             // Throwing success message into the faces context.
-            FacesMessageCreator
-                    .createFacesMessage(
-                            null,
-                            "Sie haben sich erfolgreich im System registriert. "
-                            + "Bitte bestätigen Sie den Aktivierungslink aus der "
-                            + "Verifizierungsmail!");
+            FacesMessageCreator.createFacesMessage(
+                          null,
+                          "Sie haben sich erfolgreich im System registriert. "
+                          + "Bitte bestätigen Sie den Aktivierungslink aus der "
+                          + "Verifizierungsmail!");
             return "/facelets/open/index.xhtml?faces-redirect=true";
         } else {
-            FacesMessageCreator
-            .createFacesMessage(
-                    null,
-                    "Bitte AGBs bestätigen!");
+            FacesMessageCreator.createFacesMessage(
+                                                    null,
+                                                    "Bitte AGBs bestätigen!");
             return "/facelets/open/authenticate.xhtml?faces-redirect=false";
         }
     }
@@ -246,7 +248,7 @@ public class RegisterUserBean {
     /**
      * Returns the value of the attribute <code>registerCondirmPassword</code>.
      * 
-     * @return the inserted confim password
+     * @return the inserted confirm password
      */
     public String getRegisterConfirmPassword() {
         return registerConfirmPassword;

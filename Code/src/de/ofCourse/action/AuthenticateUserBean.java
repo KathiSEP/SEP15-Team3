@@ -15,6 +15,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Language;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -190,6 +191,7 @@ public class AuthenticateUserBean {
             }
 
         } catch (InvalidDBTransferException e) {
+            LogHandler.getInstance().error(e.getMessage());
             this.transaction.rollback();
         }
 
