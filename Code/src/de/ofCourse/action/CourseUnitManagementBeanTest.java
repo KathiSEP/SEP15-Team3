@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -30,6 +29,7 @@ import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Period;
 import de.ofCourse.model.SortColumn;
@@ -37,6 +37,7 @@ import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
 
 
 /**
@@ -46,7 +47,7 @@ import de.ofCourse.system.Transaction;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
 	CourseUnitDAO.class, CourseDAO.class, CycleDAO.class,
-	FacesContext.class, PaginationData.class })
+	FacesContext.class, PaginationData.class, LanguageManager.class, FacesMessageCreator.class })
 public class CourseUnitManagementBeanTest {
 
     private CourseUnitManagementBean bean;
@@ -59,6 +60,8 @@ public class CourseUnitManagementBeanTest {
     private CourseUnit unit2;
     private CourseUnit unit3;
     private Course course;
+    
+    private SessionUserBean sessionUser;
 
     @SuppressWarnings("unused")
     private String enteredTurnus;
@@ -70,6 +73,8 @@ public class CourseUnitManagementBeanTest {
 
     private List<User> participants2;
     private List<User> participants3;
+
+    private LanguageManager myLang;
 
     private Connection conn;
 
@@ -169,7 +174,18 @@ public class CourseUnitManagementBeanTest {
 
 	participants3 = new ArrayList<User>();
 	participants3.add(part);
-
+	
+	sessionUser = new SessionUserBean();
+	sessionUser.setLanguage(Language.DE);
+	
+	
+	
+	PowerMockito.mockStatic(LanguageManager.class);
+	myLang = mock(LanguageManager.class);
+	Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
+	
+	PowerMockito.mockStatic(FacesMessageCreator.class);
+	
 	Mockito.when(
 		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1,
 			false)).thenReturn(participants);
@@ -359,7 +375,8 @@ public class CourseUnitManagementBeanTest {
 	bean.setDate(new Date(2016, 2, 2));
 	bean.setStart(new Date(2016, 2, 2, 12, 0));
 	bean.setEnd(new Date(2016, 2, 2, 14, 0));
-
+        bean.setSessionUser(sessionUser);
+	
 	String url2 = bean.createCourseUnit();
 	assertEquals(url2, "x");
 

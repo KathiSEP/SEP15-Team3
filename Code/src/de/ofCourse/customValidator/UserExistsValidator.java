@@ -30,6 +30,7 @@ public class UserExistsValidator implements Validator {
 
 	String userIDString = value.toString();
 	int userID = 0;
+	
 	// Whether the entered id is a number
 	try {
 	    userID = Integer.parseInt(userIDString);
@@ -37,6 +38,7 @@ public class UserExistsValidator implements Validator {
 	    throw new ValidatorException(new FacesMessage("userID",
 		    "Eingegebene ID ist keine Zahl!"));
 	}
+	
 	// Whether the entered id is positive
 	if (userID < 1) {
 	    throw new ValidatorException(new FacesMessage("userID",

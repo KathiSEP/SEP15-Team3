@@ -45,17 +45,20 @@ public class SystemConfigurationBean implements Serializable {
     /**
      * Represents the url to the page where a administrator can search for users
      */
-    private final static String URL_SEARCH_USER = "/facelets/user/systemAdministrator/searchUser.xhtml";   
+    private final static String URL_SEARCH_USER = 
+	    "/facelets/user/systemAdministrator/searchUser.xhtml";   
     
     /**
      * Represents the url to the page where a new user can be created
      */
-    private final static String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml";
+    private final static String URL_CREATE_USER = 
+	    "/facelets/user/systemAdministrator/createUser.xhtml";
     
     /**
      * Represents the url to the page where a new course can be created
      */
-    private final static String URL_CREATE_COURSE = "/facelets/user/systemAdministrator/createCourse.xhtml";
+    private final static String URL_CREATE_COURSE = 
+	    "/facelets/user/systemAdministrator/createCourse.xhtml";
     
     /**
      * Represents the url to the page where you can search for courses
@@ -98,19 +101,17 @@ public class SystemConfigurationBean implements Serializable {
      */
     @PostConstruct
     private void init() {
-	
 	transaction = Connection.create();
 	transaction.start();
 	
 	try{
-	    
 	    overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
 	    signOffLimit = SystemDAO.getSignOffLimit(transaction);
 	    transaction.commit();
 	}
 	catch(InvalidDBTransferException e){
-	    LogHandler.getInstance().error("Error during initializing"
-		    				+ " admin managements page");
+	    LogHandler.getInstance().error(
+		    "Error during initializing admin managements page");
 	    transaction.rollback();
 	}
 	
@@ -124,7 +125,6 @@ public class SystemConfigurationBean implements Serializable {
 	transaction.start();
 	
 	try {    
-	    
 	    SystemDAO.setActivationType(
 		    transaction, 
 		    Activation.fromString(getAccountActivationType()));    

@@ -73,7 +73,8 @@ public class MyCoursesBean implements Pagination, Serializable {
     /**
      * Represents the url to the course detail page
      */
-    private final static String URL_COURSE_DETAIL = "/facelets/open/courses/courseDetail.xhtml";
+    private final static String URL_COURSE_DETAIL =
+	    "/facelets/open/courses/courseDetail.xhtml";
     
     /**
      * This attribute represents a pagination object. It stores all the
@@ -119,11 +120,12 @@ public class MyCoursesBean implements Pagination, Serializable {
 		    	    getPagination(),
 		    	    sessionUser.getUserID());
 	    transaction.commit();
+	    
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error occured during updating the"
-			    + " page with elements from database.");
+		    + " page with elements from database.");
 	}
 
     }
@@ -152,6 +154,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 		    		getPagination(),
 		    		sessionUser.getUserID());
 	    transaction.commit();
+	    
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
@@ -165,8 +168,8 @@ public class MyCoursesBean implements Pagination, Serializable {
     @Override
     public void sortBySpecificColumn() {
 	//Compute sort direction
-	if(getPagination().getSortColumn().
-		equals(SortColumn.fromString(orderParam))) {
+	if(getPagination().getSortColumn().equals(
+		                          SortColumn.fromString(orderParam))) {
 	     
 	    getPagination().changeSortDirection();
 	} else {
@@ -181,6 +184,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 		    		getPagination(),
 		    		sessionUser.getUserID());
     	    transaction.commit();
+    	    
     	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(

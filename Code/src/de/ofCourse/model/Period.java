@@ -1,25 +1,39 @@
 package de.ofCourse.model;
 
+/**
+ * Represents the different periods in which a regular course unit can take place.
+ *
+ */
 public enum Period {
     
     
+    /**
+     * Represents a daily period
+     */
     DAYS("DAYS"),
+    
+    /**
+     * Represents a weekly period
+     */
     WEEKS("WEEKS");
     
- private String period;
+    /**
+     * the period as string
+     */
+    private String period;
     
+    /**
+     * Private  constructor
+     * 
+     * @param periodString
+     */
     private Period(String periodString) {
         this.period = periodString;
     }
+
     
-    public String getSalutation() {
-        return this.period;
-    }
-    
-    
-    /*
-    * (non-Javadoc)
-    * @see java.lang.Enum#toString()
+    /**
+    *Returns the String representation of the period
     * 
     */
    @Override
@@ -27,10 +41,17 @@ public enum Period {
        return this.name();
    }
    
-   public static Period fromString(String statusString) {
-       if (statusString != null) {
+   /**
+    * Returns a period from a given string.
+    * 
+    * @param periodString 
+    * 		the String to get a period
+    * @return the period, which was determined by the given string
+    */
+   public static Period fromString(String periodString) {
+       if (periodString != null) {
          for (Period period : Period.values()) {
-             if (statusString.equalsIgnoreCase(period.name())) {
+             if (periodString.equalsIgnoreCase(period.name())) {
                  return period;
              }
          }
@@ -39,7 +60,5 @@ public enum Period {
        else {
            return null;
        }
-   }
-    
-    
+   }   
 }

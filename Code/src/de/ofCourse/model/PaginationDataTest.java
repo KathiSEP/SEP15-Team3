@@ -13,7 +13,7 @@ public class PaginationDataTest {
 
     /**
      * Test method that checks whether the PaginationData calculates
-     * the corrext values.
+     * the correct values.
      * 
      * @author Fuchs Tobias
      */

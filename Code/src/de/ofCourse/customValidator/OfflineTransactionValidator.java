@@ -36,7 +36,6 @@ public class OfflineTransactionValidator implements Validator {
 	    throws ValidatorException {
 
 	String enteredIDString = value.toString();
-	System.out.println("enteredId :" + enteredIDString);
 	int userID = 0;
 
 	UIInput uiInputUserName = (UIInput) component.getAttributes().get(

@@ -5,9 +5,7 @@ package de.ofCourse.system;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-
 import java.sql.Connection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -30,7 +28,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ LogHandler.class})
 public class DatabaseConnectionManagerTest{
     
+    
+    /**
+     * Attribute that represents the mocked logger
+     */
     private LogHandler myLogger;
+    
     /**
      * Tests the connection manager.
      */
@@ -45,7 +48,7 @@ public class DatabaseConnectionManagerTest{
 
 	// Enables the debug mode of the database connection manager to ensure
 	// that it is sealed of from other classes that can produce errors(like
-	// e.g. PropertyManager).
+	// e.g. PropertyManager) and preserve database resources.
 	DatabaseConnectionManager.debugMode(true);
 
 	// Checks whether the DatabaseConnectionsManager is no null
