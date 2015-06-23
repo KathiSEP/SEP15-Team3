@@ -10,8 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
+import java.util.Map;
 
 
 
@@ -24,8 +24,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 
-
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;

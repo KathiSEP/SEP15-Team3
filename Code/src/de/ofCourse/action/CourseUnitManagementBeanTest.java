@@ -23,10 +23,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.GregorianCalendar;
 
-import de.ofCourse.database.dao.CourseDAO;
-import de.ofCourse.database.dao.CourseUnitDAO;
-import de.ofCourse.database.dao.CycleDAO;
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
+import de.ofCourse.Database.dao.CycleDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;

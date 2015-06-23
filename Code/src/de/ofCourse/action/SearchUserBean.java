@@ -15,8 +15,8 @@ import javax.mail.search.SentDateTerm;
 
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 
-import de.ofCourse.database.dao.CourseDAO;
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;

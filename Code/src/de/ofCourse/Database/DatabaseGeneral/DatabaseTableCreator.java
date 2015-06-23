@@ -1,7 +1,7 @@
 /**
  * This package contains classes required at the launch of the system
  */
-package de.ofCourse.database.databaseGeneral;
+package de.ofCourse.Database.DatabaseGeneral;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

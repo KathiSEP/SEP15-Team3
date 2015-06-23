@@ -17,10 +17,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import de.ofCourse.database.dao.CourseDAO;
-import de.ofCourse.database.dao.CourseUnitDAO;
-import de.ofCourse.database.dao.CycleDAO;
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
+import de.ofCourse.Database.dao.CycleDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;

@@ -1,4 +1,4 @@
-package de.ofCourse.database.databaseGeneral;
+package de.ofCourse.Database.DatabaseGeneral;
 
 import java.sql.SQLException;
 import java.sql.Statement;

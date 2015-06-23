@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.ofCourse.database.dao.CourseDAO;
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;

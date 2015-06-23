@@ -6,7 +6,7 @@ package de.ofCourse.system;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.ofCourse.database.dao.CourseDAO;
+import de.ofCourse.Database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 
 /**

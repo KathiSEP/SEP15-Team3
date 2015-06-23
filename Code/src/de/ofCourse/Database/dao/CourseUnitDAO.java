@@ -1,7 +1,7 @@
 /**
  * This package represents the Data Access Objects of the ofCourse system.
  */
-package de.ofCourse.database.dao;
+package de.ofCourse.Database.dao;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;

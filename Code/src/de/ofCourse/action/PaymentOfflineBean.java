@@ -10,7 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
-import de.ofCourse.database.dao.UserDAO;
+import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;

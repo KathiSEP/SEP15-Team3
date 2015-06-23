@@ -13,7 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import de.ofCourse.database.dao.CourseUnitDAO;
+import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Week;
