@@ -173,7 +173,15 @@
 	                            </h:column>
 	                            <h:column>
 	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.end')}</f:facet>
-	                            	<h:outputText value="#{courseUnit.endtime}"/>
+	                            	<h:outputText value="#{courseUnit.endtime}">
+	                                    <f:convertDateTime pattern="dd.MM.yyyy"/>
+	                            	</h:outputText>
+	                            </h:column>
+	                            <h:column>
+	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.endTime')}</f:facet>
+	                            	<h:outputText value="#{courseUnit.endtime}">
+	                                    <f:convertDateTime pattern="HH:mm"/>
+	                            	</h:outputText>
 	                            </h:column>
 	                            <h:column>
 	                            	<f:facet name="header">#{sessionUser.getLabel('courseDetail.row.units.description')}</f:facet>

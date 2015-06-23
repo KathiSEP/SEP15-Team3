@@ -418,6 +418,8 @@ public class CourseUnitDAO {
     
     	    while (resultSet.next()) {
     		CourseUnit unit = new CourseUnit();
+    		Timestamp startStamp, endStamp;
+    		Date startDate, endDate;
     
     		unit.setCourseID(courseID);
     		unit.setCourseUnitID(resultSet.getInt("id"));
@@ -437,10 +439,32 @@ public class CourseUnitDAO {
     		unit.setMaxUsers(resultSet.getInt("max_participants"));
     		unit.setMinUsers(resultSet.getInt("min_participants"));
     		unit.setPrice(resultSet.getFloat("fee"));
-    		unit.setStartime(resultSet.getDate("start_time"));
-    		unit.setEndtime(resultSet.getDate("end_time"));
-    		unit.setNumberOfUsers(getNumberOfParticipants(trans,
-    			unit.getCourseUnitID()));
+            
+    		startStamp = resultSet.getTimestamp("start_time");
+            if (startStamp != null) {
+                startDate = new Date(
+                                    startStamp.getYear(),
+                                    startStamp.getMonth(),
+                                    startStamp.getDate(), 
+                                    startStamp.getHours(),
+                                    startStamp.getMinutes()
+                                    );
+                unit.setStartime(startDate);
+            }
+
+            endStamp = resultSet.getTimestamp("end_time");
+            if (endStamp != null) {
+                endDate = new Date(
+                                    endStamp.getYear(),
+                                    endStamp.getMonth(),
+                                    endStamp.getDate(), 
+                                    endStamp.getHours(),
+                                    endStamp.getMinutes()
+                                    );
+                unit.setEndtime(endDate);
+            }
+
+    		unit.setNumberOfUsers(getNumberOfParticipants(trans, unit.getCourseUnitID()));
     
     		Address unitAddress = new Address();
     
