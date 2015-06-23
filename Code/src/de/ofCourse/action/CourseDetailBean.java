@@ -125,7 +125,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return the currentPage
      */
     public int getCurrentPage() {
-	return currentPage;
+        return currentPage;
     }
 
     /**
@@ -133,7 +133,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the currentPage to set
      */
     public void setCurrentPage(int currentPage) {
-	this.currentPage = currentPage;
+        this.currentPage = currentPage;
     }
 
     /**
@@ -142,25 +142,21 @@ public class CourseDetailBean implements Pagination, Serializable {
      * entry of the course is updated with the new data and the
      * <code>courseDetails</code> page is returned.
      * 
-     * @return link to the next page
      * @author Ricky Strohmeier
      */
-    public String saveCourse() {
-	if (getEditMode()) {
-	    transaction = Connection.create();
-	    try {
-		transaction.start();
-		CourseDAO.updateCourse(transaction, course);
-		transaction.commit();
-	    } catch (InvalidDBTransferException e) {
-		transaction.rollback();
-		LogHandler
-			.getInstance()
-			.error("Error occured in saveCourse method of CourseDetailBean");
-	    }
-	    setEditMode(false);
-	}
-	return "#";
+    public void saveCourse() {
+    	if (getEditMode()) {
+    	    transaction = Connection.create();
+    	    try {
+        		transaction.start();
+        		CourseDAO.updateCourse(transaction, course);
+        		transaction.commit();
+    	    } catch (InvalidDBTransferException e) {
+        		transaction.rollback();
+        		LogHandler.getInstance().error("Error occured in saveCourse method of CourseDetailBean");
+    	    }
+    	    setEditMode(false);
+    	}
     }
 
     /**
@@ -172,14 +168,13 @@ public class CourseDetailBean implements Pagination, Serializable {
     @PostConstruct
     private void init() {
     	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
-    		.getExternalContext().getRequestParameterMap().get("courseID"));
+    	            .getExternalContext().getRequestParameterMap().get("courseID"));
     	pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
     
     	leaderToAdd = new User();
     	transaction = Connection.create();
     
     	try {
-    
     	    if (courseID > 0) {
         		transaction.start();
         		course = CourseDAO.getCourse(transaction, courseID);
@@ -192,7 +187,7 @@ public class CourseDetailBean implements Pagination, Serializable {
         		                UserDAO.userIsParticipantInCourseUnit(transaction, sessionUser.getUserID(),
                                                                         courseUnitsOfCourse.get(i).getCourseUnitID()));
         		}
-    
+
 		        isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);
     	    }
     	    transaction.commit();
@@ -208,12 +203,10 @@ public class CourseDetailBean implements Pagination, Serializable {
     /**
      * Enables the edit mode of the facelet.
      * 
-     * @return the same page
      * @author Ricky Strohmeier
      */
-    public String enableEditMode() {
-	setEditMode(true);
-	return "#";
+    public void enableEditMode() {
+        setEditMode(true);
     }
 
     /**
@@ -222,7 +215,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return the course
      */
     public Course getCourse() {
-	return course;
+        return course;
     }
 
     /**
@@ -232,7 +225,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the new course
      */
     public void setCourse(Course course) {
-	this.course = course;
+        this.course = course;
     }
 
     /**
@@ -241,7 +234,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return whether the user has registered for course news
      */
     public boolean getRegisteredForCourseNews() {
-	return registeredForCourseNews;
+        return registeredForCourseNews;
     }
 
     /**
@@ -252,7 +245,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @author Ricky Strohmeier
      */
     public void setRegisteredForCourseNews(boolean registeredForCourseNews) {
-	this.registeredForCourseNews = registeredForCourseNews;
+        this.registeredForCourseNews = registeredForCourseNews;
     }
 
     /**
@@ -432,12 +425,6 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    return courseUnitsOfThatCourse;
 	}
 
-    }
-
-    /**
-     * Selects all avialible course units of a course at once.
-     */
-    public void selectAllCourseUnits() {
     }
 
     /**
@@ -634,7 +621,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return list of selected course units
      */
     public List<CourseUnit> getSelectedCourseUnits() {
-	return selectedCourseUnits;
+        return selectedCourseUnits;
     }
 
     /**
@@ -644,7 +631,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the new list of selected course units
      */
     public void setSelectedCourseUnits(List<CourseUnit> selectedCourseUnits) {
-	this.selectedCourseUnits = selectedCourseUnits;
+        this.selectedCourseUnits = selectedCourseUnits;
     }
 
     /**
@@ -653,7 +640,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return list of leaders
      */
     public List<User> getLeadersOfCourse() {
-	return leadersOfCourse;
+        return leadersOfCourse;
     }
 
     /**
@@ -663,7 +650,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the new list of leaders
      */
     public void setLeadersOfCourse(List<User> leaders) {
-	this.leadersOfCourse = leaders;
+        this.leadersOfCourse = leaders;
     }
 
     /**
@@ -672,7 +659,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return list of course units
      */
     public List<CourseUnit> getCourseUnitsOfCourse() {
-	return courseUnitsOfCourse;
+        return courseUnitsOfCourse;
     }
 
     /**
@@ -692,34 +679,36 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return link to the next page
      */
     public String loadParticipantsPage() {
-	return "/facelets/user/registeredUser/listParticipants.xhtml";
+        return "/facelets/user/registeredUser/listParticipants.xhtml";
     }
 
     /**
      * Redirects the user to a page where he can edit a course unit.
      * 
      * @return link to the next page
+     * @author Ricky Strohmeier
      */
     public String loadEditCourseUnitPage() {
-	return "/facelets/user/courseLeader/editCourseUnit.xhtml";
+        return "/facelets/user/courseLeader/editCourseUnit.xhtml";
     }
 
     /**
      * {@inheritDoc}
+     * @author Ricky Strohmeier
      */
     @Override
     public void goToSpecificPage() {
-	this.pagination.setCurrentPageNumber(this.currentPage);
-	transaction.start();
-	try {
-	    courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
-		    transaction, courseID, pagination);
-	    transaction.commit();
-	} catch (InvalidDBTransferException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during fetching data for pagination.");
-	    this.transaction.rollback();
-	}
+    	pagination.setCurrentPageNumber(this.currentPage);
+    	transaction.start();
+
+    	try {
+    	    courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
+    	                                        transaction, courseID, pagination);
+    	    transaction.commit();
+    	} catch (InvalidDBTransferException e) {
+    	    LogHandler.getInstance().error("Error occured during fetching data for pagination.");
+    	    transaction.rollback();
+    	}
     }
 
     /**
@@ -735,7 +724,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     @Override
     public PaginationData getPagination() {
-	return pagination;
+        return pagination;
     }
 
     /**
@@ -743,7 +732,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     @Override
     public void setPagination(PaginationData pagination) {
-	this.pagination = pagination;
+        this.pagination = pagination;
     }
 
     /**
@@ -752,7 +741,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+        return sessionUser;
     }
 
     /**
@@ -762,7 +751,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
-	this.sessionUser = userSession;
+        this.sessionUser = userSession;
     }
 
     /**
@@ -771,7 +760,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return true when in edit mode, false if not
      */
     public boolean getEditMode() {
-	return editMode;
+        return editMode;
     }
 
     /**
@@ -781,7 +770,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the boolean flag to be set
      */
     public void setEditMode(boolean editMode) {
-	this.editMode = editMode;
+        this.editMode = editMode;
     }
 
     /**
@@ -790,7 +779,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return the courseID
      */
     public int getCourseID() {
-	return courseID;
+        return courseID;
     }
 
     /**
@@ -800,7 +789,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the courseID to set
      */
     public void setCourseID(int courseID) {
-	this.courseID = courseID;
+        this.courseID = courseID;
     }
 
     /**
@@ -849,7 +838,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @author Ricky Strohmeier
      */
     public boolean getIsRegistered() {
-	return isRegistered;
+        return isRegistered;
     }
 
     /**
@@ -860,7 +849,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @author Ricky Strohmeier
      */
     public void setIsRegistered(boolean isRegistered) {
-	this.isRegistered = isRegistered;
+        this.isRegistered = isRegistered;
     }
 
     /**
@@ -941,7 +930,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * @return the leader to be add
      */
     public User getLeaderToAdd() {
-	return leaderToAdd;
+        return leaderToAdd;
     }
 
     /**
@@ -951,7 +940,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      *            the leader to be add
      */
     public void setLeaderToAdd(User leaderToAdd) {
-	this.leaderToAdd = leaderToAdd;
+        this.leaderToAdd = leaderToAdd;
     }
 
     /**
