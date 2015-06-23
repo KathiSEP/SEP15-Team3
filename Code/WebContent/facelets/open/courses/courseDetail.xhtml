@@ -109,12 +109,13 @@
 										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.createUnit')}"
 															rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
 															action="#{courseDetailBean.loadEditCourseUnitPage}">
-										<f:param name="editMode" value="false"/>
-										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-										<p/>
+											<f:param name="editMode" value="false"/>
+											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+											<p/>
 										</h:commandButton>
-										<h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}"/>
-										<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+										<h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
+											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+										</h:commandButton>
 									</div>
 									</h:panelGroup>
 									<div class="container">
