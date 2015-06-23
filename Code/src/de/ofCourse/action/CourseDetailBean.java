@@ -307,16 +307,15 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    } else {
 		// If the course is full we throw the
 		// CourseRegistrationException
-		trans.rollback();
-		throw new CourseRegistrationException();
+	        trans.rollback();
+	        
+	        //TODO Fehlermeldung
+	        throw new CourseRegistrationException("You couldn't take part in the course because the maximum amount of Participant has already reached");
 	    }
 	} catch (InvalidDBTransferException e) {
-	    trans.rollback();
-	    // TODO Error Handling
-	    LogHandler.getInstance().error(
-		    "Error occured while User:" + sessionUser.getUserID()
-			    + " signing up for course:" + courseID);
-	    throw new CourseRegistrationException();
+	    trans.rollback();	    
+	    throw new CourseRegistrationException("Error occured while User:" + sessionUser.getUserID()
+                + " signing up for course:" + courseID);
 	}
 
     }
