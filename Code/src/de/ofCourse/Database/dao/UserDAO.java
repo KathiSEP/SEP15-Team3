@@ -1271,8 +1271,8 @@ public class UserDAO {
 
         Connection connection = (Connection) trans;
         java.sql.Connection conn = connection.getConn();
-        PreparedStatement statement;
-        ResultSet resultSet;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         ArrayList<Course> courses = new ArrayList<Course>();
 
         int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();

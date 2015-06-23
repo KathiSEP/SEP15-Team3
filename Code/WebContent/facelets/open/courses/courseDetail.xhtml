@@ -125,7 +125,9 @@
 											</h:panelGroup>
 											<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.signUp')}"
 																rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
-											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}"/>
+											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
+      	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+   	                       					</h:commandButton>
 										</h:form>
 									</div>
 									<h:panelGroup rendered="#{courseDetailBean.editMode}">
@@ -217,35 +219,40 @@
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{courseDetailBean.pagination.currentPageNumber>=1}"
                                                     value="#{sessionUser.getLabel('pagination.back')}" action="#{courseDetailBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber-1}"  />
+                                                    <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
+                                                    								value="#{courseDetailBean.pagination.currentPageNumber-1}"/>
+            	                       				<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
                                                     rendered="#{courseDetailBean.pagination.currentPageNumber>=1}"
                                                     value="#{courseDetailBean.pagination.currentPageNumber}"
                                                     action="#{courseDetailBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber-1}"  />
+                                                    <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
+                                                    								value="#{courseDetailBean.pagination.currentPageNumber-1}"/>
+            	                       				<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
                                             <li><h:commandButton style="font-weight:bold;"
                                                     class="btn btn-primary"
                                                     value="#{courseDetailBean.pagination.currentPageNumber +1}"
                                                     action="#{courseDetailBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber}"  />
+                                                    <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
+                                                    								value="#{courseDetailBean.pagination.currentPageNumber}"/>
+            	                        			<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
                                                     rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}"
                                                     value="#{courseDetailBean.pagination.currentPageNumber+2}"
                                                     action="#{courseDetailBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber+1}" />
+                                                    <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
+                                                    								value="#{courseDetailBean.pagination.currentPageNumber+1}"/>
+            	                        			<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{courseDetailBean.pagination.numberOfPages>=courseDetailBean.pagination.currentPageNumber+1}"
                                                     value="#{sessionUser.getLabel('pagination.forward')}" action="#{courseDetailBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{courseDetailBean.currentPage}" value="#{courseDetailBean.pagination.currentPageNumber+1}"  />
+                                                    <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
+                                                    								value="#{courseDetailBean.pagination.currentPageNumber+1}"/>
+            	                        		<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
                                         </ul>
                                     </div>

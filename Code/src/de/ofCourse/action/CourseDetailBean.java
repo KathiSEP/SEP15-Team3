@@ -26,6 +26,8 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
@@ -171,7 +173,7 @@ public class CourseDetailBean implements Pagination, Serializable {
     private void init() {
     	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
     		.getExternalContext().getRequestParameterMap().get("courseID"));
-    	pagination = new PaginationData(pageElements, 0, "title", true);
+    	pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
     
     	leaderToAdd = new User();
     	transaction = Connection.create();
@@ -179,28 +181,27 @@ public class CourseDetailBean implements Pagination, Serializable {
     	try {
     
     	    if (courseID > 0) {
-    		transaction.start();
-    		course = CourseDAO.getCourse(transaction, courseID);
-    		pagination.refreshNumberOfPages(CourseUnitDAO.getNumberOfCourseUnits(transaction, courseID));
-    		leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
-    		courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);
+        		transaction.start();
+        		course = CourseDAO.getCourse(transaction, courseID);
+        		pagination.refreshNumberOfPages(CourseUnitDAO.getNumberOfCourseUnits(transaction, courseID));
+        		leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);
+        		courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);
+        
+        		for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
+        		    courseUnitsOfCourse.get(i).setUserIsParticipant(
+        		                UserDAO.userIsParticipantInCourseUnit(transaction, sessionUser.getUserID(),
+                                                                        courseUnitsOfCourse.get(i).getCourseUnitID()));
+        		}
     
-    		for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
-    		    courseUnitsOfCourse.get(i).setUserIsParticipant(
-    		                UserDAO.userIsParticipantInCourseUnit(transaction, sessionUser.getUserID(),
-                                                                    courseUnitsOfCourse.get(i).getCourseUnitID()));
-    		}
-    
-    		isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);
+		        isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);
     	    }
+    	    transaction.commit();
     	} catch (InvalidDBTransferException e) {
     	    transaction.rollback();
     	    LogHandler.getInstance().error("Error occured in init method of CourseDetailBean");
     	    courseID = 0;
     	    isRegistered = false;
     	    course = new Course();
-    	} finally {
-    	    transaction.commit();
     	}
     }
 

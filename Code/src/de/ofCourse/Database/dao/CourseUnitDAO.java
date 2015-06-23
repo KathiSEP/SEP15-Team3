@@ -374,24 +374,22 @@ public class CourseUnitDAO {
     public static List<CourseUnit> getCourseUnitsFromCourse(Transaction trans,
 	    int courseID, PaginationData pagination)
 	    throws InvalidDBTransferException {
-    	String direction = getSortDirection(pagination.isSortAsc());
     	ArrayList<CourseUnit> courseUnits = new ArrayList<CourseUnit>();
     
     	String courseUnitsQuery = "SELECT * FROM \"course_units\", \"course_unit_addresses\" WHERE "
     		+ "course_units.course_id = ? AND course_units.id = course_unit_addresses.course_unit_id "
     		+ " ORDER BY %s %s LIMIT ? OFFSET ?";
     
-    	int offset = pagination.getElementsPerPage()
-    		* pagination.getCurrentPageNumber();
+    	int offset = pagination.getElementsPerPage() * pagination.getCurrentPageNumber();
     
-    	courseUnitsQuery = String.format(courseUnitsQuery, "titel", direction);
+    	courseUnitsQuery = String.format(courseUnitsQuery, pagination.getSortColumn().toString(),
+    	                                                pagination.getSortDirection().toString());
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
-    	PreparedStatement statement = null;
     	ResultSet resultSet;
     
     	try {
-    	    statement = conn.prepareStatement(courseUnitsQuery);
+    	    PreparedStatement statement = conn.prepareStatement(courseUnitsQuery);
     	    statement.setInt(1, courseID);
     	    statement.setInt(2, pagination.getElementsPerPage());
     	    statement.setInt(3, offset);
