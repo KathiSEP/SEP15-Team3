@@ -107,7 +107,8 @@ public class ListParticipantsBean implements Pagination {
                     .getRequestParameterMap()
                     .get("courseID")));
             
-            pagination = new PaginationData(elementsPerPage, 0, SortColumn.NICKNAME, SortDirection.ASC);
+            pagination = new PaginationData(elementsPerPage, 0, 
+                                        SortColumn.NICKNAME, SortDirection.ASC);
         }
         catch (Exception e) {
             FacesMessageCreator.createFacesMessage
@@ -126,7 +127,9 @@ public class ListParticipantsBean implements Pagination {
                       .getNumberOfParticipants(transaction, this.getCourseID()));
                 this.participants.setWrappedData
                         (UserDAO.getParticipantsOfCourse
-                                (this.transaction,  this.getPagination(), this.getCourseID()));
+                                                        (this.transaction,  
+                                                         this.getPagination(), 
+                                                         this.getCourseID()));
                 
                 this.transaction.commit();
                 
@@ -162,12 +165,14 @@ public class ListParticipantsBean implements Pagination {
         
         try {
             if(UserDAO.removeParticipantsFromCourse
-                    (this.transaction, this.getCourseID(), this.getUsersToDelete()) == false) {
+                    (this.transaction, this.getCourseID(), 
+                                           this.getUsersToDelete()) == false) {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
             } else {
                 this.pagination.refreshNumberOfPages(CourseDAO
-                        .getNumberOfParticipants(transaction, this.getCourseID()));
+                        .getNumberOfParticipants(transaction, 
+                                                           this.getCourseID()));
                 this.participants.setWrappedData(UserDAO.
                         getParticipantsOfCourse(
                                 this.transaction, 
@@ -244,11 +249,13 @@ public class ListParticipantsBean implements Pagination {
     @Override
     public void sortBySpecificColumn() {
         
-        if(this.getPagination().getSortColumn().equals(SortColumn.fromString(this.sortColumn))) {
+        if(this.getPagination().getSortColumn().equals(
+                                     SortColumn.fromString(this.sortColumn))) {
             this.getPagination().changeSortDirection();
             
         } else {
-            this.getPagination().setSortColumn(SortColumn.fromString(this.sortColumn));
+            this.getPagination().setSortColumn(
+                                        SortColumn.fromString(this.sortColumn));
         }
         transaction.start();
         

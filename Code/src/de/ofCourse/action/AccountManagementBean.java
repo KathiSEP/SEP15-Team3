@@ -96,15 +96,18 @@ public class AccountManagementBean implements Pagination {
     @PostConstruct
     private void init() {
         this.users = new ListDataModel<User>();
-        pagination = new PaginationData(elementsPerPage, 0, SortColumn.NICKNAME, SortDirection.ASC);
+        pagination = new PaginationData(elementsPerPage, 0, 
+                                        SortColumn.NICKNAME, SortDirection.ASC);
         
         transaction = Connection.create();
         transaction.start();
         try {
             this.pagination.refreshNumberOfPages(UserDAO
-                    .getNumberOfNotAdminActivatedUsers(this.transaction));
-            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(this.transaction, this.getPagination()));
+                          .getNumberOfNotAdminActivatedUsers(this.transaction));
+            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(
+                                       this.transaction, this.getPagination()));
             this.transaction.commit();
+            
         } catch (InvalidDBTransferException e) {
             LogHandler.getInstance().error(
                     "Error occured during updating the"
@@ -138,16 +141,18 @@ public class AccountManagementBean implements Pagination {
             this.transaction = Connection.create();
             transaction.start();
             try {
-                if(UserDAO.AdminActivateUsers(this.transaction, this.usersToActivate) == false) {
+                if(UserDAO.AdminActivateUsers(this.transaction, 
+                                            this.usersToActivate) == false) {
                     LogHandler.getInstance().error(
                             "Error occured during adminActivateUsers().");
                     } else {
                         //Refresh page content
                         this.pagination.refreshNumberOfPages(UserDAO
-                                .getNumberOfNotAdminActivatedUsers(this.transaction));
-                        this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers
-                                (this.transaction, 
-                                 this.getPagination()));
+                          .getNumberOfNotAdminActivatedUsers(this.transaction));
+                        this.users.setWrappedData(
+                                UserDAO.getNotAdminActivatedUsers
+                                                        (this.transaction, 
+                                                         this.getPagination()));
                         
                         FacesMessageCreator.createFacesMessage(
                                  null, "Benutzer erfolgreich aktiviert!");
@@ -213,11 +218,13 @@ public class AccountManagementBean implements Pagination {
     @Override
     public void sortBySpecificColumn() {
         
-        if(this.getPagination().getSortColumn().equals(SortColumn.fromString(this.sortColumn))) {
+        if(this.getPagination().getSortColumn().equals(SortColumn.fromString
+                                                          (this.sortColumn))) {
             this.getPagination().changeSortDirection();
             
         } else {
-            this.getPagination().setSortColumn(SortColumn.fromString(this.sortColumn));
+            this.getPagination().setSortColumn(SortColumn.fromString(
+                                                           this.sortColumn));
         }
         
         transaction.start();
