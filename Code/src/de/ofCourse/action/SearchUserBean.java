@@ -20,6 +20,8 @@ import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -118,9 +120,7 @@ private int currentPage;
     @PostConstruct
     public void init() {
         searchParam = "name";
-        pagination = new PaginationData();
-        pagination.setElementsPerPage(10);
-        pagination.setSortAsc(true);
+        pagination = new PaginationData(10, 0, SortColumn.NAME, SortDirection.ASC);
     }
 
     /**
@@ -133,10 +133,7 @@ private int currentPage;
     public void search() {
         transaction = Connection.create();
         transaction.start();
-
-        pagination.setCurrentPageNumber(0);
-        pagination.setSortAsc(true);
-        pagination.setSortColumn("name");
+        
         ArrayList<User> result;
         try {
             result = getResultArray();
@@ -274,16 +271,17 @@ private int currentPage;
     public void sortBySpecificColumn() {
         transaction = Connection.create();
         transaction.start();
-        pagination.setSortColumn(orderParam);
-
         ArrayList<User> result;
-
-        if (pagination.isSortAsc()) {
-            pagination.setSortAsc(false);
-        } else {
-            pagination.setSortAsc(true);
-        }
-
+        
+        if(getPagination().getSortColumn().
+                equals(SortColumn.fromString(orderParam))) {
+                 
+                getPagination().changeSortDirection();
+            
+            } else {
+                getPagination().setSortColumn(SortColumn.fromString(orderParam));
+            }
+        
         try {
             result = getResultArray();
 
@@ -357,9 +355,6 @@ private int currentPage;
         transaction = Connection.create();
         transaction.start();
 
-        pagination.setCurrentPageNumber(0);
-        pagination.setSortAsc(true);
-        pagination.setSortColumn("name");
 
         try {
             pagination.refreshNumberOfPages(UserDAO

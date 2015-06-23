@@ -399,14 +399,19 @@ public class UserDAO {
     }
 
     /**
-     * Returns a list containing all users stored in the database.
      * 
+     * Returns a list containing all users stored in the database.
+     * @author Sebastian
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
      * @param pagination
      *            the Pagination object which contains the amount of elements
      *            which are to be retrieved
+     * @param searchString
+     *            the input String which should be searched
+     * @param searchParam
+     *            the paramter which says in which coloum we should look
      * @return the list of users, or null if no users were retrieved
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
@@ -415,72 +420,79 @@ public class UserDAO {
 	    PaginationData pagination, String searchParam, String searchString)
 	    throws InvalidDBTransferException {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	int limit = pagination.getElementsPerPage();
-	int offset = limit * pagination.getCurrentPageNumber();
-	String orderParam = getOrderParam(pagination.getSortColumn());
-	String dir = pagination.getSQLSortDirection();
-	String query = null;
+        int limit = pagination.getElementsPerPage();
+        int offset = limit * pagination.getCurrentPageNumber();
+        String dir = pagination.getSortDirection().toString();
+        String query = null;
 
-	switch (searchParam) {
-	case "name":
-	    query = GET_USERS_BY_NAME;
-	    break;
+        switch (searchParam) {
+        case "name":
+            query = GET_USERS_BY_NAME;
+            break;
 
-	case "email":
-	    query = GET_USER_BY_EMAIL;
-	    break;
-
-	case "nickname":
-	    query = GET_USER_BY_NICKNAME;
-	    break;
-
-	default:
-	    query = ALL_USERS;
-	    return getAllUsers(conn, pagination,
-		    String.format(query, orderParam, dir), limit, offset);
-
-	}
-
-	return getUsers(conn, pagination,
-		String.format(query, orderParam, dir), searchString, limit,
-		offset);
+    	case "email":
+    	    query = GET_USER_BY_EMAIL;
+    	    break;
+    
+    	case "nickname":
+    	    query = GET_USER_BY_NICKNAME;
+    	    break;
+    
+    	default:
+    	    query = ALL_USERS;
+    	    return getAllUsers(conn, pagination,
+    		    String.format(query, pagination.getSortColumn(), dir), limit, offset);
+    
+    	}
+    
+    	return getUsers(conn, pagination,
+    		String.format(query, pagination.getSortColumn(), dir), searchString, limit,
+    		offset);
     }
 
     /**
+     * Returns a List of All Users, depends how the pagination is defined and 
+     * on which side we are
+     * 
+     * @author Sebastian
      * @param conn
      * @param pagination
      * @param query
      * @param limit
      * @param offset
-     * @return
+     * @return a list of Users
      * @throws InvalidDBTransferException
      */
     private static ArrayList<User> getAllUsers(java.sql.Connection conn,
 	    PaginationData pagination, String query, int limit, int offset)
 	    throws InvalidDBTransferException {
-	ArrayList<User> result = null;
-	ResultSet resultSet = null;
+	
+        ArrayList<User> result = null;
+        
 
-	try (PreparedStatement pS = conn.prepareStatement(query)) {
+        try (PreparedStatement pS = conn.prepareStatement(query)) {
 
-	    pS.setInt(1, limit);
-	    pS.setInt(2, offset);
-
-	    resultSet = pS.executeQuery();
-	    result = getResult(resultSet);
-
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during GetAllUsers Methode");
-	    throw new InvalidDBTransferException();
-	}
-	return result;
+            pS.setInt(1, limit);
+            pS.setInt(2, offset);
+            try(ResultSet resultSet = pS.executeQuery()){
+                result = getResult(resultSet);
+            }
+    	
+        } catch (SQLException e) {
+    	   
+    	    throw new InvalidDBTransferException("Error occured during GetAllUsers Methode", e);
+    	}
+    	return result;
     }
 
     /**
+     * Sets all Information about a User out of the ResultSet which was 
+     * delivered
+     * 
+     * @author Sebastian
      * @param resultSet
      * @return
      * @throws SQLException
@@ -488,80 +500,57 @@ public class UserDAO {
     private static ArrayList<User> getResult(ResultSet resultSet)
 	    throws SQLException {
 
-	ArrayList<User> result = new ArrayList<User>();
+        ArrayList<User> result = new ArrayList<User>();
 
-	try {
+        try {
 
-	    while (resultSet.next()) {
-		User userToAdd = new User();
-		if (resultSet.getString("first_name") == null) {
-		    userToAdd.setFirstname("Nicht angegeben");
-		} else {
-		    userToAdd.setFirstname(resultSet.getString("first_name"));
-		}
-		if (resultSet.getString("name") == null) {
-		    userToAdd.setLastname("Nicht angegeben");
-		} else {
-		    userToAdd.setLastname(resultSet.getString("name"));
-		}
-		if (resultSet.getDate("date_of_birth") == null) {
-		    SimpleDateFormat dateformat = new SimpleDateFormat(
-			    "dd/MM/yyyy");
-		    Date jesusBirth = dateformat.parse("25/12/0001");
-		    userToAdd.setDateOfBirth(jesusBirth);
-		} else {
-		    userToAdd.setDateOfBirth(new java.util.Date(resultSet
-			    .getDate("date_of_birth").getTime()));
-		}
-		userToAdd.setEmail(resultSet.getString("email"));
+    	    while (resultSet.next()) {
+    	        User userToAdd = new User();
+    	        if (resultSet.getString("first_name") == null) {
+    	            userToAdd.setFirstname("Nicht angegeben");
+    	        } else {
+    	            userToAdd.setFirstname(resultSet.getString("first_name"));
+    	        }
+    	        if (resultSet.getString("name") == null) {
+    	            userToAdd.setLastname("Nicht angegeben");
+    	        } else {
+    	            userToAdd.setLastname(resultSet.getString("name"));
+    	        }
+    	        if (resultSet.getDate("date_of_birth") == null) {
+    	            SimpleDateFormat dateformat = new SimpleDateFormat(
+    	                    "dd/MM/yyyy");
+    	            Date jesusBirth = dateformat.parse("25/12/0001");
+    	            userToAdd.setDateOfBirth(jesusBirth);
+    	        } else {
+    	            userToAdd.setDateOfBirth(new java.util.Date(resultSet
+    	                    .getDate("date_of_birth").getTime()));
+    	        }
+    	        userToAdd.setEmail(resultSet.getString("email"));
+    
+    	        userToAdd.setUsername(resultSet.getString("nickname"));
+    	        userToAdd.setUserID(resultSet.getInt("id"));
+    	        result.add(userToAdd);
+    	    }
 
-		userToAdd.setUsername(resultSet.getString("nickname"));
-		userToAdd.setUserID(resultSet.getInt("id"));
-		result.add(userToAdd);
-	    }
-
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during GetResult Methode");
-	    throw new SQLException();
-	} catch (ParseException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during Parsing Jesus Birthday");
-	}
-	return result;
+        } catch (SQLException e) {
+           
+            throw new SQLException("Error occured during GetResult Methode");
+        } catch (ParseException e) {
+            //TODO dont know what to do
+            LogHandler.getInstance().error(
+                    "Error occured during Parsing Jesus Birthday");
+        }
+	
+        return result;
     }
 
-    /**
-     * @param orderParam
-     * @return
-     */
-    private static String getOrderParam(String orderParam) {
 
-	switch (orderParam) {
-
-	case "nickname":
-	    return "nickname";
-
-	case "name":
-	    return "name";
-
-	case "first_name":
-	    return "first_name";
-
-	case "date_of_birth":
-	    return "date_of_birth";
-
-	case "email":
-	    return "email";
-
-	}
-	return null;
-    }
 
     /**
      * Returns a list of users which names contain the search term the user has
      * entered.
      * 
+     * @author Sebastian
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
@@ -581,22 +570,21 @@ public class UserDAO {
 	    PaginationData pagination, String query, String searchString,
 	    int limit, int offset) throws InvalidDBTransferException {
 
-	ArrayList<User> result = null;
-	ResultSet resultSet = null;
+        ArrayList<User> result = null;
 
-	try (PreparedStatement pS = conn.prepareStatement(query)) {
-	    pS.setString(1, searchString);
-	    pS.setInt(2, limit);
-	    pS.setInt(3, offset);
-
-	    resultSet = pS.executeQuery();
-	    result = getResult(resultSet);
-	    return result;
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during GetUsers(connection) Methode");
-	    throw new InvalidDBTransferException();
-	}
+        try (PreparedStatement pS = conn.prepareStatement(query)) {
+            pS.setString(1, searchString);
+            pS.setInt(2, limit);
+            pS.setInt(3, offset);
+	    
+            try(ResultSet resultSet = pS.executeQuery()){
+                result = getResult(resultSet);
+                return result;
+            }    
+        } catch (SQLException e) {
+	    
+            throw new InvalidDBTransferException("Error occured during GetUsers(connection) Methode", e);
+        }
 
     }
 
@@ -1500,43 +1488,40 @@ public class UserDAO {
     }
 
     /**
-     * TODO
+     * Returns whether the User wants to get Course News or not. Checks the inform_user
+     * if the Relation UserID CourseID is included
      * 
      * @author Sebastian
      * @param trans
      * @param userID
      * @param courseID
-     * @return
-     */
-    /**
-     * @param trans
-     * @param userID
-     * @param courseID
-     * @return
+     * @return  true or false
      * @throws InvalidDBTransferException
      */
     public static boolean userWantsToBeInformed(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String searchUserInUserToInform = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
 
-	String searchUserInUserToInform = "SELECT * FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+        try {
+	    
+            boolean returnStatment = isInTable(userID, courseID, conn,
+                    searchUserInUserToInform);
+            
+            //TODO Remove here
+            LogHandler.getInstance().debug(
+                    "UserWantsToBeInformed methode was succesfull");
+            return returnStatment;
 
-	try {
-	    boolean returnStatment = isInTable(userID, courseID, conn,
-		    searchUserInUserToInform);
-	    LogHandler.getInstance().debug(
-		    "UserWantsToBeInformed methode was succesfull");
-	    return returnStatment;
-
-	} catch (SQLException e) {
-	    LogHandler.getInstance().debug(
-		    "Error occured during UserWantsToBeInformed methode ");
-	    throw new InvalidDBTransferException();
-	}
+        } catch (SQLException e) {
+            throw new InvalidDBTransferException("Error occured during UserWantsToBeInformed methode ", e);
+        }
     }
 
     /**
+     * An extraceted Methode because this or similar SQL Commands are often used
      * 
      * @author Sebastian
      * @param userID
@@ -1549,49 +1534,52 @@ public class UserDAO {
     private static boolean isInTable(int userID, int courseID,
 	    java.sql.Connection conn, String searchUserInUserToInform)
 	    throws SQLException {
-	PreparedStatement pS;
-	ResultSet resultSet;
-	pS = conn.prepareStatement(searchUserInUserToInform);
-	pS.setInt(1, userID);
-	pS.setInt(2, courseID);
-	resultSet = pS.executeQuery();
-
-	boolean returnStatment = resultSet.next();
-	resultSet.close();
-	pS.close();
-	return returnStatment;
+	
+        try(PreparedStatement pS = conn.prepareStatement(searchUserInUserToInform)){
+            pS.setInt(1, userID);
+            pS.setInt(2, courseID);
+            
+            try(ResultSet resultSet = pS.executeQuery()){
+                boolean returnStatment = resultSet.next();
+                return returnStatment;
+            }
+        }
     }
 
     /**
+     * Checks whether the User is already Participant in that Course or Not
      * 
      * @author Sebastian
      * @param trans
      * @param userID
      * @param courseID
-     * @return
+     * @return true or false
      * @throws InvalidDBTransferException
      */
     public static boolean userIsParticpant(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String searchUserCourse = "SELECT * FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
 
-	String searchUserCourse = "SELECT * FROM \"course_participants\" WHERE participant_id=? AND course_id=?";
-
-	try {
-	    boolean returnStatement = isInTable(userID, courseID, conn,
-		    searchUserCourse);
-	    LogHandler.getInstance().debug(
+        try {
+            boolean returnStatement = isInTable(userID, courseID, conn,
+                    searchUserCourse);
+	    
+            //TODO REMOVE
+            LogHandler.getInstance().debug(
 		    "UserIsParticipant methode was succesfull");
-	    return returnStatement;
-	} catch (SQLException e) {
-	    LogHandler.getInstance().debug(
-		    "Error occured during UserIsParticipant methode ");
-	    throw new InvalidDBTransferException();
-	}
+            return returnStatement;
+        } catch (SQLException e) {
+	    
+	    throw new InvalidDBTransferException("Error occured during UserIsParticipant methode ", e);
+        }
     }
 
     /**
+     * Update the Users Account Balance after he signed up or signed off for a CourseUnit 
+     * 
      * @author Sebastian Schwarz
      * @param trans
      * @param userID
@@ -1599,183 +1587,185 @@ public class UserDAO {
      */
     public static void updateAccountBalance(Transaction trans, int userID,
 	    float newAccountBalance) {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String updateAccountBalance = "UPDATE \"users\" SET credit_balance = ? WHERE id = ?";
 
-	// TODO spalte evlt noch nciht richtig
+        try (PreparedStatement pS = conn.prepareStatement(updateAccountBalance)){
 
-	String updateAccountBalance = "UPDATE \"users\" SET credit_balance = ? WHERE id = ?";
+            pS.setFloat(1, newAccountBalance);
+            pS.setInt(2, userID);
+            pS.executeUpdate();
 
-	try {
-	    PreparedStatement pS = conn.prepareStatement(updateAccountBalance);
-	    pS.setFloat(1, newAccountBalance);
-	    pS.setInt(2, userID);
-	    pS.executeUpdate();
-	    pS.close();
-	    LogHandler.getInstance().debug(
-		    "AccountBalance succesfully update of User:" + userID);
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error acurred while updating Account Balance of User:"
-			    + userID);
-	    throw new InvalidDBTransferException();
-	}
+            //TODO Remove
+            LogHandler.getInstance().debug(
+                    "AccountBalance succesfully update of User:" + userID);
+        } catch (SQLException e) {
+           
+            throw new InvalidDBTransferException("Error acurred while updating Account Balance of User:"
+                    + userID, e);
+        }
     }
 
     /**
+     * Checks whether the User is already Participant in the CourseUnit or not
+     * 
      * @author Sebastian Schwarz
      * @param trans
      * @param userID
      * @param courseUnitID
-     * @return
+     * @return true or false
      */
     public static boolean userIsParticipantInCourseUnit(Transaction trans,
 	    int userID, int courseUnitID) throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String searchUserCourse = "SELECT * FROM \"course_unit_participants\" WHERE participant_id=? AND course_unit_id=?";
 
-	String searchUserCourse = "SELECT * FROM \"course_unit_participants\" WHERE participant_id=? AND course_unit_id=?";
-
-	try {
-	    boolean returnStatement = isInTable(userID, courseUnitID, conn,
-		    searchUserCourse);
-	    LogHandler.getInstance().debug(
+        try {
+            boolean returnStatement = isInTable(userID, courseUnitID, conn,
+                    searchUserCourse);
+	    
+            //TODO Remove
+            LogHandler.getInstance().debug(
 		    "UserIsParticipantInCourseUnit methode was succesfull");
-	    return returnStatement;
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .debug("Error occured during UserIsParticipantInCourseUnit methode ");
-	    throw new InvalidDBTransferException();
-	}
+            return returnStatement;
+        } catch (SQLException e) {
+
+	    throw new InvalidDBTransferException("Error occured during UserIsParticipantInCourseUnit methode ", e);
+        }
     }
 
     /**
-     * 
+     * Returns the UserImage as byte Array From the Database
+    
      * @author Sebastian Schwarz
      * @param trans
      * @param courseID
-     * @return
+     * @return ProfilImage
      */
     public static byte[] getImage(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	byte[] picture;
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        byte[] picture;
+        String selectImage = "SELECT profile_image FROM \"users\" WHERE id=?";
 
-	String selectImage = "SELECT profile_image FROM \"users\" WHERE id=?";
+        try (PreparedStatement pS = conn.prepareStatement(selectImage)){
+	    
+            pS.setInt(1, userID);
+            try(ResultSet resultSet = pS.executeQuery()){
+                
+                if (resultSet.next()) {
+                    
+                    picture = resultSet.getBytes("profile_image");                   
+                    return picture;
+                } else {
+                    
+                    //Returns null, so that the HTTP Servlet knows that he has to load the dummy Picture
+                    return null;
+                }
+            }
 
-	try {
-	    PreparedStatement pS = conn.prepareStatement(selectImage);
-	    pS.setInt(1, userID);
-	    ResultSet resultSet = pS.executeQuery();
+        } catch (SQLException e) {
 
-	    if (resultSet.next()) {
-		picture = resultSet.getBytes("profile_image");
-		LogHandler.getInstance().debug(
-			"User Picture succesfully loaded");
-		pS.close();
-		return picture;
-	    } else {
-		LogHandler.getInstance().debug("No User Picture found");
-		pS.close();
-		return null;
-	    }
-
-	} catch (SQLException e) {
-	    // Error Handling
-	    LogHandler
-		    .getInstance()
-		    .error("Exception occured during loading User Picture from Database");
-	    throw new InvalidDBTransferException();
-	}
+	    throw new InvalidDBTransferException("Exception occured during loading User Picture from Database", e);
+        }
     }
 
     /**
+     * Identifys the UserNickname on the Database by his EMail Address and returns 
+     * the User
      * 
      * @author Sebastian Schwarz
      * @param trans
      * @param email
-     * @return
+     * @return searched User
      */
     public static User getUserPerMail(Transaction trans, String email) {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	User user = null;
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	String query = "SELECT nickname FROM \"users\" WHERE email=?";
-	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setString(1, email);
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        User user = null;
+        String query = "SELECT nickname FROM \"users\" WHERE email=?";
+         	
+        try(PreparedStatement stmt = conn.prepareStatement(query)) {
 
-	    rst = stmt.executeQuery();
-	    if (rst.next()) {
-		user = getUser(trans, rst.getString(1));
-	    }
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing getUser(Transaction trans, email)");
-	    throw new InvalidDBTransferException();
-	}
-	return user;
+            stmt.setString(1, email);
+            try(ResultSet rst = stmt.executeQuery()){
+                
+                if (rst.next()) {
+                    //Uses the Already implemented getUser, no Code reproduction
+                    user = getUser(trans, rst.getString(1));
+                }
+            }       
+        } catch (SQLException e) {
+	    
+            throw new InvalidDBTransferException("SQL Exception occoured during executing getUser(Transaction trans, email)", e);
+        }
+        return user;
     }
 
     /**
+     * Returns The Number of Users the systems has
+     * 
+     * @author Sebastian
      * @param transaction
-     * @return
+     * @return Number of Users the System has as Integer
      */
     public static int getNumberOfUsers(Transaction transaction) {
-	Connection connection = (Connection) transaction;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) transaction;
+        java.sql.Connection conn = connection.getConn();
+        String sql = "SELECT COUNT (*) FROM \"users\"";
 
-	ResultSet resultSet = null;
-	String sql = "SELECT COUNT (*) FROM \"users\"";
-
-	try (PreparedStatement pS = conn.prepareStatement(sql)) {
-	    resultSet = pS.executeQuery();
-	    if (resultSet.next()) {
-		return resultSet.getInt(1);
-	    }
-
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing getNumberOfUsers");
-	    throw new InvalidDBTransferException();
-	}
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {	    
+            try(ResultSet resultSet = pS.executeQuery()){
+	        
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }	         
+            }
+        } catch (SQLException e) {
+                
+            throw new InvalidDBTransferException("SQL Exception occoured during executing getNumberOfUsers", e);
+        }
 
 	return 0;
     }
 
     /**
+     * Returns the Number of Users which has this Name
+     * 
+     * @author Sebastian
      * @param transaction
      * @param searchParam
      * @return
      */
     public static int getNumberOfUsersWithThisName(Transaction transaction,
 	    String searchParam) {
-	Connection connection = (Connection) transaction;
-	java.sql.Connection conn = connection.getConn();
+	
+        Connection connection = (Connection) transaction;
+        java.sql.Connection conn = connection.getConn();
+        String sql = "SELECT COUNT (*) FROM \"users\" where name = ?";
 
-	ResultSet resultSet = null;
-	String sql = "SELECT COUNT (*) FROM \"users\" where name = ?";
+        try (PreparedStatement pS = conn.prepareStatement(sql)) {
+            pS.setString(1, searchParam);
+            try(ResultSet  resultSet = pS.executeQuery()){
+	        
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
 
-	try (PreparedStatement pS = conn.prepareStatement(sql)) {
-	    pS.setString(1, searchParam);
-	    resultSet = pS.executeQuery();
-	    if (resultSet.next()) {
-		return resultSet.getInt(1);
-	    }
+            throw new InvalidDBTransferException("SQL Exception occoured during executing getNumberOfUsersWithThisName", e);
+        }
 
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing getNumberOfUsersWithThisName");
-	    throw new InvalidDBTransferException();
-	}
-
-	return 0;
+        return 0;
     }
 
     /**
