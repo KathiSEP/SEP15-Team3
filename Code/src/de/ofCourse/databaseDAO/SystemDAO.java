@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Activation;
 import de.ofCourse.system.Connection;
-import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -34,6 +33,20 @@ public class SystemDAO {
     
     private final static String SET_SIGN_OFF_LIMIT = 
 	    "UPDATE \"system_attributes\" SET withdrawal_hours=?";
+    
+    private final static String SET_OVERDRAFT_CREDIT = 
+	    "UPDATE \"system_attributes\" " 
+            + "SET overdraft_credit=?";
+    
+    private final static String SET_ACTIVATION_TYPE =
+	    "UPDATE \"system_attributes\" "
+	    + "SET activation_type=?::activation";
+    
+    private final static String GET_OVERDRAFT_CREDIT = 
+	    "SELECT overdraft_credit FROM \"system_attributes\"";
+    
+    private final static String GET_SIGN_OFF_LIMIT =
+	    "SELECT withdrawal_hours FROM FROM \"system_attributes\"";
 
     /**
      * Returns the value of the overdraft credit stored in the database.
@@ -49,14 +62,24 @@ public class SystemDAO {
      */
     public static int getOverdraftCredit(Transaction trans)
 	    throws InvalidDBTransferException {
-
+        int overdraftCredit = 0;
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
+	
+	try(PreparedStatement stmt = conn.prepareStatement(GET_OVERDRAFT_CREDIT)){
+	    
+	    try(ResultSet res = stmt.executeQuery()){
+		res.next();
+		overdraftCredit = res.getInt("overdraft_credit");
+	    }
 
-	String sql = "";
-
-	return 0;
-
+	}catch(SQLException e){
+	    throw new InvalidDBTransferException(
+		    "Error occured during fetching the" 
+	            + " overdraft credit from database", e);
+	}
+	return overdraftCredit;
     }
 
     /**
@@ -73,22 +96,18 @@ public class SystemDAO {
      */
     public static void setOverdraftCredit(Transaction trans, float credit)
 	    throws InvalidDBTransferException {
-
-	String queryOverdraft = "UPDATE \"system_attributes\" "
-		+ "SET overdraft_credit=?";
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(queryOverdraft)) {
+	try (PreparedStatement stmt = conn.prepareStatement(SET_OVERDRAFT_CREDIT)) {
 
 	    // Update the account activation in the database
 	    stmt.setFloat(1, credit);
 	    stmt.executeUpdate();
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during setting overdraft credit.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+		    "Error occured during setting overdraft credit.", e);
 	}
     }
 
@@ -152,26 +171,22 @@ public class SystemDAO {
      *            type of activation
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias
      */
     public static void setActivationType(Transaction trans, Activation type)
 	    throws InvalidDBTransferException {
-	String queryActivation = "UPDATE \"system_attributes\" "
-		+ "SET activation_type=?::activation";
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(queryActivation)) {
+	try (PreparedStatement stmt = conn.prepareStatement(SET_ACTIVATION_TYPE)) {
 
 	    // Update the overdraft credit in the database
 	    stmt.setString(1, type.toString());
 	    stmt.executeUpdate();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during setting activation type.");
-	    System.out.println("Execeptionk");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+		    "Error occured during setting activation type.", e);
 	}
-	
     }
 
     /**
@@ -186,7 +201,25 @@ public class SystemDAO {
      */
     public static int getSignOffLimit(Transaction trans)
 	    throws InvalidDBTransferException {
-	return 0;
+	//Default value
+	int signOffLimit = 3;
+	
+	Connection connection = (Connection) trans;
+	java.sql.Connection conn = connection.getConn();
+	
+	try(PreparedStatement stmt = conn.prepareStatement(GET_SIGN_OFF_LIMIT)){
+	    
+	    try(ResultSet res = stmt.executeQuery()){
+		res.next();
+		signOffLimit = res.getInt("withdrawal_hours");
+	    }
+
+	}catch(SQLException e){
+	    throw new InvalidDBTransferException(
+		    "Error occured during fetching the" 
+	            + " sign off limit from database", e);
+	}
+	return signOffLimit;
 
     }
 
