@@ -4,8 +4,16 @@
 package de.ofCourse.system;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
 import java.sql.Connection;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Tests the DatabaseConnectionManager. <br>
@@ -18,25 +26,34 @@ import org.junit.Test;
  * @author Tobias Fuchs
  *
  */
-public class DatabaseConnectionManagerTest {
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ LogHandler.class})
+public class DatabaseConnectionManagerTest{
+    
+    private LogHandler myLogger;
     /**
      * Tests the connection manager.
      */
     @Test
-    public void test() {
+    public void test() {		
+	
+	// Mock LogHandler
+	PowerMockito.mockStatic(LogHandler.class);
+	myLogger = mock(LogHandler.class);
+	Mockito.when(LogHandler.getInstance()).thenReturn(myLogger);
+	
 
 	// Enables the debug mode of the database connection manager to ensure
 	// that it is sealed of from other classes that can produce errors(like
 	// e.g. PropertyManager).
 	DatabaseConnectionManager.debugMode(true);
 
-
 	// Checks whether the DatabaseConnectionsManager is no null
 	assertNotNull(DatabaseConnectionManager.getInstance());
-
+	
+	
 	// Checks whether the DatabaseConnectionManager is unique and fulfills
-	// the Singelton characteristic
+	// the Singleton characteristic
 	assertSame(DatabaseConnectionManager.getInstance(),
 		DatabaseConnectionManager.getInstance());
 
@@ -44,6 +61,7 @@ public class DatabaseConnectionManagerTest {
 	Connection connectionTestNull = DatabaseConnectionManager.getInstance()
 		.getConnection();
 	assertNotNull(connectionTestNull);
+	
 	DatabaseConnectionManager.getInstance().releaseConnection(
 		connectionTestNull);
 

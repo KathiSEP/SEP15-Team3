@@ -60,6 +60,7 @@ public class CourseUnitManagementBeanTest {
     private CourseUnit unit3;
     private Course course;
 
+    @SuppressWarnings("unused")
     private String enteredTurnus;
     private Cycle cycle;
 

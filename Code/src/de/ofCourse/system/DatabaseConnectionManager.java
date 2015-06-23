@@ -90,15 +90,9 @@ public class DatabaseConnectionManager {
 	try {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occoured during"
-			+ " loading the database driver!");
-	    } else {
 		LogHandler.getInstance().error(
 			"Error occoured during"
 				+ " loading the database driver!");
-	    }
 	}
 
     }
@@ -120,18 +114,12 @@ public class DatabaseConnectionManager {
 	} else {
 	    // There's no free connection
 	    try {
-		wait(2000);
+		wait(5000);
 	    } catch (InterruptedException e) {
-		if (debug) {
-		    System.out.println("LOGGING MESSAGE:   "
-			    + "Error occured during "
-			    + "waiting for a connection.");
-		} else {
 		    LogHandler.getInstance().error(
 			    "Error occured during waiting"
 				    + " for a connection.");
 		}
-	    }
 
 	}
 
@@ -148,33 +136,19 @@ public class DatabaseConnectionManager {
 	 */
 	if (!this.isConnectionActive(connection) && difference > 0) {
 	    connection = establishConnection();
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "New Connection established.");
-	    } else {
 		LogHandler.getInstance().debug("New Connection established.");
-	    }
 	}
 
 	// Check the new connection before giving it free
 	if (!this.isConnectionActive(connection)) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Not able to get a active "
-			+ "connection to the database.");
-	    } else {
 		LogHandler.getInstance().error(
 			"Not able to get a active connection to the database.");
-	    }
 	    throw new InvalidDBTransferException();
 	}
 
 	++numberOfConnectionsInUse;
-	if (debug) {
-	    System.out.println("LOGGING MESSAGE:   " + "Connection returned.");
-	} else {
 	    LogHandler.getInstance().debug("Connection returned.");
-	}
+	
 
 	return connection;
     }
@@ -187,21 +161,13 @@ public class DatabaseConnectionManager {
 	    if (!connection.isClosed() && connection != null) {
 		--numberOfConnectionsInUse;
 		freeConnections.add(connection);
-		if (debug) {
-		    System.out.println("LOGGING MESSAGE:   "
-			    + "Connection released.");
-		} else {
 		    LogHandler.getInstance().debug("Connection released.");
-		}
+		
 	    }
 	} catch (SQLException e) {
-	    if (debug) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occured during releasing the connection.");
-	    } else {
 		LogHandler.getInstance().error(
 			"Error occured during releasing the connection.");
-	    }
+	   
 	}
 	// Notifies all waiting threads that there's a free connection
 	notifyAll();
@@ -222,7 +188,6 @@ public class DatabaseConnectionManager {
 		numberOfConnection = Integer.parseInt(PropertyManager
 			.getInstance()
 			.getPropertyConfiguration("dbconnections"));
-		System.out.println(numberOfConnection);
 	    }
 
 	    for (int i = 0; i < numberOfConnection; ++i) {
@@ -255,11 +220,13 @@ public class DatabaseConnectionManager {
 			"fuchstob", "eX4Cooth");
 		connection.setAutoCommit(false);
 	    } catch (SQLException e) {
-		System.out.println("LOGGING MESSAGE:   "
-			+ "Error occured during establishing a database"
-			+ "connection. Please check whether the login"
-			+ " credentials are set correctly and the"
-			+ " connection to the database is alive.");
+		LogHandler.getInstance().error(
+			"Error occured during establishing a database"
+				+ "connection. Please check whether the login"
+				+ " credentials are set correctly  and the"
+				+ " connection to the database is alive.");
+
+	    
 	    }
 	} else {
 	    try {
@@ -301,23 +268,13 @@ public class DatabaseConnectionManager {
 	    if (connection != null) {
 		try {
 		    connection.close();
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Connection closed.");
-		    } else {
 			LogHandler.getInstance().error("Connection closed.");
-		    }
-		} catch (SQLException e) {
-		    if (debug) {
-			System.out.println("LOGGING MESSAGE:   "
-				+ "Error occured during closing"
-				+ " the connections to the database.");
-		    } else {
+		} catch (SQLException e) {  
 			LogHandler.getInstance().error(
 				"Error occured during closing"
 					+ " the connections to the database.");
 		    }
-		}
+		
 	    }
 	}
 	freeConnections.clear();
