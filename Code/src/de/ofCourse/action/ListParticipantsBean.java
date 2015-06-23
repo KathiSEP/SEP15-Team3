@@ -14,8 +14,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;

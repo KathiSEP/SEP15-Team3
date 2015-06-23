@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import de.ofCourse.Database.dao.CourseUnitDAO;
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;

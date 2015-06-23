@@ -1,7 +1,7 @@
 /**
  * This package represents the Data Access Objects of the ofCourse system.
  */
-package de.ofCourse.Database.dao;
+package de.ofCourse.databaseDAO;
 
 import java.io.IOException;
 import java.io.InputStream;

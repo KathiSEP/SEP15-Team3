@@ -26,9 +26,9 @@ import javax.faces.bean.ManagedBean;
 
 import javax.faces.context.FacesContext;
 
-import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.CourseUnitDAO;
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.SmtpServer;

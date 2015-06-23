@@ -24,10 +24,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.CourseUnitDAO;
-import de.ofCourse.Database.dao.CycleDAO;
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.CycleDAO;
+import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;

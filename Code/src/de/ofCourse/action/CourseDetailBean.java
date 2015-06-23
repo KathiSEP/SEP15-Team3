@@ -18,9 +18,9 @@ import javax.annotation.PostConstruct;
 
 import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
-import de.ofCourse.Database.dao.CourseDAO;
-import de.ofCourse.Database.dao.CourseUnitDAO;
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
