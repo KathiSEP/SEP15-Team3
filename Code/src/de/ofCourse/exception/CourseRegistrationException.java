@@ -3,6 +3,12 @@
  */
 package de.ofCourse.exception;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.SQLException;
+
+import de.ofCourse.system.LogHandler;
+
 /**
  * Occurs if a failure happened during the registration process for a course.
  * The CourseRegistrationException is a runtime exception.
@@ -13,6 +19,8 @@ package de.ofCourse.exception;
 public class CourseRegistrationException extends RuntimeException{
 
     private static final long serialVersionUID = -783634204496326525L;
+    private SQLException error;
+    
     
     /**
      * 
@@ -26,5 +34,16 @@ public class CourseRegistrationException extends RuntimeException{
 
     public CourseRegistrationException(String message){
         super(message);
+        LogHandler.getInstance().error(message);
+    }
+    
+    
+    public CourseRegistrationException(String message, SQLException e){
+        super(message);
+        this.error = e;
+        StringWriter errors = new StringWriter();
+        error.printStackTrace(new PrintWriter(errors));
+        
+        LogHandler.getInstance().error(message +"\n\n" + errors.toString());
     }
 }

@@ -3,6 +3,13 @@
  */
 package de.ofCourse.exception;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.mail.MessagingException;
+
+import de.ofCourse.system.LogHandler;
+
 /**
  * Occurs if there happened a failure concerning the systems mail service.
  * E.g. the server is not reachable or a mail could not be sent.
@@ -13,6 +20,7 @@ package de.ofCourse.exception;
 public class MailingException extends RuntimeException{
 
     private static final long serialVersionUID = 7556546921801557343L;
+    private MessagingException error;
 
     /**
      * 
@@ -29,5 +37,19 @@ public class MailingException extends RuntimeException{
      */
     public MailingException(String message){
         super(message);
+        LogHandler.getInstance().error(message);
+    }
+
+    /**
+     * @param message
+     * @param e
+     */
+    public MailingException(String message, MessagingException e) {
+        super(message);
+        this.error = e;
+        StringWriter errors = new StringWriter();
+        error.printStackTrace(new PrintWriter(errors));
+        
+        LogHandler.getInstance().error(message +"\n\n" + errors.toString());
     }
 }
