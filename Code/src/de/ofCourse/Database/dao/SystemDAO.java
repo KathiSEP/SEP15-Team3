@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Activation;
-import de.ofCourse.model.Salutation;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -32,6 +31,9 @@ import de.ofCourse.system.Transaction;
  *
  */
 public class SystemDAO {
+    
+    private final static String SET_SIGN_OFF_LIMIT = 
+	    "UPDATE \"system_attributes\" SET withdrawal_hours=?";
 
     /**
      * Returns the value of the overdraft credit stored in the database.
@@ -199,24 +201,22 @@ public class SystemDAO {
      *            the new sign off limit
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias            
      */
     public static void setSignOffLimit(Transaction trans, int limit)
 	    throws InvalidDBTransferException {
-	String querySignOff = "UPDATE \"system_attributes\" "
-		+ "SET withdrawal_hours=?";
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	try (PreparedStatement stmt = conn.prepareStatement(querySignOff)) {
+	try (PreparedStatement stmt = conn.prepareStatement(SET_SIGN_OFF_LIMIT)) {
 
 	    // Update the sign off limit in the database
 	    stmt.setInt(1, limit);
 	    stmt.executeUpdate();
-
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during setting the sign off limit.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+		    "Error occured during setting the sign off limit.", e);
 	}
     }
 }

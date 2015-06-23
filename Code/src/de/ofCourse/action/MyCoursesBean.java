@@ -119,7 +119,6 @@ public class MyCoursesBean implements Pagination, Serializable {
 		    	    getPagination(),
 		    	    sessionUser.getUserID());
 	    transaction.commit();
-
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
@@ -145,15 +144,14 @@ public class MyCoursesBean implements Pagination, Serializable {
     @Override
     public void goToSpecificPage() {
 	pagination.setCurrentPageNumber(currentPage);
-	
 	transaction.start();
+	
 	try {
 	    registeredCourses = CourseDAO.getCoursesOf(
 		    		transaction, 
 		    		getPagination(),
 		    		sessionUser.getUserID());
 	    transaction.commit();
-	    
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
@@ -171,7 +169,6 @@ public class MyCoursesBean implements Pagination, Serializable {
 		equals(SortColumn.fromString(orderParam))) {
 	     
 	    getPagination().changeSortDirection();
-    
 	} else {
 	    getPagination().setSortColumn(SortColumn.fromString(orderParam));
 	}
@@ -179,13 +176,11 @@ public class MyCoursesBean implements Pagination, Serializable {
 	//Fetch the needed courses
 	transaction.start();
     	try {
-	    
     	    registeredCourses =  CourseDAO.getCoursesOf(
 		    		transaction, 
 		    		getPagination(),
 		    		sessionUser.getUserID());
     	    transaction.commit();
-	    
     	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
