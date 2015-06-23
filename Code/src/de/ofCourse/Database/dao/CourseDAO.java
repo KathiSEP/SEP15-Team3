@@ -143,8 +143,8 @@ public class CourseDAO {
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.executeUpdate();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error("Error");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                        "Error occured during doCourseMaintenance", e);
 
 	}
 	return success;
@@ -194,11 +194,8 @@ public class CourseDAO {
 	        }
 	    
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "courseLeaderExists(Transaction trans, "
-			    + "int courseLeaderID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                        "Error occured during courseLeaderExists", e);
 	}
 	return courseLeaderExists;
     }
@@ -272,20 +269,13 @@ public class CourseDAO {
 	        res.next();
 	        generatedCourseID = res.getInt("id");
 	    } catch (SQLException e) {
-                throw new SQLException();
+                throw new SQLException("Error occured during createCourse", e);
             }
 	    
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "createCourse(Transaction trans, Course course, "
-			    + "Part courseImage)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during createCourse", e);
 	} catch (IOException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "createCourse(Transaction trans, Course course, "
-			    + "Part courseImage)");
 	    throw new InvalidDBTransferException();
 	}
 	return generatedCourseID;
@@ -1090,10 +1080,8 @@ public class CourseDAO {
 		successful = false;
 	    }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "deleteCourse(Transaction trans, int courseID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                                "Error occured during deleteCourse", e);
 
 	}
 	return successful;
@@ -1219,11 +1207,8 @@ public class CourseDAO {
 	    }
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "addLeaderToCourse(Transaction trans, "
-			    + "int userID, int courseID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                          "Error occured during addLeaderToCourse", e);
 
 	}
 	return successful;
@@ -1271,11 +1256,8 @@ public class CourseDAO {
 	    }
 
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during executing "
-			    + "removeLeaderFromCourse(Transaction trans, "
-			    + "int userID,int courseID)");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+	                      "Error occured during removeLeaderFromCourse", e);
 
 	}
 	return successful;

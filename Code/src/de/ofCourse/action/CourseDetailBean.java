@@ -879,7 +879,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	try {
 
 	    if (CourseDAO.deleteCourse(this.transaction,
-		    this.course.getCourseID()) == true) {
+	                                this.course.getCourseID()) == true) {
 		FacesMessageCreator.createFacesMessage(null,
 			"Kurs wurde erfolgreich gelöscht!");
 		this.transaction.commit();
@@ -890,10 +890,12 @@ public class CourseDetailBean implements Pagination, Serializable {
 		FacesMessageCreator.createFacesMessage(null,
 			"Löschen des Kurses fehlgeschlagen!");
 		this.transaction.rollback();
-		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+		return "/facelets/open/courses/courseDetail.xhtml"
+		                                     + "?faces-redirect=false";
 	    }
 
 	} catch (InvalidDBTransferException e) {
+	    LogHandler.getInstance().error(e.getMessage());
 	    this.transaction.rollback();
 	}
 
@@ -905,7 +907,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      * 
      * @author Katharina Hölzl
      */
-    public void addCourseLeader() {
+    public String addCourseLeader() {
 
 	// Create a new transaction object for the database connection.
 	this.transaction = Connection.create();
@@ -915,14 +917,20 @@ public class CourseDetailBean implements Pagination, Serializable {
 		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {
 		FacesMessageCreator.createFacesMessage(null,
 			"Der Kursleiter wurde erfolgreich hinzugefügt!");
+		this.transaction.commit();
+		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID="+ courseID;
+	    }else{
+                FacesMessageCreator.createFacesMessage(null,
+                        "Hinzufügen des Kursleiters fehlgeschlagen!");
+                this.transaction.rollback();
+                return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
 	    }
-	    this.transaction.commit();
 	} catch (InvalidDBTransferException e) {
-	    FacesMessageCreator.createFacesMessage(null,
-		    "Hinzufügen des Kursleiters fehlgeschlagen!");
+	    LogHandler.getInstance().error(e.getMessage());
 	    this.transaction.rollback();
+	  
 	}
-
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
     }
 
     /**
@@ -945,30 +953,34 @@ public class CourseDetailBean implements Pagination, Serializable {
     }
 
     /**
-     * removes the target course leaders
+     * removes the target course leaders from the course
      * 
      * @author Katharina Hölzl
      */
-    public void removeCourseLeaders() {
+    public String removeCourseLeaders() {
 	// Create a new transaction object for the database connection.
 	this.transaction = Connection.create();
 	transaction.start();
 
 	String delLeaderString = FacesContext
-		.getCurrentInstance().getExternalContext().getRequestParameterMap().get("leaderID");
-System.out.println(delLeaderString);
+		.getCurrentInstance().getExternalContext().
+		                      getRequestParameterMap().get("leaderID");
 	int delLeaderID;
+	
 	try {
 	    delLeaderID = Integer.parseInt(delLeaderString);
+	    
 	    if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,
 		    this.course.getCourseID())) {
 		FacesMessageCreator.createFacesMessage(null,
 			"Der Kursleiter wurde erfolgreich gelöscht!");
 		this.transaction.commit();
+		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&courseID="+ courseID;
 	    } else {
 		FacesMessageCreator.createFacesMessage(null,
 			"Löschen des Kursleiters fehlgeschlagen!");
 		this.transaction.rollback();
+		return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
 	    }
 	} catch (NumberFormatException e) {
 	    // ID is no number
@@ -977,6 +989,7 @@ System.out.println(delLeaderString);
 		    "Der Kursleiter konnte nicht gelöscht werden, da die "
 			    + "übergebene ID keine positive Zahl ist!");
 	}
+	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
     }
 
 }
