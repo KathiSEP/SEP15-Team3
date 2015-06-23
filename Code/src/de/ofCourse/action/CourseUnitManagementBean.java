@@ -551,7 +551,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					unitId);
 				 sendMailToSelected(
 					 transaction,
-					 Arrays.asList(user),
+					 user,
 					 true);
 			    }
 			}
@@ -575,8 +575,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				courseUnit.getCourseUnitID(),
 				true);
 		deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
+		
+		for(User user : participants){
 
-		sendMailToSelected(transaction, participants, true);
+		sendMailToSelected(transaction, user, true);}
 	    }
 	    transaction.commit();
 
@@ -638,33 +640,26 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @author Tobias Fuchs
      */
-    private void sendMailToSelected(Transaction trans, List<User> participants,
+    private void sendMailToSelected(Transaction trans, User user,
 	    boolean delete) {
 	int recipientsGroup = getSelectedToInform();
-	List<String> recipients = new ArrayList<String>();
-	User tempUser = new User();
 
-	for (User user : participants) {
 
 	    if (recipientsGroup == informParticipantsOfUnit) {
 		if (CourseUnitDAO.userWantsToBeInformed(transaction,
 			user.getUserID(), courseID)) {
-		    tempUser = UserDAO.getUser(trans, user.getUserID());
-		    recipients.add(tempUser.getEmail());
+		    if (delete) {
+			mailBean.sendCourseUnitDeleteMail(user.getEmail(),
+				courseUnit.getCourseUnitID());
+		    } else {
+			mailBean.sendCourseEditUnitMail(Arrays.asList(user.getEmail()),
+				courseUnit.getCourseUnitID());
+		    }
+		    
 		}
 
 	    }
-	}
-
-	if (recipients.size() > 0) {
-	    if (delete) {
-		mailBean.sendCourseUnitDeleteMail(recipients,
-			courseUnit.getCourseUnitID());
-	    } else {
-		mailBean.sendCourseEditUnitMail(recipients,
-			courseUnit.getCourseUnitID());
-	    }
-	}
+	
     }
 
     /**

@@ -332,7 +332,7 @@ public class MailBean {
      * @param recipients
      * @param CourseUnit
      */
-    public void sendCourseUnitDeleteMail(List<String> recipients, int CourseUnit){
+    public void sendCourseUnitDeleteMail(String userMail, int CourseUnit){
         Transaction trans = Connection.create();
         trans.start();
         try{
@@ -347,7 +347,7 @@ public class MailBean {
             message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
             message += createSignature();
             
-            sendMail(recipients, subject, message);
+            sendSingleMail(userMail, subject, message);
         
         }catch (InvalidDBTransferException e){
             LogHandler.getInstance().error("Error occured during sendCourseUnitEditMail");

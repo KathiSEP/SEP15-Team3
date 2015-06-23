@@ -18,6 +18,7 @@ import de.ofCourse.model.Address;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Period;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
@@ -58,6 +59,13 @@ public class CourseUnitDAO {
 		"AND \"course_unit_participants\".course_unit_id = \"course_units\".id " +
 		"AND \"users\".id = ?";
 
+	private final static String GET_PARTICIPANTS_OF = 
+		"SELECT id, name, first_name, nickname, credit_balance, email FROM"
+		+ " users WHERE users.id IN"
+		+ " (SELECT participant_id FROM course_unit_participants"
+		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
+		+ " LIMIT ? OFFSET ?";
+	
     /**
      * Adds a course unit to the list of course units in the database. A course
      * unit contains the course's ID which it is assigned to.
@@ -298,15 +306,9 @@ public class CourseUnitDAO {
 				.getInt("cycle_end"));
 
 			// TODO EMUMS anpassen EVTL
-			String period = resultSetCycle.getString("period");
-			switch (period) {
-			case "DAYS":
-			    courseCycle.setTurnus(1);
-			    break;
-			case "WEEKS":
-			    courseCycle.setTurnus(7);
-			    break;
-			}
+		
+			    courseCycle.setTurnus(Period.fromString(resultSetCycle.getString("period")));
+			  
 		    }
 		    pSCycle.close();
 		    // resultSetCycle.close();
@@ -1066,15 +1068,15 @@ public class CourseUnitDAO {
     public static List<User> getParticipiantsOfCourseUnit(Transaction trans,
 	    PaginationData pagination, int courseUnitId, boolean all)
 	    throws InvalidDBTransferException {
-	String direction = getSortDirection(pagination.isSortAsc());
-	ArrayList<User> participants = new ArrayList<User>();
-	String query = "SELECT id, name, first_name, nickname, credit_balance FROM"
-		+ " users WHERE users.id IN"
-		+ " (SELECT participant_id FROM course_unit_participants"
-		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
-		+ " LIMIT ? OFFSET ?";
-
-	query = String.format(query, pagination.getSortColumn(), direction);
+	
+	String direction = pagination.getSortDirection().toString();
+	List<User> participants = new ArrayList<User>();
+	
+	String query = String.format(
+		GET_PARTICIPANTS_OF, 
+		pagination.getSortColumn(),
+		direction);
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
@@ -1116,6 +1118,7 @@ public class CourseUnitDAO {
 		fetchedUser.setUsername(fetchedParticipants
 			.getString("nickname"));
 		fetchedUser.setAccountBalance(fetchedParticipants.getFloat("credit_balance"));
+		fetchedUser.setEmail(fetchedParticipants.getString("email"));
 		participants.add(fetchedUser);
 	    }
 	    stmt.close();
