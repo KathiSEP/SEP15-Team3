@@ -1,4 +1,4 @@
-package de.ofCourse.Database.dao;
+package de.ofCourse.database.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

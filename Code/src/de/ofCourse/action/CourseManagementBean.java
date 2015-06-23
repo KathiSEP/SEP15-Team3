@@ -9,7 +9,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.servlet.http.Part;
 
-import de.ofCourse.Database.dao.CourseDAO;
+import de.ofCourse.database.dao.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.system.Connection;

@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import de.ofCourse.Database.dao.UserDAO;
+import de.ofCourse.database.dao.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;
