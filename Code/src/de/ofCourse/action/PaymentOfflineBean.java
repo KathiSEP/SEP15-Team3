@@ -65,8 +65,7 @@ public class PaymentOfflineBean implements Serializable {
     private SessionUserBean sessionUser;
 
     /**
-     * Tops up an user account in the system with a certain amount of money and
-     * returns <code>true</code> if the action was successful.<br>
+     * Tops up an user account in the system with a certain amount of money. 
      * If a user has paid a certain amount of money to the administrator, the
      * administrator can top up the users account.
      * <p>
@@ -82,15 +81,17 @@ public class PaymentOfflineBean implements Serializable {
 	transaction.start();
 	
 	try {
-	    User tempUser = UserDAO.getUser(transaction, user.getUserID());
+	    User tempUser = UserDAO.getUser(	
+		    			transaction,																				
+		    			user.getUserID());
 	    float accountBalance = tempUser.getAccountBalance();
-	    float newBalance =accountBalance + amountToDeposit;
+	    float newBalance = accountBalance + amountToDeposit;
 	    
 	    //Updates the account balance 
 	    UserDAO.updateAccountBalance(
-		    transaction,
-		    user.getUserID(), 
-		    newBalance);
+		    			transaction,
+		    			user.getUserID(), 
+		    			newBalance);
 	    transaction.commit();
 	    
 	    FacesMessageCreator.createFacesMessage(
@@ -106,6 +107,7 @@ public class PaymentOfflineBean implements Serializable {
 	    LogHandler.getInstance().error(
 		    "Error occured during depositing money on the account of user: "
 			    + user.getUserID());
+	    
 	    FacesMessageCreator.createFacesMessage(
 		    "formToUpAccount:spendMoney",
 		    sessionUser.getLabel("paymentOfflineBean.FacesMessage.deposit3"));
@@ -182,5 +184,4 @@ public class PaymentOfflineBean implements Serializable {
     public void setSessionUser(SessionUserBean userSession) {
 	this.sessionUser = userSession;
     }
-
 }

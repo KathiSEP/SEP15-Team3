@@ -53,7 +53,8 @@ public class AccessPhaseListener implements PhaseListener {
     /**
      * Represents the url to the course registration error page
      */
-    private final static String URL_COURSE_REGISTRATION_ERROR = "/facelets/ErrorPages/CourseRegistrationException.xhtml";
+    private final static String URL_COURSE_REGISTRATION_ERROR = 
+	    "/facelets/ErrorPages/CourseRegistrationException.xhtml";
     
     /**
      * Represents the url to the 404 error page
@@ -88,62 +89,75 @@ public class AccessPhaseListener implements PhaseListener {
     /**
      * Represents the url to the course detail page
      */
-    private final static String URL_COURSE_DETAIL = "/facelets/open/courses/courseDetail.xhtml";
+    private final static String URL_COURSE_DETAIL = 
+	    "/facelets/open/courses/courseDetail.xhtml";
     
     /**
      * Represents the url to the page where the courses of the user are listed
      */
-    private final static String URL_MY_COURSES = "/facelets/user/registeredUser/myCourses.xhtml";
+    private final static String URL_MY_COURSES = 
+	    "/facelets/user/registeredUser/myCourses.xhtml";
     
     /**
      * Represents the url to the profile page
      */
-    private final static String URL_PROFILE = "/facelets/user/registeredUser/profile.xhtml";
+    private final static String URL_PROFILE = 
+	    "/facelets/user/registeredUser/profile.xhtml";
     
     /**
      * Represents the url to the scheduler page
      */
-    private final static String URL_SCHEDULER= "/facelets/user/registeredUser/scheduler.xhtml";
+    private final static String URL_SCHEDULER= 
+	    "/facelets/user/registeredUser/scheduler.xhtml";
         
     /**
      * Represents the url to the profile page of a course leader
      */
-    private final static String URL_LEADER_PROFILE = "/facelets/user/registeredUser/leaderProfile.xhtml";
+    private final static String URL_LEADER_PROFILE = 
+	    "/facelets/user/registeredUser/leaderProfile.xhtml";
     
     /**
      * Represents the url to the participants list page of a course
      */
-    private final static String URL_PARTICIPANTS_LIST = "/facelets/user/registeredUser/listParticipants.xhtml";   
+    private final static String URL_PARTICIPANTS_LIST = 
+	    "/facelets/user/registeredUser/listParticipants.xhtml";   
     
     /**
-     * Represents the url to the profile page where a course leader create/edit/delete course units
+     * Represents the url to the profile page where a course leader 
+     * create/edit/delete course units
      */
-    private final static String URL_EDIT_COURSE_UNIT = "/facelets/user/courseLeader/editCourseUnit.xhtml";
+    private final static String URL_EDIT_COURSE_UNIT = 
+	    "/facelets/user/courseLeader/editCourseUnit.xhtml";
     
     /**
      * Represents the url to the user activation page
      */
-    private final static String URL_ACTIVATE_USERS = "/facelets/user/courseLeader/activateUsers.xhtml";
+    private final static String URL_ACTIVATE_USERS = 
+	    "/facelets/user/courseLeader/activateUsers.xhtml";
     
     /**
      * Represents the url to the administrator page
      */
-    private final static String URL_ADMIN_MANAGEMENT = "/facelets/user/systemAdministrator/adminManagement.xhtml";
+    private final static String URL_ADMIN_MANAGEMENT = 
+	    "/facelets/user/systemAdministrator/adminManagement.xhtml";
     
     /**
      * Represents the url to the page where a administrator can search for users
      */
-    private final static String URL_SEARCH_USER = "/facelets/user/systemAdministrator/searchUser.xhtml";   
+    private final static String URL_SEARCH_USER = 
+	    "/facelets/user/systemAdministrator/searchUser.xhtml";   
     
     /**
      * Represents the url to the page where a new user can be created
      */
-    private final static String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml";
+    private final static String URL_CREATE_USER = 
+	    "/facelets/user/systemAdministrator/createUser.xhtml";
     
     /**
      * Represents the url to the page where a new course can be created
      */
-    private final static String URL_CREATE_COURSE = "/facelets/user/systemAdministrator/createCourse.xhtml";
+    private final static String URL_CREATE_COURSE = 
+	    "/facelets/user/systemAdministrator/createCourse.xhtml";
 
     /**
      * List that contains the pages accessible for an anonymous user.

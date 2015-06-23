@@ -172,12 +172,15 @@ public class PropertyManager {
 		    .getExternalContext()
 		    .getResourceAsStream(
 			    CONFIGURATIONPATH + CONFIGURATIONFILE);
+	    
 	    property.load(readInput);
 	    configurationRead = true;
+	    
 	} catch (IOException e) {
 	    configurationRead = false;
-	    LogHandler.getInstance().error(
+	    LogHandler.getInstance().fatal(
 		    "Error during loading the config property.");
+	    
 	} finally {
 	    if (readInput != null) {
 		try {
@@ -185,7 +188,7 @@ public class PropertyManager {
 		} catch (IOException e) {
 		    LogHandler.getInstance().fatal(
 			    "Error occured during"
-				    + " loading configuration property.");
+		            + " loading configuration property.");
 		}
 	    }
 	}
@@ -206,16 +209,17 @@ public class PropertyManager {
 	InputStream readInput = null;
 
 	try {
-
 	    readInput = FacesContext.getCurrentInstance().getExternalContext()
 		    .getResourceAsStream(LOGGINGPATH + LOGGINGFILE);
 	    property.load(readInput);
 
 	    loggingRead = true;
+	    
 	} catch (IOException e) {
 	    loggingRead = false;
-	    LogHandler.getInstance().error(
+	    LogHandler.getInstance().fatal(
 		    "Error during loading the logging property.");
+	    
 	} finally {
 	    if (readInput != null) {
 		try {
@@ -223,7 +227,7 @@ public class PropertyManager {
 		} catch (IOException e) {
 		    LogHandler.getInstance().fatal(
 			    "Error occured during"
-				    + " loading logging property.");
+			    + " loading logging property.");
 		}
 	    }
 	}
@@ -242,15 +246,18 @@ public class PropertyManager {
     private static Properties loadMailConfigProperty() {
 	Properties property = new Properties();
 	InputStream readInput = null;
+	
 	try {
 	    readInput = FacesContext.getCurrentInstance().getExternalContext()
 		    .getResourceAsStream(EMAILPATH + EMAILFILE);
 	    property.load(readInput);
 	    mailRead = true;
+	    
 	} catch (IOException e) {
 	    mailRead = false;
-	    LogHandler.getInstance().error(
+	    LogHandler.getInstance().fatal(
 		    "Error during loading the mail property.");
+	    
 	} finally {
 	    if (readInput != null) {
 		try {

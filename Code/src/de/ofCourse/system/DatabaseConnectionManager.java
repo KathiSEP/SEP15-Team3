@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -72,27 +71,17 @@ public class DatabaseConnectionManager {
     private static boolean debug = false;
 
     /**
-     * Enables or disables the debugging mode.
-     * 
-     * @param debugging
-     *            whether the debug mode is set
-     */
-    protected static void debugMode(boolean debugging) {
-	debug = debugging;
-    }
-
-    /**
      * Constructor of the class DatabaseConnectionManager
      */
     private DatabaseConnectionManager() {
-	freeConnections = Collections
-		.synchronizedList(new LinkedList<Connection>());
+	freeConnections = Collections.synchronizedList(
+					new LinkedList<Connection>());
 	try {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
 		LogHandler.getInstance().error(
 			"Error occoured during"
-				+ " loading the database driver!");
+			+ " loading the database driver!");
 	}
 
     }
@@ -107,18 +96,20 @@ public class DatabaseConnectionManager {
 	int indexLastElement;
 
 	// There's a free connection
-	if (!this.freeConnections.isEmpty()) {
+	if (!freeConnections.isEmpty()) {
 	    indexLastElement = freeConnections.size() - 1;
 	    connection = freeConnections.get(indexLastElement);
 	    freeConnections.remove(indexLastElement);
+	    
 	} else {
+	    
 	    // There's no free connection
 	    try {
-		wait(5000);
+		wait(3000);
 	    } catch (InterruptedException e) {
 		    LogHandler.getInstance().error(
 			    "Error occured during waiting"
-				    + " for a connection.");
+			    + " for a connection.");
 		}
 
 	}
@@ -134,16 +125,15 @@ public class DatabaseConnectionManager {
 	 * If there's no active connection in <code>the freeConnections<\code>
 	 * list and not the full number of connections are active
 	 */
-	if (!this.isConnectionActive(connection) && difference > 0) {
+	if (!isConnectionActive(connection) && difference > 0) {
 	    connection = establishConnection();
 		LogHandler.getInstance().debug("New Connection established.");
 	}
 
 	// Check the new connection before giving it free
-	if (!this.isConnectionActive(connection)) {
+	if (!isConnectionActive(connection)) {
 		LogHandler.getInstance().error(
 			"Not able to get a active connection to the database.");
-	    throw new InvalidDBTransferException();
 	}
 
 	++numberOfConnectionsInUse;
@@ -159,10 +149,10 @@ public class DatabaseConnectionManager {
     public synchronized void releaseConnection(Connection connection) {
 	try {
 	    if (!connection.isClosed() && connection != null) {
+		
 		--numberOfConnectionsInUse;
 		freeConnections.add(connection);
-		    LogHandler.getInstance().debug("Connection released.");
-		
+		LogHandler.getInstance().debug("Connection released.");
 	    }
 	} catch (SQLException e) {
 		LogHandler.getInstance().error(
@@ -182,6 +172,8 @@ public class DatabaseConnectionManager {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
 
+	    // In case of debug only three connections are established 
+	    // to preserve database ressources
 	    if (debug) {
 		numberOfConnection = 3;
 	    } else {
@@ -213,14 +205,18 @@ public class DatabaseConnectionManager {
     private static Connection establishConnection() {
 	Connection connection = null;
 
+	// In case of tests it is attempted to establish a database connection to
+	// test database to preserve the working database from unnecessary demands
 	if (debug) {
 	    try {
+		
 		connection = DriverManager.getConnection(
 			"jdbc:postgresql://localhost:12345/fuchstob",
 			"fuchstob", "eX4Cooth");
 		connection.setAutoCommit(false);
+		
 	    } catch (SQLException e) {
-		LogHandler.getInstance().error(
+		LogHandler.getInstance().fatal(
 			"Error occured during establishing a database"
 				+ "connection. Please check whether the login"
 				+ " credentials are set correctly  and the"
@@ -230,7 +226,8 @@ public class DatabaseConnectionManager {
 	    }
 	} else {
 	    try {
-		connection = DriverManager.getConnection(
+		
+		connection= DriverManager.getConnection(
 			"jdbc:postgresql://"
 				+ PropertyManager.getInstance()
 					.getPropertyConfiguration("dbhost")
@@ -244,12 +241,13 @@ public class DatabaseConnectionManager {
 				"dbuser"), PropertyManager.getInstance()
 				.getPropertyConfiguration("dbpassword"));
 		connection.setAutoCommit(false);
+		
 	    } catch (SQLException e) {
-		LogHandler.getInstance().error(
+		LogHandler.getInstance().fatal(
 			"Error occured during establishing a database"
-				+ "connection. Please check whether the login"
-				+ " credentials are set correctly  and the"
-				+ " connection to the database is alive.");
+			+ "connection. Please check whether the login"
+			+ " credentials are set correctly  and the"
+			+ " connection to the database is alive.");
 
 	    }
 	}
@@ -264,16 +262,18 @@ public class DatabaseConnectionManager {
 	ListIterator<Connection> it = freeConnections.listIterator(0);
 
 	while (it.hasNext()) {
+	    
 	    Connection connection = it.next();
 	    if (connection != null) {
+		
 		try {
 		    connection.close();
-			LogHandler.getInstance().error("Connection closed.");
+		    LogHandler.getInstance().debug("Connection closed.");
 		} catch (SQLException e) {  
 			LogHandler.getInstance().error(
 				"Error occured during closing"
-					+ " the connections to the database.");
-		    }
+				+ " the connections to the database.");
+		}
 		
 	    }
 	}
@@ -290,23 +290,29 @@ public class DatabaseConnectionManager {
      */
     private boolean isConnectionActive(Connection connection) {
 	boolean active = false;
-
+	String query = "SELECT 0;";
+	
 	if (connection != null) {
-	    PreparedStatement stmt = null;
-	    String query = "SELECT 0;";
-
-	    try {
-		stmt = connection.prepareStatement(query);
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(query)){
+	
 		stmt.execute();
-		stmt.close();
 		active = true;
 	    } catch (SQLException e) {
-		this.freeConnections.remove(connection);
+		freeConnections.remove(connection);
 		active = false;
 	    }
-
 	}
 	return active;
     }
 
+    /**
+     * Enables or disables the debugging mode.
+     * 
+     * @param debugging
+     *            whether the debug mode is set
+     */
+    protected static void debugMode(boolean debugging) {
+	debug = debugging;
+    }
 }
