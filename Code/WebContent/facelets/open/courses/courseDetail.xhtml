@@ -100,7 +100,9 @@
 										<h:commandButton class="btn btn-warning" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
 															rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
 										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
-															rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}"/>
+															rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}">
+   	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+                       					</h:commandButton>
 									</div>
 									<div class="container">
 										<p/>
@@ -124,7 +126,9 @@
 											    <p/>
 											</h:panelGroup>
 											<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.signUp')}"
-																rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}"/>
+																rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}">
+       	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+   	                       					</h:commandButton>
 											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
       	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
    	                       					</h:commandButton>

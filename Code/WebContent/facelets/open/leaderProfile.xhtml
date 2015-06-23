@@ -24,25 +24,25 @@
                             </div>
                             <div class="panel-body">
                                 <h:form class="form-horizontal" id="formSettings">
-			                        <h:panelGroup rendered="#{userProfileBean.readOnly}">
+			                        <h:panelGroup rendered="#{leaderProfileBean.readOnly}">
 	                                    <div class="input-group" style="padding-top:25px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.username}" />
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.username}" />
 	                                    </div>
 	                                
 	                                    <div class="input-group" style="padding-top:5px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.prename')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.firstname}" />
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.firstname}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.name')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.lastname}" />
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.lastname}" />
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.email}" />
+	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.email}" />
 	                                    </div>
 	                                    <br/>
 			                        </h:panelGroup>
@@ -65,7 +65,7 @@
 	                                    <div class="panel-body">
 	                                        <div class="row" style="padding-top:10px;">
 	                                            <div class="col-lg-8">
-	                                                <h:graphicImage value="/image?profilImage=#{userProfileBean.userID}" width="200" height="200"></h:graphicImage>                                          
+	                                                <h:graphicImage value="/image?profilImage=#{leaderProfileBean.userID}" width="200" height="200"></h:graphicImage>                                          
 	                                            </div>
 	                                            <br/>
 	                                        </div>
@@ -76,7 +76,7 @@
 	                                		<strong>#{sessionUser.getLabel('leaderProfile.row.courses.header')}</strong>
 	                                	</div>
 	                                	<div class="panel-body">
-	                                		<h:dataTable value="#{userProfileBean.managedCourses}" var="course" class="table table-hover"
+	                                		<h:dataTable value="#{leaderProfileBean.managedCourses}" var="course" class="table table-hover"
 	                                						cellspacing="0" width="100%">
                            						<h:column>
 		                                			<f:facet name="header">#{sessionUser.getLabel('leaderProfile.row.courses.name')}</f:facet>
@@ -88,48 +88,48 @@
                            						</h:column>
 												<f:facet name="footer">
 													<h:panelGroup
-														rendered="#{userProfileBean.pagination.numberOfPages>0}">
+														rendered="#{leaderProfileBean.pagination.numberOfPages>0}">
 														<div class="row" style="text-align: center;">
 															<ul class="pagination">
 																<li><h:commandButton class="btn btn-info"
-																		rendered="#{userProfileBean.pagination.currentPageNumber>=1}"
-																		value="#{sessionUser.getLabel('pagination.back')}" action="#{userProfileBean.goToSpecificPage}">
+																		rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
+																		value="#{sessionUser.getLabel('pagination.back')}" action="#{leaderProfileBean.goToSpecificPage}">
 																		<f:setPropertyActionListener
-					                                            target="#{myCoursesBean.currentPage}" value="#{userProfileBean.pagination.currentPageNumber-1}"  />
+					                                            target="#{myCoursesBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber-1}"  />
 																	</h:commandButton></li>
 																<li><h:commandButton class="btn btn-default"
-																		rendered="#{userProfileBean.pagination.currentPageNumber>=1}"
-																		value="#{userProfileBean.pagination.currentPageNumber}"
-																		action="#{userProfileBean.goToSpecificPage}">
+																		rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
+																		value="#{leaderProfileBean.pagination.currentPageNumber}"
+																		action="#{leaderProfileBean.goToSpecificPage}">
 																		<f:setPropertyActionListener
-					                                            target="#{userProfileBean.currentPage}" value="#{userProfileBean.pagination.currentPageNumber-1}"  />
+					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber-1}"  />
 																	</h:commandButton></li>
 																<li><h:commandButton style="font-weight:bold;"
 																		class="btn btn-primary"
-																		value="#{userProfileBean.pagination.currentPageNumber +1}"
-																		action="#{userProfileBean.goToSpecificPage}">
+																		value="#{leaderProfileBean.pagination.currentPageNumber +1}"
+																		action="#{leaderProfileBean.goToSpecificPage}">
 																		<f:setPropertyActionListener
-					                                            target="#{userProfileBean.currentPage}" value="#{userProfileBean.pagination.currentPageNumber}"  />
+					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber}"  />
 																	</h:commandButton></li>
 																<li><h:commandButton class="btn btn-default"
-																		rendered="#{userProfileBean.pagination.numberOfPages>=userProfileBean.pagination.currentPageNumber+1}"
-																		value="#{userProfileBean.pagination.currentPageNumber+2}"
-																		action="#{userProfileBean.goToSpecificPage}">
+																		rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
+																		value="#{leaderProfileBean.pagination.currentPageNumber+2}"
+																		action="#{leaderProfileBean.goToSpecificPage}">
 																		<f:setPropertyActionListener
-					                                            target="#{userProfileBean.currentPage}" value="#{userProfileBean.pagination.currentPageNumber+1}" />
+					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber+1}" />
 																	</h:commandButton></li>
 																<li><h:commandButton class="btn btn-info"
-																		rendered="#{userProfileBean.pagination.numberOfPages>=userProfileBean.pagination.currentPageNumber+1}"
-																		value="#{sessionUser.getLabel('pagination.forward')}"  action="#{userProfileBean.goToSpecificPage}">
+																		rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
+																		value="#{sessionUser.getLabel('pagination.forward')}"  action="#{leaderProfileBean.goToSpecificPage}">
 																		<f:setPropertyActionListener
-					                                            target="#{userProfileBean.currentPage}" value="#{userProfileBean.pagination.currentPageNumber+1}"  />
+					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber+1}"  />
 																	</h:commandButton></li>
 															</ul>
 														</div>
 													</h:panelGroup>
 												</f:facet>
 	                                		</h:dataTable>
-	                                		<h:outputText rendered="#{userProfileBean.managedCourses.size() == 0}" class="alert alert-warning">
+	                                		<h:outputText rendered="#{leaderProfileBean.managedCourses.size() == 0}" class="alert alert-warning">
 	                                			<strong>#{sessionUser.getLabel('leaderProfile.sign')}:</strong>
 	                                			#{sessionUser.getLabel('leaderProfile.row.courses.noCoursesText')}
 	                                		</h:outputText>
