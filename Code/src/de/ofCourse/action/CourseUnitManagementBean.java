@@ -34,6 +34,7 @@ import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.MailThread;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -462,7 +463,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    true);
 			    for(User user : participants){
 
-				sendMailToSelected(transaction, user, true);}
+			        Thread t = new Thread(new MailThread(){
+
+	                    @Override
+	                    public void run() {
+	                        sendMailToSelected(transaction, user, true);
+	                        
+	                    }
+	                    
+	                });
+	                t.start();
+	                }
 			    
 			} else {
 			    LogHandler.getInstance().debug("Unit "
@@ -481,8 +492,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				    pagination, courseUnit.getCourseUnitID(),
 				    true);
 		    for(User user : participants){
+		        Thread t = new Thread(new MailThread(){
 
-			sendMailToSelected(transaction, user, true);}
+                    @Override
+                    public void run() {
+                        sendMailToSelected(transaction, user, true);
+                        
+                    }
+		            
+		        });
+		        t.start();
+			}
 		    
 		}
 		transaction.commit();

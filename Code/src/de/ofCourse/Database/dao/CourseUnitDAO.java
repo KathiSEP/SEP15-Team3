@@ -65,6 +65,56 @@ public class CourseUnitDAO {
 		+ " (SELECT participant_id FROM course_unit_participants"
 		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
+	private final static String GET_UNIT_IDS_OF_CYCLE = 
+		"SELECT id FROM \"course_units\" WHERE"
+		+ " cycle_id=? AND course_units.start_time >= CURRENT_DATE";
+	
+	private final static String COUNT_NUMBER_OF_PARTICIPANTS = 
+		"SELECT COUNT(*) FROM \"course_unit_participants\" "
+		+ "WHERE course_unit_id = ?";
+	
+	private final static String GET_PRICE_OF_UNIT = 
+		"SELECT fee FROM \"course_units\" WHERE id=?";
+	
+	private final static String DELETE_UNIT = "DELETE FROM \"course_units\" "
+		+ "WHERE course_units.id=?";
+	
+	private final static String DELETE_UNIT_ADDRESS = 
+		"DELETE FROM \"course_unit_addresses\" "
+		+ "WHERE course_unit_id=?";
+	
+	private final static String UPDATE_UNIT = 
+		"UPDATE \"course_units\" SET course_id=?,"
+		+ " max_participants=?, titel=?::TEXT,"
+		+ " min_participants=?, fee=?, start_time=?,"
+		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
+		+ " WHERE id=?";
+	
+	private final static String UPDATE_UNIT_ADDRESS =
+		"UPDATE \"course_unit_addresses\" SET "
+		+ "country=?, city=?, zip_code=?,"
+		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
+	
+	private final static String CREATE_UNIT_ADDRESS = 
+		"INSERT INTO \"course_unit_addresses\""
+		+ " (course_unit_id, country, city,"
+		+ " zip_code, street, house_nr, location)"
+		+ " VALUES (?, ?, ?, ?, ?, ?, ?::TEXT)";
+	
+	private final static String CREATE_UNIT = 
+		"INSERT INTO \"course_units\""
+		+ " (course_id, max_participants, titel,"
+		+ " min_participants, fee, start_time, end_time, description, " 
+		+ "course_instructor_id, cycle_id)"
+		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
+	
+	private final static String CREATE_UNIT_IRREG =
+		"INSERT INTO \"course_units\""
+		+ " (course_id, max_participants, titel,"
+		+ " min_participants, fee, start_time, end_time," 
+		+ " description, course_instructor_id)"
+		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
+	
 	
     /**
      * Adds a course unit to the list of course units in the database. A course
@@ -85,60 +135,44 @@ public class CourseUnitDAO {
 	    CourseUnit courseUnit, int courseID, boolean regular)
 	    throws InvalidDBTransferException {
 	String query;
-
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	ResultSet res = null;
-	try {
-	    if (regular) {
-		query = "INSERT INTO \"course_units\""
-			+ " (course_id, max_participants, titel,"
-			+ " min_participants, fee, start_time, end_time, description, course_instructor_id, cycle_id)"
-			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
-		stmt = conn.prepareStatement(query);
-		stmt.setInt(10, courseUnit.getCycle().getCycleID());
-	    } else {
-		query = "INSERT INTO \"course_units\""
-			+ " (course_id, max_participants, titel,"
-			+ " min_participants, fee, start_time, end_time, description, course_instructor_id)"
-			+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
-
-		stmt = conn.prepareStatement(query);
-	    }
-
+	
+	//Select the needed SQL - command
+	if(regular){
+	    query = CREATE_UNIT;
+	}else{
+	    query = CREATE_UNIT_IRREG;
+	}
+	
+	try (PreparedStatement stmt = conn.prepareStatement(query)) {
 	    stmt.setInt(1, courseID);
 	    stmt.setInt(2, courseUnit.getMaxUsers());
-	    if (courseUnit.getTitle().length() < 1
-		    || courseUnit.getTitle() == null) {
-		stmt.setString(3, null);
-	    } else {
-		stmt.setString(3, courseUnit.getTitle());
-	    }
+	    stmt.setString(3, courseUnit.getTitle());
 	    stmt.setInt(4, courseUnit.getMinUsers());
 	    stmt.setFloat(5, courseUnit.getPrice());
-	    stmt.setTimestamp(6, new java.sql.Timestamp(courseUnit
-		    .getStartime().getTime()));
-	    stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getEndtime()
-		    .getTime()));
-	    if (courseUnit.getDescription().length() < 1
-		    || courseUnit.getDescription() == null) {
-		stmt.setString(8, null);
-	    } else {
-		stmt.setString(8, courseUnit.getDescription());
-	    }
+	    stmt.setTimestamp(6, 
+		    new java.sql.Timestamp(courseUnit.getStartime().getTime()));
+	    stmt.setTimestamp(7, 
+		    new java.sql.Timestamp(courseUnit.getEndtime().getTime()));
+	    stmt.setString(8, courseUnit.getDescription());
+	    
 	    stmt.setInt(9, courseUnit.getCourseAdmin().getUserID());
-	    res = stmt.executeQuery();
-	    res.next();
-	    courseUnit.setCourseUnitID(res.getInt("id"));
-	    res.close();
-	    // Create the corresponding course unit address
-	    createCourseUnitAddress(trans, courseUnit);
-	    stmt.close();
+	    if(regular){
+		stmt.setInt(10, courseUnit.getCycle().getCycleID());
+	    }
+	    
+	    try(ResultSet res = stmt.executeQuery()){
+		res.next();
+		courseUnit.setCourseUnitID(res.getInt("id"));
+	    
+		// Create the corresponding course unit address
+		createCourseUnitAddress(trans, courseUnit);
+	    }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during creating a new course unit");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error occured during " 
+		    + "creating a new course unit", e);
 	}
     }
 
@@ -156,41 +190,24 @@ public class CourseUnitDAO {
      */
     private static void createCourseUnitAddress(Transaction trans,
 	    CourseUnit unit) throws SQLException {
-	String queryAddress = "INSERT INTO \"course_unit_addresses\""
-		+ " (course_unit_id, country, city,"
-		+ " zip_code, street, house_nr, location)"
-		+ " VALUES (?, ?, ?, ?, ?, ?, ?::TEXT)";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(queryAddress);
+
+	try(PreparedStatement stmt = conn.prepareStatement(CREATE_UNIT_ADDRESS)) {
 	    stmt.setInt(1, unit.getCourseUnitID());
 	    stmt.setString(2, unit.getAddress().getCountry());
 	    stmt.setString(3, unit.getAddress().getCity());
 	    stmt.setString(4, unit.getAddress().getZipCode().toString());
-	    if (unit.getAddress().getStreet().length() < 1
-		    || unit.getAddress().getStreet() == null) {
-		stmt.setString(5, null);
-	    } else {
-		stmt.setString(5, unit.getAddress().getStreet());
-	    }
+	    stmt.setString(5, unit.getAddress().getStreet());
 	    stmt.setInt(6, unit.getAddress().getHouseNumber());
-	    if (unit.getAddress().getLocation().length() < 1
-		    || unit.getAddress().getLocation() == null) {
-		stmt.setString(7, null);
-	    } else {
-		stmt.setString(7, unit.getAddress().getLocation());
-	    }
+	    stmt.setString(7, unit.getAddress().getLocation());
+	    
 	    stmt.executeUpdate();
-	    stmt.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during creating a new course unit address.");
-	    throw new SQLException();
+	    throw new SQLException("Error occured during creating" 
+		    + " a new course unit address.", e);
 	}
-
     }
 
     /**
@@ -221,7 +238,9 @@ public class CourseUnitDAO {
 			    + " a user wants to be informed in case"
 			    + " of changes of the course unit.");
 	    e.printStackTrace();
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error occoured during checking whether"
+		    + " a user wants to be informed in case"
+		    + " of changes of the course unit.", e);
 	}
 
     }
@@ -476,64 +495,41 @@ public class CourseUnitDAO {
      */
     public static void updateCourseUnit(Transaction trans, CourseUnit courseUnit)
 	    throws InvalidDBTransferException {
-	String updateUnitQuery = "UPDATE \"course_units\" SET course_id=?,"
-		+ " max_participants=?, titel=?::TEXT,"
-		+ " min_participants=?, fee=?, start_time=?,"
-		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
-		+ " WHERE id=?";
-	String updateUnitAddressQuery = "UPDATE \"course_unit_addresses\" SET "
-		+ "country=?, city=?, zip_code=?,"
-		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
-
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
 
-	try {
-	    stmt = conn.prepareStatement(updateUnitQuery);
+	try (PreparedStatement stmt = conn.prepareStatement(UPDATE_UNIT);
+	     PreparedStatement stmt1 = conn.prepareStatement(UPDATE_UNIT_ADDRESS)) {
+	    
+	    //Updates unit
 	    stmt.setInt(1, courseUnit.getCourseID());
 	    stmt.setInt(2, courseUnit.getMaxUsers());
 	    stmt.setString(3, courseUnit.getTitle());
 	    stmt.setInt(4, courseUnit.getMinUsers());
 	    stmt.setFloat(5, courseUnit.getPrice());
-	    stmt.setTimestamp(6, new java.sql.Timestamp(courseUnit
-		    .getStartime().getTime()));
-	    stmt.setTimestamp(7, new java.sql.Timestamp(courseUnit.getEndtime()
-		    .getTime()));
-	    if (courseUnit.getDescription().length() < 1
-		    || courseUnit.getDescription() == null) {
-		stmt.setString(8, null);
-	    } else {
-		stmt.setString(8, courseUnit.getDescription());
-	    }
+	    stmt.setTimestamp(6, 
+		    new java.sql.Timestamp(courseUnit.getStartime().getTime()));
+	    stmt.setTimestamp(7, 
+		    new java.sql.Timestamp(courseUnit.getEndtime().getTime()));
+	    stmt.setString(8, courseUnit.getDescription());
 	    stmt.setInt(9, courseUnit.getCourseAdmin().getUserID());
 	    stmt.setInt(10, courseUnit.getCourseUnitID());
+	    
 	    stmt.executeUpdate();
 
-	    stmt = conn.prepareStatement(updateUnitAddressQuery);
-	    stmt.setString(1, courseUnit.getAddress().getCountry());
-	    stmt.setString(2, courseUnit.getAddress().getCity());
-	    stmt.setString(3, courseUnit.getAddress().getZipCode().toString());
-	    if (courseUnit.getAddress().getStreet().length() < 1
-		    || courseUnit.getAddress().getStreet() == null) {
-		stmt.setString(4, null);
-	    } else {
-		stmt.setString(4, courseUnit.getAddress().getStreet());
-	    }
-	    stmt.setInt(5, courseUnit.getAddress().getHouseNumber());
-	    if (courseUnit.getAddress().getLocation().length() < 1
-		    || courseUnit.getAddress().getLocation() == null) {
-		stmt.setString(6, null);
-	    } else {
-		stmt.setString(6, courseUnit.getAddress().getLocation());
-	    }
-	    stmt.setInt(7, courseUnit.getCourseUnitID());
-	    stmt.executeUpdate();
-	    stmt.close();
+	    //Updates unit address
+	    stmt1.setString(1, courseUnit.getAddress().getCountry());
+	    stmt1.setString(2, courseUnit.getAddress().getCity());
+	    stmt1.setString(3, courseUnit.getAddress().getZipCode().toString());
+	    stmt1.setString(4, courseUnit.getAddress().getStreet());
+	    stmt1.setInt(5, courseUnit.getAddress().getHouseNumber());
+	    stmt1.setString(6, courseUnit.getAddress().getLocation());
+	    stmt1.setInt(7, courseUnit.getCourseUnitID());
+	    
+	    stmt1.executeUpdate();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during updating a course unit.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+		    "Error occured during updating a course unit.", e);
 	}
     }
 
@@ -551,31 +547,23 @@ public class CourseUnitDAO {
      */
     public static void deleteCourseUnit(Transaction trans, int courseUnitID)
 	    throws InvalidDBTransferException {
-	String queryUnit = "DELETE FROM \"course_units\" "
-		+ "WHERE course_units.id=?";
-	String queryAddress = "DELETE FROM \"course_unit_addresses\" "
-		+ "WHERE course_unit_id=?";
-
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
 
-	try {
-	    stmt = conn.prepareStatement(queryUnit);
+	try(PreparedStatement stmt = conn.prepareStatement(DELETE_UNIT);
+	    PreparedStatement stmt1 = conn.prepareStatement(DELETE_UNIT_ADDRESS)) {
 	    stmt.setInt(1, courseUnitID);
 	    stmt.executeUpdate();
 
-	    stmt = conn.prepareStatement(queryAddress);
-	    stmt.setInt(1, courseUnitID);
-	    stmt.executeUpdate();
+	    stmt1.setInt(1, courseUnitID);
+	    stmt1.executeUpdate();
 
-	    stmt.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occoured during deleting a course unit.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException(
+		    "Error occoured during deleting a course unit.", e);
 	}
     }
+    
 
     /**
      * Returns a list of course unit ids that belong to the same cycle as the
@@ -595,37 +583,25 @@ public class CourseUnitDAO {
      */
     public static List<Integer> getIdsCourseUnitsOfCycle(Transaction trans,
 	    int courseUnitId) {
-	ArrayList<Integer> ids = new ArrayList<Integer>();
-	// The queries to execute
-	String queryCycleId = "SELECT cycle_id FROM \"course_units\" WHERE"
-		+ " id=?";
-	String queryUnitIds = "SELECT id FROM \"course_units\" WHERE"
-		+ " cycle_id=? AND course_units.start_time >= CURRENT_DATE";
-
+	List<Integer> ids = new ArrayList<Integer>();
+	int cycle_id;
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	ResultSet res = null;
-	int cycle_id;
-	try {
-	    stmt = conn.prepareStatement(queryCycleId);
-	    stmt.setInt(1, courseUnitId);
-	    res = stmt.executeQuery();
-	    res.next();
-	    cycle_id = res.getInt("cycle_id");
-
-	    stmt = conn.prepareStatement(queryUnitIds);
+	
+	try (PreparedStatement stmt = conn.prepareStatement(GET_UNIT_IDS_OF_CYCLE)) {
+	    cycle_id = CycleDAO.getCycleId(trans, courseUnitId);
 	    stmt.setInt(1, cycle_id);
-	    res = stmt.executeQuery();
-	    while (res.next()) {
-		ids.add(res.getInt("id"));
+	    
+	    try(ResultSet  res = stmt.executeQuery()){
+		while (res.next()) {
+		    ids.add(res.getInt("id"));
+		}
 	    }
-	    stmt.close();
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured during fetching the id of "
-			    + "course units which belong to the same cycle.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error occured during fetching" 
+		    + " the id of course units which belong "
+		    + "to the same cycle.", e);
 	}
 
 	// Adds the given course unit id if it's not already in the list.
@@ -634,6 +610,7 @@ public class CourseUnitDAO {
 	}
 	return ids;
     }
+    
 
     /**
      * Returns the price of a course unit.
@@ -648,24 +625,21 @@ public class CourseUnitDAO {
      * @author Tobias Fuchs
      */
     public static float getPriceOfUnit(Transaction trans, int unitId) {
-	String query = "SELECT fee FROM \"course_units\" WHERE id=?";
 	float price = -1;
+	
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	ResultSet res = null;
-	try {
-	    stmt = conn.prepareStatement(query);
+	
+	try (PreparedStatement stmt = conn.prepareStatement(GET_PRICE_OF_UNIT)){
 	    stmt.setInt(1, unitId);
-	    res = stmt.executeQuery();
-
-	    res.next();
-	    price = res.getFloat("fee");
-	    stmt.close();
+	    
+	    try(ResultSet result = stmt.executeQuery()){
+		result.next();
+		price = result.getFloat("fee");
+	    }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error during fetching " + "the price of course unit.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error during fetching " 
+		    + "the price of course unit.", e);
 	}
 	return price;
 
@@ -1009,26 +983,22 @@ public class CourseUnitDAO {
     public static int getNumberOfParticipants(Transaction trans,
 	    int courseUnitId) throws InvalidDBTransferException {
 	int numberParticipants = 0;
-	String countQuery = "SELECT COUNT(*) FROM \"course_unit_participants\" "
-		+ "WHERE course_unit_id = ?";
 
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
-
-	PreparedStatement stmt = null;
-	try {
-	    stmt = conn.prepareStatement(countQuery);
+	
+	try (PreparedStatement stmt = conn.prepareStatement(COUNT_NUMBER_OF_PARTICIPANTS)) {
 	    stmt.setInt(1, courseUnitId);
-	    ResultSet resultSet = stmt.executeQuery();
-	    resultSet.next();
-	    numberParticipants = resultSet.getInt(1);
-	    stmt.close();
+	    
+	    try(ResultSet resultSet = stmt.executeQuery();){
+		resultSet.next();
+		numberParticipants = resultSet.getInt(1);
+	    }  
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occoured during fetching the number"
-			    + " of particpants of course unit with id: "
-			    + courseUnitId + ".");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException( "Error occoured during " 
+	            + "fetching the number of particpants of course unit with"
+		    + "id: "
+		    + courseUnitId + ".", e);
 	}
 	return numberParticipants;
     }
@@ -1044,6 +1014,7 @@ public class CourseUnitDAO {
     private static int calculateOffset(PaginationData pagination) {
 	int calculatedOffset = pagination.getElementsPerPage()
 		* pagination.getCurrentPageNumber();
+	
 	return calculatedOffset;
     }
 
@@ -1068,7 +1039,6 @@ public class CourseUnitDAO {
     public static List<User> getParticipiantsOfCourseUnit(Transaction trans,
 	    PaginationData pagination, int courseUnitId, boolean all)
 	    throws InvalidDBTransferException {
-	
 	String direction = pagination.getSortDirection().toString();
 	List<User> participants = new ArrayList<User>();
 	
@@ -1083,6 +1053,8 @@ public class CourseUnitDAO {
 	int limit;
 	int offset;
 
+	// Initializes limit and offset according to the fact whether 
+	// all participants are to be fetched or only the ones for the next page
 	if (all) {
 	    limit = CourseUnitDAO.getNumberOfParticipants(trans, courseUnitId);
 	    offset = 0;
@@ -1090,61 +1062,44 @@ public class CourseUnitDAO {
 	    limit = pagination.getElementsPerPage();
 	    offset = calculateOffset(pagination);
 	}
-	PreparedStatement stmt = null;
-	try {
 
-	    stmt = conn.prepareStatement(query);
+	try (PreparedStatement stmt = conn.prepareStatement(query)){
 	    stmt.setInt(1, courseUnitId);
 	    stmt.setInt(2, limit);
 	    stmt.setInt(3, offset);
-	    ResultSet fetchedParticipants = stmt.executeQuery();
 
-	    while (fetchedParticipants.next()) {
-		User fetchedUser = new User();
-		fetchedUser.setUserID(fetchedParticipants.getInt("id"));
-		if (fetchedParticipants.getString("name") != null) {
-		    fetchedUser.setLastname(fetchedParticipants
-			    .getString("name"));
-		} else {
-		    fetchedUser.setLastname("Nicht angegeben");
-		}
+            try (ResultSet fetchedParticipants = stmt.executeQuery()){
+        	
+        	while (fetchedParticipants.next()) {
+        	    User fetchedUser = new User();
+        	    fetchedUser.setUserID(fetchedParticipants.getInt("id"));
+        	    if (fetchedParticipants.getString("name") != null) {
+        		fetchedUser.setLastname(
+        			fetchedParticipants.getString("name"));
+        	    } else {
+        		fetchedUser.setLastname("Nicht angegeben");
+        	    }
 
-		if (fetchedParticipants.getString("first_name") != null) {
-		    fetchedUser.setFirstname(fetchedParticipants
-			    .getString("first_name"));
-		} else {
-		    fetchedUser.setFirstname("Nicht angegeben");
-		}
-		fetchedUser.setUsername(fetchedParticipants
-			.getString("nickname"));
-		fetchedUser.setAccountBalance(fetchedParticipants.getFloat("credit_balance"));
-		fetchedUser.setEmail(fetchedParticipants.getString("email"));
-		participants.add(fetchedUser);
+        	    if (fetchedParticipants.getString("first_name") != null) {
+        		fetchedUser.setFirstname(
+        			fetchedParticipants.getString("first_name"));
+        	    } else {
+        		fetchedUser.setFirstname("Nicht angegeben");
+        	    }
+        	    
+        	    fetchedUser.setUsername(
+        		    fetchedParticipants.getString("nickname"));
+        	    fetchedUser.setAccountBalance(
+        		    fetchedParticipants.getFloat("credit_balance"));
+        	    fetchedUser.setEmail(fetchedParticipants.getString("email"));
+        	    
+        	    participants.add(fetchedUser);
 	    }
-	    stmt.close();
+          }
 	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occoured during fetching the"
-			    + " next set of participants of a course.");
-	    throw new InvalidDBTransferException();
+	    throw new InvalidDBTransferException("Error occoured during "
+	              + "fetching the next set of participants of a course.", e);
 	}
 	return participants;
-    }
-
-    /**
-     * Returns the sort direction as String so it can easiley be added to the
-     * SQL statement.
-     * 
-     * @param isSortAsc
-     *            whether the sort direction is ascending order
-     * @return the sort direction as String
-     * @author Tobias Fuchs
-     */
-    private static String getSortDirection(boolean isSortAsc) {
-    	if (isSortAsc) {
-    	    return "ASC";
-    	} else {
-    	    return "DESC";
-    	}
     }
 }

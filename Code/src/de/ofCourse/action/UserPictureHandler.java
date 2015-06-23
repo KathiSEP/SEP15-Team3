@@ -53,14 +53,24 @@ public class UserPictureHandler extends HttpServlet {
                 String pictureBelongsToUserID = req.getParameter("profilImage");
                 int userID = Integer.parseInt(pictureBelongsToUserID);
                 byte[] userPicture = UserDAO.getImage(trans, userID);
+
+
                 if (userPicture == null) {
+                    
                     dummypicture(resp);
+                    LogHandler.getInstance().debug("No User Picture found, "
+                            + "load DummyPicture");
+                    
                 } else {
+                    
+
                     resp.reset();
                     resp.setContentType("image/jpg");
                     resp.setContentLength(userPicture.length);
                     resp.getOutputStream().write(userPicture);
-
+                    
+                    LogHandler.getInstance().debug(
+                            "User Picture succesfully loaded");
                 }
                 trans.commit();
 
@@ -68,57 +78,30 @@ public class UserPictureHandler extends HttpServlet {
 
                 String pictureBelongsToCourseID = req
                         .getParameter("courseImage");
+                
                 int courseID = Integer.parseInt(pictureBelongsToCourseID);
                 byte[] courseImage = CourseDAO.getImage(trans, courseID);
+                
                 if (courseImage == null) {
+                    
                     dummypicture(resp);
+                    LogHandler.getInstance().debug("No Course Picture found, "
+                            + "load DummyPicture");
+                    
                 } else {
+                    
                     resp.reset();
                     resp.setContentType("image/jpg");
                     resp.setContentLength(courseImage.length);
                     resp.getOutputStream().write(courseImage);
+                    
+                    LogHandler.getInstance().debug(
+                            "Course Picture succesfully loaded");
                 }
 
                 trans.commit();
-            } else {
+            } 
 
-            }
-
-            // InputStream picture = new ByteArrayInputStream(
-            // user.getProfilImage());
-
-            // BufferedInputStream input = null;
-            // BufferedOutputStream output = null;
-            //
-            // try {
-            // input = new BufferedInputStream(picture);
-            // output = new BufferedOutputStream(resp.getOutputStream());
-            //
-            // byte[] buffer = new byte[8192];
-            // int length;
-            // while ((length = input.read(buffer)) > 0) {
-            // output.write(buffer, 0, length);
-            // }
-            // trans.commit();
-            // } finally {
-            // if (output != null) {
-            // try {
-            // output.close();
-            // } catch (Exception e) {
-            // LogHandler.getInstance().error(
-            // "HTTPServlet funktioniert nicht: output.close");
-            // }
-            // }
-            //
-            // if (input != null) {
-            // try {
-            // input.close();
-            // } catch (Exception e) {
-            // LogHandler.getInstance().error(
-            // "HTTPServlet funktioniert nicht: input.close");
-            // }
-            // }
-            // }
 
         } catch (Exception e) {
             // TODO Error page
@@ -130,13 +113,18 @@ public class UserPictureHandler extends HttpServlet {
     }
 
     /**
+     * Sets the Path of the Dummy picture which is stored on the Server
+     * 
      * @param resp
      * @throws IOException
      */
     private void dummypicture(HttpServletResponse resp) throws IOException {
+        
+        
         resp.reset();
         resp.setContentType("image/jpg");
-
+        
+        //TODO Anpassen per facletcontext
         resp.sendRedirect("http://localhost:8003/OfCourse/resources/img/userdata/userphoto.jpg");
     }
 

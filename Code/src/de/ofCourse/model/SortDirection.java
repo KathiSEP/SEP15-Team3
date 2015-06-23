@@ -22,7 +22,7 @@ public enum SortDirection {
     public String toString() {
         return sortDirection;
     }
-    
+     
     public static SortDirection fromBoolean(boolean sortAsc) {
         if(sortAsc) {
             return SortDirection.ASC;
