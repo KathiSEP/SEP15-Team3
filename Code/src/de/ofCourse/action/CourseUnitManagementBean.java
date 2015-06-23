@@ -460,7 +460,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    pagination,
 					    id, 
 					    true);
-			    sendMailToSelected(transaction, participants, false);
+			    for(User user : participants){
+
+				sendMailToSelected(transaction, user, true);}
+			    
 			} else {
 			    LogHandler.getInstance().debug("Unit "
 					    + tempUnit.getCourseUnitID()
@@ -477,7 +480,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    .getParticipiantsOfCourseUnit(transaction,
 				    pagination, courseUnit.getCourseUnitID(),
 				    true);
-		    sendMailToSelected(transaction, participants, false);
+		    for(User user : participants){
+
+			sendMailToSelected(transaction, user, true);}
+		    
 		}
 		transaction.commit();
 		return URL_COURSE_DETAIL;
