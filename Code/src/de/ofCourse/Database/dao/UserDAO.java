@@ -995,7 +995,7 @@ public class UserDAO {
         	    if (res.next()) {
         
         		// Fill the user object with values from the database.
-        		user.setUserId(res.getInt("id"));
+        		user.setUserId(res.getInt("user_id"));
         		user.setFirstname(res.getString("first_name"));
         		user.setLastname(res.getString("name"));
         		user.setEmail(res.getString("email"));
@@ -1016,7 +1016,7 @@ public class UserDAO {
         		user.setUserStatus(UserStatus.fromString(
         		                              res.getString("status")));
         
-        		address.setId(res.getInt("id"));
+        		address.setId(res.getInt("address_id"));
         		address.setCity(res.getString("city"));
         		address.setCountry(res.getString("country"));
         		address.setZipCode(res.getInt("zip_code"));
