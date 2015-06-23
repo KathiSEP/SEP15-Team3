@@ -125,7 +125,6 @@ public class SystemConfigurationBean implements Serializable {
 	transaction.start();
 	
 	try {    
-	    
 	    SystemDAO.setActivationType(
 		    transaction, 
 		    Activation.fromString(getAccountActivationType()));    

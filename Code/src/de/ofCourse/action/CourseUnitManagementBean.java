@@ -670,10 +670,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    boolean delete) {
 	int recipientsGroup = getSelectedToInform();
 
-
 	    if (recipientsGroup == informParticipantsOfUnit) {
 		if (CourseUnitDAO.userWantsToBeInformed(transaction,
 			user.getUserID(), courseID)) {
+		    
 		    if (delete) {
 			mailBean.sendCourseUnitDeleteMail(user.getEmail(),
 				courseUnit.getCourseUnitID());
@@ -785,7 +785,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	if (tempDateBegin.getTime() > tempDateEnd.getTime()) {
 
 	    FacesMessageCreator.createFacesMessage(null,
-		    "Das Enddatum liegt vor dem Startdatum!");
+		    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.date"));
 	    return false;
 
 	} else {
@@ -805,9 +805,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    long endCourse = tempCourse.getEnddate().getTime();
 
 		    FacesMessageCreator.createFacesMessage(null,
-			    "Die Kurseinheit liegt nicht im Bereich des Kurses vom "
+			    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
 				    + dateAsString(new Date(beginCourse))
-				    + " bis zum "
+				    + sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
 				    + dateAsString(new Date(endCourse)) + " !");
 		}
 
