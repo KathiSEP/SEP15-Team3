@@ -6,6 +6,8 @@ package de.ofCourse.Database.DatabaseGeneral;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
@@ -177,6 +179,26 @@ public class DatabaseTableCreator {
      * execution of the method
      */
     public static void buildUpDatabase() throws InvalidDBTransferException{
+    	
+    	//
+    	List<String> createStatements = new ArrayList<String>();
+    	createStatements.add(CREATE_FORM_OF_ADDRESS);
+    	createStatements.add(CREATE_ROLE);
+    	createStatements.add(CREATE_STATUS);
+    	createStatements.add(CREATE_PERIOD);
+    	createStatements.add(CREATE_ACTIVATION);
+    	createStatements.add(CREATE_USERS);
+    	createStatements.add(CREATE_COURSES);
+    	createStatements.add(CREATE_CYCLES);
+    	createStatements.add(CREATE_COURSE_INSTRUCTORS);
+    	createStatements.add(CREATE_COURSE_UNITS);
+    	createStatements.add(CREATE_USER_ADDRESSES);
+    	createStatements.add(CREATE_COURSE_UNIT_ADDRESSES);
+    	createStatements.add(CREATE_INFORM_USERS);
+    	createStatements.add(CREATE_COURSE_PARTICIPANTS);
+    	createStatements.add(CREATE_COURSE_UNIT_PARTICIPANTS);
+    	createStatements.add(CREATE_SYSTEM_ATTRIBUTES);
+    	
     	String checkTables = "SELECT COUNT(*) FROM information_schema.tables " +
     			"WHERE table_schema = 'public'";
     	Transaction trans = new Connection();
@@ -209,6 +231,19 @@ public class DatabaseTableCreator {
 			Long numTables = (Long) count.getObject(1);
 			
 			if (numTables == 0) {
+				
+				//
+				for (int i = 0; i < createStatements.size(); i++) {
+					Statement stmt = conn.createStatement();
+					stmt.execute(createStatements.get(i));
+					
+					if (i < createStatements.size() - 1) {
+						conn.commit();
+					} else {
+						trans.commit();
+					}
+				}
+				
 				formOfAddress = conn.createStatement();
 				formOfAddress.execute(CREATE_FORM_OF_ADDRESS);
 				conn.commit();
@@ -283,7 +318,7 @@ public class DatabaseTableCreator {
 			LogHandler
 		    .getInstance()
 		    .error("SQL Exception occoured during buildUpDatabase()");
-	    throw new InvalidDBTransferException();
+			throw new InvalidDBTransferException();
 		} finally {
 			if (count != null) {
 				try {

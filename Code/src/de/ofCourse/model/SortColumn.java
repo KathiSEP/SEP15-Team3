@@ -41,7 +41,7 @@ public enum SortColumn {
                   return column;
               }
           }
-          return null;
+          return ID;
         }
         else {
             return null;

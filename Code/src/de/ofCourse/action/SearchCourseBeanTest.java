@@ -25,6 +25,8 @@ import de.ofCourse.Database.dao.CycleDAO;
 import de.ofCourse.Database.dao.UserDAO;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
@@ -71,18 +73,6 @@ public class SearchCourseBeanTest {
 	
 	@Before
     public void setup() {
-		/*PowerMockito.mockStatic(FacesContext.class);
-		FacesContext fc = mock(FacesContext.class);
-		Mockito.when(FacesContext.getCurrentInstance()).thenReturn(fc);
-
-		// Mock the ExternalContext
-		ExternalContext ec = mock(ExternalContext.class);
-		Mockito.when(fc.getExternalContext()).thenReturn(ec);
-
-		// Determine returning of getRequestParameterMap()
-		pm = new HashMap<String, String>();
-		Mockito.when(ec.getRequestParameterMap()).thenReturn(pm);*/
-
 		// Mock the connection
 		PowerMockito.mockStatic(Connection.class);
 		conn = mock(Connection.class);
@@ -90,6 +80,8 @@ public class SearchCourseBeanTest {
 		
 		// Mock CourseDAO
 		PowerMockito.mockStatic(CourseDAO.class);
+		
+		searchResult = new ArrayList<Course>();
 		
 		pagination = new PaginationData();
     	pagination.setElementsPerPage(10);
@@ -100,20 +92,17 @@ public class SearchCourseBeanTest {
 		orderPeriod = displayPeriod;
 		orderSearchParam = searchParam;
 		orderSearchString = searchString;
+		
+		bean = new SearchCourseBean();
 	}
 
 	@Test
-	public void testSearchByTitle() {
-		/*
-		// Initializes the session
-		pm.put("searchParam", "title");
-		pm.put("searchString", "yoga");*/
-		
-		searchParam = "title";
-		searchString = "yoga";
+	public void testSearchByTitle() {		
+		bean.setSearchParam("titel");
+		bean.setSearchString("yoga");
 				
-		pagination.setSortColumn("title");
-		pagination.setSortAsc(true);
+		pagination.setSortColumn(SortColumn.TITEL);
+		pagination.setSortDirection(SortDirection.ASC);
 		pagination.setCurrentPageNumber(0);
 		
 		// Determine the return value of getNumberOfCourses
@@ -121,11 +110,13 @@ public class SearchCourseBeanTest {
 		
 		pagination.refreshNumberOfPages(1);
 		
+		bean.setPagination(pagination);
+		
 		//Create course dates
 		Date startDate = new Date();
-		startDate.setDate(2015-06-15);
+		startDate.setDate(2015-6-15);
 		Date endDate = new Date();
-		endDate.setDate(2016-06-15);
+		endDate.setDate(2016-6-15);
 		
 		// Create course
 		Course course = new Course();
@@ -145,20 +136,21 @@ public class SearchCourseBeanTest {
 		bean.search();
 	}
 	
-	/*@Test
+	@Test
 	public void testSearchByDate() {
-		// Initializes the session
-		pm.put("searchParam", "date");
-		pm.put("searchString", "07.12.2016");
+		bean.setSearchParam("start_date");
+		bean.setSearchString("6.7.2015");
 				
-		pagination.setSortColumn("date");
-		pagination.setSortAsc(true);
+		pagination.setSortColumn(SortColumn.START_DATE);
+		pagination.setSortDirection(SortDirection.ASC);
 		pagination.setCurrentPageNumber(0);
 		
 		// Determine the return value of getNumberOfCourses
-		Mockito.when(CourseDAO.getNumberOfCourses(conn, "date", "07.12.2016")).thenReturn(1);
+		Mockito.when(CourseDAO.getNumberOfCourses(conn, searchParam, searchString)).thenReturn(1);
 		
 		pagination.refreshNumberOfPages(1);
+		
+		bean.setPagination(pagination);
 		
 		//Create course dates
 		Date startDate = new Date();
@@ -179,12 +171,14 @@ public class SearchCourseBeanTest {
 		searchResult.add(course);
 		
 		// Determine the return value of getCourses
-		Mockito.when(CourseDAO.getCourses(conn, pagination, "date", "07.12.2016")).thenReturn(searchResult);
+		Mockito.when(CourseDAO.getCourses(conn, pagination, searchParam, searchString)).thenReturn(searchResult);
+		
+		bean.search();
 	}
 	
 	@Test
 	public void testDisplayCoursesInPeriod() {
 		
-	}*/
+	}
 
 }

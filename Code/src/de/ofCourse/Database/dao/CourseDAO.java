@@ -316,16 +316,16 @@ public class CourseDAO {
 	case "total":
 	    query = NUM_COURSES_TOTAL;
 	    return countCourses(conn, query, null, false);
-	case "courseID":
+	case "id":
 	    query = NUM_COURSES_ID;
 	    return countCourses(conn, query, searchString, false);
-	case "title":
+	case "titel":
 	    query = NUM_COURSES_TITLE;
 	    return countCourses(conn, query, searchString, false);
 	case "leader":
 	    query = NUM_COURSES_LEADER;
 	    return countCourses(conn, query, searchString, false);
-	case "date":
+	case "start_date":
 	    query = NUM_COURSES_DATE;
 	    return countCourses(conn, query, searchString, true);
 	}
@@ -578,13 +578,13 @@ public class CourseDAO {
 	boolean isDate = false;
 
 	switch (searchParam) {
-	case "title":
+	case "titel":
 	    query = GET_COURSES_BY_TITLE;
 	    break;
 	case "leader":
 	    query = GET_COURSES_BY_LEADER;
 	    break;
-	case "date":
+	case "start_date":
 	    query = GET_COURSES_BY_DATE;
 	    isDate = true;
 	    break;

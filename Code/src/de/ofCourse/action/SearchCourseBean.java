@@ -129,7 +129,7 @@ public class SearchCourseBean implements Pagination {
     @PostConstruct
     public void init() {
     	displayPeriod = "total";
-    	searchParam = "title";
+    	searchParam = "titel";
     	pagination = new PaginationData();
     	pagination.setElementsPerPage(ELEMENTS_PER_PAGE);
     }
@@ -242,7 +242,7 @@ public class SearchCourseBean implements Pagination {
 		//pagination.setSortAsc(true);
 		pagination.setSortDirection(SortDirection.ASC);
 		//pagination.setSortColumn(searchParam);
-		pagination.setSortColumn(SortColumn.valueOf(searchParam));
+		pagination.setSortColumn(SortColumn.fromString(searchParam));
 		try {
     		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,

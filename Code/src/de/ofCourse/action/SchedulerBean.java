@@ -17,6 +17,7 @@ import de.ofCourse.Database.dao.CourseUnitDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Week;
+import de.ofCourse.model.WeekDay;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -43,7 +44,7 @@ public class SchedulerBean {
 	/**
      * Stores the number of days that are in one week
      */
-    private static final int WEEK_DAYS = 7;
+    private final int WEEK_DAYS = 7;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -76,7 +77,7 @@ public class SchedulerBean {
     		
     		
     		
-    		Calendar cale = Calendar.getInstance();
+    		/*Calendar cale = Calendar.getInstance();
 
     		// Set the Calendar object to your date
     		cale.setTime(currentMonday);
@@ -96,7 +97,7 @@ public class SchedulerBean {
     		System.out.println("monday: " + currentMonday);
     		System.out.println("tuesday: " + newDate);
     		System.out.println("sunday: " + currentSunday);
-    		System.out.println("monday after increment: " + currentMonday);
+    		System.out.println("monday after increment: " + currentMonday);*/
     		
     		transaction.commit();
     		
@@ -183,6 +184,12 @@ public class SchedulerBean {
     }
     
     private Week createWeek(List<CourseUnit> weekRow) {
+    	
+    	//
+    	for (WeekDay day : WeekDay.getWeekDays()) {
+    		
+    	}
+    	
     	Week week = new Week();
     	Date date = new Date(currentMonday.getTime());
     	
