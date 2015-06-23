@@ -31,13 +31,13 @@ public enum SortColumn {
      */
     @Override
     public String toString() {
-        return this.name();
+        return sortColumn;
     }
     
     public static SortColumn fromString(String columnString) {
         if (columnString != null) {
           for (SortColumn column : SortColumn.values()) {
-              if (columnString.equalsIgnoreCase(column.name())) {
+              if (columnString.equalsIgnoreCase(column.sortColumn)) {
                   return column;
               }
           }

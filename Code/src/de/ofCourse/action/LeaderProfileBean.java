@@ -53,7 +53,7 @@ import de.ofCourse.utilities.PasswordHash;
  */
 @ManagedBean
 @ViewScoped
-public class UserProfileBean implements Pagination {
+public class LeaderProfileBean implements Pagination {
     
     /**
      * Stores the transaction that is used for database interaction.

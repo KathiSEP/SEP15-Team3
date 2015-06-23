@@ -82,7 +82,7 @@
                                      <h:column>  
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="courseID" />
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="id" />
                                                 #{sessionUser.getLabel('search.table.id')}
                                             </h:commandLink>
                                          </f:facet>  
@@ -106,7 +106,7 @@
                                      <h:column>
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="maxUsers" />
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="max_participants" />
                                                 #{sessionUser.getLabel('search.table.maxParticipants')}
                                             </h:commandLink>
                                          </f:facet>
@@ -116,7 +116,7 @@
                                      <h:column>
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="starts" />
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="start_date" />
                                                 #{sessionUser.getLabel('search.table.start')}
                                             </h:commandLink>
                                          </f:facet>
@@ -126,7 +126,7 @@
                                      <h:column>
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="ends" />
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="end_date" />
                                                 #{sessionUser.getLabel('search.table.end')}
                                             </h:commandLink>
                                          </f:facet>
