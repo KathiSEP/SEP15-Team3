@@ -1129,14 +1129,9 @@ public class CourseDAO {
 	try {
 	    setRelationMethode(userID, courseID, conn, addUserToCourse);
 
-	    LogHandler.getInstance().debug(
-		    "Methode addUserToCourse was succesfull");
-
 	} catch (SQLException e) {
-	    // TODO fehler auffangen
-	    LogHandler.getInstance().error(
-		    "Error occured during addUserToCOurse");
-	    throw new InvalidDBTransferException();
+	    
+	    throw new InvalidDBTransferException("Error occured during addUserToCOurse", e);
 	}
     }
 

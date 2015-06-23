@@ -287,9 +287,14 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
 		System.out.println(sessionUser.getUserID());
 
+		
 		// Add user to course_participant list on the database server
 		CourseDAO.addUserToCourse(trans, sessionUser.getUserID(),
 			courseID);
+		LogHandler.getInstance().debug(
+	            "Methode addUserToCourse was succesfull");
+		
+		
 		if (registeredForCourseNews) {
 		    CourseDAO.addUserToInformUser(trans,
 			    sessionUser.getUserID(), courseID);
