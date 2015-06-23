@@ -125,9 +125,9 @@ public class RegisterUserBean {
             this.transaction = Connection.create();
             transaction.start();
             if (UserDAO.verifyUser(this.transaction, veriString)) {
-                FacesMessageCreator.createFacesMessage(null, "Ihr Account wurde erfolgreich freigeschaltet!");
+                FacesMessageCreator.createFacesMessage("verifizierungString", "Ihr Account wurde erfolgreich freigeschaltet!");
             } else {
-                FacesMessageCreator.createFacesMessage(null, "Der Verifizierungsstring existiert nicht!");
+                FacesMessageCreator.createFacesMessage("verifizierungString", "Der Verifizierungsstring existiert nicht!");
             }
             this.transaction.commit();
         }
