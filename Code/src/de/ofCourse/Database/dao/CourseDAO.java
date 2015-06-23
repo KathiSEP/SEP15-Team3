@@ -1121,18 +1121,18 @@ public class CourseDAO {
     public static void addUserToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	String addUserToCourse = "INSERT INTO \"course_participants\" (participant_id,course_id) VALUES (?,?)";
+        String addUserToCourse = "INSERT INTO \"course_participants\" (participant_id,course_id) VALUES (?,?)";
 
-	try {
-	    setRelationMethode(userID, courseID, conn, addUserToCourse);
+        try {
+            setRelationMethode(userID, courseID, conn, addUserToCourse);
 
-	} catch (SQLException e) {
+	        } catch (SQLException e) {
 	    
-	    throw new InvalidDBTransferException("Error occured during addUserToCOurse", e);
-	}
+	            throw new InvalidDBTransferException("Error occured during addUserToCOurse", e);
+	        }
     }
 
     /**
@@ -1156,22 +1156,23 @@ public class CourseDAO {
     public static void removeUserFromCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	String removeUserFromCourse = "DELETE FROM \"course_participants\" WHERE participant_id = ? AND course_id = ?";
+        String removeUserFromCourse = "DELETE FROM \"course_participants\" WHERE participant_id = ? AND course_id = ?";
 
-	try {
-	    setRelationMethode(userID, courseID, conn, removeUserFromCourse);
-	    LogHandler.getInstance().error(
+        try {
+            setRelationMethode(userID, courseID, conn, removeUserFromCourse);
+            
+            //TODO Remove Here 
+            LogHandler.getInstance().error(
 		    "Deleting User:" + userID + " from course:" + courseID
 			    + "was succesfull");
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "Error occured while trying to delete User:" + userID
-			    + " from course:" + courseID);
-	    throw new InvalidDBTransferException();
-	}
+        } catch (SQLException e) {
+            
+            throw new InvalidDBTransferException("Error occured while trying to delete User:" + userID
+                + " from course:" + courseID, e);
+        }
 
     }
 
@@ -1282,46 +1283,44 @@ public class CourseDAO {
     }
 
     /**
+     * Returns the Number of Participants of that Course
      * 
      * @author Sebastian
      * @param trans
      * @param courseID
-     * @return
+     * @return Number of Participants as Integer
      */
     public static Integer getNumberOfParticipants(Transaction trans,
 	    int courseID) {
-
-	PreparedStatement pS = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	String countSQLstat = "SELECT COUNT(*) FROM \"course_participants\" WHERE course_id=?";
-	ResultSet resultSet = null;
-
-	try {
-	    pS = conn.prepareStatement(countSQLstat);
-	    pS.setInt(1, courseID);
-
-	    resultSet = pS.executeQuery();
-
-	    resultSet.next();
-	    int numberOfParticipants = resultSet.getInt(1);
-	    resultSet.close();
-	    pS.close();
-	    LogHandler.getInstance().debug(
-		    "Methode getNumberOfParticipants was succesfull");
-	    return numberOfParticipants;
-
-	} catch (SQLException e) {
-	    // TODO Error Handling
-	    LogHandler.getInstance().error(
-		    "Exception occured during getNumberOfParticipants");
-	    throw new InvalidDBTransferException();
-	}
+        
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String countSQLstat = "SELECT COUNT(*) FROM \"course_participants\" WHERE course_id=?";
+        
+        try(PreparedStatement pS = conn.prepareStatement(countSQLstat)) {
+	    
+            pS.setInt(1, courseID);           
+            try(ResultSet resultSet = pS.executeQuery()){
+                
+                resultSet.next();
+                int numberOfParticipants = resultSet.getInt(1);
+                resultSet.close();
+                
+                //TODO Remove This
+                LogHandler.getInstance().debug(
+                    "Methode getNumberOfParticipants was succesfull");
+                return numberOfParticipants;  
+            }
+        } catch (SQLException e) {
+            
+            throw new InvalidDBTransferException("Exception occured during getNumberOfParticipants", e);
+        }
 
     }
 
     /**
+     * 
+     * Adds a User to the User_Inform Table of the Database. 
      * 
      * @author Sebastian
      * @param trans
@@ -1331,23 +1330,25 @@ public class CourseDAO {
     public static void addUserToInformUser(Transaction trans, int userID,
 	    int courseID) {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-
-	String addUserToInformUser = "INSERT INTO \"inform_users\" (user_id,course_id) VALUES (?,?)";
-	try {
-	    setRelationMethode(userID, courseID, conn, addUserToInformUser);
-	    LogHandler.getInstance().debug(
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        String addUserToInformUser = "INSERT INTO \"inform_users\" (user_id,course_id) VALUES (?,?)";
+        
+        try {
+            setRelationMethode(userID, courseID, conn, addUserToInformUser);
+            
+            //TODO Remove this
+            LogHandler.getInstance().debug(
 		    "Methode addUserToInformUser was succesfull");
-	} catch (SQLException e) {
-	    // Error Handling
-	    LogHandler.getInstance().error(
-		    "Exception occured during addUserToInformUser");
-	    throw new InvalidDBTransferException();
-	}
+        
+        } catch (SQLException e) {
+            throw new InvalidDBTransferException("Exception occured during addUserToInformUser", e);
+        }
     }
 
     /**
+     * This DAO Methode removes a User from The Inform_Users Table.(For example when the Users
+     * leaves the course where he signed up for Course News)
      * 
      * @author Sebastian Schwarz
      * @param trans
@@ -1357,24 +1358,27 @@ public class CourseDAO {
     public static void removeUserToInformUser(Transaction trans, int userID,
 	    int courseID) {
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	String removeUserToInformUser = "DELETE FROM \"inform_users\" WHERE user_id=? AND course_id=?";
-	try {
-	    setRelationMethode(userID, courseID, conn, removeUserToInformUser);
-	    LogHandler.getInstance().debug(
-		    "Methode RemoveUserToInformUser was succesfull");
-	} catch (SQLException e) {
-	    // Error Handling
-	    LogHandler.getInstance().error(
-		    "Exception occured during RemoveUserToInformUser");
-	    throw new InvalidDBTransferException();
-	}
+        String removeUserToInformUser = "DELETE FROM \"inform_users\" WHERE user_id=? AND course_id=?";
+	
+        try {
+            setRelationMethode(userID, courseID, conn, removeUserToInformUser);
+            //TODO Remove LogHandler here
+            LogHandler.getInstance().debug(
+                    "Methode RemoveUserToInformUser was succesfull");
+	
+	        } catch (SQLException e) {
+	    
+	            throw new InvalidDBTransferException("Exception occured during RemoveUserToInformUser", e);
+	        }
 
     }
 
     /**
+     * This is a extracted Methode which sets the values and excute a simple sql command.
+     * 
      * 
      * @author Sebastian
      * @param userID
@@ -1385,45 +1389,58 @@ public class CourseDAO {
      */
     static int setRelationMethode(int userID, int courseID,
 	    java.sql.Connection conn, String preparedStmt) throws SQLException {
-	PreparedStatement pS = null;
-	pS = conn.prepareStatement(preparedStmt);
-	pS.setInt(1, userID);
-	pS.setInt(2, courseID);
-	int success = pS.executeUpdate();
-	pS.close();
-	return success;
-
+	
+        try(PreparedStatement pS = conn.prepareStatement(preparedStmt)){
+            
+            pS.setInt(1, userID);
+            pS.setInt(2, courseID);
+            int success = pS.executeUpdate();
+            
+            return success;
+        }			
     }
 
+    
+    /**
+     * Returns the Picture as Byte Array from the Database
+     * 
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param courseID
+     * @return picture 
+     *              as byte Array
+     */
     public static byte[] getImage(Transaction trans, int courseID) {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	byte[] picture;
+	
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
+        byte[] picture;
 
-	String selectImage = "SELECT image FROM \"courses\" WHERE id=?";
+        String selectImage = "SELECT image FROM \"courses\" WHERE id=?";
 
-	try {
-	    PreparedStatement pS = conn.prepareStatement(selectImage);
-	    pS.setInt(1, courseID);
-	    ResultSet resultSet = pS.executeQuery();
-
-	    if (resultSet.next()) {
-		picture = resultSet.getBytes("image");
-		LogHandler.getInstance().debug(
-			"Course Picture succesfully loaded");
-		return picture;
-	    } else {
-		LogHandler.getInstance().debug("No course Picture found");
-		return null;
+        try(PreparedStatement pS = conn.prepareStatement(selectImage)) {
+	    
+            pS.setInt(1, courseID);
+	    
+            try(ResultSet resultSet = pS.executeQuery()){
+	        
+                if (resultSet.next()) {
+                    
+                    picture = resultSet.getBytes("image");  
+                    return picture;
+	        } else {
+	        	
+	            //Returns null so that the HTTP Serlvet can load the dummy picutre
+	            return null;
+	        }  
 	    }
-
+	    
 	} catch (SQLException e) {
-	    // Error Handling
-	    LogHandler
-		    .getInstance()
-		    .error("Exception occured during loading course Picture from Database");
-	    throw new InvalidDBTransferException();
-	}
+	    
+	    throw new InvalidDBTransferException("Exception occured during "
+	            + "loading course Picture from Database", e);
+	    }
     }
 
 }

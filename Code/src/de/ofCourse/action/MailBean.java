@@ -344,7 +344,7 @@ public class MailBean {
             
             message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at" + editCourseUnit.getStartime() + "has been deleted. \n";
             message += "Please visit the OfCourse WebPage for further Information: \n\n";
-            message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
+            //message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
             message += createSignature();
             
             sendSingleMail(userMail, subject, message);
