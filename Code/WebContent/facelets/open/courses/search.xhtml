@@ -47,10 +47,10 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon" style="width:100px; text-align:right;">#{sessionUser.getLabel('search.row.filterCourses.param')}:</span>
                                                 <h:selectOneMenu class="form-control" id="filterProperty" value="#{searchCourseBean.searchParam}">
-                                                    <f:selectItem itemValue="title" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.title')}" />
+                                                    <f:selectItem itemValue="titel" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.title')}" />
                                                     <f:selectItem itemValue="id" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.id')}" />
                                                     <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.leader')}" />
-                                                    <f:selectItem itemValue="date" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.date')}" />
+                                                    <f:selectItem itemValue="start_date" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.date')}" />
                                                 </h:selectOneMenu>
                                             </div>
                                         </div>
@@ -94,7 +94,7 @@
                                      <h:column>  
                                          <f:facet name="header">
                                             <h:commandLink action="#{searchCourseBean.sortBySpecificColumn()}" styleClass="theader">
-                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="title" />
+                                                <f:setPropertyActionListener target="#{searchCourseBean.orderParam}" value="titel" />
                                                 #{sessionUser.getLabel('search.table.title')}
                                             </h:commandLink>
                                          </f:facet>  
