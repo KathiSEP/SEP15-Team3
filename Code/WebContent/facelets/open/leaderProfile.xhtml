@@ -23,30 +23,28 @@
                                 <strong>#{sessionUser.getLabel('profile.row.userData.header')}</strong>
                             </div>
                             <div class="panel-body">
-                                <h:form class="form-horizontal" id="formSettings">
-			                        <h:panelGroup rendered="#{leaderProfileBean.readOnly}">
-	                                    <div class="input-group" style="padding-top:25px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.username}" />
-	                                    </div>
-	                                
-	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.prename')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.firstname}" />
-	                                    </div>
-	                                    
-	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.name')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.lastname}" />
-	                                    </div>
-	                                    
-	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}</span>
-	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.email}" />
-	                                    </div>
-	                                    <br/>
-			                        </h:panelGroup>
-                                </h:form>
+	                            <h:form class="form-horizontal" id="formSettings">
+	                                 <div class="input-group" style="padding-top:25px;">
+	                                     <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}</span>
+	                                     <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.username}" />
+	                                 </div>
+	                             
+	                                 <div class="input-group" style="padding-top:5px;">
+	                                     <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.prename')}</span>
+	                                     <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.firstname}" />
+	                                 </div>
+	                                 
+	                                 <div class="input-group" style="padding-top:5px;">
+	                                     <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.name')}</span>
+	                                     <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.lastname}" />
+	                                 </div>
+	                                 
+	                                 <div class="input-group" style="padding-top:5px;">
+	                                     <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}</span>
+	                                     <h:outputLabel class="form-control" style="width:340px;" value="#{leaderProfileBean.user.email}" />
+	                                 </div>
+	                                 <br/>
+                               	</h:form>
                                 <div class="col-lg-12">
 			                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
                                 </div>
