@@ -45,7 +45,7 @@ public class SearchCourseBean implements Pagination {
 	/**
      * Stores the number of elements that are displayed by pagination at once
      */
-    private static final int ELEMENTS_PER_PAGE = 10;
+    private final int ELEMENTS_PER_PAGE = 10;
 	
     /**
      * Stores the transaction that is used for database interaction.
