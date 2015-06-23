@@ -29,6 +29,9 @@
                             <h:commandLink action="#{navigationBean.setLanguage('en')}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
                                 <h:graphicImage url="/resources/img/englishFlag.gif" alt="EN" title="English Version" width="50"/>
                             </h:commandLink>
+                            <h:commandLink action="#{navigationBean.setLanguage('bay')}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+                                <h:graphicImage url="/resources/img/bavarianFlag.gif" alt="BAY" title="Bavarian Version" width="50"/>
+                            </h:commandLink>
                         </h:form>
                     </div>
                     <ul class="nav navbar-nav collapse navbar-collapse">

@@ -43,6 +43,8 @@ public class NavigationBean {
     public void setLanguage(String language) {
     	if (language.equals("en")) {
     		sessionUser.setLanguage(Language.EN);
+    	} else if (language.equals("bay")) {
+    	    sessionUser.setLanguage(Language.BAY);
     	} else {
     		sessionUser.setLanguage(Language.DE);
     	}

@@ -113,6 +113,8 @@ public class LanguageManager {
     private String getLanguageFile(Language language) {
 		if (language == Language.EN) {
 			return "language_en.properties";
+		} else if (language == Language.BAY) {
+		    return "language_bay.properties";
 		}
 		return "language_de.properties";
 	}
