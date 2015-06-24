@@ -47,9 +47,16 @@ import de.ofCourse.utilities.LanguageManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
-	CourseUnitDAO.class, CourseDAO.class, CycleDAO.class,
-	FacesContext.class, PaginationData.class, LanguageManager.class, FacesMessageCreator.class })
+@PrepareForTest({ Transaction.class,
+                  Connection.class, 
+                  UserDAO.class,
+	          CourseUnitDAO.class, 
+	          CourseDAO.class, 
+	          CycleDAO.class,
+	          FacesContext.class,
+	          PaginationData.class, 
+	          LanguageManager.class,
+	          FacesMessageCreator.class })
 public class CourseUnitManagementBeanTest {
 
     //bean attribute

@@ -1,0 +1,10 @@
+# Pflichtenheft-Dateien #
+*.aux
+*.glo
+*.ist
+*.log
+*.out
+*.pdf
+*.synctex.gz
+*.toc
+*.db

@@ -1,0 +1,277 @@
+\documentclass[a4paper, 12pt]{scrreprt}
+\usepackage[german]{babel}
+\usepackage[german]{translator}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ae}
+\usepackage[bookmarks,bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage[left=2.50cm, right=2.50cm, bottom =3.53cm]{geometry}
+\usepackage{ pdflscape}
+%\usepackage{pdfpages}
+%\usepackage[section]{placeins}
+
+
+\newcommand{\col}[2]{\textcolor{#1}{#2}}
+
+% Zeilenhöhe bei Tabellen
+\newcommand{\zh}[1]{\parbox[0pt][#1][c]{0cm}{}}
+
+\begin{document}
+	\thispagestyle{plain}
+	
+	\begin{titlepage}
+		\begin{center}
+			\begin{figure}[ht]
+				\centering
+				\includegraphics[width=0.66\textwidth, angle=0]{logo/name_blau_ofCourse.jpg}
+			\end{figure}
+			
+			\begin{title}
+				\title{\Huge{\textbf{Kurseinheiten-Manager \\ \ \\ 
+							\ \\
+							Handbuch Installation
+							}}}
+			\begin{figure}[th]
+				\centering
+				\includegraphics[width=0.40\textwidth, angle=0]{Grafiken/installation-instructions-icon}
+			\end{figure}
+				
+			\end{title}
+			\hspace{3cm}
+			
+			Software Engineering Praktikum \\
+			Sommersemester 2015\\
+			Universität Passau\\
+			
+			
+			Betreuer: Andreas Stahlbauer \\
+        	\hspace{1,5cm}\\
+        	Version: 1.0 \\
+        	\hspace{1,5cm}\\
+        	Datum: 26.06.2015\\[28pt]
+        	Team 3 \\
+
+			\ \\
+        \begin{tabular}{ | l | l | l | l |}
+        	\hline
+        	\textbf{Matrikelnummer} & \textbf{Name} & \textbf{Phase} & \textbf{E-Mail}  \\ \hline
+        	63097 & Katharina Hölzl & Pflichtenheft & hoelzlka@fim.uni-passau.de \\ \hline
+        	64504 & Ricky Strohmeier& Entwurf & strohric@fim.uni-passau.de  \\ \hline
+        	61085 & Sebastian Schwarz & Feinspezifikation & sebastian@nrschwarz.de \\ \hline 
+        	64080 & Tobias Fuchs & Implementierung  &  fuchstob@fim.uni-passau.de\\ \hline
+        	58379 & Patrick Cretu  &  Validierung & cretu@fim.uni-passau.de \\ \hline
+        \end{tabular}
+        
+      
+       
+        
+        
+    \end{center}
+\end{titlepage}
+
+
+% Platzierung des Inhaltsverzeichnisses
+\tableofcontents
+\chapter{Benötigte Software}
+Für die Vorbereitung, Einrichtung und Inbetriebnahme der Webapplikation \textbf{ofCourse} wird folgende Software benötigt.
+\begin{itemize}
+	\item Java Runtime Environment 8\\
+	{\it Link:\\} \url{https://www.java.com/de/download/}
+	\item Apache Tomcat 8\\
+	{\it Link:\\} \url{https://tomcat.apache.org/download-80.cgi}
+	\item 7-zip\\
+	{\it Link:\\} \url{http://www.7-zip.de/}
+	\item Notepad++ (oder einen Texteditor Ihrer Wahl)\\
+	{\it Link:\\} \url{https://notepad-plus-plus.org/download/v6.7.9.2.html}
+	\item Webbrowser(z.B. Firefox 38)\\
+	{\it Link:\\} \url{https://www.mozilla.org/de/firefox/new/}
+	\item PostgreSQL Datenbank\\
+	{\it Link:\\} \url{http://de.enterprisedb.com/products-services-training/pgdownload}
+\end{itemize}
+\chapter{Einrichtung des Tomcat Servers}
+\paragraph{The simple way}\ \\
+\ \\
+Laden Sie die JRE von URL
+\begin{center}
+	 \url{https://www.java.com/de/download/}
+\end{center}
+und installieren Sie es auf ihrem System.\ \\
+\ \\
+Laden Sie nun den Tomcat Windows Installer von URL 
+\begin{center}
+	\url{https://tomcat.apache.org/download-80.cgi}
+\end{center}
+herunter und starten Sie den Installationsvorgang indem Sie die heruntergeladene Datei doppelklicken.\\
+Fuehren Sie das Setup durch, bis Sie auf die Seite {\it Configuration} kommen.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\linewidth]{Grafiken/TomcatInstall1}
+\caption{Seite Configuration des Tomcat Setups}
+\label{fig:TomcatInstall1}
+\end{figure}\\
+Aendern Sie den {\it HTTP/1.1 Connector Port} auf \textbf{8003} und legen Sie einen {\it User Name} und ein {\it Password} fuer den Administrator fest.(vgl Abbildung \ref{fig:TomcatInstall1})\\
+\ \\
+Auf der darauffolgenden Seite des Setups werden Sie aufgefordert den Pfad der {\it Java Virtual Machine} anzugeben.\\
+Geben Sie hier den Pfad der im vorherigen installierten {\it Java Runtime Environment} an.\\
+\ \\
+Fuehren Sie nun die Installation zu Ende indem Sie das restliche Setup durchlaufen.\\
+Ihr Tomcat Server ist nun installiert.
+\ \\
+Wechseln Sie nun in da Installationsverzeichnis des Tomcat Servers. Dort finden Sie folgende Dateien:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/TomcatDirectory}
+\caption{Installationsverzeichnis}
+\label{fig:TomcatDirectory}
+\end{figure}\\
+Durch Klicken auf die Datei {\it Tomcat8} starten Sie den Tomcat Server direkt.\\
+\newpage
+\ \\
+Durch Klicken auf die Datei {\it Tomcat8w} oeffnen Sie ein Fenster in dem Sie den Server weiter konfigurieren koennen und durch 
+Betaetigen des \textbf{Start} Buttons starten Sie den Server.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/TomcatStartup}
+\caption{Start/Konfigurationsfenster des Tomcat Servers}
+\label{fig:TomcatStartup}
+\end{figure}
+
+
+\paragraph{The long and hard way}\ \\
+\ \\
+Wenn Sie nicht den Installer verwenden wollen, folgen Sie bitte den Anweisungen unter:
+\begin{center}
+	\url{http://tomcat.apache.org/tomcat-8.0-doc/RUNNING.txt}
+\end{center}
+
+\chapter{Vorbereitung von ofCourse}
+Öffnen Sie die Datei \textbf{ofCourse.war} mit der Software {\it 7Zip}.\\
+Sie sehen nun die im folgenden abgebildeten Ordner:
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.0\linewidth]{Grafiken/7ZipOfCourse1}
+\caption{ofCourse.war in 7Zip geoeffnet}
+\label{fig:7ZipOfCourse1}
+\end{figure}\\
+Navigieren Sie nun zum Ordner \textbf{config}. Diesen erreichen Sie folgendermaßen:
+\begin{center}
+	{\it WEB-INF > config}
+\end{center}
+In diesem Ordner finden Sie die Dateien:
+\begin{itemize}
+	\item ofCourse.properties
+	\item mail.properties
+\end{itemize}
+Diese öffnen Sie nun jeweils mit {\it Notepad++ (oder einem Texteditor Ihrer Wahl)}. Füllen diese Dateien mit ihren Daten und speichern Sie. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{Grafiken/propertiesComplete}
+\caption{Zu füllende Dateien}
+\label{fig:propertiesComplete}
+\end{figure}\ \\
+\textbf{ofCourse} ist nun mit ihren Daten konfiguriert.\\
+\chapter{Deployment ofCourse}
+Starten Sie nun ihren Tomcat Server. Durch Eingabe von
+\begin{center}
+		{\it http://localhost:8003}
+\end{center}
+werden Sie auf die Startseite des Servers geleitet. Hier Betätigen Sie den Button \textbf{Manager App} auf der rechten Seite.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/ServerStartPage}
+\caption{Startseite des Tomcat Servers}
+\label{fig:ServerStartPage}
+\end{figure}\\
+Sie werden nun aufgefordert ihre Zugangsdaten einzugeben. Geben Sie die Daten ein, die Sie in {\it Kapitel 2 Einrichten des Tomcat Servers} gewählt haben. 
+\newpage 
+\ \\
+Sie werden nun auf die \textbf{Tomcat Web Application Manager} Seite weitergeleitet.
+Scrollen Sie nach unten, bis Sie den {\it Deploy} - des Servers sehen.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{Grafiken/ServerDeploy}
+\caption{Deploybereich des Tomcat Servers}
+\label{fig:ServerDeploy}
+\end{figure}
+\\
+Druecken Sie nun im Abschnitt {\it WAR file to deploy} den \textbf{Durchsuchen} Button und waehlen sie die {\it ofCourse.war} - Datei aus. Durch Betätigen des Buttons \textbf{Deploy} wird die .war - Datei im Server depolyed.\\
+\ \\
+Sie sehen nun {\it ofCourse} im {\it Application} - Bereich des Servers.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{Grafiken/ApplicationBereichServerDeployed}
+\caption{Application Bereich des Tomcat Servers}
+\label{fig:ApplicationBereichServerDeployed}
+\end{figure}
+\ \\
+\textbf{ofCourse} laeuft nun noch nicht auf ihrem Server. Um die Applikation zu starten, druecken Sie den \textbf{Start} Button bei dem Eintrag {\it ofCourse}.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\linewidth]{Grafiken/ofCourseDeployed}
+\caption{ofCourse laeuft auf dem Server}
+\label{fig:OfCourseDeployed}
+\end{figure}
+\newpage
+\ \\
+\textbf{ofCourse} laeuft nun auf dem Server. Hier können sie auch einstellen nach wie vielen Minuten ohne Taetigkeit die Session zerstoert werden soll.\ \\
+\ \\
+Geben Sie nun im Browser 
+\begin{center}
+	{\it http://localhost:8003/OfCourse/}
+\end{center}
+Sie befinden sich nun auf der Startseite von \textbf{ofCourse}.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{Grafiken/indexPage}
+	\caption[]{Startseite von ofCourse}
+	\label{fig:indexPage1}
+\end{figure} 
+
+\chapter{Erster Login}
+Geben Sie in ihren Browser folgende URL ein:
+\begin{center}
+	{\it http://localhost:8003/OfCourse/}
+\end{center}
+Sie befinden sich nun auf der Startseite von \textbf{ofCourse}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/indexPage}
+\caption[]{Startseite von ofCourse}
+\label{fig:indexPage}
+\end{figure} \ \\
+Durch Betätigen des  gruenen Buttons \textbf{Registrieren/Login} links oben auf der Startseite werden Sie auf die Anmeldeseite weitergeleitet.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/loginPage}
+\caption{Ausschnitt der Anmeldeseite}
+\label{fig:loginPage}
+\end{figure} \newpage
+\ \\
+Füllen Sie nun die Felder {\it Benutzername} und {\it Passwort} mit folgenden Daten aus und Betätigen Sie den \textbf{Anmelden} Button.
+\begin{center}
+	Benutzername: {\it admin1}\\
+	Passwort: {\it Password!123}
+\end{center}
+Sie werden nun auf die \textbf{Meine Kurse} Seite weitergeleitet und sind nun erfolgreich im System angemeldet.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/myCoursesPage}
+\caption{'Meine Kurse' - Seite von ofCourse}
+\label{fig:myCoursesPage}
+\end{figure}
+\ \\
+\ \\
+\begin{center}
+	{\Large Herzlich Willkommen bei \ \\}
+	\ \\
+\includegraphics[width=0.5\linewidth]{logo/name_blau_ofCourse}
+\end{center}
+
+\end{document}

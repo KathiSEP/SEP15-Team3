@@ -256,10 +256,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    // course unit
 	    transaction.start();
 	    try {
-		courseUnit = new CourseUnit();
-		courseUnit.setCourseAdmin(new User());
+		
 		courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
+		
+		if(courseUnit.getCourseAdmin() == null){
+		    courseUnit.setCourseAdmin(new User());
+		}
 
 		start = new Date(courseUnit.getStartime().getTime());
 		end = new Date(courseUnit.getEndtime().getTime());
@@ -450,8 +453,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());
 			tempUnit.setAddress(courseUnit.getAddress());
 
-			if (isUnitInRangeOfCourse(transaction,
-				tempUnit.getStartime(), tempUnit.getEndtime())) {
+			if (isUnitInRangeOfCourse(
+					transaction,
+					tempUnit.getStartime(), 
+					tempUnit.getEndtime())) {
 
 			    // update tempUnit
 			    CourseUnitDAO.updateCourseUnit(transaction,
@@ -465,17 +470,23 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    id, 
 					    true);
 			    if(selectedToInform == informParticipantsOfUnit){
-	                for(User user : participants){
-	                    if(UserDAO.userWantsToBeInformed(transaction, user.getUserID(), courseID)){
-	                        recipients.add(user.getEmail());
-	                    }
+				for(User user : participants){
+				    if(UserDAO.userWantsToBeInformed(
+					    transaction,
+					    user.getUserID(),
+					    courseID)){
+					recipients.add(user.getEmail());
+				    }
 	                    
 	                            
-	                    }
-	                if(!recipients.isEmpty()){
-	                    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());  
-	                }
-	            }       
+				}
+				if(!recipients.isEmpty()){
+				    mailBean.sendCourseEditUnitMail(
+					    	recipients,
+					    	transaction, 
+					    	courseUnit.getCourseUnitID());  
+	                	}
+			    }       
 			    
 			    
 			} else {
@@ -497,14 +508,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    
 		    if(selectedToInform == informParticipantsOfUnit){
 		        for(User user : participants){
-	                if(UserDAO.userWantsToBeInformed(transaction, user.getUserID(), courseID)){
+		            if(UserDAO.userWantsToBeInformed(
+		        	    transaction, 
+		        	    user.getUserID(),
+		        	    courseID)){
 	                    recipients.add(user.getEmail());
+		            }      
 	                }
-	                
-	                        
-	                }
+		        
 	            if(!recipients.isEmpty()){
-	                mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());  
+	                mailBean.sendCourseEditUnitMail(
+	                	recipients, 
+	                	transaction,
+	                	courseUnit.getCourseUnitID());  
 	            }
 		    }		    
 		}
@@ -582,7 +598,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					transaction,
 					user.getUserID(),
 					unitId);
+				if(UserDAO.userWantsToBeInformed(
+					transaction, 
+					user.getUserID(),
+					courseID)){
+				    
 				mailSend.put(unitId, user.getEmail());
+				}
 			    }
 			}
 			// Update account balance of the user
@@ -592,14 +614,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    }
 		    
 		}
-		if(selectedToInform !=0){
-		sortMailAddresses(mailSend);}
-		for(int id : idsToDelete ){
-		 // Delete the unit
-            CourseUnitDAO.deleteCourseUnit(transaction, id);
+		
+		if(selectedToInform == informParticipantsOfUnit 
+			&& !mailSend.isEmpty()){
+		    sortMailAddresses(mailSend);
 		}
+		
+		for(int id : idsToDelete ){
+		    // Delete the unit
+		    CourseUnitDAO.deleteCourseUnit(transaction, id);
+		}
+		
 		// Delete the cycle
-        CycleDAO.deleteCycle(transaction, cycleId);
+		CycleDAO.deleteCycle(transaction, cycleId);
 	    } else {
 
 		List<User> participants = CourseUnitDAO
@@ -610,10 +637,24 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				true);
 		deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 		
-		for(User user : participants){
+		 if(selectedToInform == informParticipantsOfUnit){
+		        for(User user : participants){
+		            if(UserDAO.userWantsToBeInformed(
+		        	    transaction,
+		        	    user.getUserID(),
+		        	    courseID)){
 		    mailToSend.add(user.getEmail());
+		            }
+		       }
 		}
-		mailBean.sendCourseUnitDeleteMail(mailToSend, courseUnit.getCourseUnitID(), transaction);
+		 
+		//Send mails
+		if(!mailToSend.isEmpty()){
+		mailBean.sendCourseUnitDeleteMail(
+			mailToSend, 
+			courseUnit.getCourseUnitID(),
+			transaction);
+		}
 	    }
 	    transaction.commit();
 
@@ -626,16 +667,24 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     }
 
     /**
-     * @param mailSend
+     * Fetches for each course unit that is to delete the email addresses from 
+     * the given HashMap and sends the notification mails for each course unit 
+     * at once.
+     * 
+     * @param mailSend 
+     * 		HashMap that contains the tuples with the id of the unit to 
+     * 		delete as key and the mail address of a participant of the unit 
+     * 		as value
+     * 
+     * @author Fuchs Tobias
      */
     private void sortMailAddresses(HashMap<Integer,String> mailSend) {
 	List<String> recipients;
+	Entry<Integer, String> entry;
         
         while(!mailSend.isEmpty()){
             recipients = new ArrayList<String>();
-            System.out.println("hier");
-            Entry<Integer, String> entry = mailSend.entrySet().iterator().next();
-            System.out.println("hier1");
+            entry = mailSend.entrySet().iterator().next();
             recipients.add(entry.getValue());
             mailSend.remove(entry.getKey(), entry.getValue());
             
@@ -645,11 +694,12 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
                 mailSend.remove(entry.getKey(), mailAdress);
             }
             
-            if(recipients != null&& entry.getKey()!=null && transaction != null){
-        	System.out.println(entry.getKey());
-            mailBean.sendCourseUnitDeleteMail(recipients, entry.getKey(), transaction);
-        }}
-        
+            //Send emails
+            mailBean.sendCourseUnitDeleteMail(
+        	    recipients,
+        	    entry.getKey(),
+        	    transaction);
+        } 
     }
 
     /**
@@ -669,17 +719,25 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	try {
 	    List<User> participants = CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(trans, pagination, unitId,
+		    .getParticipiantsOfCourseUnit(
+			    trans,
+			    getPagination(), 
+			    unitId,
 			    true);
 
 	    for (User user : participants) {
-		CourseUnitDAO.removeUserFromCourseUnit(trans, user.getUserID(),
-			unitId);
+		CourseUnitDAO.removeUserFromCourseUnit(
+			    trans, 
+			    user.getUserID(),
+			    unitId);
 		float newAccountBalance = calculateNewAccountBalance(
-			(CourseUnitDAO.getPriceOfUnit(trans, unitId)), user,
+			(CourseUnitDAO.getPriceOfUnit(trans, unitId)),
+			user,
 			false);
-		UserDAO.updateAccountBalance(trans, user.getUserID(),
-			newAccountBalance);
+		UserDAO.updateAccountBalance(
+			    trans, 
+			    user.getUserID(),
+			    newAccountBalance);
 	    }
 	    CourseUnitDAO.deleteCourseUnit(trans, unitId);
 
@@ -689,40 +747,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    throw new InvalidDBTransferException();
 	}
     }
-
-    /**
-     * Fetches the mail addresses of the users who want to be informed about
-     * changes of a course course unit they participate.
-     * 
-     * @param trans
-     *            the Transaction object which contains the connection to the
-     *            database
-     * @param participants
-     *            list of users
-     * 
-     * @author Tobias Fuchs
-     */
-//    private void sendMailToSelected(Transaction trans, User user,
-//	    boolean delete) {
-//	int recipientsGroup = getSelectedToInform();
-//
-//	    if (recipientsGroup == informParticipantsOfUnit) {
-//		if (CourseUnitDAO.userWantsToBeInformed(transaction,
-//			user.getUserID(), courseID)) {
-//		     
-//		    if (delete) {
-//			mailBean.sendCourseUnitDeleteMail(user.getEmail(), courseUnit.getCourseUnitID(),
-//				transaction);
-//		    } else {
-//			mailBean.sendCourseEditUnitMail(Arrays.asList(user.getEmail()), transaction,
-//				courseUnit.getCourseUnitID());
-//		    }
-//		    
-//		}
-//
-//	    }
-//	
-//    }
 
     /**
      * Calculates and returns the account balance of a user is he signs up/signs
@@ -779,7 +803,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	    // Updates the shown list with the actual data
 	    List<User> temp = CourseUnitDAO.getParticipiantsOfCourseUnit(
-		    transaction, pagination, courseUnitID, false);
+		    			transaction, 
+		    			getPagination(), 
+		    			courseUnitID, 
+		    			false);
 
 	    participants.setWrappedData(temp);
 	    transaction.commit();
@@ -995,8 +1022,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	//Fetch the participants for the next page
 	try {
 	    participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitID, false));
+		    .getParticipiantsOfCourseUnit(
+			    transaction,
+			    getPagination(),
+			    courseUnitID,
+			    false));
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
@@ -1024,8 +1054,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();	
 	try {
 	    participants.setWrappedData(CourseUnitDAO
-		    .getParticipiantsOfCourseUnit(transaction, pagination,
-			    courseUnitID, false));
+		    .getParticipiantsOfCourseUnit(
+			    transaction, 
+			    getPagination(),
+			    courseUnitID,
+			    false));
 	    transaction.commit();
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
