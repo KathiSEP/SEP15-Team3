@@ -88,7 +88,6 @@ public class UserProfileBean {
     @PostConstruct
     private void init() {
     	readOnly = true;
-    	password = null;
 
     	transaction = Connection.create();
 
@@ -96,8 +95,6 @@ public class UserProfileBean {
     	    transaction.start();
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
     	                .getExternalContext().getRequestParameterMap().get("userID"));
-            //pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));
-            //managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
     		user = UserDAO.getUser(transaction, userID);
 
     		transaction.commit();
