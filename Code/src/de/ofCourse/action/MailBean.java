@@ -35,6 +35,7 @@ import de.ofCourse.model.SmtpServer;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.MailThread;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PropertyManager;
 
@@ -125,35 +126,45 @@ public class MailBean {
         }                        
 
         
-        Session session = Session.getDefaultInstance(prop, loginAuth);
         
-        try{
-            // https://javamail.java.net/nonav/docs/api/
-            MimeMessage mail = new MimeMessage(session);
-            
-            mail.setFrom(new InternetAddress(smtpServer.getUsername()));
-            
-            for(String mailAddresse : recipients){
-                mail.addRecipients(Message.RecipientType.TO, mailAddresse);
+        Thread t = new Thread(new MailThread(prop, loginAuth, smtpServer, recipients, subject, message){
+
+            @Override
+            public void run() {
+                try{
+                    // https://javamail.java.net/nonav/docs/api/
+                    Session session = Session.getDefaultInstance(prop, loginAuth);
+                    MimeMessage mail = new MimeMessage(session);
+                    
+                    mail.setFrom(new InternetAddress(smtpServer.getUsername()));
+                    
+                    for(String mailAddresse : recipients){
+                        mail.setRecipients(Message.RecipientType.BCC, mailAddresse);
+                    }
+                    
+                    
+                    mail.setSubject(subject);
+                    mail.setText(message);
+                                           
+                    Transport transport = session.getTransport("smtp");
+                    
+                    
+                    transport.connect(smtpServer.getHostaddr(), smtpServer.getUsername(), smtpServer.getPassword());
+                    transport.sendMessage(mail, mail.getAllRecipients());
+                    transport.close();
+                    
+                    
+                }catch (MessagingException e){
+                    LogHandler.getInstance().error("Error occured while sending mail");
+                    
+                }
             }
             
-            
-            mail.setSubject(subject);
-            mail.setText(message);
-                                   
-            Transport transport = session.getTransport("smtp");
-            
-            
-            transport.connect(smtpServer.getHostaddr(), smtpServer.getUsername(), smtpServer.getPassword());
-            transport.sendMessage(mail, mail.getAllRecipients());
-            transport.close();
-            
-            System.out.println("Mail wird verschickt");
-        }catch (MessagingException e){
-            //TODO Logging
-            System.out.println("Fehler!");
-            
-        }
+        });
+        t.start();
+        
+        
+        
     }
 
     /**
@@ -332,24 +343,24 @@ public class MailBean {
      * @param recipients
      * @param CourseUnit
      */
-    public void sendCourseUnitDeleteMail(String userMail, int CourseUnit){
-        Transaction trans = Connection.create();
-        trans.start();
+    public void sendCourseUnitDeleteMail(List<String> recipients, int CourseUnit, Transaction transaction){
+          
         try{
-            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(trans, CourseUnit);
+            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(transaction, CourseUnit);
             
             String subject = "CourseUnit: " +  editCourseUnit.getTitle() + " has been deleted";
 
             String message = "Dear User, \n \n";
             
-            message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at" + editCourseUnit.getStartime() + "has been deleted. \n";
+            message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at " + editCourseUnit.getStartime() + " has been deleted. \n";
             message += "Please visit the OfCourse WebPage for further Information: \n\n";
             //message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
             message += createSignature();
             
-            sendSingleMail(userMail, subject, message);
+            sendMail(recipients, subject, message);
         
         }catch (InvalidDBTransferException e){
+            
             LogHandler.getInstance().error("Error occured during sendCourseUnitEditMail");
         }
             
@@ -363,11 +374,11 @@ public class MailBean {
      * @param recipients
      * @param CourseUnit
      */
-    public void sendCourseEditUnitMail(List<String> recipients, int CourseUnit){
-        Transaction trans = Connection.create();
-        trans.start();
+    public void sendCourseEditUnitMail(List<String> recipients,Transaction transaction, int CourseUnit){
+        
+        
         try{
-            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(trans, CourseUnit);
+            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(transaction, CourseUnit);
             
             String subject = "CourseUnit: " +  editCourseUnit.getTitle() + " has changed";
             

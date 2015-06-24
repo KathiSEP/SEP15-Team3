@@ -169,7 +169,7 @@ public class CourseDetailBean implements Pagination, Serializable {
     private void init() {
     	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
     	            .getExternalContext().getRequestParameterMap().get("courseID"));
-    	pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
+    	pagination = new PaginationData(pageElements, 0, SortColumn.START_TIME, SortDirection.ASC);
     
     	leaderToAdd = new User();
     	transaction = Connection.create();

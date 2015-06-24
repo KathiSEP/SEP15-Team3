@@ -7,7 +7,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -406,6 +409,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     public String saveCourseUnit() {
 	CourseUnit tempUnit = null;
+	List<String> recipients = new ArrayList<String>();
 
 	if (checkDate()) {
 
@@ -462,19 +466,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    id, 
 					    true);
 			    for(User user : participants){
-
-			        Thread t = new Thread(new MailThread(){
-
-	                    @Override
-	                    public void run() {
-	                        sendMailToSelected(transaction, user, true);
-	                        
-	                    }
-	                    
-	                });
-	                t.start();
-	                }
-			    
+			        recipients.add(user.getEmail());
+                        
+			    } 
+			    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());
 			} else {
 			    LogHandler.getInstance().debug("Unit "
 					    + tempUnit.getCourseUnitID()
@@ -492,17 +487,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				    pagination, courseUnit.getCourseUnitID(),
 				    true);
 		    for(User user : participants){
-		        Thread t = new Thread(new MailThread(){
-
-                    @Override
-                    public void run() {
-                        sendMailToSelected(transaction, user, true);
+		        recipients.add(user.getEmail());
                         
-                    }
-		            
-		        });
-		        t.start();
-			}
+                }
+		    
+		    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());        
+		        
+			
 		    
 		}
 		transaction.commit();
@@ -535,6 +526,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     public String deleteCourseUnit() {
 	transaction.start();
 	int cycleId = 0;
+	List<String> mailToSend = new ArrayList<String>();
+	HashMap<Integer, String> mailSend = new HashMap<Integer, String> ();
+	
 	try {
 	    // If all units of a cycle are to delete
 	    if (courseUnit.getCycle() != null && completeCycle) {
@@ -575,10 +569,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					transaction,
 					user.getUserID(),
 					unitId);
-				 sendMailToSelected(
-					 transaction,
-					 user,
-					 true);
+				mailSend.put(unitId, user.getEmail());
 			    }
 			}
 			// Update account balance of the user
@@ -591,7 +582,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		}
 		// Delete the cycle
 		CycleDAO.deleteCycle(transaction, cycleId);
-
+		sortMailAddresses(mailSend);
 	    } else {
 
 		List<User> participants = CourseUnitDAO
@@ -603,8 +594,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		deleteSingleUnit(transaction, courseUnit.getCourseUnitID());
 		
 		for(User user : participants){
-
-		sendMailToSelected(transaction, user, true);}
+		    mailToSend.add(user.getEmail());
+		}
+		mailBean.sendCourseUnitDeleteMail(mailToSend, courseUnit.getCourseUnitID(), transaction);
 	    }
 	    transaction.commit();
 
@@ -614,6 +606,29 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    "Error occured during deleting" + " a course unit.");
 	}
 	return URL_COURSE_DETAIL;
+    }
+
+    /**
+     * @param mailSend
+     */
+    private void sortMailAddresses(HashMap<Integer,String> mailSend) {
+        
+        
+        while(!mailSend.isEmpty()){
+            List<String> recipients = new ArrayList<String>();
+            Entry<Integer, String> entry = mailSend.entrySet().iterator().next();
+            recipients.add(entry.getValue());
+            mailSend.remove(entry.getKey(), entry.getValue());
+            
+            while(mailSend.get(entry.getKey()) != null){
+                String mailAdress = mailSend.get(entry.getKey());
+                recipients.add(mailAdress);
+                mailSend.remove(entry.getKey(), mailAdress);
+            }
+            
+            mailBean.sendCourseUnitDeleteMail(recipients, entry.getKey(), transaction);
+        }
+        
     }
 
     /**
@@ -666,27 +681,27 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @author Tobias Fuchs
      */
-    private void sendMailToSelected(Transaction trans, User user,
-	    boolean delete) {
-	int recipientsGroup = getSelectedToInform();
-
-	    if (recipientsGroup == informParticipantsOfUnit) {
-		if (CourseUnitDAO.userWantsToBeInformed(transaction,
-			user.getUserID(), courseID)) {
-		    
-		    if (delete) {
-			mailBean.sendCourseUnitDeleteMail(user.getEmail(),
-				courseUnit.getCourseUnitID());
-		    } else {
-			mailBean.sendCourseEditUnitMail(Arrays.asList(user.getEmail()),
-				courseUnit.getCourseUnitID());
-		    }
-		    
-		}
-
-	    }
-	
-    }
+//    private void sendMailToSelected(Transaction trans, User user,
+//	    boolean delete) {
+//	int recipientsGroup = getSelectedToInform();
+//
+//	    if (recipientsGroup == informParticipantsOfUnit) {
+//		if (CourseUnitDAO.userWantsToBeInformed(transaction,
+//			user.getUserID(), courseID)) {
+//		     
+//		    if (delete) {
+//			mailBean.sendCourseUnitDeleteMail(user.getEmail(), courseUnit.getCourseUnitID(),
+//				transaction);
+//		    } else {
+//			mailBean.sendCourseEditUnitMail(Arrays.asList(user.getEmail()), transaction,
+//				courseUnit.getCourseUnitID());
+//		    }
+//		    
+//		}
+//
+//	    }
+//	
+//    }
 
     /**
      * Calculates and returns the account balance of a user is he signs up/signs

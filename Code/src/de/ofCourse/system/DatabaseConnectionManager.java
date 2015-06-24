@@ -105,7 +105,7 @@ public class DatabaseConnectionManager {
 	    
 	    // There's no free connection
 	    try {
-		wait(3000);
+		wait(5000);
 	    } catch (InterruptedException e) {
 		    LogHandler.getInstance().error(
 			    "Error occured during waiting"
