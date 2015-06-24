@@ -3,15 +3,16 @@
  */
 package de.ofCourse.customValidator;
 
-import java.sql.SQLException;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
+import de.ofCourse.action.SessionUserBean;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
@@ -28,6 +29,9 @@ import de.ofCourse.system.Transaction;
 @FacesValidator("userNameValidator")
 public class UserNameValidator implements Validator {
 
+    @ManagedProperty("#{sessionUser}")
+    private SessionUserBean sessionUser;
+    
     /**
      * Gets called when you want to register or change your user name when
      * you’re already registered. The method checks if the entered user name
@@ -43,7 +47,8 @@ public class UserNameValidator implements Validator {
         if (username.length() < 5 || username.length() > 100) {
             throw new ValidatorException(
                     new FacesMessage(
-                            "Der Benutzername muss zwischen 5 und 100 Zeichen lang sein."));
+                            sessionUser.getLabel(
+                                    "authenticate.validator.UserNameLength")));
         }
 
         Transaction transaction = new Connection();
