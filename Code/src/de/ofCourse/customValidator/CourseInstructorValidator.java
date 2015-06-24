@@ -7,6 +7,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
@@ -24,6 +25,7 @@ import de.ofCourse.system.Transaction;
  * @author Katharina Hölzl
  *
  */
+@FacesValidator("courseInstructorValidator")
 public class CourseInstructorValidator implements Validator {
 
     @ManagedProperty("#{sessionUser}")
