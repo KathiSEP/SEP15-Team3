@@ -41,6 +41,8 @@ import de.ofCourse.utilities.LanguageManager;
 
 
 /**
+ * JUnit test for the class CourseUnitManagementBean.
+ * 
  * @author Tobias Fuchs
  *
  */
@@ -50,34 +52,44 @@ import de.ofCourse.utilities.LanguageManager;
 	FacesContext.class, PaginationData.class, LanguageManager.class, FacesMessageCreator.class })
 public class CourseUnitManagementBeanTest {
 
+    //bean attribute
     private CourseUnitManagementBean bean;
 
     // RequestparameterMap
     private Map<String, String> pm;
 
+    // participant user
     private User part;
+    
+    //Course units
     private CourseUnit unit;
     private CourseUnit unit2;
     private CourseUnit unit3;
+    
+    //corresponding course
     private Course course;
     
+    //SessionUserBean to define the language
     private SessionUserBean sessionUser;
 
+    //Cycle of regular course unit
     @SuppressWarnings("unused")
     private String enteredTurnus;
     private Cycle cycle;
 
-    private PaginationData pagination;
 
+    //Participants lists of the course units
     private List<User> participants;
-
     private List<User> participants2;
     private List<User> participants3;
 
     private LanguageManager myLang;
 
+    // Connection for database access
     private Connection conn;
 
+    private PaginationData pagination;
+    
     @SuppressWarnings("deprecation")
     @Before
     public void setup() {
@@ -110,14 +122,19 @@ public class CourseUnitManagementBeanTest {
 
 	// Mock CycleaDAO
 	PowerMockito.mockStatic(CycleDAO.class);
+	
+	//Mock LanguageManagerCreator
+	PowerMockito.mockStatic(LanguageManager.class);
+	myLang = mock(LanguageManager.class);
+	
+	// Mock FacesMessageCreator
+	PowerMockito.mockStatic(FacesMessageCreator.class);
+	
 
 	// Create courseUnit
 	CourseUnit cu1 = new CourseUnit();
 	cu1.setStartime(new GregorianCalendar(2015, 6, 1).getTime());
 	cu1.setEndtime(new GregorianCalendar(2015, 6, 2).getTime());
-
-	// Determine the return value of getCourseUnit
-	Mockito.when(CourseUnitDAO.getCourseUnit(conn, 1)).thenReturn(cu1);
 
 	// Initialization work
 	participants = new ArrayList<User>();
@@ -160,7 +177,7 @@ public class CourseUnitManagementBeanTest {
 	pagination.setElementsPerPage(10);
 	pagination.setNumberOfPages(1);
 	pagination.setSortDirection(SortDirection.ASC);
-	pagination.setSortColumn(SortColumn.TITEL);
+	pagination.setSortColumn(SortColumn.TITLE);
 
 	course = new Course();
 	course.setStartdate(new Date(2015, 1, 1));
@@ -178,46 +195,51 @@ public class CourseUnitManagementBeanTest {
 	sessionUser = new SessionUserBean();
 	sessionUser.setLanguage(Language.DE);
 	
+	List<Integer> idsToDelete = new ArrayList<Integer>();
+	idsToDelete.add(1);
+	idsToDelete.add(2);
+	idsToDelete.add(3);
 	
+	// Determine the return values of called static methods
+	Mockito.when(CourseUnitDAO.getCourseUnit(conn, 1)).thenReturn(cu1);
 	
-	PowerMockito.mockStatic(LanguageManager.class);
-	myLang = mock(LanguageManager.class);
-	Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
-	
-	PowerMockito.mockStatic(FacesMessageCreator.class);
-	
-	Mockito.when(
-		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1,
-			false)).thenReturn(participants);
+	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(
+		conn,
+		pagination,
+		1,
+		false)).thenReturn(participants);
 
 	Mockito.when(CourseDAO.getCourse(conn, 1)).thenReturn(course);
 
 	Mockito.when(CycleDAO.createCycle(conn, 1, cycle)).thenReturn(1);
 
-	ArrayList<Integer> idsToDelete = new ArrayList<Integer>();
-	idsToDelete.add(1);
-	idsToDelete.add(2);
-	idsToDelete.add(3);
-
 	Mockito.when(CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1))
 		.thenReturn(idsToDelete);
 
-	Mockito.when(
-		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1,
-			true)).thenReturn(participants);
-	Mockito.when(
-		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2,
-			true)).thenReturn(participants2);
-	Mockito.when(
-		CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3,
-			true)).thenReturn(participants2);
+	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(
+		conn,
+		pagination,
+		1,	
+		true)).thenReturn(participants);
+	
+	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(
+		conn,
+		pagination,
+		2,
+		true)).thenReturn(participants2);
+	
+	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(
+		conn,
+		pagination,
+		3,
+		true)).thenReturn(participants2);
 
-	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 1)).thenReturn(
-		(float) 2.0);
-	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 2)).thenReturn(
-		(float) 2.0);
-	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 3)).thenReturn(
-		(float) 2.0);
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 1))
+		.thenReturn((float) 2.0);
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 2))
+		.thenReturn((float) 2.0);
+	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 3))
+		.thenReturn((float) 2.0);
 
 	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 1))
 		.thenReturn(true);
@@ -225,11 +247,17 @@ public class CourseUnitManagementBeanTest {
 		.thenReturn(true);
 	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 3))
 		.thenReturn(true);
+	
+	Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
 
 	// Create the course unit management
 	bean = new CourseUnitManagementBean();
     }
 
+    
+    /**
+     * Tests the addUserToCourseUnit() - method
+     */
     @Test
     public void testAddUserToCourseUnit() {
 	// Initializes the session
@@ -240,6 +268,7 @@ public class CourseUnitManagementBeanTest {
 	// Initializes the Bean
 	bean.init();
 
+	//Does some further initialization
 	bean.setPagination(pagination);
 	bean.setCourseUnit(unit);
 	bean.setUserToAdd(part);
@@ -248,7 +277,7 @@ public class CourseUnitManagementBeanTest {
 	// Adds user part to course unit unit
 	bean.addUserToCourseUnit();
 
-	// Checks whether the methods were executed
+	// Checks whether the methods were executed correctly
 	PowerMockito.verifyStatic();
 	UserDAO.updateAccountBalance(conn, 1, 18);
 
@@ -258,9 +287,11 @@ public class CourseUnitManagementBeanTest {
 
 	PowerMockito.verifyStatic();
 	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, false);
-
     }
 
+    /**
+     * Tests the deleteCourseUnit - method
+     */
     @Test
     public void testDeleteCourseUnit() {
 
@@ -269,12 +300,13 @@ public class CourseUnitManagementBeanTest {
 	pm.put("courseID", "1");
 	pm.put("courseUnitID", "1");
 
+	//Initialization work
 	bean.init();
 	bean.setPagination(pagination);
 	bean.setCourseUnit(unit);
-
 	bean.setCompleteCycle(true);
 
+	// Executes the deleteCourseUnit() method
 	String url = bean.deleteCourseUnit();
 
 	// Checks whether the methods were executed
@@ -331,10 +363,13 @@ public class CourseUnitManagementBeanTest {
 	PowerMockito.verifyStatic();
 	CycleDAO.deleteCycle(conn, 0);
 
+	//Checks whether you are redirected to course details page
 	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
-
     }
 
+    /**
+     * Tests the createCourseUnit() - method
+     */
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateCourseUnit() {
@@ -343,6 +378,7 @@ public class CourseUnitManagementBeanTest {
 	pm.put("courseID", "1");
 	pm.put("courseUnitID", "1");
 
+	//Initialization work
 	bean.init();
 	bean.setCourseUnit(unit);
 	bean.setEnteredTurnus("WEEKS");
@@ -355,6 +391,7 @@ public class CourseUnitManagementBeanTest {
 	bean.setStart(new Date(2015, 2, 2, 12, 0));
 	bean.setEnd(new Date(2015, 2, 2, 14, 0));
 
+	// Checks whether you are redirected to course detail page
 	String url = bean.createCourseUnit();
 	assertEquals(url, "/facelets/open/courses/courseDetail.xhtml");
 
@@ -377,9 +414,9 @@ public class CourseUnitManagementBeanTest {
 	bean.setEnd(new Date(2016, 2, 2, 14, 0));
         bean.setSessionUser(sessionUser);
 	
+        // Check whether you stay on the same page in case of the entered dates
+        // are not in range of the course
 	String url2 = bean.createCourseUnit();
 	assertEquals(url2, "x");
-
     }
-
 }
