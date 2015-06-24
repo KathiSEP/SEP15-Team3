@@ -65,6 +65,20 @@ public class CourseManagementBean {
     private Integer courseLeaderID;
 
     /**
+     * Represents the url of the createCourse page
+     */
+    private final static String URL_CREATE_COURSE =
+                                    "/facelets/user/systemAdministrator/"
+                                    + "createCourse.xhtml?faces-redirect=false";
+    
+    /**
+     * Represents the url of the courseDetail page
+     */
+    private final static String URL_COURSE_DETAIL =
+                                    "/facelets/open/courses/courseDetail.xhtml?"
+                                    + "faces-redirect=true&courseID=";
+    
+    /**
      * Initialization of objects.
      */
     @PostConstruct
@@ -98,28 +112,32 @@ public class CourseManagementBean {
 
             if (createdCourseID < 0 || leaderAddOK == false) {
 
-                // Throwing error message into the faces context.
-                FacesMessageCreator.createFacesMessage(null,
-                        "Beim Erstellen des Kurses trat ein Fehler auf!");
+                // Throwing error message into the faces context:
+                // Mistake in creating course'
+                FacesMessageCreator.createFacesMessage(
+                        null,
+                        sessionUser.getLabel(
+                           "courseManagementBean.facesMessage.CourseMistake"));
 
-                return "/facelets/user/systemAdministrator/"
-                        + "createCourse.xhtml?faces-redirect=false";
+                return URL_CREATE_COURSE;
             } else {
 
-                // Throwing success message into the faces context..
-                FacesMessageCreator.createFacesMessage(null,
-                        "Kurs wurde erfolgreich angelegt!");
-                return "/facelets/open/courses/courseDetail.xhtml?"
-                        + "faces-redirect=true&courseID="
-                        + createdCourseID;
+                // Throwing success message into the faces context:
+                // 'Course creation successful'
+                FacesMessageCreator.createFacesMessage(
+                     null,
+                     sessionUser.getLabel(
+                         "courseManagementBean.facesMessage.CourseSuccessful"));
+                return URL_COURSE_DETAIL + createdCourseID;
             }
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
-            FacesMessageCreator.createFacesMessage(null,
-                    "Problem beim Anlegen des Kurses!");
+            FacesMessageCreator.createFacesMessage(
+                    null,
+                    sessionUser.getLabel(
+                            "courseManagementBean.facesMessage.CourseMistake"));
         }
-        return "/facelets/user/systemAdministrator/createCourse.xhtml?"
-                + "faces-redirect=false";
+        return URL_CREATE_COURSE;
     }
 
     /**
