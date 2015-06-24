@@ -4,11 +4,13 @@
 package de.ofCourse.customValidator;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
+import de.ofCourse.action.SessionUserBean;
 import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -24,6 +26,9 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseInstructorValidator implements Validator {
 
+    @ManagedProperty("#{sessionUser}")
+    private SessionUserBean sessionUser;
+    
     /**
      * TGets called when you want to add a course instructor to a course unit or
      * to a course. The method checks if the entered name of the course

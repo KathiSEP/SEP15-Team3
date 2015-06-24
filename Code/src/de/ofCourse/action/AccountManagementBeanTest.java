@@ -34,18 +34,26 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
 import de.ofCourse.system.Connection;
+import de.ofCourse.utilities.LanguageManager;
 import de.ofCourse.model.User;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Connection.class, UserDAO.class, PaginationData.class, FacesMessage.class, FacesMessageCreator.class, InvalidDBTransferException.class, FacesContext.class})
+@PrepareForTest({Connection.class, UserDAO.class, PaginationData.class, 
+    FacesMessage.class, FacesMessageCreator.class, InvalidDBTransferException.class, 
+    FacesContext.class, LanguageManager.class})
 public class AccountManagementBeanTest {
     
     // Create new Bean for testing
     private AccountManagementBean accountManagementBean;
+    
+    private SessionUserBean sessionUser;
+    
+    private LanguageManager languageManager;
     
     // Create necessary attributes of the test bean
     private PaginationData pagination;
@@ -90,8 +98,25 @@ public class AccountManagementBeanTest {
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
+        
+        sessionUser = new SessionUserBean();
+        sessionUser.setLanguage(Language.DE);
                 
-        // Moch the database class statically.
+        //Mock LanguageManagerCreator
+        PowerMockito.mockStatic(LanguageManager.class);
+        languageManager = mock(LanguageManager.class);
+ 
+        Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("AccountManagementBean.facesMessage.NoUsers", Language.DE)).
+                thenReturn("Keine Benutzer ausgewählt!");
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("AccountManagementBean.facesMessage.ActivationSucceed", Language.DE)).
+                thenReturn("Benutzer erfolgreich aktiviert!");
+        
+        // Mock the database class statically.
         PowerMockito.mockStatic(UserDAO.class);
         
         // Specify what the methods of the database should return by specific requests.
@@ -128,7 +153,7 @@ public class AccountManagementBeanTest {
         pagination.setSortColumn(SortColumn.NICKNAME);
         
         Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).thenReturn(notAdminActivatedUsers);
-        
+                
         // Initialize the captor for the FacesMessages.
         clientIdCaptor = ArgumentCaptor.forClass(String.class);
         facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
@@ -141,6 +166,8 @@ public class AccountManagementBeanTest {
     public void test() {
         // Initialize new test bean.
         accountManagementBean = new AccountManagementBean();
+        
+        accountManagementBean.setSessionUser(sessionUser);
         
         // Set necessary attributes.
         DataModel<User> dataModelUserList = new ListDataModel<User>();

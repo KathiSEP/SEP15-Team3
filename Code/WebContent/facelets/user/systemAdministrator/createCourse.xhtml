@@ -63,7 +63,7 @@
                                             <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.instructorID')}:</span>
                                             <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}" 
-                                                id="IdOfCourseLeader">
+                                                id="IdOfCourseLeader" converterMessage="Bitte positive Zahl eingeben.">
                                                 <f:validator validatorId="courseInstructorValidator"/>
                                                 </h:inputText>
                                             

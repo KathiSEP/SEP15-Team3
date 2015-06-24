@@ -29,13 +29,21 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
+import de.ofCourse.model.Language;
 import de.ofCourse.system.Connection;
+import de.ofCourse.utilities.LanguageManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Connection.class, CourseDAO.class, FacesMessage.class, FacesMessageCreator.class, InvalidDBTransferException.class, FacesContext.class})
+@PrepareForTest({Connection.class, CourseDAO.class, FacesMessage.class, 
+    FacesMessageCreator.class, InvalidDBTransferException.class, 
+    FacesContext.class, LanguageManager.class})
 public class CourseManagementBeanTest extends TestCase{
     
     private CourseManagementBean courseManagementBean;
+    
+    private SessionUserBean sessionUser;
+    
+    private LanguageManager languageManager;
     
     @Mock
     FacesContext facesContext;
@@ -71,6 +79,23 @@ public class CourseManagementBeanTest extends TestCase{
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
+        
+        sessionUser = new SessionUserBean();
+        sessionUser.setLanguage(Language.DE);
+                
+        //Mock LanguageManagerCreator
+        PowerMockito.mockStatic(LanguageManager.class);
+        languageManager = mock(LanguageManager.class);
+ 
+        Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("courseManagementBean.facesMessage.CourseMistake", Language.DE)).
+                thenReturn("Beim Erstellen des Kurses trat ein Fehler auf!");
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("courseManagementBean.facesMessage.CourseSuccessful", Language.DE)).
+                thenReturn("Kurs wurde erfolgreich angelegt!");
                 
         PowerMockito.mockStatic(CourseDAO.class);
         
@@ -103,6 +128,8 @@ public class CourseManagementBeanTest extends TestCase{
     @Test
     public void test() {
         courseManagementBean = new CourseManagementBean();
+        
+        courseManagementBean.setSessionUser(sessionUser);
         
         courseManagementBean.setCourse(wrongCourse);
         

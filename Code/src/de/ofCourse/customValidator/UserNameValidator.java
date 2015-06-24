@@ -46,9 +46,7 @@ public class UserNameValidator implements Validator {
 
         if (username.length() < 5 || username.length() > 100) {
             throw new ValidatorException(
-                    new FacesMessage(
-                            sessionUser.getLabel(
-                                    "authenticate.validator.UserNameLength")));
+                    new FacesMessage("Test"));
         }
 
         Transaction transaction = new Connection();

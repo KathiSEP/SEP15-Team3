@@ -249,6 +249,7 @@ public class RegisterUserBean {
      *            session of the user
      */
     public void setSessionUser(SessionUserBean userSession) {
+        this.sessionUser = userSession;
     }
 
     /**

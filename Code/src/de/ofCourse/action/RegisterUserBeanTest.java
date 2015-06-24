@@ -25,16 +25,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.utilities.LanguageManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Connection.class, UserDAO.class, FacesMessage.class, 
                         MailBean.class, FacesMessageCreator.class, 
-                        InvalidDBTransferException.class, FacesContext.class})
+                        InvalidDBTransferException.class, FacesContext.class,
+                        LanguageManager.class})
 public class RegisterUserBeanTest {
 
     private RegisterUserBean registerUserBean; 
+    
+    private SessionUserBean sessionUser;
+    
+    private LanguageManager languageManager;
     
     @Mock
     private MailBean mailBean;
@@ -76,6 +83,29 @@ public class RegisterUserBeanTest {
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
+        
+        sessionUser = new SessionUserBean();
+        sessionUser.setLanguage(Language.DE);
+                
+        //Mock LanguageManagerCreator
+        PowerMockito.mockStatic(LanguageManager.class);
+        languageManager = mock(LanguageManager.class);
+ 
+        Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("registerUserBean.facesMessage.EmailExisting", Language.DE)).
+                thenReturn("E-Mail existiert bereits!");
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("registerUserBean.facesMessage.SuccessfulRegistration", Language.DE)).
+                thenReturn("Sie haben sich erfolgreich im System registriert. "
+                            + "Bitte bestätigen Sie den Aktivierungslink aus der "
+                            + "Verifizierungsmail!");
+        
+        Mockito.when(LanguageManager.getInstance().
+                getProperty("registerUserBean.facesMessage.AGB", Language.DE)).
+                thenReturn("Bitte AGBs bestätigen!");
                 
         PowerMockito.mockStatic(UserDAO.class);
         
@@ -113,8 +143,11 @@ public class RegisterUserBeanTest {
         registerUserBean = new RegisterUserBean();
       
         requestParameterMap.clear();
-        requestParameterMap.put("veri", correctVeriString);
+        requestParameterMap.put("veri", correctVeriString);        
+        
         registerUserBean = new RegisterUserBean();
+        
+        
        
         registerUserBean.setMailBean(mailBean);
                
@@ -136,6 +169,8 @@ public class RegisterUserBeanTest {
         registerUserBean.setRegisterConfirmPassword("Test123#");       
         
         registerUserBean.setUserToRegistrate(user);
+        
+        registerUserBean.setSessionUser(sessionUser);
         
         // Test auf AGB
         assertEquals(registerUserBean.registerUser(), 
