@@ -153,9 +153,12 @@ public class AccountManagementBean implements Pagination {
                                 UserDAO.getNotAdminActivatedUsers
                                                         (this.transaction, 
                                                          this.getPagination()));
-                        
+                        //FacesMessage: 'User activation successful'
                         FacesMessageCreator.createFacesMessage(
-                                 null, "Benutzer erfolgreich aktiviert!");
+                                 null,
+                                 sessionUser.getLabel(
+                                         "AccountManagementBean.facesMessage."
+                                         + "ActivationSucceed"));
                     }
                     this.transaction.commit();
                 
@@ -166,8 +169,11 @@ public class AccountManagementBean implements Pagination {
                 this.transaction.rollback();
                }
          } else {
+             //FacesMessage: 'No users selected'
             FacesMessageCreator.createFacesMessage(
-                    null, "Keine Benutzer ausgewählt!");            
+                    null, 
+                    sessionUser.getLabel(
+                            "AccountManagementBean.facesMessage.NoUsers"));            
         }
     }
 

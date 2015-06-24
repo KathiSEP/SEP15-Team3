@@ -111,13 +111,19 @@ public class ListParticipantsBean implements Pagination {
                                         SortColumn.NICKNAME, SortDirection.ASC);
         }
         catch (Exception e) {
-            FacesMessageCreator.createFacesMessage
-                    (null, "Die Seite wurde mit keinem Parameter aufgerufen!");
+            // FacesMessage: ' The page was called without a parameter'
+            FacesMessageCreator.createFacesMessage(
+                    null, 
+                    sessionUser.getLabel(
+                            "listParticipantsBean.facesMessage.NoParameter"));
         }
         
         if(this.getCourseID() < 0) {
-            FacesMessageCreator.createFacesMessage
-                    (null, "Die Seite exisitert nicht!");
+            //FacesMessage: 'The page does not exist'
+            FacesMessageCreator.createFacesMessage(
+                    null, 
+                    sessionUser.getLabel(
+                            "listParticipantsBean.facesMessage.PageNotExist"));
         } else {       
             transaction = Connection.create();
             transaction.start();
@@ -178,6 +184,12 @@ public class ListParticipantsBean implements Pagination {
                                 this.transaction, 
                                 this.getPagination(),
                                 this.getCourseID()));
+                //FacesMessage: 'Deleting successful'
+                FacesMessageCreator.createFacesMessage(
+                        null, 
+                        sessionUser.getLabel(
+                                "listParticipantsBean.facesMessage."
+                                + "DeletingSuccessful"));
             }
             this.transaction.commit();
         } catch (InvalidDBTransferException e) {
