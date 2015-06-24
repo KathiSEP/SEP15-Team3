@@ -107,6 +107,19 @@ public class CourseDetailBean implements Pagination, Serializable {
     private PaginationData pagination;
 
     /**
+     * Represents the courseDetail page
+     */
+    private final static String URL_STAY_COURSE_DETAIL = 
+            "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+    
+    /**
+     * Represents the new CourseDetail page
+     */
+    private final static String URL_COURSE_DETAIL_NEW =
+            "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true"
+            + "&courseID=";
+    
+    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
@@ -869,18 +882,23 @@ public class CourseDetailBean implements Pagination, Serializable {
 
 	    if (CourseDAO.deleteCourse(this.transaction,
 	                                this.course.getCourseID()) == true) {
-		FacesMessageCreator.createFacesMessage(null,
-			"Kurs wurde erfolgreich gelöscht!");
+	     // FacesMessage: Delete course successful.
+		FacesMessageCreator.createFacesMessage(
+		        null,
+		        sessionUser.getLabel(
+                                "courseDetailBean.facesMessage.DeleteCourse"));
 		this.transaction.commit();
 		// Forwarding to the page search, because the delete was
 		// successful.
 		return "/facelets/open/courses/search.xhtml?faces-redirect=true";
 	    } else {
-		FacesMessageCreator.createFacesMessage(null,
-			"Löschen des Kurses fehlgeschlagen!");
+	        // FacesMessage: Delete course failed.
+		FacesMessageCreator.createFacesMessage(
+		        null,
+		        sessionUser.getLabel(
+                             "courseDetailBean.facesMessage.DeleteCourseFail"));
 		this.transaction.rollback();
-		return "/facelets/open/courses/courseDetail.xhtml"
-		                                     + "?faces-redirect=false";
+		return URL_STAY_COURSE_DETAIL;
 	    }
 
 	} catch (InvalidDBTransferException e) {
@@ -888,7 +906,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    this.transaction.rollback();
 	}
 
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+	return URL_STAY_COURSE_DETAIL;
     }
 
     /**
@@ -904,24 +922,28 @@ public class CourseDetailBean implements Pagination, Serializable {
 	try {
 	    if (CourseDAO.addLeaderToCourse(this.transaction,
 		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {
-		FacesMessageCreator.createFacesMessage(null,
-			"Der Kursleiter wurde erfolgreich hinzugefügt!");
+	        //FacesMessage: Add courseleader successful
+		FacesMessageCreator.createFacesMessage(
+		        null,
+		        sessionUser.getLabel(
+	                      "courseDetailBean.facesMessage.CourseLeaderAdd"));
 		this.transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml"
-		                  + "?faces-redirect=true&courseID="+ courseID;
+		return URL_COURSE_DETAIL_NEW+ courseID;
 	    }else{
-                FacesMessageCreator.createFacesMessage(null,
-                        "Hinzufügen des Kursleiters fehlgeschlagen!");
+	        //FacesMessage: Add course leader failed
+                FacesMessageCreator.createFacesMessage(
+                        null,
+                        sessionUser.getLabel(
+                          "courseDetailBean.facesMessage.CourseLeaderAddFail"));
                 this.transaction.rollback();
-                return "/facelets/open/courses/courseDetail.xhtml"
-                                                     + "?faces-redirect=false";
+                return URL_STAY_COURSE_DETAIL;
 	    }
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(e.getMessage());
 	    this.transaction.rollback();
 	  
 	}
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+	return URL_STAY_COURSE_DETAIL;
     }
 
     /**
@@ -963,26 +985,34 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    
 	    if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,
 		    this.course.getCourseID())) {
-		FacesMessageCreator.createFacesMessage(null,
-			"Der Kursleiter wurde erfolgreich gelöscht!");
+	        //FacesMessage: Delete course leader successful
+		FacesMessageCreator.createFacesMessage(
+		        null,
+		        sessionUser.getLabel(
+	                   "courseDetailBean.facesMessage.CourseLeaderDelete"));
 		this.transaction.commit();
-		return "/facelets/open/courses/courseDetail.xhtml"
-		                  + "?faces-redirect=true&courseID="+ courseID;
+		return URL_COURSE_DETAIL_NEW + courseID;
 	    } else {
-		FacesMessageCreator.createFacesMessage(null,
-			"Löschen des Kursleiters fehlgeschlagen!");
+	        //FacesMEssage: Delete course leader failed.
+		FacesMessageCreator.createFacesMessage(
+		        null,
+		        sessionUser.getLabel(
+		                  "courseDetailBean.facesMessage."
+		                  + "CourseLeaderDeleteFail"));
 		this.transaction.rollback();
-		return "/facelets/open/courses/courseDetail.xhtml"
-		                                      + "?faces-redirect=false";
+		return URL_STAY_COURSE_DETAIL;
 	    }
 	} catch (NumberFormatException e) {
 	    // ID is no number
 	    this.transaction.rollback();
-	    FacesMessageCreator.createFacesMessage(null,
-		    "Der Kursleiter konnte nicht gelöscht werden, da die "
-			    + "übergebene ID keine positive Zahl ist!");
+	    //FacesMessage: Delete failed because id is not a positive number
+	    FacesMessageCreator.createFacesMessage(
+	            null,
+	            sessionUser.getLabel(
+	                           "courseDetailBean.facesMessage."
+	                           + "CourseLeaderIDNotPositiv"));
 	}
-	return "/facelets/open/courses/courseDetail.xhtml?faces-redirect=false";
+	return URL_STAY_COURSE_DETAIL;
     }
 
 }

@@ -44,14 +44,19 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.title')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
-		                                        id="courseTitle"></h:inputText>
+		                                        id="courseTitle" required="true" requiredMessage="Bitte Titel angeben."
+		                                        validatorMessage="Ihr Titel darf höchstens 150 Zeichen lang sein. ">
+		                                        <f:validateLength minimum="1" maximum="150" />
+		                                        </h:inputText>
 		                               
 		                                </div>
 		                                <div class="input-group" style="padding-top: 5px;">
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.description')}:</span>
 		                                    <h:inputTextarea class="form-control" cols="45" rows="3" value="#{courseManagementBean.course.description}"
-		                                        id="courseDescription"></h:inputTextarea>
+		                                        id="courseDescription" validatorMessage="Ihre Beschreibung darf höchstens 1000 Zeichen lang sein. ">
+		                                        <f:validateLength minimum="0" maximum="1000" />
+		                                        </h:inputTextarea>
 		                                   
 		                                </div>
                                         <div class="input-group" style="padding-top: 5px;">
