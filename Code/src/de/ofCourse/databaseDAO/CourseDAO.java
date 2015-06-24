@@ -63,7 +63,7 @@ public class CourseDAO {
 	    + "WHERE CAST(id AS TEXT) LIKE ?";
 
     private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
-	    + "WHERE LOWER(titel) LIKE LOWER(?)";
+	    + "WHERE LOWER(title) LIKE LOWER(?)";
 
     private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"users\", \"course_instructors\" "
 	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
@@ -74,12 +74,12 @@ public class CourseDAO {
 	    + "WHERE \"courses\".id = \"course_units\".course_id "
 	    + "AND \"course_units\".start_time::date = ?";
 
-    private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+    private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
 	    + "courses.end_date FROM \"courses\", \"course_units\" "
 	    + "WHERE \"course_units\".start_time::date = current_date "
 	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+    private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
 	    + "courses.end_date FROM \"courses\", \"course_units\" "
 	    + "WHERE \"course_units\".start_time::date BETWEEN current_date AND current_date + integer '6' "
 	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
@@ -91,21 +91,21 @@ public class CourseDAO {
 	    + "WHERE CAST(id AS TEXT) LIKE ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     private final static String GET_COURSES_BY_TITLE = "SELECT * FROM \"courses\" "
-	    + "WHERE LOWER(titel) LIKE LOWER(?) ORDER BY %s %s LIMIT ? OFFSET ?";
+	    + "WHERE LOWER(title) LIKE LOWER(?) ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+    private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, courses.title, courses.max_participants, courses.start_date,"
 	    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
 	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
 	    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
 	    + "AND \"course_instructors\".course_id = courses.id ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT courses.id, courses.titel, courses.max_participants, courses.start_date,"
+    private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
 	    + "courses.end_date FROM \"courses\", \"course_units\" "
 	    + "WHERE \"courses\".id = \"course_units\".course_id "
 	    + "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
     
     
-    private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id, courses.titel, (SELECT DISTINCT course_units.start_time " 
+    private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id, courses.title, (SELECT DISTINCT course_units.start_time " 
             + "FROM course_units WHERE courses.id = course_units.course_id AND course_units.start_time > CURRENT_TIMESTAMP " 
 	    + "ORDER BY course_units.start_time LIMIT 1), (SELECT course_unit_addresses.location FROM course_units, " 
             + "course_unit_addresses WHERE course_units.id = course_unit_addresses.course_unit_id "
@@ -224,7 +224,7 @@ public class CourseDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "Insert into \"courses\" (titel, max_participants, "
+	String sql = "Insert into \"courses\" (title, max_participants, "
 	                                    + "start_date, end_date, "
 	                                    + "description, image) "
 	           + "values (?, ?, ?, ?, ?, ?) "
@@ -846,7 +846,7 @@ public class CourseDAO {
     	    statement.setInt(1, courseID);
     	    resultSet = statement.executeQuery();
     	    resultSet.next();
-    	    course.setTitle(resultSet.getString("titel"));
+    	    course.setTitle(resultSet.getString("title"));
     	    course.setMaxUsers(resultSet.getInt("max_participants"));
     	    course.setStartdate(resultSet.getDate("start_date"));
     	    course.setEnddate(resultSet.getDate("end_date"));
@@ -922,8 +922,8 @@ public class CourseDAO {
 		    
 		    fetchedCourse.setCourseID(fetchedCourses.getInt("id"));
 		
-		    if (fetchedCourses.getString("titel") != null) {
-			fetchedCourse.setTitle(fetchedCourses.getString("titel"));
+		    if (fetchedCourses.getString("title") != null) {
+			fetchedCourse.setTitle(fetchedCourses.getString("title"));
 		    } else {
 			fetchedCourse.setTitle("Nicht angegeben");
 		    }

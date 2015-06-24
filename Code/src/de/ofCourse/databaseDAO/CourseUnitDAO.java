@@ -45,7 +45,7 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseUnitDAO {
 	
-	private static final String GET_WEEKLY_UNITS = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee, " +
+	private static final String GET_WEEKLY_UNITS = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".title, \"course_units\".fee, " +
 			"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"course_unit_participants\", \"users\" " +
 			"WHERE \"course_units\".id = \"course_unit_participants\".course_unit_id " + 
 			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
@@ -53,7 +53,7 @@ public class CourseUnitDAO {
 			"AND \"course_units\".start_time::date BETWEEN ? AND ?::date + integer '6' " +
 			"ORDER BY \"course_units\".start_time";
 	
-	private static final String GET_UNITS_OF = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".titel, \"course_units\".fee, " +
+	private static final String GET_UNITS_OF = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".title, \"course_units\".fee, " +
 		"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"users\", \"course_unit_participants\" " +
 		"WHERE \"users\".id = \"course_unit_participants\".participant_id " +
 		"AND \"course_unit_participants\".course_unit_id = \"course_units\".id " +
@@ -85,7 +85,7 @@ public class CourseUnitDAO {
 	
 	private final static String UPDATE_UNIT = 
 		"UPDATE \"course_units\" SET course_id=?,"
-		+ " max_participants=?, titel=?::TEXT,"
+		+ " max_participants=?, title=?::TEXT,"
 		+ " min_participants=?, fee=?, start_time=?,"
 		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
 		+ " WHERE id=?";
@@ -103,14 +103,14 @@ public class CourseUnitDAO {
 	
 	private final static String CREATE_UNIT = 
 		"INSERT INTO \"course_units\""
-		+ " (course_id, max_participants, titel,"
+		+ " (course_id, max_participants, title,"
 		+ " min_participants, fee, start_time, end_time, description, " 
 		+ "course_instructor_id, cycle_id)"
 		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
 	
 	private final static String CREATE_UNIT_IRREG =
 		"INSERT INTO \"course_units\""
-		+ " (course_id, max_participants, titel,"
+		+ " (course_id, max_participants, title,"
 		+ " min_participants, fee, start_time, end_time," 
 		+ " description, course_instructor_id)"
 		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?) RETURNING id";
@@ -299,7 +299,7 @@ public class CourseUnitDAO {
 		requestedCourseUnit.setMinUsers(resultSet
 			.getInt("min_participants"));
 		requestedCourseUnit.setPrice(resultSet.getInt("fee"));
-		requestedCourseUnit.setTitle(resultSet.getString("titel"));
+		requestedCourseUnit.setTitle(resultSet.getString("title"));
 		adminID = resultSet.getInt("course_instructor_id");
 		LogHandler.getInstance().debug(
 			"Initialisieren von Kurseinheiten abgeschlossen");
@@ -423,8 +423,8 @@ public class CourseUnitDAO {
     	            unit.setCourseID(courseID);
     	            unit.setCourseUnitID(resultSet.getInt("id"));
     	            
-    	            if (resultSet.getString("titel") != null) {
-    	                unit.setTitle(resultSet.getString("titel"));
+    	            if (resultSet.getString("title") != null) {
+    	                unit.setTitle(resultSet.getString("title"));
     	            } else {
     	                unit.setTitle("Ohne Titel");
     	            }
