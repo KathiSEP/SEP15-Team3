@@ -11,6 +11,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Checks at the launch of the system if an administrator has been initially
@@ -33,7 +34,7 @@ public class SetupAdmin {
 	private static final String INIT_ADMIN =
 			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, credit_balance," +
 			"email_verification, admin_verification, veri_string, role, status) " +
-			"VALUES ('admin1', 'bazinga@gmail.com', 'password', 'pwsalt', 0, TRUE, " +
+			"VALUES ('admin1', 'bazinga@gmail.com', %s, %s, 0, TRUE, " +
 			"TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')";
 	
 	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) FROM \"system_attributes\"";
@@ -51,7 +52,13 @@ public class SetupAdmin {
      * execution of the method
      */
     public static void createInitialAdmin() throws InvalidDBTransferException {
-    	executeInitialization(CHECK_ADMIN, INIT_ADMIN);
+    	String salt = PasswordHash.getSalt();
+    	String pw = PasswordHash.hash("Password!123", salt);
+    	
+    	salt = "'" + salt + "'";
+    	pw = "'" + pw + "'";
+    	
+    	executeInitialization(CHECK_ADMIN, String.format(INIT_ADMIN, pw, salt));
     }
     
     public static void setSystemAttributes() throws InvalidDBTransferException {

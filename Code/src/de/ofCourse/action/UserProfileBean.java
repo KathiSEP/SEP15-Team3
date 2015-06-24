@@ -104,11 +104,6 @@ public class UserProfileBean implements Pagination {
 
     private static int pageElements = 10;
     
-    /**
-     * Init-method for the User or Leader Profile Page.
-     * 
-     * @author Ricky Strohmeier
-     */
     @PostConstruct
     private void init() {
         pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
@@ -121,7 +116,7 @@ public class UserProfileBean implements Pagination {
     	    transaction.start();
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
     	                .getExternalContext().getRequestParameterMap().get("userID"));
-            pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));
+            //pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));
             //managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
     		user = UserDAO.getUser(transaction, userID);
 
