@@ -208,7 +208,7 @@ public class SearchCourseBean implements Pagination {
      */
     public void search() {
     	if (!searchString.isEmpty()) {
-    		if (searchParam.equals("date")) {
+    		if (searchParam.equals("start_date")) {
     			if (isValidDate(searchString)) {
     				executeSearch();
     			} else {
