@@ -465,11 +465,20 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    pagination,
 					    id, 
 					    true);
-			    for(User user : participants){
-			        recipients.add(user.getEmail());
-                        
-			    } 
-			    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());
+			    if(selectedToInform == informParticipantsOfUnit){
+	                for(User user : participants){
+	                    if(UserDAO.userWantsToBeInformed(transaction, user.getUserID(), courseID)){
+	                        recipients.add(user.getEmail());
+	                    }
+	                    
+	                            
+	                    }
+	                if(!recipients.isEmpty()){
+	                    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());  
+	                }
+	            }       
+			    
+			    
 			} else {
 			    LogHandler.getInstance().debug("Unit "
 					    + tempUnit.getCourseUnitID()
@@ -486,15 +495,19 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    .getParticipiantsOfCourseUnit(transaction,
 				    pagination, courseUnit.getCourseUnitID(),
 				    true);
-		    for(User user : participants){
-		        recipients.add(user.getEmail());
-                        
-                }
 		    
-		    mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());        
-		        
-			
-		    
+		    if(selectedToInform == informParticipantsOfUnit){
+		        for(User user : participants){
+	                if(UserDAO.userWantsToBeInformed(transaction, user.getUserID(), courseID)){
+	                    recipients.add(user.getEmail());
+	                }
+	                
+	                        
+	                }
+	            if(!recipients.isEmpty()){
+	                mailBean.sendCourseEditUnitMail(recipients, transaction, courseUnit.getCourseUnitID());  
+	            }
+		    }		    
 		}
 		transaction.commit();
 		return URL_COURSE_DETAIL;
@@ -528,6 +541,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	int cycleId = 0;
 	List<String> mailToSend = new ArrayList<String>();
 	HashMap<Integer, String> mailSend = new HashMap<Integer, String> ();
+	
 	
 	try {
 	    // If all units of a cycle are to delete
@@ -577,12 +591,16 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			UserDAO.updateAccountBalance(transaction,
 				user.getUserID(), newBalance);
 		    }
-		    // Delete the unit
-		    CourseUnitDAO.deleteCourseUnit(transaction, id);
+		    
+		}
+		
+		sortMailAddresses(mailSend);
+		for(int id : idsToDelete ){
+		 // Delete the unit
+            CourseUnitDAO.deleteCourseUnit(transaction, id);
 		}
 		// Delete the cycle
-		CycleDAO.deleteCycle(transaction, cycleId);
-		sortMailAddresses(mailSend);
+        CycleDAO.deleteCycle(transaction, cycleId);
 	    } else {
 
 		List<User> participants = CourseUnitDAO

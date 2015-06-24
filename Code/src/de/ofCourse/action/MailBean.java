@@ -9,16 +9,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-
-
-
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -26,7 +17,6 @@ import javax.faces.bean.ManagedBean;
 
 import javax.faces.context.FacesContext;
 
-import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.CourseUnitDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -127,40 +117,7 @@ public class MailBean {
 
         
         
-        Thread t = new Thread(new MailThread(prop, loginAuth, smtpServer, recipients, subject, message){
-
-            @Override
-            public void run() {
-                try{
-                    // https://javamail.java.net/nonav/docs/api/
-                    Session session = Session.getDefaultInstance(prop, loginAuth);
-                    MimeMessage mail = new MimeMessage(session);
-                    
-                    mail.setFrom(new InternetAddress(smtpServer.getUsername()));
-                    
-                    for(String mailAddresse : recipients){
-                        mail.setRecipients(Message.RecipientType.BCC, mailAddresse);
-                    }
-                    
-                    
-                    mail.setSubject(subject);
-                    mail.setText(message);
-                                           
-                    Transport transport = session.getTransport("smtp");
-                    
-                    
-                    transport.connect(smtpServer.getHostaddr(), smtpServer.getUsername(), smtpServer.getPassword());
-                    transport.sendMessage(mail, mail.getAllRecipients());
-                    transport.close();
-                    
-                    
-                }catch (MessagingException e){
-                    LogHandler.getInstance().error("Error occured while sending mail");
-                    
-                }
-            }
-            
-        });
+        Thread t = new Thread(new MailThread(prop, loginAuth, smtpServer, recipients, subject, message));
         t.start();
         
         
@@ -354,7 +311,7 @@ public class MailBean {
             
             message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at " + editCourseUnit.getStartime() + " has been deleted. \n";
             message += "Please visit the OfCourse WebPage for further Information: \n\n";
-            //message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
+            message += createCourseLink(editCourseUnit.getCourseID()) + "\n";
             message += createSignature();
             
             sendMail(recipients, subject, message);
