@@ -5,11 +5,9 @@ package de.ofCourse.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
@@ -37,7 +35,6 @@ import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
-import de.ofCourse.system.MailThread;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -259,6 +256,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    // course unit
 	    transaction.start();
 	    try {
+		courseUnit = new CourseUnit();
+		courseUnit.setCourseAdmin(new User());
 		courseUnit = CourseUnitDAO.getCourseUnit(transaction,
 			courseUnitID);
 
@@ -593,8 +592,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    }
 		    
 		}
-		
-		sortMailAddresses(mailSend);
+		if(selectedToInform !=0){
+		sortMailAddresses(mailSend);}
 		for(int id : idsToDelete ){
 		 // Delete the unit
             CourseUnitDAO.deleteCourseUnit(transaction, id);
@@ -630,11 +629,13 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @param mailSend
      */
     private void sortMailAddresses(HashMap<Integer,String> mailSend) {
-        
+	List<String> recipients;
         
         while(!mailSend.isEmpty()){
-            List<String> recipients = new ArrayList<String>();
+            recipients = new ArrayList<String>();
+            System.out.println("hier");
             Entry<Integer, String> entry = mailSend.entrySet().iterator().next();
+            System.out.println("hier1");
             recipients.add(entry.getValue());
             mailSend.remove(entry.getKey(), entry.getValue());
             
@@ -644,8 +645,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
                 mailSend.remove(entry.getKey(), mailAdress);
             }
             
+            if(recipients != null&& entry.getKey()!=null && transaction != null){
+        	System.out.println(entry.getKey());
             mailBean.sendCourseUnitDeleteMail(recipients, entry.getKey(), transaction);
-        }
+        }}
         
     }
 

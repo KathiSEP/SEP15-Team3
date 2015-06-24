@@ -305,6 +305,7 @@ public class CourseUnitManagementBeanTest {
 	bean.setPagination(pagination);
 	bean.setCourseUnit(unit);
 	bean.setCompleteCycle(true);
+	bean.setSelectedToInform(0);
 
 	// Executes the deleteCourseUnit() method
 	String url = bean.deleteCourseUnit();
