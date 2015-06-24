@@ -175,10 +175,5 @@ public class SearchCourseBeanTest {
 		
 		bean.search();
 	}
-	
-	@Test
-	public void testDisplayCoursesInPeriod() {
-		
-	}
 
 }

@@ -91,7 +91,7 @@ public class DatabaseTableCreator {
     			"id SERIAL PRIMARY KEY," +
     			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
     			"cycle_id INTEGER REFERENCES \"cycles\"(id) ON DELETE SET NULL," +
-    			"course_instructor_id INTEGER REFERENCES \"course_instructors\"(course_instructor_id) ON DELETE CASCADE NOT NULL," +
+    			"course_instructor_id INTEGER REFERENCES \"users\"(users.id) ON DELETE CASCADE NOT NULL," +
     			"max_participants INTEGER NOT NULL " +
     			"CHECK (max_participants > 0)," +
     			"title TEXT," +
