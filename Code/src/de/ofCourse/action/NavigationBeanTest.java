@@ -20,15 +20,17 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ FacesContext.class })
 public class NavigationBeanTest {
 
-    private NavigationBean bean;
+    private NavigationBean navigationBean;
+
     @Mock
     private FacesContext fc;
+
     @Mock
     private ExternalContext ec;
 
     @Before
     public void setup() {
-        bean = new NavigationBean();
+        navigationBean = new NavigationBean();
 
         PowerMockito.mockStatic(FacesContext.class);
         when(FacesContext.getCurrentInstance()).thenReturn(fc);
@@ -38,7 +40,7 @@ public class NavigationBeanTest {
 
     @Test
     public void testLogout() {
-        assertEquals("/facelets/open/index.xhtml?faces-redirect=true", bean.logout());
+        assertEquals("/facelets/open/index.xhtml?faces-redirect=true", navigationBean.logout());
     }
 
 }
