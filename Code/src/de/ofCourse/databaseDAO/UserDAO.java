@@ -361,7 +361,7 @@ public class UserDAO {
 	    } else {
 	        pS.setBoolean(10, false);
 	    }
-	    pS.setString(11, UserRole.REGISTERED_USER.toString());
+	    pS.setString(11, user.getUserRole().toString());
 	    pS.setString(12, UserStatus.NOT_ACTIVATED.toString());
 	    pS.setString(13, veriString);
 	    pS.setString(14, salt);

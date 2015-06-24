@@ -15,6 +15,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -200,6 +201,7 @@ public class RegisterUserBean {
         
                     // If the inserted mail doesn't already exist, create a 
                     //new user.
+                    this.userToRegistrate.setUserRole(UserRole.REGISTERED_USER);
                     veriString = UserDAO.createUser(this.transaction,
                             this.getUserToRegistrate(), passwordHash, salt);
         
