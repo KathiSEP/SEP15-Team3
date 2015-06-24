@@ -129,7 +129,7 @@ public class SearchCourseBean implements Pagination {
     @PostConstruct
     public void init() {
     	displayPeriod = "total";
-    	searchParam = "titel";
+    	searchParam = "title";
     	pagination = new PaginationData();
     	pagination.setElementsPerPage(ELEMENTS_PER_PAGE);
     }

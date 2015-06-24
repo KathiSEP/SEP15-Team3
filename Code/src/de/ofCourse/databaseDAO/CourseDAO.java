@@ -309,7 +309,7 @@ public class CourseDAO {
 	case "id":
 	    query = NUM_COURSES_ID;
 	    return countCourses(conn, query, searchString, false);
-	case "titel":
+	case "title":
 	    query = NUM_COURSES_TITLE;
 	    return countCourses(conn, query, searchString, false);
 	case "leader":
@@ -568,7 +568,7 @@ public class CourseDAO {
 	boolean isDate = false;
 
 	switch (searchParam) {
-	case "titel":
+	case "title":
 	    query = GET_COURSES_BY_TITLE;
 	    break;
 	case "leader":
@@ -595,7 +595,7 @@ public class CourseDAO {
     private static String getOrderParam(String orderParam) {
 	switch (orderParam) {
 	case "title":
-	    return "titel";
+	    return "title";
 	case "maxUsers":
 	    return "max_participants";
 	case "starts":
