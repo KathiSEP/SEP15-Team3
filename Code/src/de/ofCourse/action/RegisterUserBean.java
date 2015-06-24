@@ -79,6 +79,18 @@ public class RegisterUserBean {
      * inserted password.
      */
     private String registerConfirmPassword;
+    
+    /**
+     * Represents the url to the authenticate page
+     */
+    private final static String URL_AUTHENTICATE = 
+                       "/facelets/open/authenticate.xhtml?faces-redirect=false";
+    
+    /**
+     * Represents the url to the index page
+     */
+    private final static String URL_INDEX = 
+                               "/facelets/open/index.xhtml?faces-redirect=true";
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -125,12 +137,19 @@ public class RegisterUserBean {
         if (veriString != null && veriString.length() > 0) {
             this.transaction = Connection.create();
             transaction.start();
+            
             if (UserDAO.verifyUser(this.transaction, veriString)) {
-                FacesMessageCreator.createFacesMessage("verifizierungString", 
-                            "Ihr Account wurde erfolgreich freigeschaltet!");
+                //FacesMessage: 'The account activation was successful'
+                FacesMessageCreator.createFacesMessage(
+                        "verifizierungString", 
+                        sessionUser.getLabel(
+                                "registerUserBean.facesMessage.Account"));
             } else {
-                FacesMessageCreator.createFacesMessage("verifizierungString", 
-                            "Der Verifizierungsstring existiert nicht!");
+                //FacesMessage: 'The verification string does not exist'
+                FacesMessageCreator.createFacesMessage(
+                        "verifizierungString", 
+                        sessionUser.getLabel(
+                                "registerUserBean.facesMessage.NoVeriString"));
             }
             this.transaction.commit();
         }
@@ -148,7 +167,8 @@ public class RegisterUserBean {
      */
     public String registerUser() {
         if(agbAccepted == true) {
-            this.getUserToRegistrate().setSalutation(Salutation.fromString(this.saluString));
+            this.getUserToRegistrate().setSalutation(
+                                        Salutation.fromString(this.saluString));
         
             String veriString = "";
             
@@ -160,19 +180,23 @@ public class RegisterUserBean {
                 // Hash the inserted password.
                 // Generate the salt.
                 String salt = PasswordHash.getSalt();
-                String passwordHash = PasswordHash.hash(this.getRegisterPassword(),
-                        salt);
+                String passwordHash = PasswordHash.hash(
+                                                    this.getRegisterPassword(),
+                                                    salt);
+                
                 // Check if the inserted mail already exists in the system.
                 if (UserDAO.emailExists(transaction, this.getUserToRegistrate()
                         .getEmail())) {
         
                     // Throwing error message into the faces context if the 
                     // mail already exists.
-                    FacesMessageCreator.createFacesMessage(null,
-                            "E-Mail existiert bereits!");
+                    FacesMessageCreator.createFacesMessage(
+                            null,
+                            sessionUser.getLabel(
+                                "registerUserBean.facesMessage.EmailExisting"));
         
                     this.transaction.rollback();
-                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                    return URL_AUTHENTICATE;
                 } else {
         
                     // If the inserted mail doesn't already exist, create a 
@@ -195,16 +219,16 @@ public class RegisterUserBean {
         
             // Throwing success message into the faces context.
             FacesMessageCreator.createFacesMessage(
-                          null,
-                          "Sie haben sich erfolgreich im System registriert. "
-                          + "Bitte bestätigen Sie den Aktivierungslink aus der "
-                          + "Verifizierungsmail!");
-            return "/facelets/open/index.xhtml?faces-redirect=true";
+                   null,
+                   sessionUser.getLabel(
+                       "registerUserBean.facesMessage.SuccessfulRegistration"));
+            return URL_INDEX;
         } else {
             FacesMessageCreator.createFacesMessage(
-                                                    null,
-                                                    "Bitte AGBs bestätigen!");
-            return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                                    null,
+                                    sessionUser.getLabel(
+                                          "registerUserBean.facesMessage.AGB"));
+            return URL_AUTHENTICATE;
         }
     }
 

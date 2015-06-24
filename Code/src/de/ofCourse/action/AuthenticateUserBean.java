@@ -44,6 +44,18 @@ public class AuthenticateUserBean {
     private User loginUser;
 
     /**
+     * Represents the url to the authenticate page
+     */
+    private final static String URL_AUTHENTICATE = 
+                       "/facelets/open/authenticate.xhtml?faces-redirect=false";
+    
+    /**
+     * Represents the url to the myCourses page
+     */
+    private final static String URL_MY_COURSES =
+            "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
+    
+    /**
      * This managed Property represents the mail bean.
      */
     @ManagedProperty("#{mailBean}")
@@ -124,8 +136,11 @@ public class AuthenticateUserBean {
             String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
                         .getUsername());
             if(salt == null) {
-                FacesMessageCreator.createFacesMessage(null,
-                        "Benutzername oder Passwort falsch!");
+                //FacesMessage: User name or password wrong
+                FacesMessageCreator.createFacesMessage(
+                        null,
+                        sessionUser.getLabel(
+                             "authenticateUserBean.facesMessage.UserNameOrPW"));
             } else {
                 String passwordHash = PasswordHash.hash(this.loginPassword, salt);
                 // Checks if the username and the password are valid.
@@ -137,32 +152,41 @@ public class AuthenticateUserBean {
                 // Returns -2 if the user account is not activated yet.
                 // Else it returns the id of the user.
                 if (id == usernameOrPasswordWrong) {
-                    // Throwing error message into the faces context.
-                    FacesMessageCreator.createFacesMessage(null,
-                            "Benutzername oder Passwort falsch!");
+                    // Throwing error message into the faces context:
+                    // 'User name or password wrong'
+                    FacesMessageCreator.createFacesMessage(
+                            null,
+                            sessionUser.getLabel(
+                             "authenticateUserBean.facesMessage.UserNameOrPW"));
     
                     // Return to the login page again, because the login went 
                     // wrong.
                     this.transaction.rollback();
-                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                    return URL_AUTHENTICATE;
                 } else if (id == accountNotActivated) {
-                    // Throwing error message into the faces context
-                    FacesMessageCreator.createFacesMessage(null,
-                            "Benutzerkonto nicht aktiv!");
+                    // Throwing error message into the faces context:
+                    // 'Account not active'
+                    FacesMessageCreator.createFacesMessage(
+                            null,
+                            sessionUser.getLabel(
+                              "authenticateUserBean.facesMessage.UserAccount"));
     
                     // Return to the login page again, because the login went 
                     // wrong.
                     this.transaction.rollback();
-                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                    return URL_AUTHENTICATE;
                 } else if (id == dbErrorOccured) {
-                    // Throwing error message into the faces context.
-                    FacesMessageCreator.createFacesMessage(null,
-                            "Benutzerkonto nicht aktiv!");
+                    // Throwing error message into the faces context:
+                    // 'Account not active'
+                    FacesMessageCreator.createFacesMessage(
+                            null,
+                            sessionUser.getLabel(
+                              "authenticateUserBean.facesMessage.UserAccount"));
     
                     // Return to the login page again, because the login went 
                     // wrong.
                     this.transaction.rollback();
-                    return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+                    return URL_AUTHENTICATE;
                 } else {
                     // Filling the session object with the user data, 
                     // interrogate not yet available data from the database 
@@ -186,7 +210,7 @@ public class AuthenticateUserBean {
                     // Forwarding to the page myCourses, because the login was 
                     // successful.
                     this.transaction.commit();
-                    return "/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true";
+                    return URL_MY_COURSES;
                 }
             }
 
@@ -195,7 +219,7 @@ public class AuthenticateUserBean {
             this.transaction.rollback();
         }
 
-        return "/facelets/open/authenticate.xhtml?faces-redirect=false";
+        return URL_AUTHENTICATE;
     }
 
     /**
