@@ -45,12 +45,14 @@ public class CourseDateValidator implements Validator {
             DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
             endDate = format.parse(courseEndDateString);
         } catch(Exception e) {
-            throw new ValidatorException(new FacesMessage("Datum muss im Format dd.MM.yyyy angegeben werden."));
+            throw new ValidatorException(new FacesMessage("Datum muss im "
+                    + "Format dd.MM.yyyy angegeben werden."));
         }
         
 
         if (startDate.getTime() > endDate.getTime()) {
-            throw new ValidatorException(new FacesMessage("Startdatum muss vor dem Enddatum liegen."));
+            throw new ValidatorException(new FacesMessage("Startdatum muss vor "
+                    + "dem Enddatum liegen."));
         }
     }
 

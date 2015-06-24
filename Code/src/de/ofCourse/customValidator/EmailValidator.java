@@ -31,7 +31,8 @@ public class EmailValidator implements Validator {
     private Pattern pattern;
     private Matcher matcher;
 
-    private static final String EmailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+    private static final String EmailPattern = "^[_A-Za-z0-9-\\+]+(\\."
+            + "[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9.-]+)*(\\.[A-Za-z]{2,})$";
 
     public EmailValidator() {
@@ -53,7 +54,8 @@ public class EmailValidator implements Validator {
 	matcher = pattern.matcher(email);
 	
 	if (!matcher.matches()) {
-	    throw new ValidatorException(new FacesMessage("Kein gültiges Emailformat."));
+	    throw new ValidatorException(new FacesMessage("Kein gültiges "
+	                                                    + "Emailformat."));
 	}
     }
 

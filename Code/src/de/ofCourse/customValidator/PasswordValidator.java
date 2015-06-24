@@ -57,14 +57,16 @@ public class PasswordValidator implements Validator {
 		.toString();
 
 	    if(!confirmPassword.equals(password)){
-		throw new ValidatorException(new FacesMessage("Passwörter müssen übereinstimmen."));
+		throw new ValidatorException(new FacesMessage("Passwörter "
+		        + "müssen übereinstimmen."));
 	    }
 	
 	
 	if(password.length() < 8 || password.length() > 100) {
 	    throw new ValidatorException(
 		    new FacesMessage(
-			    "Das Passwort muss mindestens 8 Zeichen lang sein, darf aber höchstens 100 Zeichen lang sein."));
+			    "Das Passwort muss mindestens 8 Zeichen lang sein, "
+			    + "darf aber höchstens 100 Zeichen lang sein."));
 	}
 	
 	matcher = pattern.matcher(password);
@@ -73,9 +75,9 @@ public class PasswordValidator implements Validator {
 	    throw new ValidatorException(
 		    new FacesMessage(
 			    "Das Passwort muss mindestens "
-			    + "ein Sonderzeichen (@,#,$,%,!,_,?,&), Ziffern und Groß- und "
-			    + "Kleinbuchstaben enthalten. ß, ä, ö, ü sind "
-			    + "nicht erlaubt."));
+			    + "ein Sonderzeichen (@,#,$,%,!,_,?,&), Ziffern "
+			    + "und Groß- und Kleinbuchstaben enthalten. "
+			    + "ß, ä, ö, ü sind nicht erlaubt."));
 	}
 
     }

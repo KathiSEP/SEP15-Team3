@@ -37,7 +37,8 @@ public class DateOfBirthValidator implements Validator {
 	try {
 	    dateOfBirth = (Date) value;
 	} catch(Exception e) {
-	    throw new ValidatorException(new FacesMessage("Datum muss im Format dd.MM.yyyy angegeben werden."));
+	    throw new ValidatorException(new FacesMessage("Datum muss im "
+	            + "Format dd.MM.yyyy angegeben werden."));
 	}
 	
 	    long spread = dateToday.getTime() - dateOfBirth.getTime();
