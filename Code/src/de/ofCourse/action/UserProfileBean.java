@@ -3,7 +3,6 @@
  */
 package de.ofCourse.action;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,19 +10,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import de.ofCourse.databaseDAO.CourseUnitDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
-import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
-import de.ofCourse.model.SortColumn;
-import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
 import de.ofCourse.model.UserStatus;
@@ -53,7 +45,7 @@ import de.ofCourse.utilities.PasswordHash;
  */
 @ManagedBean
 @ViewScoped
-public class UserProfileBean implements Pagination {
+public class UserProfileBean {
     
     /**
      * Stores the transaction that is used for database interaction.
@@ -86,27 +78,15 @@ public class UserProfileBean implements Pagination {
     private String role;
 
     /**
-     * This attribute represents a pagination object. It stores all the
-     * information that is necessary for pagination, e.g. the number of elements
-     * per page.
-     */
-    private PaginationData pagination;
-
-    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-
-    private int currentPage;
-
-    private static int pageElements = 10;
     
     @PostConstruct
     private void init() {
-        pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
     	readOnly = true;
     	password = null;
 
@@ -347,38 +327,6 @@ public class UserProfileBean implements Pagination {
 		this.image = image;
 	}
 
-	/**
-     * {@inheritDoc}
-     */
-    @Override
-    public void goToSpecificPage() {
-        pagination.setCurrentPageNumber(currentPage);
-        transaction.start();
-        try {
-            managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);
-            transaction.commit();
-        } catch (InvalidDBTransferException e) {
-            LogHandler.getInstance().error("Error occured during fetching data for pagination.");
-            this.transaction.rollback();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PaginationData getPagination() {
-        return pagination;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPagination(PaginationData pagination) {
-        this.pagination = pagination;
-    }
-
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
@@ -396,15 +344,6 @@ public class UserProfileBean implements Pagination {
      */
     public void setSessionUser(SessionUserBean sessionUser) {
     	this.sessionUser = sessionUser;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
-
     }
     
     /**
@@ -443,12 +382,5 @@ public class UserProfileBean implements Pagination {
 	public void setRole(String role) {
 		this.role = role;
 	}
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
+	
 }

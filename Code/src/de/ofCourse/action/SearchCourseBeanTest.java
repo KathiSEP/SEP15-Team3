@@ -101,7 +101,7 @@ public class SearchCourseBeanTest {
 		bean.setSearchParam("titel");
 		bean.setSearchString("yoga");
 				
-		pagination.setSortColumn(SortColumn.TITEL);
+		pagination.setSortColumn(SortColumn.TITLE);
 		pagination.setSortDirection(SortDirection.ASC);
 		pagination.setCurrentPageNumber(0);
 		
