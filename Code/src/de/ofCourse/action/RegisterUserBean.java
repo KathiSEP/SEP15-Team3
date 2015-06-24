@@ -142,14 +142,13 @@ public class RegisterUserBean {
                 //FacesMessage: 'The account activation was successful'
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
-                        sessionUser.getLabel(
-                                "registerUserBean.facesMessage.Account"));
+                        "Ihr Account wurde erfolgreich freigeschaltet!");
             } else {
                 //FacesMessage: 'The verification string does not exist'
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
                         sessionUser.getLabel(
-                                "registerUserBean.facesMessage.NoVeriString"));
+                                "Der Verifizierungsstring existiert nicht"));
             }
             this.transaction.commit();
         }

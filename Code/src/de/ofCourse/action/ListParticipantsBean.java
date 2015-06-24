@@ -113,17 +113,13 @@ public class ListParticipantsBean implements Pagination {
         catch (Exception e) {
             // FacesMessage: ' The page was called without a parameter'
             FacesMessageCreator.createFacesMessage(
-                    null, 
-                    sessionUser.getLabel(
-                            "listParticipantsBean.facesMessage.NoParameter"));
+                    null,  "Die Seite wurde ohne Parameter aufgerufen");
         }
         
         if(this.getCourseID() < 0) {
             //FacesMessage: 'The page does not exist'
             FacesMessageCreator.createFacesMessage(
-                    null, 
-                    sessionUser.getLabel(
-                            "listParticipantsBean.facesMessage.PageNotExist"));
+                    null,  "Die Seite existiert nicht");
         } else {       
             transaction = Connection.create();
             transaction.start();
