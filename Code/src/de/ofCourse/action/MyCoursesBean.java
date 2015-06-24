@@ -101,7 +101,7 @@ public class MyCoursesBean implements Pagination, Serializable {
 	pagination = new PaginationData(
 		elementsPerPage,
 		0,
-		SortColumn.TITEL,
+		SortColumn.TITLE,
 		SortDirection.ASC);
 
 	//Setting up transaction
