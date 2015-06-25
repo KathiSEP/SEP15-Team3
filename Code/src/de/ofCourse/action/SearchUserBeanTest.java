@@ -125,8 +125,6 @@ public class SearchUserBeanTest {
         pagination.setCurrentPageNumber(0);
         pagination.setElementsPerPage(10);
 
-        pagination.setSortAsc(true);
-        pagination.setSortColumn("name");
         
         bean.init();
 
