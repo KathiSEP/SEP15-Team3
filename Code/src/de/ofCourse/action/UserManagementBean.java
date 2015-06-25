@@ -39,9 +39,11 @@ import de.ofCourse.utilities.PasswordHash;
 @RequestScoped
 public class UserManagementBean {
     
-	private final String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+	private final String URL_CREATE_USER = "/facelets/user/" +
+			"systemAdministrator/createUser.xhtml?faces-redirect=false";
 	
-	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/searchUser.xhtml?faces-redirect=true";
+	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/" +
+			"searchUser.xhtml?faces-redirect=true";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -94,19 +96,22 @@ public class UserManagementBean {
         
         try {
 	        if (UserDAO.emailExists(transaction, user.getEmail())) {
-	            FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
-                        "registerUserBean.facesMessage.EmailExisting"));
+	            FacesMessageCreator.createFacesMessage(null,
+	            		sessionUser.getLabel(
+	            				"registerUserBean.facesMessage.EmailExisting"));
 	            this.transaction.rollback();
 	        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
-	        	FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
-                        "createUser.username.Message"));
+	        	FacesMessageCreator.createFacesMessage(null,
+	        			sessionUser.getLabel("createUser.username.Message"));
 	            this.transaction.rollback();
 	        } else {
 	        	setEnums();
 	        	String salt = PasswordHash.getSalt();
 	        	String pwHash = PasswordHash.hash(password, salt);
-	        	String veriString = UserDAO.createUser(this.transaction, user, pwHash, salt);
-	        	int userID = UserDAO.getUserID(this.transaction, user.getUsername());
+	        	String veriString = UserDAO.createUser(this.transaction, user,
+	        			pwHash, salt);
+	        	int userID = UserDAO.getUserID(this.transaction,
+	        			user.getUsername());
 	        	UserDAO.verifyUser(transaction, veriString);
 	        	
 	        	if (image != null) {

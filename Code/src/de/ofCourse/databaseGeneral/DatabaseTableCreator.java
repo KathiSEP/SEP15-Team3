@@ -88,9 +88,12 @@ public class DatabaseTableCreator {
     private static final String CREATE_COURSE_UNITS =
     		"CREATE TABLE course_units (" +
     			"id SERIAL PRIMARY KEY," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
-    			"cycle_id INTEGER REFERENCES \"cycles\"(id) ON DELETE SET NULL," +
-    			"course_instructor_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE NOT NULL," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) " +
+    			"ON DELETE CASCADE NOT NULL," +
+    			"cycle_id INTEGER REFERENCES \"cycles\"(id) " +
+    			"ON DELETE SET NULL," +
+    			"course_instructor_id INTEGER REFERENCES \"users\"(id) " +
+    			"ON DELETE CASCADE NOT NULL," +
     			"max_participants INTEGER NOT NULL " +
     			"CHECK (max_participants > 0)," +
     			"title TEXT," +
@@ -105,7 +108,8 @@ public class DatabaseTableCreator {
     private static final String CREATE_USER_ADDRESSES =
     		"CREATE TABLE user_addresses (" +
     			"id SERIAL PRIMARY KEY," +
-    			"user_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE NOT NULL," +
+    			"user_id INTEGER REFERENCES \"users\"(id) " +
+    			"ON DELETE CASCADE NOT NULL," +
     			"country VARCHAR(100)," +
     			"city VARCHAR(100)," +
     			"zip_code VARCHAR(10)," +
@@ -116,7 +120,8 @@ public class DatabaseTableCreator {
     private static final String CREATE_COURSE_UNIT_ADDRESSES =
     		"CREATE TABLE course_unit_addresses (" +
     			"id SERIAL PRIMARY KEY," +
-    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) ON DELETE CASCADE NOT NULL," +
+    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) " +
+    			"ON DELETE CASCADE NOT NULL," +
     			"country VARCHAR(100) NOT NULL," +
     			"city VARCHAR(100) NOT NULL," +
     			"zip_code VARCHAR(10) NOT NULL," +
@@ -128,7 +133,8 @@ public class DatabaseTableCreator {
     private static final String CREATE_CYCLES =
     		"CREATE TABLE cycles (" +
     			"id SERIAL PRIMARY KEY," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE NOT NULL," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) " +
+    			"ON DELETE CASCADE NOT NULL," +
     			"period PERIOD," +
     			"cycle_end INTEGER NOT NULL" +
     		")";
@@ -136,28 +142,35 @@ public class DatabaseTableCreator {
     private static final String CREATE_INFORM_USERS =
     		"CREATE TABLE inform_users (" +
     			"user_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) " +
+    			"ON DELETE CASCADE," +
     			"PRIMARY KEY (user_id, course_id)" +
     		")";
 
     private static final String CREATE_COURSE_INSTRUCTORS =
     		"CREATE TABLE course_instructors (" +
-    			"course_instructor_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE," +
+    			"course_instructor_id INTEGER REFERENCES \"users\"(id) " +
+    			"ON DELETE CASCADE," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) " +
+    			"ON DELETE CASCADE," +
     			"PRIMARY KEY (course_instructor_id, course_id)" +
     		")";
 
     private static final String CREATE_COURSE_PARTICIPANTS =
     		"CREATE TABLE course_participants (" +
-    			"participant_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE," +
-    			"course_id INTEGER REFERENCES \"courses\"(id) ON DELETE CASCADE," +
+    			"participant_id INTEGER REFERENCES \"users\"(id) " +
+    			"ON DELETE CASCADE," +
+    			"course_id INTEGER REFERENCES \"courses\"(id) " +
+    			"ON DELETE CASCADE," +
     			"PRIMARY KEY (participant_id, course_id)" +
     		")";
 
     private static final String CREATE_COURSE_UNIT_PARTICIPANTS =
     		"CREATE TABLE course_unit_participants (" +
-    			"participant_id INTEGER REFERENCES \"users\"(id) ON DELETE CASCADE," +
-    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) ON DELETE CASCADE," +
+    			"participant_id INTEGER REFERENCES \"users\"(id) " +
+    			"ON DELETE CASCADE," +
+    			"course_unit_id INTEGER REFERENCES \"course_units\"(id) " +
+    			"ON DELETE CASCADE," +
     			"PRIMARY KEY (participant_id, course_unit_id)" +
     		")";
 
@@ -225,7 +238,8 @@ public class DatabaseTableCreator {
     		}
 		} catch (SQLException e) {
 			trans.rollback();
-			throw new InvalidDBTransferException("SQL Exception occoured during buildUpDatabase()", e);
+			throw new InvalidDBTransferException(
+					"SQL Exception occoured during buildUpDatabase()", e);
 		}
     } 
     

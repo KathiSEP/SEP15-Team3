@@ -60,11 +60,6 @@ public class SearchCourseBean implements Pagination {
     private String displayPeriod;
 
     /**
-     * Stores whether the user only wants to search for free courses
-     */
-    private boolean searchOnlyFreeCourses;
-
-    /**
      * Stores the the search result that is displayed on the page. In this case
      * it's a list of users.
      */
@@ -73,20 +68,6 @@ public class SearchCourseBean implements Pagination {
     private String orderParam;
     
     private int currentPage;
-    
-    /**
-     * @return the currentPage
-     */
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    /**
-     * @param currentPage the currentPage to set
-     */
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
     
     
     /**
@@ -151,7 +132,8 @@ public class SearchCourseBean implements Pagination {
     	pagination.setSortColumn(SortColumn.ID);
     	
     	try {
-    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, displayPeriod, searchString));
+    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(
+    				transaction, displayPeriod, searchString));
 	    	List<Course> result = CourseDAO.getCourses(transaction, pagination,
 	    			displayPeriod);
 	    	
@@ -177,7 +159,8 @@ public class SearchCourseBean implements Pagination {
      * @param result
      * @param pagingSearchTerm
      */
-    private void setResultParams(List<Course> result, boolean pagingSearchTerm) {
+    private void setResultParams(List<Course> result,
+    		boolean pagingSearchTerm) {
     	searchResult = result;
 		setPagingSearchTerm(pagingSearchTerm);
 		setRenderTable(true);
@@ -221,7 +204,8 @@ public class SearchCourseBean implements Pagination {
     			if (isValidDate(searchString)) {
     				executeSearch();
     			} else {
-    				FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("search.message"));
+    				FacesMessageCreator.createFacesMessage(null,
+    						sessionUser.getLabel("search.message"));
     			}
     		} else {
     			executeSearch();
@@ -250,7 +234,8 @@ public class SearchCourseBean implements Pagination {
 		pagination.setSortDirection(SortDirection.ASC);
 		pagination.setSortColumn(SortColumn.fromString(searchParam));
 		try {
-    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
+    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(
+    				transaction, searchParam, searchString));
     		List<Course> result = CourseDAO.getCourses(transaction, pagination,
     			searchParam, searchString);
     		
@@ -268,15 +253,6 @@ public class SearchCourseBean implements Pagination {
                     + "createUser()");
     		transaction.rollback();
     	}
-    }
-    
-    /**
-     * Returns whether only free courses are to be displayed.
-     * 
-     * @return whether only free courses are to be displayed
-     */
-    public boolean getSearchOnlyFreeCourses() {
-    	return searchOnlyFreeCourses;
     }
 
     /**
@@ -359,17 +335,7 @@ public class SearchCourseBean implements Pagination {
 	public void setPagingSearchTerm(boolean pagingSearchTerm) {
 		this.pagingSearchTerm = pagingSearchTerm;
 	}
-
-	/**
-     * Redirects the user to the <code>courseDetail</code> page of a certain
-     * course .
-     * 
-     * @return link to the course detail page
-     */
-    public String loadCourseDetailPageOfSelectedCourse() {
-    	return "courseDetail";
-    }
-
+	
     /**
      * {@inheritDoc}
      */
@@ -474,8 +440,6 @@ public class SearchCourseBean implements Pagination {
     public void setPagination(PaginationData pagination) {
     	this.pagination = pagination;
     }
-
-    
     
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
@@ -496,4 +460,18 @@ public class SearchCourseBean implements Pagination {
     	this.sessionUser = sessionUser;
     }
 
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
 }

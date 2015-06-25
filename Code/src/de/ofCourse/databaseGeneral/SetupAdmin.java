@@ -28,17 +28,21 @@ import de.ofCourse.utilities.PasswordHash;
 public class SetupAdmin {
 	
 	private static final String CHECK_ADMIN =
-			"SELECT COUNT(*) FROM \"users\" WHERE role = 'SYSTEM_ADMINISTRATOR'";
+			"SELECT COUNT(*) FROM \"users\" WHERE role = " +
+			"'SYSTEM_ADMINISTRATOR'";
 	
 	private static final String INIT_ADMIN =
-			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, credit_balance," +
-			"email_verification, admin_verification, veri_string, role, status) " +
-			"VALUES ('admin1', 'bazinga@gmail.com', %s, %s, 0, TRUE, " +
+			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, " +
+			"credit_balance, email_verification, admin_verification, " +
+			"veri_string, role, status) VALUES (" +
+			"'admin1', 'bazinga@gmail.com', %s, %s, 0, TRUE, " +
 			"TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')";
 	
-	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) FROM \"system_attributes\"";
+	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) " +
+			"FROM \"system_attributes\"";
 	
-	private static final String INIT_ATTRIBUTES = "INSERT INTO \"system_attributes\"(row_lock, activation_type, " +
+	private static final String INIT_ATTRIBUTES = "INSERT INTO " +
+			"\"system_attributes\"(row_lock, activation_type, " +
 			"withdrawal_hours, overdraft_credit) " +
 			"VALUES('X', 'EMAIL', 3, 0)";
 	
@@ -63,7 +67,9 @@ public class SetupAdmin {
     	executeInitialization(CHECK_ATTRIBUTES, INIT_ATTRIBUTES);
     }
     
-    private static void executeInitialization(String checkQuery, String initQuery) {
+    private static void executeInitialization(String checkQuery,
+    		String initQuery) {
+    	
     	Transaction trans = Connection.create();
     	trans.start();
     	Connection connection = (Connection) trans;
@@ -81,7 +87,9 @@ public class SetupAdmin {
     		trans.commit();
 		} catch (SQLException e) {
 			trans.rollback();
-			throw new InvalidDBTransferException("SQL Exception occoured during executeInitialization(String checkQuery, String initQuery)", e);
+			throw new InvalidDBTransferException("SQL Exception occoured " +
+					"during executeInitialization(String checkQuery, " +
+					"String initQuery)", e);
 		}
     }
 }

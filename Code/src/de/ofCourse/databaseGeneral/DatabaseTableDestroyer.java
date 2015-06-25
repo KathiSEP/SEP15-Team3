@@ -16,7 +16,8 @@ import de.ofCourse.system.Transaction;
  */
 public class DatabaseTableDestroyer {
 	
-	private static final String DROP_FORM_OF_ADDRESS = "DROP TYPE form_of_address";
+	private static final String DROP_FORM_OF_ADDRESS =
+			"DROP TYPE form_of_address";
 	
 	private static final String DROP_ROLE = "DROP TYPE role";
 	
@@ -32,9 +33,11 @@ public class DatabaseTableDestroyer {
 	
 	private static final String DROP_COURSE_UNITS = "DROP TABLE course_units";
 	
-	private static final String DROP_USER_ADDRESSES = "DROP TABLE user_addresses";
+	private static final String DROP_USER_ADDRESSES =
+			"DROP TABLE user_addresses";
 	
-	private static final String DROP_COURSE_UNIT_ADDRESSES = "DROP TABLE course_unit_addresses";
+	private static final String DROP_COURSE_UNIT_ADDRESSES =
+			"DROP TABLE course_unit_addresses";
 	
 	private static final String DROP_CYCLES = "DROP TABLE cycles";
 	
@@ -89,7 +92,8 @@ public class DatabaseTableDestroyer {
 			}
 		} catch (SQLException e) {
 			trans.rollback();
-			throw new InvalidDBTransferException("SQL Exception occoured during dropTables()", e);
+			throw new InvalidDBTransferException(
+					"SQL Exception occoured during dropTables()", e);
 		}
 	}
 }
