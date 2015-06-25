@@ -632,7 +632,7 @@ public class CourseDAO {
 		leaders.add(leader);
 	    }
 	    statement.close();
-	    resultSet.close();
+	    resultSet.close(); 
 	} catch (SQLException e) {
 	    LogHandler.getInstance().error(
 		    "Error occoured in getLeaders from CourseDAO");
@@ -914,6 +914,7 @@ public class CourseDAO {
 
 	String sql = "DELETE FROM \"courses\" "
 	           + " WHERE id = ?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);
@@ -997,13 +998,8 @@ public class CourseDAO {
 
         try {
             setRelationMethode(userID, courseID, conn, removeUserFromCourse);
-            
-            //TODO Remove Here 
-            LogHandler.getInstance().error(
-		    "Deleting User:" + userID + " from course:" + courseID
-			    + "was succesfull");
-        } catch (SQLException e) {
-            
+
+        } catch (SQLException e) {           
             throw new InvalidDBTransferException("Error occured while trying to delete User:" + userID
                 + " from course:" + courseID, e);
         }
@@ -1132,11 +1128,6 @@ public class CourseDAO {
                 
                 resultSet.next();
                 int numberOfParticipants = resultSet.getInt(1);
-                resultSet.close();
-                
-                //TODO Remove This
-                LogHandler.getInstance().debug(
-                    "Methode getNumberOfParticipants was succesfull");
                 return numberOfParticipants;  
             }
         } catch (SQLException e) {
@@ -1164,10 +1155,7 @@ public class CourseDAO {
         
         try {
             setRelationMethode(userID, courseID, conn, addUserToInformUser);
-            
-            //TODO Remove this
-            LogHandler.getInstance().debug(
-		    "Methode addUserToInformUser was succesfull");
+
         
         } catch (SQLException e) {
             throw new InvalidDBTransferException("Exception occured during addUserToInformUser", e);
@@ -1193,15 +1181,10 @@ public class CourseDAO {
 	
         try {
             setRelationMethode(userID, courseID, conn, removeUserToInformUser);
-            //TODO Remove LogHandler here
-            LogHandler.getInstance().debug(
-                    "Methode RemoveUserToInformUser was succesfull");
-	
-	        } catch (SQLException e) {
-	    
-	            throw new InvalidDBTransferException("Exception occured during RemoveUserToInformUser", e);
-	        }
-
+            
+	    } catch (SQLException e) {	    
+	        throw new InvalidDBTransferException("Exception occured during RemoveUserToInformUser", e);
+	    }        
     }
 
     /**

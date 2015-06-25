@@ -120,6 +120,7 @@ public class CourseManagementBean {
                            "courseManagementBean.facesMessage.CourseMistake"));
 
                 return URL_CREATE_COURSE;
+                
             } else {
 
                 // Throwing success message into the faces context:
@@ -130,6 +131,7 @@ public class CourseManagementBean {
                          "courseManagementBean.facesMessage.CourseSuccessful"));
                 return URL_COURSE_DETAIL + createdCourseID;
             }
+            
         } catch (InvalidDBTransferException e) {
             this.transaction.rollback();
             FacesMessageCreator.createFacesMessage(

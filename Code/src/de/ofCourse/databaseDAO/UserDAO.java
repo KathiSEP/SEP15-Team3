@@ -1378,9 +1378,11 @@ public class UserDAO {
 	    Connection connection = (Connection) trans;
 	    java.sql.Connection conn = connection.getConn();
 
-	    String sql = "DELETE FROM course_participants WHERE course_id = ? "
-	            + "and participant_id IN (?";
+	    String sql = "DELETE FROM course_participants "
+	                + "WHERE course_id = ? "
+	                + "AND participant_id IN (?";
 	    
+	    // Add an '?' for each selected user to remove
 	    for (int i = 1; i < usersToRemove.size(); i++) {
 		sql += ",?";
 	    }
@@ -1390,6 +1392,7 @@ public class UserDAO {
 		pS.setInt(1, courseID);
 		int counter = 2;
 		
+		// Sets the '?' in the prepared statement
 		for (User user : usersToRemove) {
 		    pS.setInt(counter, user.getUserID());
 		    counter++;
@@ -1433,10 +1436,15 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT COUNT (*) as courseParticipantNumber FROM "
-		+ "(SELECT DISTINCT * FROM course_participants cP, users u "
-		+ "WHERE cP.course_id = ? AND u.id = cP.participant_id) "
-		+ "AS courseParticipants;";
+	String sql = "SELECT COUNT (*) as courseParticipantNumber "
+	            + "FROM "
+	                    + "(SELECT DISTINCT * "
+	                            + "FROM "
+	                                + "course_participants cP, "
+	                                + "users u "
+	                            + "WHERE cP.course_id = ? "
+	                            + "AND u.id = cP.participant_id) "
+	            + "AS courseParticipants;";
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);
@@ -1773,11 +1781,13 @@ public class UserDAO {
 	    pS.setBoolean(1, false);
 
 	    try( ResultSet res = pS.executeQuery()){
+	        
         	    if (res.next()) {
         		numberOfNotAdminActivatedUsers = res.getInt(1);
         	    } else {
         		numberOfNotAdminActivatedUsers = -1;
         	    }
+        	    
 	    } catch (SQLException e) {
                 throw new SQLException();
 	    }
@@ -1893,6 +1903,7 @@ public class UserDAO {
                     + "WHERE id "
                     + "IN (?";
             
+            // Add an '?' for each selected user to activate
             for (int i = 1; i < usersToActivate.size(); i++) {
                 sql += ",?";
             }
@@ -1902,6 +1913,7 @@ public class UserDAO {
                 pS.setBoolean(1, true);
                 int counter = 2;
                 
+                // Sets the '?' in the prepared statement
                 for (User user : usersToActivate) {
                     pS.setInt(counter, user.getUserID());
                     counter++;

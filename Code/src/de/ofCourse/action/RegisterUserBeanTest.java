@@ -35,14 +35,17 @@ import de.ofCourse.utilities.LanguageManager;
                         MailBean.class, FacesMessageCreator.class, 
                         InvalidDBTransferException.class, FacesContext.class,
                         LanguageManager.class})
+
 public class RegisterUserBeanTest {
 
+    // Create new Bean for testing
     private RegisterUserBean registerUserBean; 
     
     private SessionUserBean sessionUser;
     
     private LanguageManager languageManager;
     
+    // Mock FacesContext and ExternalContext and MailBean.
     @Mock
     private MailBean mailBean;
     
@@ -52,10 +55,13 @@ public class RegisterUserBeanTest {
     @Mock
     ExternalContext externalContext;
     
+    // Create captor for the FacesMessages.
     ArgumentCaptor<String> clientIdCaptor;
     ArgumentCaptor<FacesMessage> facesMessageCaptor;
     
+    // Create RequestParameterMap
     private Map<String, String> requestParameterMap;
+    
     private Connection connection;
     private FacesMessage captured;
     
@@ -68,18 +74,23 @@ public class RegisterUserBeanTest {
     
     @Before
     public void setup() {
+        // Mock FacesContext statically .
         PowerMockito.mockStatic(FacesContext.class);
         
+        // Specify what should be returned if it's ask for the instance of the
+        // FacesContext or the ExternalContext.
         Mockito.when(FacesContext.getCurrentInstance()).thenReturn(
                                                                  facesContext);
 
         Mockito.when(facesContext.getExternalContext()).thenReturn(
                                                               externalContext);
         
+        // Create RequestParameterMap.
         requestParameterMap = new HashMap<String, String>();
         Mockito.when(externalContext.getRequestParameterMap()).thenReturn(
                                                           requestParameterMap);
         
+        // Mock the Connection class statically.
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
@@ -94,11 +105,14 @@ public class RegisterUserBeanTest {
         Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("registerUserBean.facesMessage.EmailExisting", Language.DE)).
+                getProperty("registerUserBean.facesMessage.EmailExisting", 
+                                                                Language.DE)).
                 thenReturn("E-Mail existiert bereits!");
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("registerUserBean.facesMessage.SuccessfulRegistration", Language.DE)).
+                getProperty("registerUserBean.facesMessage."
+                                                    + "SuccessfulRegistration", 
+                                                                Language.DE)).
                 thenReturn("Sie haben sich erfolgreich im System registriert. "
                             + "Bitte bestätigen Sie den Aktivierungslink aus der "
                             + "Verifizierungsmail!");
@@ -106,9 +120,12 @@ public class RegisterUserBeanTest {
         Mockito.when(LanguageManager.getInstance().
                 getProperty("registerUserBean.facesMessage.AGB", Language.DE)).
                 thenReturn("Bitte AGBs bestätigen!");
-                
+         
+        // Mock the database class statically.
         PowerMockito.mockStatic(UserDAO.class);
         
+        // Specify what the methods of the database should return by specific 
+        // requests.
         correctEmail = "katharina_hoelzl@web.de";
         Mockito.when(UserDAO.emailExists(connection, correctEmail)).
                                                             thenReturn(false);
@@ -132,14 +149,19 @@ public class RegisterUserBeanTest {
         Mockito.when(UserDAO.getUserID(eq(connection), anyString())).
                                                    thenReturn(generatedUserID);
         
+        // Initialize the captor for the FacesMessages.
         clientIdCaptor = ArgumentCaptor.forClass(String.class);
         facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
     }
     
+    /**
+     * Actual test method
+     */
     @Test
     public void test() {
         requestParameterMap.put("veri", wrongVeriString);
 
+        // Initialize new test bean.
         registerUserBean = new RegisterUserBean();
       
         requestParameterMap.clear();
@@ -172,11 +194,11 @@ public class RegisterUserBeanTest {
         
         registerUserBean.setSessionUser(sessionUser);
         
-        // Test auf AGB
+        // Check AGB
         assertEquals(registerUserBean.registerUser(), 
                     "/facelets/open/authenticate.xhtml?faces-redirect=false");        
 
-        // FacesMessage prüfen
+        // Check FacesMessage 
         verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), 
                                                 facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
@@ -186,11 +208,11 @@ public class RegisterUserBeanTest {
         
         registerUserBean.setAgbAccepted(true);
         
-        // Test auf existierende Email
+        // Check if mail exists
         assertEquals(registerUserBean.registerUser(), 
                      "/facelets/open/authenticate.xhtml?faces-redirect=false");
         
-        // FacesMessage prüfen
+        // Check FacesMessage 
         verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), 
                                                  facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
@@ -200,11 +222,11 @@ public class RegisterUserBeanTest {
         
         user.setEmail(correctEmail);
         
-        // Test mit korrekter Email
+        // Test with correct mail
         assertEquals(registerUserBean.registerUser(), 
                               "/facelets/open/index.xhtml?faces-redirect=true");
         
-        // FacesMessage prüfen
+        // Check FacesMessage
         verify(facesContext, times(3)).addMessage(clientIdCaptor.capture(), 
                                                   facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
