@@ -272,58 +272,61 @@ public class CourseDetailBean implements Pagination, Serializable {
      * CourseRegistrationException is thrown.
      * 
      * @return link to the page
-     * 
+     * @author Schwarz Sebastian
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign up process
      */
     public void signUpForCourse() throws CourseRegistrationException {
-	// I have to start a transaction for database comunication
-	Transaction trans = Connection.create();
-	trans.start();
 
-	try {
-	    // First i fetch the number of Participants and the maximum amount a
-	    // Course can handle
-	    int numberOfParticipants = CourseDAO.getNumberOfParticipants(trans,
-		    courseID);
-	    Course courseToSignUp = CourseDAO.getCourse(trans, courseID);
+		transaction.start();
+	
+		try {
+		    // First i fetch the number of Participants and the maximum amount a
+		    // Course can handle
+		    int numberOfParticipants = CourseDAO.getNumberOfParticipants(transaction,
+			    courseID);
+		    Course courseToSignUp = CourseDAO.getCourse(transaction, courseID);
+	
+		    if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
 
-	    // TODO Methode noch nicht implementiert feste zahl zum testen
-	    // benutzt
-	    if (courseToSignUp.getMaxUsers() > numberOfParticipants) {
-		System.out.println(sessionUser.getUserID());
+		    	// Add user to course_participant list on the database server
+				CourseDAO.addUserToCourse(transaction, sessionUser.getUserID(),
+					courseID);
+				LogHandler.getInstance().debug(
+			            "Methode addUserToCourse was succesfull");
 
-		
-		// Add user to course_participant list on the database server
-		CourseDAO.addUserToCourse(trans, sessionUser.getUserID(),
-			courseID);
-		LogHandler.getInstance().debug(
-	            "Methode addUserToCourse was succesfull");
-		
-		
-		if (registeredForCourseNews) {
-		    CourseDAO.addUserToInformUser(trans,
-			    sessionUser.getUserID(), courseID);
+				//Checks if the User wants to be informed about course news, if so put him
+				//in the Database List 
+				if (registeredForCourseNews) {
+					CourseDAO.addUserToInformUser(transaction,
+							sessionUser.getUserID(), courseID);
+					LogHandler.getInstance().debug(
+				            "Methode addUserUserToInformUser was succesfull");
+				}
+			
+				LogHandler.getInstance().debug(
+				"User:" + sessionUser.getUserID()
+					+ "Succesfull signed for course:" + courseID);
+				transaction.commit();
+				
+				//Sets the Boolean to true for the button
+				isRegistered = true;
+		    
+		    } else {
+			
+		    	// If the course is full we throw the			
+		    	// CourseRegistrationException
+		        transaction.rollback();
+		        throw new CourseRegistrationException("You couldn't take part in the "
+		        		+ "course because the maximum amount of Participant has already reached");
+		    
+		    }
+		} catch (InvalidDBTransferException e) {
+		    transaction.rollback();	    
+		    throw new CourseRegistrationException("Error occured while User:" + sessionUser.getUserID()
+	                + " signing up for course:" + courseID);
 		}
-		LogHandler.getInstance().debug(
-			"User:" + sessionUser.getUserID()
-				+ "Succesfull signed for course:" + courseID);
-		trans.commit();
-		isRegistered = true;
-	    } else {
-		// If the course is full we throw the
-		// CourseRegistrationException
-	        trans.rollback();
-	        
-	        //TODO Fehlermeldung
-	        throw new CourseRegistrationException("You couldn't take part in the course because the maximum amount of Participant has already reached");
-	    }
-	} catch (InvalidDBTransferException e) {
-	    trans.rollback();	    
-	    throw new CourseRegistrationException("Error occured while User:" + sessionUser.getUserID()
-                + " signing up for course:" + courseID);
-	}
-
+	
     }
 
     /**
@@ -337,106 +340,126 @@ public class CourseDetailBean implements Pagination, Serializable {
      * CourseRegistrationException is thrown.
      * 
      * @return link to the page
-     * 
+     * @author Schwarz Sebastian
      * @throws CourseRegistrationException
      *             if a exception occours during the sign off process
      */
     public void signOffFromCourse() throws CourseRegistrationException {
-	transaction = Connection.create();
-	transaction.start();
 
-	try {
-	    User userWhoTryToSignOff = UserDAO.getUser(transaction,
-		    sessionUser.getUserID());
-
-	    // Fetching a List of all CourseUnits the User takes part in
-	    List<CourseUnit> signedCourseUnits = CourseUnitDAO
-		    .getCourseUnitsOf(transaction,
-			    userWhoTryToSignOff.getUserID());
-
-	    // Getting a List of Courses which only belongs to the Course and
-	    // the User is signed Up
-	    ArrayList<CourseUnit> courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);
-
-	    // If the list is not empty the users gets signed Off from every
-	    // CourseUnit which belongs to the Course and he is signedUp to
-	    // Das geht schoener aber es is schon 4 Uhr in der Frueh
-	    if (!courseUnitsToSignOff.isEmpty()) {
-		float money = 0;
-		for (int i = 0; i < courseUnitsToSignOff.size(); i++) {
-		    CourseUnitDAO.removeUserFromCourseUnit(transaction,
-			    sessionUser.getUserID(), courseUnitsToSignOff
-				    .get(i).getCourseUnitID());
-		    money += courseUnitsToSignOff.get(i).getPrice();
-
-		    // die button auch wieder setzen
-		    for (int x = 0; x < courseUnitsOfCourse.size(); x++) {
-			if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff
-				.get(i).getCourseUnitID()) {
-			    courseUnitsOfCourse.get(x).setUserIsParticipant(
-				    false);
-			    break;
-			}
+		transaction.start();
+	
+		try {
+		    User userWhoTryToSignOff = UserDAO.getUser(transaction,
+			    sessionUser.getUserID());
+		    LogHandler.getInstance().debug(
+		            "Methode getUser(" + sessionUser.getUserID() + ") was succesfull");
+		    
+		    // Fetching a List of all CourseUnits the User takes part in
+		    List<CourseUnit> signedCourseUnits = CourseUnitDAO
+			    .getCourseUnitsOf(transaction,
+				    userWhoTryToSignOff.getUserID());
+		    LogHandler.getInstance().debug(
+		            "Methode signedCourseUnits of:" + sessionUser.getUserID() 
+		            	+" was succesfull");
+		    
+		    // Getting a List of CourseUnits which only belongs to the Course and
+		    // the User is signed Up
+		    ArrayList<CourseUnit> courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);
+	
+		    // If the list is not empty the users gets signed Off from every
+		    // CourseUnit which belongs to the Course and he is signedUp to
+		    if (!courseUnitsToSignOff.isEmpty()) {
+				float money = 0;
+				for (int i = 0; i < courseUnitsToSignOff.size(); i++) {
+				    CourseUnitDAO.removeUserFromCourseUnit(transaction,
+					    sessionUser.getUserID(), courseUnitsToSignOff
+						    .get(i).getCourseUnitID());
+				    LogHandler.getInstance().debug(
+				            "Methode removeUserFromCouseUnit:" + sessionUser.getUserID()
+				            	+" was succesfull");
+				    
+				    money += courseUnitsToSignOff.get(i).getPrice();
+				    for (int x = 0; x < courseUnitsOfCourse.size(); x++) {
+						if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff
+							.get(i).getCourseUnitID()) {
+						    courseUnitsOfCourse.get(x).setUserIsParticipant(
+							    false);
+						    break;
+						}
+				    }	
+				}
+	
+				float newAccountBalance = userWhoTryToSignOff
+					.getAccountBalance() + money;
+				UserDAO.updateAccountBalance(transaction,
+					sessionUser.getUserID(), newAccountBalance);
+				LogHandler.getInstance().debug(
+			            "Methode updateAccountBalance:" + sessionUser.getUserID() 
+			            	+ " was succesfull");
+				
+				CourseDAO.removeUserFromCourse(transaction,
+					sessionUser.getUserID(), courseID);
+				LogHandler.getInstance().debug(
+			            "Methode removeUserFromCourse:" + sessionUser.getUserID() 
+			            	+" was succesfull");
+	
+		    } else {
+				CourseDAO.removeUserFromCourse(transaction,
+					sessionUser.getUserID(), courseID);
+				LogHandler.getInstance().debug(
+			            "Methode removeUserFromCourse:" + sessionUser.getUserID()
+			            	+" was succesfull");
 		    }
-
+	
+		    // if the User was in the InformUser List we have to Delete him there
+		    if (UserDAO.userWantsToBeInformed(transaction,
+			    sessionUser.getUserID(), courseID)) {
+				CourseDAO.removeUserToInformUser(transaction,
+					sessionUser.getUserID(), courseID);
+				LogHandler.getInstance().debug(
+			            "Methode removeUserToInformUser:" + sessionUser.getUserID()
+			            	+" was succesfull");
+		    }
+	
+		    transaction.commit();
+		    isRegistered = false;
+		
+		} catch (InvalidDBTransferException e) {
+		    transaction.rollback();
+		    throw new CourseRegistrationException("Error occured while trying to sign off from course");
 		}
-
-		float newAccountBalance = userWhoTryToSignOff
-			.getAccountBalance() + money;
-		UserDAO.updateAccountBalance(transaction,
-			sessionUser.getUserID(), newAccountBalance);
-		CourseDAO.removeUserFromCourse(transaction,
-			sessionUser.getUserID(), courseID);
-
-	    } else {
-		CourseDAO.removeUserFromCourse(transaction,
-			sessionUser.getUserID(), courseID);
-	    }
-
-	    // aus der inform liste loeschen falls drin
-	    if (UserDAO.userWantsToBeInformed(transaction,
-		    sessionUser.getUserID(), courseID)) {
-		CourseDAO.removeUserToInformUser(transaction,
-			sessionUser.getUserID(), courseID);
-	    }
-
-	    transaction.commit();
-	    isRegistered = false;
-	} catch (InvalidDBTransferException e) {
-	    transaction.rollback();
-	    LogHandler.getInstance().error(
-		    "Error occured while trying to sign off from course");
-	    throw new CourseRegistrationException();
-	}
 
     }
 
     /**
+     * Finds all the CourseUnits from the specific Course the user is signed in
+     * 
+     * @author Schwarz Sebastian
      * @param signedCourseUnits
-     * @return
+     * @return List of CourseUnits which belongs to the Course and the User is participant
      */
     private ArrayList<CourseUnit> findCourseUnitsOfThisCourse(
 	    List<CourseUnit> signedCourseUnits) {
-
-	// This array stores the CourseUnitIDs which belong to the course the
-	// user wants to sign off
-	ArrayList<CourseUnit> courseUnitsOfThatCourse = new ArrayList<CourseUnit>();
-
-	// If the user has not signed up to any courseUnits the Methode returns
-	// a empty list
-	if (!signedCourseUnits.isEmpty()) {
-
-	    // If the user is in no courseUnit which belongs to the course he
-	    // wants to leave the methode returns a empty list
-	    for (int i = 0; i < signedCourseUnits.size(); i++) {
-		if (signedCourseUnits.get(i).getCourseID() == courseID) {
-		    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));
+	
+		// This array stores the CourseUnitIDs which belong to the course the
+		// user wants to sign off
+		ArrayList<CourseUnit> courseUnitsOfThatCourse = new ArrayList<CourseUnit>();
+	
+		// If the user has not signed up to any courseUnits the Methode returns
+		// a empty list
+		if (!signedCourseUnits.isEmpty()) {
+	
+		    // If the user is in no courseUnit which belongs to the course he
+		    // wants to leave the methode returns a empty list
+		    for (int i = 0; i < signedCourseUnits.size(); i++) {
+				if (signedCourseUnits.get(i).getCourseID() == courseID) {
+				    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));
+				}
+		    }
+		    return courseUnitsOfThatCourse;
+		} else {
+		    return courseUnitsOfThatCourse;
 		}
-	    }
-	    return courseUnitsOfThatCourse;
-	} else {
-	    return courseUnitsOfThatCourse;
-	}
 
     }
 
@@ -459,87 +482,91 @@ public class CourseDetailBean implements Pagination, Serializable {
      * 
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign up process
-     */
-    /**
      * @return
      * @throws CourseRegistrationException
+     * @author Schwarz Sebastian
      */
     public void signUpForCourseUnits() throws CourseRegistrationException {
-	Transaction trans = Connection.create();
-	trans.start();
 	
+		transaction.start();
 	
-	// TODO an rickys faclet anpassen
-	if (UserDAO.userIsParticpant(trans, sessionUser.getUserID(), courseID)) {
-	    int courseUnitID = Integer.parseInt(FacesContext
-		    .getCurrentInstance().getExternalContext()
-		    .getRequestParameterMap().get("courseUnitID"));
-	    try {
+		//First we have to Check if the User is signedUp for the Course
+		if (UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)) {
+			
+			//Gets the CourseUnitID from the faclet
+		    int courseUnitID = Integer.parseInt(FacesContext
+			    .getCurrentInstance().getExternalContext()
+			    .getRequestParameterMap().get("courseUnitID"));
+		    try {
+
+				CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(
+					transaction, courseUnitID);
+				LogHandler.getInstance().debug("Methode getCourseUnit:" + courseUnitID 
+							+" was succesfull");
+				
+				User userWhoTryToSignUp = UserDAO.getUser(transaction,
+					sessionUser.getUserID());
+				LogHandler.getInstance().debug("Methode getUser:" + sessionUser.getUserID()
+						+" was succesfull");
+				
+				int currentAmountOfParticipants = CourseUnitDAO
+					.getNumberOfParticipants(transaction, courseUnitID);
+				LogHandler.getInstance().debug("Methode getNumberOfParticipants of:" + courseUnitID 
+						+" was succesfull");
 		
-	        
-	        // Instanziere alle Models aus der Datenbank die gebraucht
-		// werden
-		CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(
-			trans, courseUnitID);
+				//Checks whether the CourseUnit is maxed out or not
+				if (courseUnitIsFull(courseUnitToSign,
+					currentAmountOfParticipants)) {
 		
-		User userWhoTryToSignUp = UserDAO.getUser(trans,
-			sessionUser.getUserID());
+				    // The methode calculates the new Amount of monez
+				    float newAccountBalance = signingUpForUser(
+					    courseUnitToSign, userWhoTryToSignUp);
 		
-		int currentAmountOfParticipants = CourseUnitDAO
-			.getNumberOfParticipants(trans, courseUnitID);
+				    // Updates the Account and signs up the User for the CourseUnit
+				    CourseUnitDAO.addUserToCourseUnit(transaction,
+					    sessionUser.getUserID(), courseUnitID);
+				    LogHandler.getInstance().debug("Methode addUserToCourseUnit, User:" 
+					    + sessionUser.getUserID() +" Course:"+ courseUnitID +" was succesfull");
+				    
+				    UserDAO.updateAccountBalance(transaction,
+					    sessionUser.getUserID(), newAccountBalance);
+				    LogHandler.getInstance().debug("Methode updateAccountBalance of:" 
+					    + sessionUser.getUserID()  +" was succesfull");
+		
+				    //Refreshes the LoginButton
+				    for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
+						if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {
+						    courseUnitsOfCourse.get(i).setUserIsParticipant(
+							    true);
+						    break;
+						}
+				    }
+		
+				    LogHandler.getInstance().debug(
+					    "User succesfully added to CourseUnit");
+		
+				    transaction.commit();
+				} else {
 
-		if (courseUnitIsFull(courseUnitToSign,
-			currentAmountOfParticipants)) {
+				    transaction.rollback();
+				    throw new CourseRegistrationException("The courseUnit:"
+						    + courseUnitID
+						    + "has reached maximal amount of Particpants. User:"
+						    + userWhoTryToSignUp.getUserID()
+						    + "cant sign up");
+		
+				}
+	
+		    } catch (InvalidDBTransferException e) {
 
-		    // Methode berechnet neuen Kontostand
-		    float newAccountBalance = signingUpForUser(
-			    courseUnitToSign, userWhoTryToSignUp);
-
-		    // Kontostand wird geupdatet und der User in die CourseUnit
-		    // eingetragen
-		    CourseUnitDAO.addUserToCourseUnit(trans,
-			    sessionUser.getUserID(), courseUnitID);
-		    UserDAO.updateAccountBalance(trans,
-			    sessionUser.getUserID(), newAccountBalance);
-
-		    // Instanziert den button
-		    for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
-			if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {
-			    courseUnitsOfCourse.get(i).setUserIsParticipant(
-				    true);
-			    break;
-			}
+				transaction.rollback();
+				throw new CourseRegistrationException("Error occured during sign Up for CourseUnit");		    
 		    }
-
-		    LogHandler.getInstance().debug(
-			    "User succesfully added to CourseUnit");
-
-		    trans.commit();
+		    
 		} else {
-		    LogHandler
-			    .getInstance()
-			    .debug("The courseUnit:"
-				    + courseUnitID
-				    + "has reached maximal amount of Particpants. User:"
-				    + userWhoTryToSignUp.getUserID()
-				    + "cant sign up");
-		    trans.rollback();
-		    throw new CourseRegistrationException();
-
+		    transaction.rollback();
+		    throw new CourseRegistrationException("First you have to sign Up for the Course");
 		}
-
-	    } catch (InvalidDBTransferException e) {
-		LogHandler.getInstance()
-			.error("Database Transfare not working");
-		trans.rollback();
-		throw new CourseRegistrationException();
-
-	    
-	    }
-	} else {
-	    // TODO FacletMessege
-	    trans.rollback();
-	}
 
     }
 
@@ -558,50 +585,54 @@ public class CourseDetailBean implements Pagination, Serializable {
      * is thrown.
      * 
      * @return link to the page
-     * 
+     * @author Schwarz Sebastian
      * @throws CourseRegistrationException
      *             if a exception occurs during the sign off process
      */
     public void signOffFromCourseUnits() throws CourseRegistrationException {
-	Transaction trans = Connection.create();
-	trans.start();
-	// TODO noch angleichen zum FACLET
-	int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
-		.getExternalContext().getRequestParameterMap()
-		.get("courseUnitID"));
-	try {
+	
+		transaction.start();
 
-	    // Instanziere alle Models aus der Datenbank die gebraucht werden
-	    CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(trans,
-		    courseUnitID);
-	    User userWhoTryToSignOff = UserDAO.getUser(trans,
-		    sessionUser.getUserID());
-
-	    // Kann hier auch noch abfragen ob User wirklich in Kurseinheit
-	    signOffFromSpecificCourseUnit(trans, courseUnitToSignOff,
-		    userWhoTryToSignOff);
-
-	    // Instanziert noch den Damit der Button richtig angezeigt wird
-	    for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
-		if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {
-		    courseUnitsOfCourse.get(i).setUserIsParticipant(false);
-		    break;
+		//Gets the CourseUnitID from the Faclet
+		int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()
+			.getExternalContext().getRequestParameterMap()
+			.get("courseUnitID"));
+		
+		try {
+		    CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(transaction,
+			    courseUnitID);
+		    LogHandler.getInstance().debug("Methode getCourseUnit:" 
+				    + courseUnitID  +" was succesfull");
+		    
+		    User userWhoTryToSignOff = UserDAO.getUser(transaction,
+			    sessionUser.getUserID());
+		    LogHandler.getInstance().debug("Methode getUser:" 
+				    + sessionUser.getUserID()  +" was succesfull");
+		    signOffFromSpecificCourseUnit(transaction, courseUnitToSignOff,
+			    userWhoTryToSignOff);
+	
+		    // Refreshes the LoginButton
+		    for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
+				if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {
+				    courseUnitsOfCourse.get(i).setUserIsParticipant(false);
+				    break;
+				}
+		    }
+		    LogHandler.getInstance().debug(
+			    "User sucessfully signed of from courseUnit");
+	
+		    transaction.commit();
+		} catch (InvalidDBTransferException e) {
+		    transaction.rollback();
+		    throw new CourseRegistrationException("User not signed off from courseUnit");
 		}
-	    }
-	    LogHandler.getInstance().debug(
-		    "User sucessfully signed of from courseUnit");
-
-	    trans.commit();
-	} catch (InvalidDBTransferException e) {
-	    LogHandler.getInstance().debug(
-		    "User not signed off from courseUnit");
-	    trans.rollback();
-	}
     }
 
     /**
+     * This Methode signsOff from a CourseUNit and updates the Account Balance of the User
+     * 
      * @param trans
-     *
+     *@author Sebastian Schwarz
      * @param courseUnitToSignOff
      * @param userWhoTryToSignOff
      * @throws InvalidDBTransferException
@@ -609,15 +640,18 @@ public class CourseDetailBean implements Pagination, Serializable {
     private void signOffFromSpecificCourseUnit(Transaction trans,
 	    CourseUnit courseUnitToSignOff, User userWhoTryToSignOff)
 	    throws InvalidDBTransferException {
-	CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),
-		courseUnitToSignOff.getCourseUnitID());
-	float newAccountBalance = signingOffFromCourseUnit(courseUnitToSignOff,
-		userWhoTryToSignOff);
-	UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
-		newAccountBalance);
+		
+    	CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),
+			courseUnitToSignOff.getCourseUnitID());
+		float newAccountBalance = signingOffFromCourseUnit(courseUnitToSignOff,
+			userWhoTryToSignOff);
+		UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),
+			newAccountBalance);
     }
 
     /**
+     * Returns whether the CourseUnit is maxed out or not
+     * 
      * @author Sebastian
      * @param courseUnitToSign
      * @param currentAmountOfParticipants
@@ -625,7 +659,8 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     private boolean courseUnitIsFull(CourseUnit courseUnitToSign,
 	    int currentAmountOfParticipants) {
-	return courseUnitToSign.getMaxUsers() > currentAmountOfParticipants;
+    	
+    	return courseUnitToSign.getMaxUsers() > currentAmountOfParticipants;
     }
 
     /**
@@ -806,6 +841,7 @@ public class CourseDetailBean implements Pagination, Serializable {
     }
 
     /**
+     * Returns the new Account Balance of the User
      * @author Sebastian
      * @param courseUnitToSignOff
      * @param userWhoTryToSignOff
@@ -813,11 +849,15 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     private float signingOffFromCourseUnit(CourseUnit courseUnitToSignOff,
 	    User userWhoTryToSignOff) {
-	return userWhoTryToSignOff.getAccountBalance()
-		+ courseUnitToSignOff.getPrice();
+	
+    	return userWhoTryToSignOff.getAccountBalance()
+    			+ courseUnitToSignOff.getPrice();
     }
 
     /**
+     * Checks whether the User has enough Money for the CourseUnit or not and returns
+     * his new Account Balance
+     * 
      * @author Sebastian
      * @param courseUnitToSign
      * @param userWhoTryToSignUp
@@ -825,22 +865,18 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     private float signingUpForUser(CourseUnit courseUnitToSign,
 	    User userWhoTryToSignUp) {
-	if (userWhoTryToSignUp.getAccountBalance() >= courseUnitToSign
-		.getPrice()) {
-	    return userWhoTryToSignUp.getAccountBalance()
-		    - courseUnitToSign.getPrice();
-	} else {
-
-	    // TODO FacletMessenge
-	    LogHandler
-		    .getInstance()
-		    .debug("User:"
-			    + userWhoTryToSignUp.getUserID()
-			    + "has not enough money to take part in the course:"
-			    + courseUnitToSign.getCourseUnitID());
-	    throw new CourseRegistrationException();
-
-	}
+		
+    	if (userWhoTryToSignUp.getAccountBalance() >= courseUnitToSign
+			.getPrice()) {
+		    return userWhoTryToSignUp.getAccountBalance()
+			    - courseUnitToSign.getPrice();
+		} else {
+		    throw new CourseRegistrationException("User:"
+				    + userWhoTryToSignUp.getUserID()
+				    + "has not enough money to take part in the course:"
+				    + courseUnitToSign.getCourseUnitID());
+	
+		}
 
     }
 
