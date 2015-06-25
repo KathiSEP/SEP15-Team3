@@ -39,7 +39,12 @@ public class NavigationBean {
      */
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
-    
+
+    /**
+     * Sets the language in which the whole site will appear.
+     * 
+     * @param language the language to be set.
+     */
     public void setLanguage(String language) {
     	if (language.equals("en")) {
     		sessionUser.setLanguage(Language.EN);
