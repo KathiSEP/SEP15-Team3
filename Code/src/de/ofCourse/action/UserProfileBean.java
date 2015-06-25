@@ -116,7 +116,6 @@ public class UserProfileBean {
      */
     public void saveSettings() {
     	setEnums();
-    	transaction = Connection.create();
     	transaction.start();
     	
     	try {
@@ -191,7 +190,6 @@ public class UserProfileBean {
     
     public String deleteUser() {
     	String goToPage = URL_PROFILE;
-    	transaction = Connection.create();
     	transaction.start();
     	
     	try {
@@ -215,7 +213,6 @@ public class UserProfileBean {
      */
     public void uploadProfilePic() {
     	if (image != null) {
-    		transaction = Connection.create();
 	    	transaction.start();
 	    	try {
 	    		UserDAO.uploadImage(transaction, user.getUserID(), image);
@@ -231,7 +228,6 @@ public class UserProfileBean {
     }
     
     public void deleteProfilePic() {
-    	transaction = Connection.create();
     	transaction.start();
     	try {
     		UserDAO.delete(transaction, user.getUserID(), false);

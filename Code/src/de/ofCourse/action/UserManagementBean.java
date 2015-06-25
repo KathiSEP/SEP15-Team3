@@ -77,6 +77,7 @@ public class UserManagementBean {
     	image = null;
     	this.user = new User();
         this.user.setAddress(new Address());
+        transaction = Connection.create();
     }
     
     /**
@@ -88,7 +89,6 @@ public class UserManagementBean {
      * @return link to the next page
      */
     public String createUser() {
-    	transaction = Connection.create();
     	transaction.start();
         String goToPage = URL_CREATE_USER;
         
@@ -148,32 +148,12 @@ public class UserManagementBean {
     }
     
     /**
-     * Uploads a selected picture file from the local system to the server. The
-     * picture needs to be a .jpg <br>
-     */
-    public void uploadProfilPic() {
-    }
-
-    /**
-     * Deletes the actual displayed user from the system and returns the link to
-     * the next page.<br>
-     * That means that the method deletes the user from the database. Also the
-     * user is signed off from all courses and course units the user attends.
-     * 
-     * @return link to next page
-     */
-    public String deleteUser() {
-	return null;
-    }
-
-    
-    /**
      * Returns the value of the attribute <code>user</code>.
      * 
      * @return the displayed user
      */
     public User getUser() {
-	return user;
+    	return user;
     }
 
     /**
@@ -183,6 +163,7 @@ public class UserManagementBean {
      *            the displayed user
      */
     public void setUser(User user) {
+    	this.user = user;
     }
 
     public String getSalutation() {
