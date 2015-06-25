@@ -105,6 +105,12 @@ public class AuthenticateUserBean {
     @PostConstruct
     private void init() {
         loginUser = new User();
+        // Filling the HTTP-Session with the user data for the 
+        // PhaseListener.
+        HttpSession session = (HttpSession) FacesContext
+                .getCurrentInstance().getExternalContext()
+                .getSession(true);
+        session.setAttribute("lang", Language.DE.toString());
     }
 
     /**

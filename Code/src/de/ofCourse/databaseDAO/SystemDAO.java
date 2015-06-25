@@ -46,7 +46,7 @@ public class SystemDAO {
 	    "SELECT overdraft_credit FROM \"system_attributes\"";
     
     private final static String GET_SIGN_OFF_LIMIT =
-	    "SELECT withdrawal_hours FROM FROM \"system_attributes\"";
+	    "SELECT withdrawal_hours FROM \"system_attributes\"";
 
     /**
      * Returns the value of the overdraft credit stored in the database.

@@ -23,7 +23,6 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Activation;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
-import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
@@ -181,52 +180,29 @@ public class UserDAO {
      */
     public static boolean nickTaken(Transaction trans, String nickname)
 	    throws InvalidDBTransferException {
-	boolean exists = true;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	int check;
-	String query = "SELECT COUNT(*) FROM \"users\" WHERE nickname = ?";
-
-	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setString(1, nickname);
-	    rst = stmt.executeQuery();
-	    rst.next();
-	    check = rst.getInt(1);
-
-	    if (check == 0) {
-		exists = false;
-	    }
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing nickTaken(Transaction trans, String nickname)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (stmt != null) {
-		try {
-		    stmt.close();
+    	
+		boolean exists = true;
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		int check;
+		String query = "SELECT COUNT(*) FROM \"users\" WHERE nickname = ?";
+	
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		    stmt.setString(1, nickname);
+		    
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	rst.next();
+		    	check = rst.getInt(1);
+		    	if (check == 0) {
+			    	exists = false;
+			    }
+		    }
+		    
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during closing PreparedStatement in nickTaken(Transaction trans, String nickname)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"executing nickTaken(Transaction trans, String nickname)", e);
 		}
-	    }
-	    if (rst != null) {
-		try {
-		    rst.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during closing ResultSet in nickTaken(Transaction trans, String nickname)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return exists;
+		return exists;
     }
 
     /**
@@ -240,39 +216,24 @@ public class UserDAO {
      */
     public static void uploadImage(Transaction trans, int userID, Part image)
 	    throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	try {
-	    InputStream inputStream = image.getInputStream();
-	    String query = "UPDATE \"users\" SET profile_image = ? WHERE id = ?";
-	    stmt = conn.prepareStatement(query);
-	    stmt.setBinaryStream(1, inputStream, image.getSize());
-	    stmt.setInt(2, userID);
-
-	    stmt.executeUpdate();
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-	    throw new InvalidDBTransferException();
-	} catch (IOException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (stmt != null) {
-		try {
-		    stmt.close();
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		String query = "UPDATE \"users\" SET profile_image = ? WHERE id = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		    InputStream inputStream = image.getInputStream();    
+		    stmt.setBinaryStream(1, inputStream, image.getSize());
+		    stmt.setInt(2, userID);
+	
+		    stmt.executeUpdate();
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"executing uploadImage(Transaction trans, int userID, Part image)", e);
+		} catch (IOException e) {
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"executing uploadImage(Transaction trans, int userID, Part image)");
 		}
-	    }
-	}
     }
 
     /**
@@ -631,28 +592,26 @@ public class UserDAO {
      */
     public static User getUser(Transaction trans, int userID)
 	    throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	User user = null;
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	String query = "SELECT nickname FROM \"users\" WHERE id=?";
-
-	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setInt(1, userID);
-
-	    rst = stmt.executeQuery();
-	    if (rst.next()) {
-		user = getUser(trans, rst.getString(1));
-	    }
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executing getUser(Transaction trans, int userID)");
-	    throw new InvalidDBTransferException();
-	}
-	return user;
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		User user = null;
+		String query = "SELECT nickname FROM \"users\" WHERE id=?";
+	
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		    stmt.setInt(1, userID);
+	
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	if (rst.next()) {
+		    		user = getUser(trans, rst.getString(1));
+			    }
+		    }
+		    
+		} catch (SQLException e) {
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"executing getUser(Transaction trans, int userID)", e);
+		}
+		return user;
     }
 
     /**
@@ -1179,39 +1138,25 @@ public class UserDAO {
      */
     public static void delete(Transaction trans, int userID, boolean deleteUser)
 	    throws InvalidDBTransferException {
+    	
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
-		PreparedStatement stmt = null;
 		String query = null;
 		String deleteUserQuery = "DELETE FROM \"users\" WHERE id = ?";
 		String deleteImageQuery = "UPDATE \"users\" SET profile_image = NULL WHERE id = ?";
-	
-		try {
-			if (deleteUser) {
-				query = deleteUserQuery;
-			} else {
-				query = deleteImageQuery;
-			}
-			
-		    stmt = conn.prepareStatement(query);
-		    stmt.setInt(1, userID);
+		
+		if (deleteUser) {
+			query = deleteUserQuery;
+		} else {
+			query = deleteImageQuery;
+		}
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, userID);
 		    stmt.executeUpdate();
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-		    throw new InvalidDBTransferException();
-		} finally {
-		    if (stmt != null) {
-			try {
-			    stmt.close();
-			} catch (SQLException e) {
-			    LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during executing uploadImage(Transaction trans, int userID, Part image)");
-			    throw new InvalidDBTransferException();
-			}
-		    }
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during executing uploadImage(Transaction trans, int userID, Part image)");
 		}
     }
 

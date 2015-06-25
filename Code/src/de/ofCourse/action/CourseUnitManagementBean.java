@@ -296,10 +296,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    courseUnit.setCourseAdmin(new User());
 	    courseUnit.setCycle(new Cycle());
 	    courseUnit.setCourseID(courseID);
-	    date = new Date();
-	    start = new Date();
-	    end = new Date();
-	    end.setTime((start.getTime() + 7200000L));
 	}
     }
 
@@ -436,6 +432,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		    for (int id : idsToEdit) {
 			// Fetch course unit in cycle
+			recipients = new ArrayList<String>();
 			tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);
 
 			// Add calculated time differences

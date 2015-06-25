@@ -11,12 +11,12 @@ public enum Salutation {
     /**
      * The user can have the salutation Mister.
      */
-    MR("mr."),
+    MR("mr"),
     
     /**
      * Or the user can have the salutation Misses.
      */
-    MS("ms.");
+    MS("ms");
     
     private String salutation;
     

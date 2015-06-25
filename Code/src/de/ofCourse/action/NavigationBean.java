@@ -7,6 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import de.ofCourse.model.Language;
 import de.ofCourse.utilities.LanguageManager;
@@ -46,13 +47,11 @@ public class NavigationBean {
      * @param language the language to be set.
      */
     public void setLanguage(String language) {
-    	if (language.equals("en")) {
-    		sessionUser.setLanguage(Language.EN);
-    	} else if (language.equals("bay")) {
-    	    sessionUser.setLanguage(Language.BAY);
-    	} else {
-    		sessionUser.setLanguage(Language.DE);
-    	}
+        HttpSession httpSession = (HttpSession) FacesContext
+                .getCurrentInstance().getExternalContext()
+                .getSession(true);
+        httpSession.setAttribute("lang", language.toString());
+        sessionUser.setLanguage(Language.fromString(language));
     }
 
     /**

@@ -5,6 +5,7 @@ package de.ofCourse.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -13,10 +14,12 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.http.HttpSession;
 
 import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
@@ -24,6 +27,7 @@ import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Displays the participants that attend a certain course and offers the course
@@ -100,6 +104,20 @@ public class ListParticipantsBean implements Pagination {
     private void init() {
         this.participants = new ListDataModel<User>();
         this.setCourseID(-1);
+        Map<String, Object> sessionMap = FacesContext
+                .getCurrentInstance().getExternalContext().getSessionMap();
+        
+        Language lang = null;
+        
+        if(sessionMap.containsKey("lang")) {
+            lang = Language.fromString(sessionMap.get("lang").toString());
+        } else {
+            lang = Language.DE;
+            HttpSession httpSession = (HttpSession) FacesContext
+                    .getCurrentInstance().getExternalContext()
+                    .getSession(true);
+            httpSession.setAttribute("lang", lang.toString());
+        }
         
         try {
             this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()
@@ -113,13 +131,22 @@ public class ListParticipantsBean implements Pagination {
         catch (Exception e) {
             // FacesMessage: ' The page was called without a parameter'
             FacesMessageCreator.createFacesMessage(
-                    null,  "Die Seite wurde ohne Parameter aufgerufen");
+                    null,  
+                    LanguageManager.getInstance().
+                                    getProperty(
+                                            "listParticipantsBean.facesMessage."
+                                            + "NoParameter", 
+                                            lang));
         }
         
         if(this.getCourseID() < 0) {
             //FacesMessage: 'The page does not exist'
             FacesMessageCreator.createFacesMessage(
-                    null,  "Die Seite existiert nicht");
+                    null,  
+                    LanguageManager.getInstance().
+                                    getProperty(
+                                            "listParticipantsBean.facesMessage."
+                                            + "PageNotExist", lang));
         } else {       
             transaction = Connection.create();
             transaction.start();

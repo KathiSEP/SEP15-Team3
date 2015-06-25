@@ -23,6 +23,12 @@
                                 <strong>#{sessionUser.getLabel('profile.row.userData.header')}</strong>
                             </div>
                             <div class="panel-body">
+                            
+                                <div class="input-group" style="padding-top:5px;">
+	                                <span class="input-group-addon" style="width:160px; text-align:right;"><strong>OfCourse-ID</strong>:</span>
+	                                <h:outputLabel class="form-control" value="#{userProfileBean.user.userID}" />
+                                </div>
+                                <br/>
                                 
                                 <h:form class="form-horizontal" id="formSettings">
 			                        <h:panelGroup rendered="#{userProfileBean.readOnly}">
@@ -31,7 +37,7 @@
 			                                <h:outputLabel class="form-control" value="#{userProfileBean.user.salutation}" />
 			                            </div>
 			                                
-	                                    <div class="input-group" style="padding-top:25px;">
+	                                    <div class="input-group" style="padding-top:5px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
 	                                        <h:outputLabel class="form-control" style="width:340px;" value="#{userProfileBean.user.username}" />
 	                                    </div>
@@ -114,7 +120,7 @@
 	                                        </h:selectOneMenu>
 	                                    </div>
 	                                
-	                                    <div class="input-group" style="padding-top:25px;">
+	                                    <div class="input-group" style="padding-top:5px;">
 	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
 	                                            value="#{userProfileBean.user.username}" 
@@ -234,6 +240,8 @@
                                         <br/>
 	                                    
 	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.saveButton')}" action="#{userProfileBean.saveSettings()}" />
+	                                    &nbsp;
+	                                    <h:commandButton id="cancelSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.cancelButton')}" action="#{userProfileBean.setReadOnly(true)}" />
                                     </h:panelGroup>
                                 </h:form>
                                 <br/>
@@ -297,7 +305,7 @@
                                     </div>
                                     <div class="panel-body">
                                         #{sessionUser.getLabel('profile.row.creditBalance.text')}:
-                                        <h:outputLabel value="#{userProfileBean.user.accountBalance}"/>
+                                        <h:outputLabel value="#{userProfileBean.creditBalance}"/>
                                         €
                                     </div>
                                 </div>                                      

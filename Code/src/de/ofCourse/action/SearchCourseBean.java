@@ -132,6 +132,7 @@ public class SearchCourseBean implements Pagination {
     	searchParam = "title";
     	pagination = new PaginationData();
     	pagination.setElementsPerPage(ELEMENTS_PER_PAGE);
+    	transaction = Connection.create();
     }
 
     /**
@@ -143,12 +144,10 @@ public class SearchCourseBean implements Pagination {
      * 
      */
     public void displayCoursesInPeriod() {
-    	transaction = Connection.create();
     	transaction.start();
+    	
     	pagination.setCurrentPageNumber(0);
-    	//pagination.setSortAsc(true);
     	pagination.setSortDirection(SortDirection.ASC);
-    	//pagination.setSortColumn("courseID");
     	pagination.setSortColumn(SortColumn.ID);
     	
     	try {
@@ -157,13 +156,7 @@ public class SearchCourseBean implements Pagination {
 	    			displayPeriod);
 	    	
 	    	if (result != null) {
-	    		searchResult = result;
-	    		setPagingSearchTerm(false);
-	    		setRenderTable(true);
-	    		columnSort = false;
-	    		orderPeriod = displayPeriod;
-	    		orderSearchParam = searchParam;
-	    		orderSearchString = searchString;
+	    		setResultParams(result, false);
 	    		transaction.commit();
 	    	} else {
 	    		setRenderTable(false);
@@ -176,6 +169,22 @@ public class SearchCourseBean implements Pagination {
                     + "createUser()");
     		transaction.rollback();
     	}
+    }
+    
+    /**
+     * Sets outcome parameters
+     * 
+     * @param result
+     * @param pagingSearchTerm
+     */
+    private void setResultParams(List<Course> result, boolean pagingSearchTerm) {
+    	searchResult = result;
+		setPagingSearchTerm(pagingSearchTerm);
+		setRenderTable(true);
+		columnSort = false;
+		orderPeriod = displayPeriod;
+		orderSearchParam = searchParam;
+		orderSearchString = searchString;
     }
     
     /**
@@ -235,13 +244,10 @@ public class SearchCourseBean implements Pagination {
     }
     
     private void executeSearch() {
-    	transaction = Connection.create();
 		transaction.start();
 		
 		pagination.setCurrentPageNumber(0);
-		//pagination.setSortAsc(true);
 		pagination.setSortDirection(SortDirection.ASC);
-		//pagination.setSortColumn(searchParam);
 		pagination.setSortColumn(SortColumn.fromString(searchParam));
 		try {
     		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
@@ -249,13 +255,7 @@ public class SearchCourseBean implements Pagination {
     			searchParam, searchString);
     		
     		if (result != null) {
-    			searchResult = result;
-    			setPagingSearchTerm(true);
-    			setRenderTable(true);
-    			columnSort = false;
-    			orderPeriod = displayPeriod;
-        		orderSearchParam = searchParam;
-        		orderSearchString = searchString;
+        		setResultParams(result, true);
         		transaction.commit();
     		} else {
     			setRenderTable(false);
@@ -375,15 +375,7 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-    	transaction = Connection.create();
 	    transaction.start();
-	    
-    	//pagination.setSortColumn(orderParam);
-    	/*if (pagination.isSortAsc()) {
-    		pagination.setSortAsc(false);
-    	} else {
-    		pagination.setSortAsc(true);
-    	}*/
     	
     	if (pagination.getSortColumn().toString().equals(orderParam)) {
     		pagination.changeSortDirection();
@@ -424,7 +416,6 @@ public class SearchCourseBean implements Pagination {
      */
     @Override
     public void goToSpecificPage() {
-    	transaction = Connection.create();
 	    transaction.start();
 	    
 	    try {

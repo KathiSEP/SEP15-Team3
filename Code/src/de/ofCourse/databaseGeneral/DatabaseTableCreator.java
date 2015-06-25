@@ -11,7 +11,6 @@ import java.util.List;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
-import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -179,8 +178,6 @@ public class DatabaseTableCreator {
      * execution of the method
      */
     public static void buildUpDatabase() throws InvalidDBTransferException{
-    	
-    	//
     	List<String> createStatements = new ArrayList<String>();
     	createStatements.add(CREATE_FORM_OF_ADDRESS);
     	createStatements.add(CREATE_ROLE);
@@ -201,323 +198,34 @@ public class DatabaseTableCreator {
     	
     	String checkTables = "SELECT COUNT(*) FROM information_schema.tables " +
     			"WHERE table_schema = 'public'";
-    	Transaction trans = new Connection();
+    	Transaction trans = Connection.create();
     	trans.start();
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
     	
-    	Statement formOfAddress = null;
-    	Statement role = null;
-    	Statement status = null;
-    	Statement period = null;
-    	Statement activation = null;
-    	Statement users = null;
-    	Statement courses = null;
-    	Statement courseUnits = null;
-    	Statement userAddresses = null;
-    	Statement courseUnitAddresses = null;
-    	Statement cycles = null;
-    	Statement informUsers = null;
-    	Statement courseInstructors = null;
-    	Statement courseParticipants = null;
-    	Statement courseUnitParticipants = null;
-    	Statement systemAttributes = null;
-    	Statement check = null;
-    	ResultSet count = null;
-    	try {
-			check = conn.createStatement();
-			count = check.executeQuery(checkTables);
-			count.next();
-			Long numTables = (Long) count.getObject(1);
-			
-			if (numTables == 0) {
-				
-				//
-				for (int i = 0; i < createStatements.size(); i++) {
-					Statement stmt = conn.createStatement();
-					stmt.execute(createStatements.get(i));
-					
-					if (i < createStatements.size() - 1) {
-						conn.commit();
-					} else {
-						trans.commit();
+    	try (Statement check = conn.createStatement()) {
+    		try (ResultSet count = check.executeQuery(checkTables)) {
+    			count.next();
+    			Long numTables = (Long) count.getObject(1);
+    			
+    			if (numTables == 0) {
+					for (int i = 0; i < createStatements.size(); i++) {
+						Statement stmt = conn.createStatement();
+						stmt.execute(createStatements.get(i));
+						
+						if (i < createStatements.size() - 1) {
+							conn.commit();
+						} else {
+							trans.commit();
+						}
 					}
+				} else {
+					trans.rollback();
 				}
-				
-				formOfAddress = conn.createStatement();
-				formOfAddress.execute(CREATE_FORM_OF_ADDRESS);
-				conn.commit();
-				
-				role = conn.createStatement();
-				role.execute(CREATE_ROLE);
-				conn.commit();
-				
-				status = conn.createStatement();
-				status.execute(CREATE_STATUS);
-				conn.commit();
-				
-				period = conn.createStatement();
-				period.execute(CREATE_PERIOD);
-				conn.commit();
-				
-				activation = conn.createStatement();
-				activation.execute(CREATE_ACTIVATION);
-				conn.commit();
-				
-				users = conn.createStatement();
-				users.execute(CREATE_USERS);
-				conn.commit();
-				
-				courses = conn.createStatement();
-				courses.execute(CREATE_COURSES);
-				conn.commit();
-				
-				cycles = conn.createStatement();
-				cycles.execute(CREATE_CYCLES);
-				conn.commit();
-				
-				courseInstructors = conn.createStatement();
-				courseInstructors.execute(CREATE_COURSE_INSTRUCTORS);
-				conn.commit();
-				
-				courseUnits = conn.createStatement();
-				courseUnits.execute(CREATE_COURSE_UNITS);
-				conn.commit();
-
-				userAddresses = conn.createStatement();
-				userAddresses.execute(CREATE_USER_ADDRESSES);
-				conn.commit();
-				
-				courseUnitAddresses = conn.createStatement();
-				courseUnitAddresses.execute(CREATE_COURSE_UNIT_ADDRESSES);
-				conn.commit();
-				
-				informUsers = conn.createStatement();
-				informUsers.execute(CREATE_INFORM_USERS);
-				conn.commit();
-				
-				courseParticipants = conn.createStatement();
-				courseParticipants.execute(CREATE_COURSE_PARTICIPANTS);
-				conn.commit();
-				
-				courseUnitParticipants = conn.createStatement();
-				courseUnitParticipants.
-					execute(CREATE_COURSE_UNIT_PARTICIPANTS);
-				conn.commit();
-				
-				systemAttributes = conn.createStatement();
-				systemAttributes.execute(CREATE_SYSTEM_ATTRIBUTES);
-				trans.commit();
-				
-				System.out.println("Erstellen der Datenbank fertig");
-			} else {
-				trans.rollback();
-			}
-			
+    		}
 		} catch (SQLException e) {
-			LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during buildUpDatabase()");
-			throw new InvalidDBTransferException();
-		} finally {
-			if (count != null) {
-				try {
-					count.close();
-				} catch (SQLException e1) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing ResultSet in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (check != null) {
-				try {
-					check.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}	
-			}
-			
-			if (formOfAddress != null) {
-				try {
-					formOfAddress.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (role != null) {
-				try {
-					role.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (status != null) {
-				try {
-					status.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (period != null) {
-				try {
-					period.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (activation != null) {
-				try {
-					activation.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (users != null) {
-				try {
-					users.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courses != null) {
-				try {
-					courses.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courseUnits != null) {
-				try {
-					courseUnits.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (userAddresses != null) {
-				try {
-					userAddresses.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courseUnitAddresses != null) {
-				try {
-					courseUnitAddresses.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (cycles != null) {
-				try {
-					cycles.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (informUsers != null) {
-				try {
-					informUsers.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courseInstructors != null) {
-				try {
-					courseInstructors.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courseParticipants != null) {
-				try {
-					courseParticipants.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (courseUnitParticipants != null) {
-				try {
-					courseUnitParticipants.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (systemAttributes != null) {
-				try {
-					systemAttributes.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in buildUpDatabase()");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
+			trans.rollback();
+			throw new InvalidDBTransferException("SQL Exception occoured during buildUpDatabase()", e);
 		}
     } 
     

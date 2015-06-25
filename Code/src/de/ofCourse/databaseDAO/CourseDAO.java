@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -293,83 +292,35 @@ public class CourseDAO {
      */
     public static int getNumberOfCourses(Transaction trans, String param,
 	    String searchString) throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	String query = null;
-	switch (param) {
-	case "day":
-	    query = NUM_COURSES_DAY;
-	    return countCourses(conn, query, null, false);
-	case "week":
-	    query = NUM_COURSES_WEEK;
-	    return countCourses(conn, query, null, false);
-	case "total":
-	    query = NUM_COURSES_TOTAL;
-	    return countCourses(conn, query, null, false);
-	case "id":
-	    query = NUM_COURSES_ID;
-	    return countCourses(conn, query, searchString, false);
-	case "title":
-	    query = NUM_COURSES_TITLE;
-	    return countCourses(conn, query, searchString, false);
-	case "leader":
-	    query = NUM_COURSES_LEADER;
-	    return countCourses(conn, query, searchString, false);
-	case "start_date":
-	    query = NUM_COURSES_DATE;
-	    return countCourses(conn, query, searchString, true);
-	}
-	return 0;
-    }
-
-    /**
-     * 
-     * @param conn
-     * @param query
-     * @return
-     * @throws InvalidDBTransferException
-     * 
-     * @author Patrick Cretu
-     */
-    private static int countCourses(java.sql.Connection conn, String query)
-	    throws InvalidDBTransferException {
-	Statement stmt = null;
-	ResultSet rst = null;
-	int numCourses = 0;
-
-	try {
-	    stmt = conn.createStatement();
-	    rst = stmt.executeQuery(query);
-	    rst.next();
-	    numCourses = rst.getInt(1);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (rst != null) {
-		try {
-		    rst.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
-		    throw new InvalidDBTransferException();
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		String query = null;
+		
+		switch (param) {
+		case "day":
+		    query = NUM_COURSES_DAY;
+		    return countCourses(conn, query, null, false);
+		case "week":
+		    query = NUM_COURSES_WEEK;
+		    return countCourses(conn, query, null, false);
+		case "total":
+		    query = NUM_COURSES_TOTAL;
+		    return countCourses(conn, query, null, false);
+		case "id":
+		    query = NUM_COURSES_ID;
+		    return countCourses(conn, query, searchString, false);
+		case "title":
+		    query = NUM_COURSES_TITLE;
+		    return countCourses(conn, query, searchString, false);
+		case "leader":
+		    query = NUM_COURSES_LEADER;
+		    return countCourses(conn, query, searchString, false);
+		case "start_date":
+		    query = NUM_COURSES_DATE;
+		    return countCourses(conn, query, searchString, true);
 		}
-	    }
-	    if (stmt != null) {
-		try {
-		    stmt.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return numCourses;
+		return 0;
     }
 
     /**
@@ -385,64 +336,35 @@ public class CourseDAO {
     private static int countCourses(java.sql.Connection conn, String query,
 	    String searchString, boolean isDate)
 	    throws InvalidDBTransferException {
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	int numCourses = 0;
-
-	try {
-	    stmt = conn.prepareStatement(query);
-
-	    if (searchString != null) {
-		if (isDate) {
-		    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		    Date parsed;
-		    try {
-			parsed = format.parse(searchString);
-		    } catch (ParseException e) {
-			LogHandler
-				.getInstance()
-				.error("SQL Exception occoured during countCourses(java.sql.Connection conn,"
-					+ "String query, String searchString, boolean isDate)");
-			throw new InvalidDBTransferException();
+		int numCourses = 0;
+	
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		    if (searchString != null) {
+			    if (isDate) {
+				    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+				    Date parsed;
+				    try {
+				    	parsed = format.parse(searchString);
+				    } catch (ParseException e) {
+				    	throw new InvalidDBTransferException("SQL Exception occoured during countCourses(java.sql.Connection conn,"
+							+ "String query, String searchString, boolean isDate)");
+				    }
+				    java.sql.Date date = new java.sql.Date(parsed.getTime());
+				    stmt.setDate(1, date);
+				} else {
+				    stmt.setString(1, searchString);
+				}
 		    }
-		    java.sql.Date date = new java.sql.Date(parsed.getTime());
-		    stmt.setDate(1, date);
-		} else {
-		    stmt.setString(1, searchString);
-		}
-	    }
-
-	    rst = stmt.executeQuery();
-	    rst.next();
-	    numCourses = rst.getInt(1);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (rst != null) {
-		try {
-		    rst.close();
+	
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	rst.next();
+		    	numCourses = rst.getInt(1);
+		    }
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"countCourses(java.sql.Connection conn, String query, String searchString)", e);
 		}
-	    }
-	    if (stmt != null) {
-		try {
-		    stmt.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during countCourses(java.sql.Connection conn, String query, String searchString)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return numCourses;
+		return numCourses;
     }
 
     /**
@@ -458,27 +380,28 @@ public class CourseDAO {
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String period)
 	    throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	int limit = pagination.getElementsPerPage();
-	int offset = limit * pagination.getCurrentPageNumber();
-	String orderParam = pagination.getSortColumn().toString();
-	String dir = pagination.getSortDirection().toString();
-	String query;
-
-	switch (period) {
-	case "day":
-	    query = CURRENT_DATE_COURSES;
-	    break;
-	case "week":
-	    query = CURRENT_WEEK_COURSES;
-	    break;
-	default:
-	    query = ALL_COURSES;
-	    break;
-	}
-	return getCoursesInPeriod(conn, limit, offset,
-		String.format(query, orderParam, dir));
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		int limit = pagination.getElementsPerPage();
+		int offset = limit * pagination.getCurrentPageNumber();
+		String orderParam = pagination.getSortColumn().toString();
+		String dir = pagination.getSortDirection().toString();
+		String query;
+	
+		switch (period) {
+		case "day":
+		    query = CURRENT_DATE_COURSES;
+		    break;
+		case "week":
+		    query = CURRENT_WEEK_COURSES;
+		    break;
+		default:
+		    query = ALL_COURSES;
+		    break;
+		}
+		return getCoursesInPeriod(conn, limit, offset,
+			String.format(query, orderParam, dir));
     }
 
     /**
@@ -496,45 +419,20 @@ public class CourseDAO {
     private static List<Course> getCoursesInPeriod(java.sql.Connection conn,
 	    int limit, int offset, String query)
 	    throws InvalidDBTransferException {
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	List<Course> result = null;
-
-	try {
-	    stmt = conn.prepareStatement(query);
-	    stmt.setInt(1, limit);
-	    stmt.setInt(2, offset);
-
-	    rst = stmt.executeQuery();
-	    result = getResult(rst);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (rst != null) {
-		try {
-		    rst.close();
+		List<Course> result = null;
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		    stmt.setInt(1, limit);
+		    stmt.setInt(2, offset);
+	
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	result = getResult(rst);
+		    }
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)", e);
 		}
-	    }
-	    if (stmt != null) {
-		try {
-		    stmt.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return result;
+		return result;
     }
 
     /**
@@ -558,55 +456,34 @@ public class CourseDAO {
     public static List<Course> getCourses(Transaction trans,
 	    PaginationData pagination, String searchParam, String searchString)
 	    throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	int limit = pagination.getElementsPerPage();
-	int offset = limit * pagination.getCurrentPageNumber();
-	String orderParam = pagination.getSortColumn().getSortColumn().toString();
-	String dir = pagination.getSortDirection().toString();
-	String query = null;
-	boolean isDate = false;
-
-	switch (searchParam) {
-	case "title":
-	    query = GET_COURSES_BY_TITLE;
-	    break;
-	case "leader":
-	    query = GET_COURSES_BY_LEADER;
-	    break;
-	case "start_date":
-	    query = GET_COURSES_BY_DATE;
-	    isDate = true;
-	    break;
-	default:
-	    query = GET_COURSES_BY_ID;
-	}
-	return getCourses(conn, limit, offset, searchString,
-		String.format(query, orderParam, dir), isDate);
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		int limit = pagination.getElementsPerPage();
+		int offset = limit * pagination.getCurrentPageNumber();
+		String orderParam = pagination.getSortColumn().getSortColumn().toString();
+		String dir = pagination.getSortDirection().toString();
+		String query = null;
+		boolean isDate = false;
+	
+		switch (searchParam) {
+		case "title":
+		    query = GET_COURSES_BY_TITLE;
+		    break;
+		case "leader":
+		    query = GET_COURSES_BY_LEADER;
+		    break;
+		case "start_date":
+		    query = GET_COURSES_BY_DATE;
+		    isDate = true;
+		    break;
+		default:
+		    query = GET_COURSES_BY_ID;
+		}
+		return getCourses(conn, limit, offset, searchString,
+			String.format(query, orderParam, dir), isDate);
     }
-
-    /**
-     * 
-     * @param orderParam
-     * @return
-     * 
-     * @author Patrick Cretu
-     */
-    private static String getOrderParam(String orderParam) {
-	switch (orderParam) {
-	case "title":
-	    return "title";
-	case "maxUsers":
-	    return "max_participants";
-	case "starts":
-	    return "start_date";
-	case "ends":
-	    return "end_date";
-	default:
-	    return "id";
-	}
-    }
-
+    
     /**
      * 
      * @param conn
@@ -622,60 +499,34 @@ public class CourseDAO {
     private static List<Course> getCourses(java.sql.Connection conn, int limit,
 	    int offset, String searchString, String query, boolean isDate)
 	    throws InvalidDBTransferException {
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	List<Course> result = null;
-
-	try {
-	    stmt = conn.prepareStatement(query);
-
-	    if (isDate) {
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		Date parsed = format.parse(searchString);
-		java.sql.Date date = new java.sql.Date(parsed.getTime());
-		stmt.setDate(1, date);
-	    } else {
-		String search = "%" + searchString + "%";
-		stmt.setString(1, search);
-	    }
-	    stmt.setInt(2, limit);
-	    stmt.setInt(3, offset);
-
-	    rst = stmt.executeQuery();
-	    result = getResult(rst);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-	    throw new InvalidDBTransferException();
-	} catch (ParseException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (rst != null) {
-		try {
-		    rst.close();
+		List<Course> result = null;
+	
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+	
+		    if (isDate) {
+				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+				Date parsed = format.parse(searchString);
+				java.sql.Date date = new java.sql.Date(parsed.getTime());
+				stmt.setDate(1, date);
+		    } else {
+				String search = "%" + searchString + "%";
+				stmt.setString(1, search);
+		    }
+		    stmt.setInt(2, limit);
+		    stmt.setInt(3, offset);
+	
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	result = getResult(rst);
+		    }
+		    
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)", e);
+		} catch (ParseException e) {
+		    throw new InvalidDBTransferException("SQL Exception occoured during countCourses(java.sql.Connection conn,"
+					+ "String query, String searchString, boolean isDate)");
 		}
-	    }
-	    if (stmt != null) {
-		try {
-		    stmt.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return result;
+		return result;
     }
 
     /**
@@ -688,31 +539,29 @@ public class CourseDAO {
      */
     private static List<Course> getResult(ResultSet rst)
 	    throws InvalidDBTransferException {
-	List<Course> result = new ArrayList<Course>();
-	try {
-	    int cols = rst.getMetaData().getColumnCount();
-
-	    while (rst.next()) {
-		int i = 1;
-		List<Object> tuple = new ArrayList<Object>();
-		Course course = new Course();
-		while (i <= cols) {
-		    Object o = rst.getObject(i);
-		    tuple.add(o);
-		    i++;
+		List<Course> result = new ArrayList<Course>();
+		try {
+		    int cols = rst.getMetaData().getColumnCount();
+	
+		    while (rst.next()) {
+				int i = 1;
+				List<Object> tuple = new ArrayList<Object>();
+				Course course = new Course();
+				while (i <= cols) {
+				    Object o = rst.getObject(i);
+				    tuple.add(o);
+				    i++;
+				}
+				setProperties(course, tuple);
+				result.add(course);
+		    }
+		    if (!result.isEmpty()) {
+		    	return result;
+		    }
+		} catch (SQLException e) {
+		    throw new InvalidDBTransferException("SQL Exception occoured during getResult(ResultSet rst)", e);
 		}
-		setProperties(course, tuple);
-		result.add(course);
-	    }
-	    if (!result.isEmpty()) {
-		return result;
-	    }
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during getResult(ResultSet rst)");
-	    throw new InvalidDBTransferException();
-	}
-	return null;
+		return null;
     }
 
     /**
@@ -723,36 +572,11 @@ public class CourseDAO {
      * @author Patrick Cretu
      */
     private static void setProperties(Course course, List<Object> tuple) {
-	course.setCourseID((Integer) tuple.get(0));
-	course.setTitle((String) tuple.get(1));
-	course.setMaxUsers((Integer) tuple.get(2));
-	course.setStartdate((Date) tuple.get(3));
-	course.setEnddate((Date) tuple.get(4));
-    }
-
-    /**
-     * Returns a list of courses which titles contain the search term the user
-     * has entered. The list is ordered by the passed parameter.
-     * 
-     * @param trans
-     *            the Transaction object which contains the connection to the
-     *            database
-     * @param pagination
-     *            the Pagination object which contains the amount of elements
-     *            which are to be retrieved
-     * @param searchString
-     *            the user's search term
-     * @param orderParam
-     *            the parameter the list is to be ordered by
-     * @return the list of courses ordered by the passed parameter, or null if
-     *         no courses were retrieved
-     * @throws InvalidDBTransferException
-     *             if any error occurred during the execution of the method
-     */
-    public static List<Course> getCoursesOrdered(Transaction trans,
-	    PaginationData pagination, String searchString, String searchParam,
-	    String orderParam) throws InvalidDBTransferException {
-	return null;
+		course.setCourseID((Integer) tuple.get(0));
+		course.setTitle((String) tuple.get(1));
+		course.setMaxUsers((Integer) tuple.get(2));
+		course.setStartdate((Date) tuple.get(3));
+		course.setEnddate((Date) tuple.get(4));
     }
 
     /**

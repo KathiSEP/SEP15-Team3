@@ -39,6 +39,10 @@ import de.ofCourse.utilities.PasswordHash;
 @RequestScoped
 public class UserManagementBean {
     
+	private final String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+	
+	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/searchUser.xhtml?faces-redirect=true";
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -73,6 +77,7 @@ public class UserManagementBean {
     	image = null;
     	this.user = new User();
         this.user.setAddress(new Address());
+        transaction = Connection.create();
     }
     
     /**
@@ -84,16 +89,17 @@ public class UserManagementBean {
      * @return link to the next page
      */
     public String createUser() {
-    	transaction = Connection.create();
     	transaction.start();
-        String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+        String goToPage = URL_CREATE_USER;
         
         try {
 	        if (UserDAO.emailExists(transaction, user.getEmail())) {
-	            FacesMessageCreator.createFacesMessage(null, "E-Mail bereits vergeben");
+	            FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
+                        "registerUserBean.facesMessage.EmailExisting"));
 	            this.transaction.rollback();
 	        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
-	        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
+	        	FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
+                        "createUser.username.Message"));
 	            this.transaction.rollback();
 	        } else {
 	        	setEnums();
@@ -110,8 +116,9 @@ public class UserManagementBean {
 	        	FacesMessageCreator
                 .createFacesMessage(
                         null,
-                        "Der Nutzer wurde erfolgreich im System registriert.");
-	        	goToPage = "/facelets/user/systemAdministrator/activateUsers.xhtml?faces-redirect=true";
+                        sessionUser.getLabel(
+                                "createUser.successMessage"));
+	        	goToPage = URL_ACTIVATE_USERS;
 	        }
 	        transaction.commit();
         } catch (InvalidDBTransferException e) {
@@ -141,32 +148,12 @@ public class UserManagementBean {
     }
     
     /**
-     * Uploads a selected picture file from the local system to the server. The
-     * picture needs to be a .jpg <br>
-     */
-    public void uploadProfilPic() {
-    }
-
-    /**
-     * Deletes the actual displayed user from the system and returns the link to
-     * the next page.<br>
-     * That means that the method deletes the user from the database. Also the
-     * user is signed off from all courses and course units the user attends.
-     * 
-     * @return link to next page
-     */
-    public String deleteUser() {
-	return null;
-    }
-
-    
-    /**
      * Returns the value of the attribute <code>user</code>.
      * 
      * @return the displayed user
      */
     public User getUser() {
-	return user;
+    	return user;
     }
 
     /**
@@ -176,6 +163,7 @@ public class UserManagementBean {
      *            the displayed user
      */
     public void setUser(User user) {
+    	this.user = user;
     }
 
     public String getSalutation() {
@@ -224,7 +212,7 @@ public class UserManagementBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -233,7 +221,8 @@ public class UserManagementBean {
      * @param userSession
      *            session of the user
      */
-    public void setSessionUser(SessionUserBean userSession) {
+    public void setSessionUser(SessionUserBean sessionUser) {
+    	this.sessionUser = sessionUser;
     }
 
 }

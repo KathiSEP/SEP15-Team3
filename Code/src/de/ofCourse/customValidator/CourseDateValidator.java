@@ -6,6 +6,7 @@ package de.ofCourse.customValidator;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -14,6 +15,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Checks if the inserted start date is before the inserted end date.
@@ -32,6 +37,23 @@ public class CourseDateValidator implements Validator {
     @Override
     public void validate(FacesContext fc, UIComponent component, Object value)
             throws ValidatorException {
+        
+        Map<String, Object> sessionMap = FacesContext
+                .getCurrentInstance().getExternalContext().getSessionMap();
+        
+        Language lang = null;
+        
+        if(sessionMap.containsKey("lang")) {
+            lang = Language.fromString(sessionMap.get("lang").toString());
+        } else {
+            lang = Language.DE;
+            HttpSession session = (HttpSession) FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getSession(true);
+            session.setAttribute("lang", lang.toString());
+        }
+        
         Date startDate = null;
         Date endDate = null;
         
@@ -45,14 +67,20 @@ public class CourseDateValidator implements Validator {
             DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
             endDate = format.parse(courseEndDateString);
         } catch(Exception e) {
-            throw new ValidatorException(new FacesMessage("Datum muss im "
-                    + "Format dd.MM.yyyy angegeben werden."));
+            throw new ValidatorException(
+                    new FacesMessage(
+                          LanguageManager.getInstance().
+                          getProperty(
+                             "createCourse.Validator.CourseDateFormat", lang)));
         }
         
 
         if (startDate.getTime() > endDate.getTime()) {
-            throw new ValidatorException(new FacesMessage("Startdatum muss vor "
-                    + "dem Enddatum liegen."));
+            throw new ValidatorException(
+                    new FacesMessage(
+                          LanguageManager.getInstance().
+                          getProperty(
+                                "createCourse.Validator.CourseDateEnd", lang)));
         }
     }
 

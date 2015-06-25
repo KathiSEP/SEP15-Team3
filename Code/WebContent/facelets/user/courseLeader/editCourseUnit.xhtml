@@ -213,8 +213,7 @@
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.idLeader')}"
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.idLeader')}">
-                                        <f:convertNumber integerOnly="true" pattern="#000000000"
-                                            type="number" />
+                                        <f:convertNumber integerOnly="true"/>
                                         <f:validator validatorId="courseInstructorValidator" />
                                     </h:inputText>
                                 </div>
@@ -498,8 +497,7 @@
                                             required="true"
                                             requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.addId')}"
                                             converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.addId')}">
-                                            <f:convertNumber integerOnly="true" pattern="#000000000"
-                                                type="number" />
+                                            <f:convertNumber integerOnly="true" />
                                             <f:validator validatorId="userExistsValidator" />
                                         </h:inputText>
                                     </div>

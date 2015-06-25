@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Cycle;
-import de.ofCourse.model.Period;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;

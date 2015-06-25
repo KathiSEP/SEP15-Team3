@@ -3,6 +3,7 @@
  */
 package de.ofCourse.customValidator;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,10 +14,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Checks whether the inserted password fulfills certain security requirements
- * regarding length and choice of signs and if the two insertet passwords are 
+ * regarding length and choice of signs and if the two inserted passwords are 
  * equal.
  * 
  * @author Katharina Hölzl
@@ -49,6 +54,22 @@ public class PasswordValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent component, Object value)
 	    throws ValidatorException {
 	
+        Map<String, Object> sessionMap = FacesContext
+                .getCurrentInstance().getExternalContext().getSessionMap();
+        
+        Language lang = null;
+        
+        if(sessionMap.containsKey("lang")) {
+            lang = Language.fromString(sessionMap.get("lang").toString());
+        } else {
+            lang = Language.DE;
+            HttpSession session = (HttpSession) FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getSession(true);
+            session.setAttribute("lang", lang.toString());
+        }
+        
 	String password = value.toString();
 
 	UIInput uiInputConfirmPassword = (UIInput) component.getAttributes()
@@ -57,16 +78,20 @@ public class PasswordValidator implements Validator {
 		.toString();
 
 	    if(!confirmPassword.equals(password)){
-		throw new ValidatorException(new FacesMessage("Passwörter "
-		        + "müssen übereinstimmen."));
+		throw new ValidatorException(
+		        new FacesMessage(
+		             LanguageManager.getInstance().
+	                     getProperty(
+	                       "authenticate.validator.PasswordEquals", lang)));
 	    }
 	
 	
 	if(password.length() < 8 || password.length() > 100) {
 	    throw new ValidatorException(
 		    new FacesMessage(
-			    "Das Passwort muss mindestens 8 Zeichen lang sein, "
-			    + "darf aber höchstens 100 Zeichen lang sein."));
+		            LanguageManager.getInstance().
+                            getProperty(
+                              "authenticate.validator.PasswordLength", lang)));
 	}
 	
 	matcher = pattern.matcher(password);
@@ -74,10 +99,9 @@ public class PasswordValidator implements Validator {
 	if (!matcher.matches()) {
 	    throw new ValidatorException(
 		    new FacesMessage(
-			    "Das Passwort muss mindestens "
-			    + "ein Sonderzeichen (@,#,$,%,!,_,?,&), Ziffern "
-			    + "und Groß- und Kleinbuchstaben enthalten. "
-			    + "ß, ä, ö, ü sind nicht erlaubt."));
+		            LanguageManager.getInstance().
+                            getProperty(
+                              "authenticate.validator.PasswordPattern", lang)));
 	}
 
     }

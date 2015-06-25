@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -47,6 +48,10 @@ import de.ofCourse.utilities.PasswordHash;
 @ViewScoped
 public class UserProfileBean {
     
+	private final String URL_PROFILE = "/facelets/user/systemAdministrator/profile.xhtml?faces-redirect=false";
+	
+	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/systemAdministrator/adminManagement.xhtml?faces-redirect=true";
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -76,6 +81,8 @@ public class UserProfileBean {
     private String salutation;
     
     private String role;
+    
+    private String creditBalance;
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -86,7 +93,7 @@ public class UserProfileBean {
     private SessionUserBean sessionUser;
     
     @PostConstruct
-    private void init() {
+    public void init() {
     	readOnly = true;
 
     	transaction = Connection.create();
@@ -96,8 +103,10 @@ public class UserProfileBean {
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
     	                .getExternalContext().getRequestParameterMap().get("userID"));
     		user = UserDAO.getUser(transaction, userID);
-
     		transaction.commit();
+    		
+    		DecimalFormat f = new DecimalFormat("#0.00");
+    		setCreditBalance(f.format(user.getAccountBalance()));
     	} catch (InvalidDBTransferException e) {
     		LogHandler.getInstance().error("SQL Exception occoured during executing init() in UserProfileBean");
     		transaction.rollback();
@@ -112,7 +121,6 @@ public class UserProfileBean {
      */
     public void saveSettings() {
     	setEnums();
-    	transaction = Connection.create();
     	transaction.start();
     	
     	try {
@@ -123,7 +131,7 @@ public class UserProfileBean {
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
     			String salt = null;
-    			if (password.trim().length() > 0) {
+    			if (password != null && password.trim().length() > 0) {
     				salt = PasswordHash.getSalt();
     				pwHash = PasswordHash.hash(password, salt);
     			}
@@ -131,6 +139,7 @@ public class UserProfileBean {
     			transaction.commit();
     			readOnly = true;
     		} else {
+    			FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("profile.message"));
     			transaction.rollback();
     		}
     	} catch (InvalidDBTransferException e) {
@@ -143,18 +152,22 @@ public class UserProfileBean {
     }
     
     private void setEnums() {
-    	if (salutation.equals("ms")) {
+    	if (salutation != null) {
+    		if (salutation.equals("ms")) {
     		user.setSalutation(Salutation.MS);
-    	} else {
-    		user.setSalutation(Salutation.MR);
+	    	} else {
+	    		user.setSalutation(Salutation.MR);
+	    	}
     	}
     	
-    	if (role.equals("admin")) {
+    	if (role != null) {
+    		if (role.equals("admin")) {
     		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
-    	} else if (role.equals("leader")) {
-    		user.setUserRole(UserRole.COURSE_LEADER);
-    	} else {
-    		user.setUserRole(UserRole.REGISTERED_USER);
+	    	} else if (role.equals("leader")) {
+	    		user.setUserRole(UserRole.COURSE_LEADER);
+	    	} else {
+	    		user.setUserRole(UserRole.REGISTERED_USER);
+	    	}
     	}
     }
     
@@ -185,15 +198,14 @@ public class UserProfileBean {
     }
     
     public String deleteUser() {
-    	String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
-    	transaction = Connection.create();
+    	String goToPage = URL_PROFILE;
     	transaction.start();
     	
     	try {
     		UserDAO.delete(transaction, userID, true);
     		transaction.commit();
     		
-    		goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=true";
+    		goToPage = URL_ADMIN_MANAGEMENT;
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
@@ -210,7 +222,6 @@ public class UserProfileBean {
      */
     public void uploadProfilePic() {
     	if (image != null) {
-    		transaction = Connection.create();
 	    	transaction.start();
 	    	try {
 	    		UserDAO.uploadImage(transaction, user.getUserID(), image);
@@ -226,7 +237,6 @@ public class UserProfileBean {
     }
     
     public void deleteProfilePic() {
-    	transaction = Connection.create();
     	transaction.start();
     	try {
     		UserDAO.delete(transaction, user.getUserID(), false);
@@ -268,8 +278,8 @@ public class UserProfileBean {
      * @param userToSet
      *            the displayed user
      */
-    public void setUser(User userToSet) {
-        this.user = userToSet;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -378,6 +388,14 @@ public class UserProfileBean {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getCreditBalance() {
+		return creditBalance;
+	}
+
+	public void setCreditBalance(String creditBalance) {
+		this.creditBalance = creditBalance;
 	}
 	
 }

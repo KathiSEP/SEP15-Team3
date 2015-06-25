@@ -11,6 +11,17 @@
 	<ui:define name="content">
 		<body>
 			<h1>#{sessionUser.getLabel('adminManagement.header')}</h1>
+			     <div class="row">
+                <div class="col-lg-12">
+                    <h:message for="signOffLimit" style="color:red" />
+                    <h:message for="userIDToTopUp" style="color:red" />
+                    <h:message for="userNameToTopUp" style="color:red" />
+                    <h:message for="amountToTopUp" style="color:red" />
+                    <h:message for="amountGivenCredit" style="color:red" />
+                    <h:messages globalOnly="true" layout="table"
+                        class="alert alert-danger" />
+                </div>
+            </div>
 			<div class="row" style="padding-top: 20px;">
 				<div class="col-lg-6">
 					<div class="panel panel-info">
@@ -65,8 +76,8 @@
 									<h:inputText class="form-control" style="width:340px;"
 										value="#{systemConfigurationBean.signOffLimit}"
 										id="signOffLimit" reuqired="true"
-										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.signOffLimit')}"></h:inputText>
-									<h:message for="signOffLimit" style="color:red" />
+										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.signOffLimit')}">
+									</h:inputText>
 								</div>
 								<div>
 									<br />
@@ -99,7 +110,6 @@
 										<f:attribute name="userNameToTopUp" value="#{userNameToTopUp}" />
 										<f:validator validatorId="offlineTransactionValidator" />
 									</h:inputText>
-									<h:message for="userIDToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
@@ -110,7 +120,6 @@
 										id="userNameToTopUp" required="true"
 										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositUsername')}"
 										binding="#{userNameToTopUp}"/>
-									<h:message for="userNameToTopUp" style="color:red" />
 								</div>
 								<div class="input-group" style="padding-top: 5px;">
 									<span class="input-group-addon"
@@ -124,7 +133,6 @@
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
-									<h:message for="amountToTopUp" style="color:red" />
 								</div>
 								<div>
 									<br />
@@ -132,7 +140,7 @@
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{paymentOfflineBean.depositAmountOnUserAccount}"
 										value="#{sessionUser.getLabel('adminManagement.row.payment.chargeButton')}"/>
-										<h:message id="moneyMessage" for="spendMoney" style="color:red" />
+										<h:message id="moneyMessage" for="spendMoney" style="color:green" />
 								</div>
 							</h:form>
 							<br /> <br />
@@ -149,7 +157,6 @@
 										<f:convertNumber currencyCode="EUR" currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
-									<h:message for="amountGivenCredit" style="color:red" />
 								</div>
 								<div>
 									<br />

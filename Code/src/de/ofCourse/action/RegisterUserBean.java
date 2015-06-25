@@ -3,22 +3,27 @@
  */
 package de.ofCourse.action;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Address;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
 import de.ofCourse.utilities.PasswordHash;
 
 /**
@@ -135,6 +140,21 @@ public class RegisterUserBean {
                 .getCurrentInstance().getExternalContext().getRequest();
         String veriString = request.getParameter("veri");
 
+        Map<String, Object> sessionMap = FacesContext
+                .getCurrentInstance().getExternalContext().getSessionMap();
+        
+        Language lang = null;
+        
+        if(sessionMap.containsKey("lang")) {
+            lang = Language.fromString(sessionMap.get("lang").toString());
+        } else {
+            lang = Language.DE;
+            HttpSession httpSession = (HttpSession) FacesContext
+                    .getCurrentInstance().getExternalContext()
+                    .getSession(true);
+            httpSession.setAttribute("lang", lang.toString());
+        }
+        
         if (veriString != null && veriString.length() > 0) {
             this.transaction = Connection.create();
             transaction.start();
@@ -143,13 +163,14 @@ public class RegisterUserBean {
                 //FacesMessage: 'The account activation was successful'
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
-                        "Ihr Account wurde erfolgreich freigeschaltet!");
+                        LanguageManager.getInstance().
+                        getProperty("registerUserBean.facesMessage.Account", lang));
             } else {
                 //FacesMessage: 'The verification string does not exist'
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
-                        sessionUser.getLabel(
-                                "Der Verifizierungsstring existiert nicht"));
+                                LanguageManager.getInstance().
+                                getProperty("registerUserBean.facesMessage.NoVeriString", lang));
             }
             this.transaction.commit();
         }

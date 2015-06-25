@@ -39,12 +39,9 @@ import de.ofCourse.system.Transaction;
 @ManagedBean
 @ViewScoped
 public class SchedulerBean {
-
 	
-	/**
-     * Stores the number of days that are in one week
-     */
-    private final int WEEK_DAYS = 7;
+    
+    private final int HOUR_SLOTS = 9;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -73,34 +70,9 @@ public class SchedulerBean {
     	try {
     		String currentDate = CourseUnitDAO.getCurrentWeekDay(transaction);
     		currentMonday = getCurrentMonday(transaction, currentDate);
-    		calcCurrentSunday();
-    		
-    		
-    		
-    		/*Calendar cale = Calendar.getInstance();
-
-    		// Set the Calendar object to your date
-    		cale.setTime(currentMonday);
-
-    		// Subtracts 5 days from the date
-    		// cal.add(Calendar.DATE, -5);
-
-    		// Increments the date by one
-    		cale.roll(Calendar.DATE, true);
-
-    		// Decrements the date by one
-    		// cal.roll(Calendar.DATE, false);
-
-    		// Convert the Calendar object back to a Date
-    		Date newDate = new Date(cale.getTime().getTime());
-    		
-    		System.out.println("monday: " + currentMonday);
-    		System.out.println("tuesday: " + newDate);
-    		System.out.println("sunday: " + currentSunday);
-    		System.out.println("monday after increment: " + currentMonday);*/
-    		
     		transaction.commit();
     		
+    		calcCurrentSunday();
     		getSchedule();
     	} catch (InvalidDBTransferException e) {
     		LogHandler
@@ -184,25 +156,14 @@ public class SchedulerBean {
     }
     
     private Week createWeek(List<CourseUnit> weekRow) {
-    	
-    	//
-    	for (WeekDay day : WeekDay.getWeekDays()) {
-    		
-    	}
-    	
     	Week week = new Week();
     	Date date = new Date(currentMonday.getTime());
     	
-    	for (int i = 0; i < WEEK_DAYS; i++) {
+    	for (WeekDay day : WeekDay.getWeekDays()) {
     		for (CourseUnit unit : weekRow) {
     			if (unit.getStartime().getDay() == date.getDay()) {
-    				/*String content = String.valueOf(unit.getCourseUnitID()) +
-    						" " + unit.getTitle() + ": " + String.valueOf(unit.getStartime().getHours()) +
-    						":" + String.valueOf(unit.getStartime().getMinutes()) +
-    						" - " + String.valueOf(unit.getEndtime().getHours()) + ":" +
-    						String.valueOf(unit.getEndtime().getMinutes());*/
     				String content = getString(unit);
-    				addContent(week, content, i);
+    				addContent(week, content, day);
     			}
     		}
     		
@@ -210,8 +171,6 @@ public class SchedulerBean {
     		cal.setTime(date);
     		cal.roll(Calendar.DATE, true);
     		date = new Date(cal.getTime().getTime());
-    		// Subtracts 5 days from the date
-    		// cal.add(Calendar.DATE, -5);
     	}
     	return week;
     }
@@ -232,55 +191,54 @@ public class SchedulerBean {
     	if (endMinutesInt < 10) {
     		endMinutes += "0";
     	}
-    	//return unitID + " " + title + ": " + "\n" + startHours + ":" + startMinutes + " - " + endHours + ":" + endMinutes;
     	return startHours + ":" + startMinutes + " - " + endHours + ":" + endMinutes + ": " + "\n" + unitID + " " + title;
     }
     
-    private void addContent(Week week, String content, int numDay) {
+    private void addContent(Week week, String content, WeekDay numDay) {
     	switch (numDay) {
-    	case 0:
+    	case MONDAY:
     		String mon = week.getMonday();
     		if (mon != null) {
     			content = mon + "\n" + content;
     		}
     		week.setMonday(content);
     		break;
-    	case 1:
+    	case TUESDAY:
     		String tue = week.getTuesday();
     		if (tue != null) {
     			content = tue + "\n" + content;
     		}
     		week.setTuesday(content);
     		break;
-    	case 2:
+    	case WEDNESDAY:
     		String wed = week.getWednesday();
     		if (wed != null) {
     			content = wed + "\n " + content;
     		}
     		week.setWednesday(content);
     		break;
-    	case 3:
+    	case THURSDAY:
     		String thu = week.getThursday();
     		if (thu != null) {
     			content = thu + "\n" + content;
     		}
     		week.setThursday(content);
     		break;
-    	case 4:
+    	case FRIDAY:
     		String fri = week.getFriday();
     		if (fri != null) {
     			content = fri + "\n" + content;
     		}
     		week.setFriday(content);
     		break;
-    	case 5:
+    	case SATURDAY:
     		String sat = week.getSaturday();
     		if (sat != null) {
     			content = sat + "\n" + content;
     		}
     		week.setSaturday(content);
     		break;
-    	case 6:
+    	case SUNDAY:
     		String sun = week.getSunday();
     		if (sun != null) {
     			content = sun + "\n" + content;
@@ -318,18 +276,17 @@ public class SchedulerBean {
     }
 
     private void getSchedule() {
-    	transaction = Connection.create();
     	transaction.start();
     	
 	    try {	
 	    	List<CourseUnit> weeklyUnits =
 					CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
 			List<Week> week = new ArrayList<Week>();
-			int hour = 6;
+			int startHour = 6;
 			
-			for (int i = 0; i < 9; i++) {
-				week.add(getWeekTuple(weeklyUnits, hour));
-				hour += 2;
+			for (int i = 0; i < HOUR_SLOTS; i++) {
+				week.add(getWeekTuple(weeklyUnits, startHour));
+				startHour += 2;
 			}
 			
 			weekDays = week;
