@@ -20,10 +20,19 @@ public enum Salutation {
     
     private String salutation;
     
+    /**
+     * 
+     * @param salutationString 
+     *                  the salutation string
+     */
     private Salutation(String salutationString) {
         this.salutation = salutationString;
     }
     
+    /**
+     * 
+     * @return the salutation
+     */
     public String getSalutation() {
         return this.salutation;
     }
@@ -36,6 +45,14 @@ public enum Salutation {
         return this.name();
     }
     
+    /**
+     * Assign a string which describes the salutation enum and creates the 
+     * salutation
+     * 
+     * @param salutationString 
+     *                          the salutation string
+     * @return null
+     */
     public static Salutation fromString(String salutationString) {
         if (salutationString != null) {
           for (Salutation salutation : Salutation.values()) {

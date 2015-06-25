@@ -38,6 +38,14 @@ public enum SortDirection {
         }
     }
     
+    /**
+     * Assign a string which describes the sortDirection enum and creates the 
+     * sortDirection
+     * 
+     * @param directionString
+     *                          the sorted direction string
+     * @return null
+     */
     public static SortDirection fromString(String directionString) {
         if (directionString != null) {
           for (SortDirection direction : SortDirection.values()) {

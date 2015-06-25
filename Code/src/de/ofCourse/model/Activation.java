@@ -52,7 +52,8 @@ private String activationType;
     }
     
     /**
-     * 
+     * Assign a string which describes the activation enum and creates the 
+     * activation
      * 
      * @param activationString
      *                      String to activate

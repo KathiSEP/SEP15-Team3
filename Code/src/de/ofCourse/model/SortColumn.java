@@ -24,10 +24,19 @@ public enum SortColumn {
     
     private String sortColumn;
     
+    /**
+     * 
+     * @param columnString
+     *                  the string column
+     */
     private SortColumn(String columnString) {
         this.sortColumn = columnString;
     }
     
+    /**
+     * 
+     * @return the sortColumn
+     */
     public String getSortColumn() {
         return this.sortColumn;
     }
@@ -40,6 +49,14 @@ public enum SortColumn {
         return sortColumn;
     }
     
+    /**
+     * Assign a string which describes the sort column enum and creates the 
+     * sort column
+     * 
+     * @param columnString 
+     *                  the column string
+     * @return ID
+     */
     public static SortColumn fromString(String columnString) {
         if (columnString != null) {
           for (SortColumn column : SortColumn.values()) {
