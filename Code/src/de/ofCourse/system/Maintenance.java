@@ -16,18 +16,24 @@ import de.ofCourse.exception.InvalidDBTransferException;
  * <p>
  * The class Maintenance implements the interface <code>Runnable</code>.
  * 
- * @author Tobias Fuchs
+ * @author Katharina Hölzl
  *
  */
 public class Maintenance implements Runnable {
 
     /**
-     * Singleton-object of the Maintenace class 
+     * Singleton-object of the Maintenance class 
      */
     private static Maintenance maintenance;
     
+    /**
+     * Stores the period in which the method should be executed (24h)
+     */
     private static final long timerPeriod = 82400000L;
     
+    /**
+     * Stores the timer
+     */
     private Timer timer;
 
     /**
@@ -44,6 +50,7 @@ public class Maintenance implements Runnable {
             this.transaction = Connection.create();
             this.transaction.start();
             try {
+                //Checks if the method do course maintenance was successful
                 if(CourseDAO.doCourseMaintenance(this.transaction) == true) {
                     LogHandler
                     .getInstance()
@@ -80,7 +87,7 @@ public class Maintenance implements Runnable {
     }
 
     /**
-     * Returns an instance of the Maintenace class.
+     * Returns an instance of the Maintenance class.
      * 
      * @return instance of the class Maintenance
      */
