@@ -40,9 +40,24 @@ public class OfflineTransactionValidator implements Validator {
     public void validate(FacesContext fctx, UIComponent component, Object value)
 	    throws ValidatorException {
 	
-	
-	Language lang = getLanguage();
-	
+	Map<String, Object> sessionMap = 
+	        FacesContext
+                .getCurrentInstance()
+                .getExternalContext()
+                .getSessionMap();
+
+ Language lang = null;
+        
+        if(sessionMap.containsKey("lang")) {
+            lang = Language.fromString(sessionMap.get("lang").toString());
+        } else {
+            lang = Language.DE;
+            HttpSession session = (HttpSession) FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getSession(true);
+            session.setAttribute("lang", lang.toString());
+        } 
 	 
 	
 
@@ -60,14 +75,14 @@ public class OfflineTransactionValidator implements Validator {
 	} catch (NumberFormatException ex) {
 	    throw new ValidatorException(new FacesMessage(
 		    LanguageManager.getInstance().getProperty(
-                            "offlineTransactionValidator. message1", lang)));
+                            "offlineTransactionValidator.message1", lang)));
 	}
 
 	// Whether the entered id is positive
 	if (userID < 1) {
 	    throw new ValidatorException(new FacesMessage(
 		    LanguageManager.getInstance().getProperty(
-                            "offlineTransactionValidator. message2", lang)));
+                            "offlineTransactionValidator.message2", lang)));
 	}
 
 	Transaction transaction = new Connection();
@@ -78,7 +93,7 @@ public class OfflineTransactionValidator implements Validator {
 	    if (UserDAO.getUser(transaction, userID) == null) {
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
-	                     "offlineTransactionValidator. message3", lang)));
+	                     "offlineTransactionValidator.message3", lang)));
 	    }
 
 	    int fetchedID = UserDAO.getUserID(transaction, enteredUserName);
@@ -86,13 +101,13 @@ public class OfflineTransactionValidator implements Validator {
 	    if (fetchedID == -1) {
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
-	                     "offlineTransactionValidator. message4", lang)));
+	                     "offlineTransactionValidator.message4", lang)));
 	    }
 	    // Whether the username and the id belong to the same user
 	    if (fetchedID != userID) {
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
-	                     "offlineTransactionValidator. message5", lang)));
+	                     "offlineTransactionValidator.message5", lang)));
 	    }
 
 	    transaction.commit();
