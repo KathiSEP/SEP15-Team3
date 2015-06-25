@@ -1,7 +1,39 @@
 package de.ofCourse.model;
 
 public enum Language {
-    DE,
-    BAY,
-    EN;
+    DE("DE"),
+    BAY("BAY"),
+    EN("EN");
+    
+    private String langString;
+    
+    private Language(String langString) {
+        this.langString = langString;
+    }
+    
+    public String getLanguage() {
+        return this.langString;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Enum#toString()
+     */
+    @Override
+    public String toString() {
+        return langString;
+    }
+    
+    public static Language fromString(String langString) {
+        if (langString != null) {
+          for (Language language : Language.values()) {
+              if (langString.equalsIgnoreCase(language.langString)) {
+                  return language;
+              }
+          }
+          return null;
+        }
+        else {
+            return null;
+        }
+    }
 }
