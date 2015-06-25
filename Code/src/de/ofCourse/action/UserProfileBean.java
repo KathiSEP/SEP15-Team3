@@ -3,6 +3,7 @@
  */
 package de.ofCourse.action;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -80,6 +81,8 @@ public class UserProfileBean {
     private String salutation;
     
     private String role;
+    
+    private String creditBalance;
 
     /**
      * This ManagedProperty represents the actual session of a user. It stores
@@ -100,8 +103,10 @@ public class UserProfileBean {
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
     	                .getExternalContext().getRequestParameterMap().get("userID"));
     		user = UserDAO.getUser(transaction, userID);
-
     		transaction.commit();
+    		
+    		DecimalFormat f = new DecimalFormat("#0.00");
+    		setCreditBalance(f.format(user.getAccountBalance()));
     	} catch (InvalidDBTransferException e) {
     		LogHandler.getInstance().error("SQL Exception occoured during executing init() in UserProfileBean");
     		transaction.rollback();
@@ -379,6 +384,14 @@ public class UserProfileBean {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getCreditBalance() {
+		return creditBalance;
+	}
+
+	public void setCreditBalance(String creditBalance) {
+		this.creditBalance = creditBalance;
 	}
 	
 }
