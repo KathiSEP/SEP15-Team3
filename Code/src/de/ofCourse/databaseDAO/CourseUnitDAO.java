@@ -764,48 +764,23 @@ public class CourseUnitDAO {
      */
     public static List<CourseUnit> getCourseUnitsOf(Transaction trans,
 	    int userID) throws InvalidDBTransferException {
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement stmt = null;
-	ResultSet rst = null;
-	List<CourseUnit> result = new ArrayList<CourseUnit>();
+    	
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		List<CourseUnit> result = new ArrayList<CourseUnit>();
+		
+		try (PreparedStatement stmt = conn.prepareStatement(GET_UNITS_OF)) {
+		    stmt.setInt(1, userID);
+		    
+		    try (ResultSet rst = stmt.executeQuery()) {
+		    	result = getResult(rst);
+		    }
 	
-	try {
-	    stmt = conn.prepareStatement(GET_UNITS_OF);
-	    stmt.setInt(1, userID);
-
-	    System.out.println(stmt.toString());
-
-	    rst = stmt.executeQuery();
-	    result = getResult(rst);
-	} catch (SQLException e) {
-	    LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-	    throw new InvalidDBTransferException();
-	} finally {
-	    if (rst != null) {
-		try {
-		    rst.close();
 		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-		    throw new InvalidDBTransferException();
+		    throw new InvalidDBTransferException("SQL Exception occoured during " +
+		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)", e);
 		}
-	    }
-	    if (stmt != null) {
-		try {
-		    stmt.close();
-		} catch (SQLException e) {
-		    LogHandler
-			    .getInstance()
-			    .error("SQL Exception occoured during getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)");
-		    throw new InvalidDBTransferException();
-		}
-	    }
-	}
-	return result;
+		return result;
     }
 
     /**
@@ -818,31 +793,29 @@ public class CourseUnitDAO {
      */
     private static List<CourseUnit> getResult(ResultSet rst)
 	    throws InvalidDBTransferException {
-	List<CourseUnit> result = new ArrayList<CourseUnit>();
-	try {
-	    int cols = rst.getMetaData().getColumnCount();
-
-	    while (rst.next()) {
-		int i = 1;
-		List<Object> tuple = new ArrayList<Object>();
-		CourseUnit unit = new CourseUnit();
-		while (i <= cols) {
-		    Object o = rst.getObject(i);
-		    tuple.add(o);
-		    i++;
+		List<CourseUnit> result = new ArrayList<CourseUnit>();
+		try {
+		    int cols = rst.getMetaData().getColumnCount();
+	
+		    while (rst.next()) {
+				int i = 1;
+				List<Object> tuple = new ArrayList<Object>();
+				CourseUnit unit = new CourseUnit();
+				while (i <= cols) {
+				    Object o = rst.getObject(i);
+				    tuple.add(o);
+				    i++;
+				}
+				setProperties(unit, tuple);
+				result.add(unit);
+		    }
+		    if (!result.isEmpty()) {
+		    	return result;
+		    }
+		} catch (SQLException e) {
+		    throw new InvalidDBTransferException("SQL Exception occoured during getResult(ResultSet rst)", e);
 		}
-		setProperties(unit, tuple);
-		result.add(unit);
-	    }
-	    if (!result.isEmpty()) {
 		return result;
-	    }
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured during getResult(ResultSet rst)");
-	    throw new InvalidDBTransferException();
-	}
-	return result;
     }
 
     /**
@@ -870,22 +843,21 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     public static String getCurrentWeekDay(Transaction trans) {
+    	
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
-    	Statement stmt = null;
-    	ResultSet rst = null;
     	String currentDay = null;
     	String getDay = "SELECT timeofday()";
     	
-    	try {
-			stmt = conn.createStatement();
-			rst = stmt.executeQuery(getDay);
-			rst.next();
-			currentDay = rst.getString(1);
+    	try (Statement stmt = conn.createStatement()) {
+    		
+    		try (ResultSet rst = stmt.executeQuery(getDay)) {
+    			rst.next();
+    			currentDay = rst.getString(1);
+    		}
+			
 		} catch (SQLException e) {
-			LogHandler.getInstance().
-				error("SQL Exception occoured during getCurrentWeekDay(Transaction trans)");
-			throw new InvalidDBTransferException();
+			throw new InvalidDBTransferException("SQL Exception occoured during getCurrentWeekDay(Transaction trans)", e);
 		}
     	return currentDay;
     }
@@ -899,22 +871,21 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     public static java.sql.Date getCurrentMonday(Transaction trans, int gap) {
+    	
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
-    	Statement stmt = null;
-    	ResultSet rst = null;
     	java.sql.Date currentMonday = null;
     	String getMonday = "SELECT current_date - integer '" + gap + "'";
     	
-    	try {
-			stmt = conn.createStatement();
-			rst = stmt.executeQuery(getMonday);
-			rst.next();
+    	try (Statement stmt = conn.createStatement()) {
+    		
+    		try (ResultSet rst = stmt.executeQuery(getMonday)) {
+    			rst.next();
 			currentMonday = rst.getDate(1);
+    		}
+    		
 		} catch (SQLException e) {
-			LogHandler.getInstance().
-			error("SQL Exception occoured during getCurrentMonday(Transaction trans, int gap)");
-			throw new InvalidDBTransferException();
+			throw new InvalidDBTransferException("SQL Exception occoured during getCurrentMonday(Transaction trans, int gap)", e);
 		}
     	return currentMonday;
     }
@@ -930,25 +901,23 @@ public class CourseUnitDAO {
      * @author Patrick Cretu
      */
     public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday) {
+    	
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
-    	PreparedStatement stmt = null;
-    	ResultSet rst = null;
     	List<CourseUnit> result = null;
     	
-    	try {
-			stmt = conn.prepareStatement(GET_WEEKLY_UNITS);
+    	try (PreparedStatement stmt = conn.prepareStatement(GET_WEEKLY_UNITS)) {
 			stmt.setInt(1, userID);
 			stmt.setDate(2, monday);
 			stmt.setDate(3, monday);
 			
-			rst = stmt.executeQuery();
-			result = getResult(rst);
+			try (ResultSet rst = stmt.executeQuery()) {
+				result = getResult(rst);
+			}
+			
 		} catch (SQLException e) {
-			LogHandler.getInstance().
-			error("SQL Exception occoured during" +
-					"getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday)");
-			throw new InvalidDBTransferException();
+			throw new InvalidDBTransferException("SQL Exception occoured during" +
+					"getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday)", e);
 		}
     	return result;
     }
