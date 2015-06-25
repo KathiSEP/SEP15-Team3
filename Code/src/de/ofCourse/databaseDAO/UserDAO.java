@@ -145,6 +145,7 @@ public class UserDAO {
 	String sql = "SELECT id "
 	           + "FROM \"users\" "
 	           + "WHERE email=?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setString(1, email);
@@ -160,6 +161,7 @@ public class UserDAO {
         	    } else {
         		exists = false;
         	    }
+        	    
 	    } catch (SQLException e) {
                 throw new SQLException();
             }
@@ -699,7 +701,7 @@ public class UserDAO {
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, userID);
 
-	    // /execute preparedStatement, return resultSet as a list
+	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the id is unique).
 	    try(ResultSet res = pS.executeQuery()){
 
@@ -750,11 +752,14 @@ public class UserDAO {
 	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)){
+	    
 	    pS.setBoolean(1, true);
 	    pS.setString(2, null);
 	    pS.setString(3, UserStatus.REGISTERED.toString());
 	    pS.setString(4, veriString);
 
+	    // Check if one row is affected by the update, then return true and 
+	    // the user is activated, else false
     	    if (pS.executeUpdate() == 1) {
     		success = true;
     	    } else {
@@ -815,6 +820,7 @@ public class UserDAO {
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
 	    try(ResultSet res = pS.executeQuery()){
+	        
         	    // execute next entry, return true if there is another 
         	    // entry, else false.
         	    if (res.next()) {
@@ -885,7 +891,7 @@ public class UserDAO {
     public static User getUser(Transaction trans, String username)
 	    throws InvalidDBTransferException {
 
-     // Generate a new user object and filling with the user name.
+        // Generate a new user object and filling with the user name.
         // Generate a new address object.
         User user = new User();
         user.setUsername(username);
@@ -1000,11 +1006,16 @@ public class UserDAO {
 	    pS.setString(1, username);
 	    
 	    try(ResultSet res = pS.executeQuery()){
+	        
+	            // execute next entry, return true if there is another 
+                    // entry, else false.
         	    if (res.next()) {
         		id = res.getInt("id");
         	    } else {
+        	        //Return -1 because there is no user with this nickname
         		id = userDoesNotExist;
         	    }
+        	    
 	    } catch (SQLException e) {
 	            throw new SQLException();
 	    }

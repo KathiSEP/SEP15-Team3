@@ -128,18 +128,18 @@ public class SystemDAO {
 
 	Activation activation = null;
 
-	// SQL- Abfrage vorbereiten und Connection zur Datenbank erstellen.
+	// Prepare SQL- Request and Database connection
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	// Datenbankabfrage
+	// database query
 	String sql = "SELECT activation_type FROM \"system_attributes\"";
 
-	// mögliche SQL-Injektion abfangen
+	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 
-	    // preparedStatement ausführen, gibt resultSet als Liste zurück
-	    // (hier ein Eintrag in der Liste, da Aktivierung einzigartig).
+	    //execute preparedStatement, return resultSet as a list
+            // (here one entry in the list because the activation is unique).
 	    try(ResultSet res = pS.executeQuery()){
 
         	    // Nächten Eintrag aufrufen, gibt true zurück, falls es 
@@ -157,7 +157,7 @@ public class SystemDAO {
 	    throw new InvalidDBTransferException(
                                 "Error occured during getActivationType", e);
 	}
-	// gibt die Aktivierungsmethode zurück.
+	// returns the activation method.
 	return activation;
     }
 

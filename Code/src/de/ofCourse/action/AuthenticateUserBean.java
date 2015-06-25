@@ -139,8 +139,10 @@ public class AuthenticateUserBean {
         this.transaction.start();
         try {
             // hash inserted password
-            String salt = UserDAO.getPWSalt(this.transaction, this.getLoginUser()
-                        .getUsername());
+            String salt = UserDAO.getPWSalt(
+                                    this.transaction, 
+                                    this.getLoginUser().getUsername());
+            
             if(salt == null) {
                 //FacesMessage: User name or password wrong
                 FacesMessageCreator.createFacesMessage(
@@ -148,7 +150,9 @@ public class AuthenticateUserBean {
                         sessionUser.getLabel(
                              "authenticateUserBean.facesMessage.UserNameOrPW"));
             } else {
-                String passwordHash = PasswordHash.hash(this.loginPassword, salt);
+                String passwordHash = PasswordHash.hash(
+                                                        this.loginPassword, 
+                                                        salt);
                 // Checks if the username and the password are valid.
                 id = UserDAO.proveLogin(this.transaction, this.getLoginUser()
                         .getUsername(), passwordHash);
@@ -169,6 +173,7 @@ public class AuthenticateUserBean {
                     // wrong.
                     this.transaction.rollback();
                     return URL_AUTHENTICATE;
+                    
                 } else if (id == accountNotActivated) {
                     // Throwing error message into the faces context:
                     // 'Account not active'
@@ -181,6 +186,7 @@ public class AuthenticateUserBean {
                     // wrong.
                     this.transaction.rollback();
                     return URL_AUTHENTICATE;
+                    
                 } else if (id == dbErrorOccured) {
                     // Throwing error message into the faces context:
                     // 'Account not active'
@@ -193,14 +199,16 @@ public class AuthenticateUserBean {
                     // wrong.
                     this.transaction.rollback();
                     return URL_AUTHENTICATE;
+                    
                 } else {
                     // Filling the session object with the user data, 
                     // interrogate not yet available data from the database 
                     // by using the user id.
                     sessionUser.setLanguage(Language.DE);
                     sessionUser.setUserID(id);
-                    sessionUser.setUserRole(UserDAO.getUserRole(this.transaction,
-                            id));
+                    sessionUser.setUserRole(UserDAO.getUserRole(
+                                                            this.transaction,
+                                                            id));
                     sessionUser.setUserStatus(UserDAO.getUserStatus(
                             this.transaction, id));
     
