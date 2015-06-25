@@ -56,6 +56,8 @@ public class CourseDetailBeanTest {
     List<CourseUnit> resultList = new ArrayList<CourseUnit>();
     
     private ResultSet resultSet = null;
+
+    private int SAMPLE_ID = 10050;
     
     
     @Before
@@ -118,7 +120,7 @@ public class CourseDetailBeanTest {
 
         //ab hier Code von Ricky Strohmeier
         testCourse = new Course();
-        testCourse.setCourseID(10050);
+        testCourse.setCourseID(SAMPLE_ID);
         testCourse.setTitle("Unmodified TestCourse");
         testCourse.setDescription("This is the unmodifierd TestCourse");
 
@@ -137,7 +139,12 @@ public class CourseDetailBeanTest {
 
         testCourse.setMaxUsers(100);
         courseDetailBean = new CourseDetailBean();
-        courseDetailBean.setCourse(testCourse);
+        //courseDetailBean.setCourse(testCourse);
+
+        when(Integer.parseInt(ec.getRequestParameterMap()
+                    .get("SAMPLE_ID")))
+                    .thenReturn(SAMPLE_ID);
+        when(CourseDAO.getCourse(connection, SAMPLE_ID)).thenReturn(testCourse);
     }
 
     /**
@@ -147,7 +154,10 @@ public class CourseDetailBeanTest {
      */
     @Test
     public void testCourseEditation() {
-        
+        Course editedCourse = new Course();
+        editedCourse.setCourseID(courseDetailBean.getCourse().getCourseID());
+
+        courseDetailBean.enableEditMode();
     }
     
     
