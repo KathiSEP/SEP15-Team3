@@ -11,6 +11,7 @@ import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -74,14 +75,13 @@ public class LostPasswordBean {
         String salt = UserDAO.getPWSalt(transaction, userWhoLostPW.getUsername() );
         String newPassword = generateNewPassword();
     	String newHashedPassword = PasswordHash.hash(newPassword, salt);
-    	
+
     	try {
     	    UserDAO.overridePassword(transaction, email, newHashedPassword);
     	} catch (InvalidDBTransferException e) {
     	    transaction.rollback();
-    	    //TODO Exception handling
+    	    LogHandler.getInstance().error("Error occured during resetPassword in LostPasswordBean");
     	}
-    	//TODO EMail mit Passwort rausschicken
         mailBean.sendMailForLostPassword(newPassword, email);
     	transaction.commit();
     }
@@ -160,7 +160,7 @@ public class LostPasswordBean {
     	while(password[iterator = random.nextInt(length)] != 0);
     	return iterator;
     }
-    
+
     public MailBean getMailBean() {
         return mailBean;
     }

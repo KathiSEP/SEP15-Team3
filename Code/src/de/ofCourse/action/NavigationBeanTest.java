@@ -13,8 +13,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-
-
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.ofCourse.model.Language;
