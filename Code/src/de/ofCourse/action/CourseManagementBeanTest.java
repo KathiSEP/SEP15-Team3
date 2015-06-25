@@ -37,24 +37,30 @@ import de.ofCourse.utilities.LanguageManager;
 @PrepareForTest({Connection.class, CourseDAO.class, FacesMessage.class, 
     FacesMessageCreator.class, InvalidDBTransferException.class, 
     FacesContext.class, LanguageManager.class})
+
 public class CourseManagementBeanTest extends TestCase{
     
+    // Create new Bean for testing
     private CourseManagementBean courseManagementBean;
     
     private SessionUserBean sessionUser;
     
     private LanguageManager languageManager;
     
+    // Mock FacesContext and ExternalContext .
     @Mock
     FacesContext facesContext;
     
     @Mock
     ExternalContext externalContext;
     
+    // Create captor for the FacesMessages.
     ArgumentCaptor<String> clientIdCaptor;
     ArgumentCaptor<FacesMessage> facesMessageCaptor;
     
+    // Create RequestParameterMap
     private Map<String, String> requestParameterMap;
+    
     private Connection connection;
     private FacesMessage captured;
     
@@ -63,19 +69,29 @@ public class CourseManagementBeanTest extends TestCase{
     private int creatingCourseFailed;
     private int creatingCourseSucceeded;
     
+    /**
+     * Preparations for the test
+     */
     @SuppressWarnings("deprecation")
     @Before
     public void setup() {
+        // Mock FacesContext statically .
         PowerMockito.mockStatic(FacesContext.class);
         
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
+        // Specify what should be returned if it's ask for the instance of the
+        // FacesContext or the ExternalContext.
+        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(
+                                                               facesContext);
 
-        Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
+        Mockito.when(facesContext.getExternalContext()).thenReturn(
+                                                               externalContext);
         
-        // Nur der Vollständigkeit halber
+        // only because of completeness create RequestParameterMap.
         requestParameterMap = new HashMap<String, String>();
-        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(requestParameterMap);
+        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(
+                                                           requestParameterMap);
         
+        // Mock the Connection class statically.
         PowerMockito.mockStatic(Connection.class);
         connection = mock(Connection.class);          
         Mockito.when(Connection.create()).thenReturn(connection);
@@ -90,13 +106,16 @@ public class CourseManagementBeanTest extends TestCase{
         Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("courseManagementBean.facesMessage.CourseMistake", Language.DE)).
+                getProperty("courseManagementBean.facesMessage.CourseMistake", 
+                                                                Language.DE)).
                 thenReturn("Beim Erstellen des Kurses trat ein Fehler auf!");
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("courseManagementBean.facesMessage.CourseSuccessful", Language.DE)).
+                getProperty("courseManagementBean.facesMessage.CourseSuccessful",
+                                                                Language.DE)).
                 thenReturn("Kurs wurde erfolgreich angelegt!");
-                
+         
+        // Mock the database class statically.
         PowerMockito.mockStatic(CourseDAO.class);
         
         wrongCourse = new Course();
@@ -114,19 +133,24 @@ public class CourseManagementBeanTest extends TestCase{
         correctCourse.setEnddate(new Date(2017, 11, 11));        
         
         creatingCourseFailed = -1;
-        Mockito.when(CourseDAO.createCourse(connection, wrongCourse, null)).thenReturn(creatingCourseFailed);
+        Mockito.when(CourseDAO.createCourse(connection, wrongCourse, null)).
+                                               thenReturn(creatingCourseFailed);
         
         creatingCourseSucceeded = 1;
-        Mockito.when(CourseDAO.createCourse(connection, correctCourse, null)).thenReturn(creatingCourseSucceeded);
+        Mockito.when(CourseDAO.createCourse(connection, correctCourse, null)).
+                                            thenReturn(creatingCourseSucceeded);
 
-        Mockito.when(CourseDAO.addLeaderToCourse(eq(connection), anyInt(), anyInt())).thenReturn(true);
+        Mockito.when(CourseDAO.addLeaderToCourse(eq(connection), anyInt(), 
+                                                    anyInt())).thenReturn(true);
 
+        // Initialize the captor for the FacesMessages.
         clientIdCaptor = ArgumentCaptor.forClass(String.class);
         facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);
     } 
     
     @Test
     public void test() {
+        // Initialize new test bean.
         courseManagementBean = new CourseManagementBean();
         
         courseManagementBean.setSessionUser(sessionUser);
@@ -135,22 +159,28 @@ public class CourseManagementBeanTest extends TestCase{
         
         courseManagementBean.setCourseLeaderID(12345);
         
-        assertEquals(courseManagementBean.createCourse(), "/facelets/user/systemAdministrator/createCourse.xhtml?faces-redirect=false");
+        assertEquals(courseManagementBean.createCourse(), 
+                        "/facelets/user/systemAdministrator/createCourse.xhtml?"
+                        + "faces-redirect=false");
         
-        // FacesMessage prüfen
-        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
+        // Check FacesMessage 
+        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), 
+                                                  facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
         assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());
-        assertEquals("Beim Erstellen des Kurses trat ein Fehler auf!", captured.getSummary());
+        assertEquals("Beim Erstellen des Kurses trat ein Fehler auf!", 
+                                                         captured.getSummary());
         
         courseManagementBean.setCourse(correctCourse);
         
-        assertEquals(courseManagementBean.createCourse(), "/facelets/open/courses/courseDetail.xhtml?"
-                        + "faces-redirect=true&courseID="
-                        + creatingCourseSucceeded);
+        assertEquals(courseManagementBean.createCourse(), 
+                                    "/facelets/open/courses/courseDetail.xhtml?"
+                                            + "faces-redirect=true&courseID="
+                                            + creatingCourseSucceeded);
         
-        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
+        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), 
+                                                  facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
         assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());
