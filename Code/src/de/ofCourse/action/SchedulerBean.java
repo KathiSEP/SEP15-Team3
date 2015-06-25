@@ -276,6 +276,7 @@ public class SchedulerBean {
     }
 
     private void getSchedule() {
+    	transaction = Connection.create();
     	transaction.start();
     	
 	    try {	
