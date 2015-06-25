@@ -486,7 +486,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 				    mailBean.sendCourseEditUnitMail(
 					    	recipients,
 					    	transaction, 
-					    	courseUnit.getCourseUnitID());  
+					    	id);  
 	                	}
 			    }       
 			    

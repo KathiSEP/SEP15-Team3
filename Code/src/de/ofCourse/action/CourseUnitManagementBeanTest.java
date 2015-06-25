@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -67,6 +69,9 @@ public class CourseUnitManagementBeanTest {
 
     // participant user
     private User part;
+    
+    // course admin
+    private User admin;
     
     //Course units
     private CourseUnit unit;
@@ -199,6 +204,9 @@ public class CourseUnitManagementBeanTest {
 	participants3 = new ArrayList<User>();
 	participants3.add(part);
 	
+	admin = new User();
+	admin.setUserID(2);
+	
 	sessionUser = new SessionUserBean();
 	sessionUser.setLanguage(Language.DE);
 	
@@ -254,6 +262,8 @@ public class CourseUnitManagementBeanTest {
 		.thenReturn(true);
 	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 3))
 		.thenReturn(true);
+	
+	Mockito.when(CourseDAO.getLeaders(conn, 1)).thenReturn(Arrays.asList(admin));
 	
 	Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
 
@@ -390,6 +400,7 @@ public class CourseUnitManagementBeanTest {
 	bean.init();
 	bean.setCourseUnit(unit);
 	bean.setEnteredTurnus("WEEKS");
+	bean.getCourseUnit().setCourseAdmin(admin);
 
 	// Regular unit
 	bean.setRegularCourseUnit(true);
