@@ -44,8 +44,8 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.title')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.title}"
-		                                        id="courseTitle" required="true" requiredMessage="Bitte Titel angeben."
-		                                        validatorMessage="Ihr Titel darf höchstens 150 Zeichen lang sein. ">
+		                                        id="courseTitle" required="true" requiredMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.TitelRequired')}"
+		                                        validatorMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.TitelLength')}">
 		                                        <f:validateLength minimum="1" maximum="150" />
 		                                        </h:inputText>
 		                               
@@ -54,7 +54,7 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.description')}:</span>
 		                                    <h:inputTextarea class="form-control" cols="45" rows="3" value="#{courseManagementBean.course.description}"
-		                                        id="courseDescription" validatorMessage="Ihre Beschreibung darf höchstens 1000 Zeichen lang sein. ">
+		                                        id="courseDescription" validatorMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.Description')}">
 		                                        <f:validateLength minimum="0" maximum="1000" />
 		                                        </h:inputTextarea>
 		                                   
@@ -63,7 +63,7 @@
                                             <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.instructorID')}:</span>
                                             <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}" 
-                                                id="IdOfCourseLeader" converterMessage="Bitte positive Zahl eingeben.">
+                                                id="IdOfCourseLeader" converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}">
                                                 <f:validator validatorId="courseInstructorValidator"/>
                                                 </h:inputText>
                                             
@@ -72,7 +72,7 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.maxParticipants')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.maxUsers}"
-		                                        id="courseParticipants" converterMessage="Bitte positive Zahl eingeben.">
+		                                        id="courseParticipants" converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.MaxUsers')}">
 		                                        <f:convertNumber longOnly="true"/>
 		                                        <f:validator validatorId="courseParticipantsValidator" />
 		                                        </h:inputText>
@@ -82,8 +82,8 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.start')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.startdate}"
-		                                        id="courseStartDate" converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
-		                                        required="true" requiredMessage="Bitte Startdatum angeben">
+		                                        id="courseStartDate" converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.StartFormat')}"
+		                                        required="true" requiredMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.StartRequired')}">
 		                                        <f:attribute name="courseEndDate" value="#{courseEndDate}" />
 		                                        <f:validator validatorId="courseDateValidator" />
                                                 <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
@@ -94,8 +94,8 @@
 		                                    <span class="input-group-addon"
 		                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.end')}:</span>
 		                                    <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.course.enddate}"
-		                                        id="courseEndDate"  converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. "
-		                                        required="true" requiredMessage="Bitte Enddatum angeben" binding="#{courseEndDate}">
+		                                        id="courseEndDate"  converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.EndFormat')}"
+		                                        required="true" requiredMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.EndRequired')}" binding="#{courseEndDate}">
 		                                        <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
 		                                        </h:inputText>
 		                                    
