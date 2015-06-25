@@ -25,6 +25,7 @@ import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
@@ -33,6 +34,7 @@ import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
 import de.ofCourse.utilities.PasswordHash;
 
 /**
@@ -42,7 +44,7 @@ import de.ofCourse.utilities.PasswordHash;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
-	FacesContext.class, })
+	LanguageManager.class, FacesContext.class, FacesMessageCreator.class })
 public class UserProfileBeanTest {
 
 	private boolean readOnly;
@@ -58,6 +60,10 @@ public class UserProfileBeanTest {
 	private User user;
 	
 	private User checkUser;
+	
+	private SessionUserBean sessionUser;
+	
+	private LanguageManager myLang;
 	
 	private UserProfileBean bean;
 	
@@ -84,12 +90,22 @@ public class UserProfileBeanTest {
 		conn = mock(Connection.class);
 		Mockito.when(Connection.create()).thenReturn(conn);
 		
+		//Mock LanguageManagerCreator
+		PowerMockito.mockStatic(LanguageManager.class);
+		myLang = mock(LanguageManager.class);
+		
+		// Mock FacesMessageCreator
+		PowerMockito.mockStatic(FacesMessageCreator.class);
+		
 		// Mock CourseDAO
 		PowerMockito.mockStatic(UserDAO.class);
 		
 		readOnly = false;
 		salutation = "mr";
 		role = "admin";
+		
+		sessionUser = new SessionUserBean();
+		sessionUser.setLanguage(Language.DE);
 		
 		// Set initial user
 		Address address = new Address();
@@ -176,9 +192,12 @@ public class UserProfileBeanTest {
 		bean.setSalutation("mr");
 		bean.setRole("admin");
 		bean.setUser(user);
+		bean.setSessionUser(sessionUser);
 		
 		// Determine the return value of getUser
 		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);
+		
+		Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
 		
 		// At this point the user data is not updated, because the nickname is already taken
 		bean.saveSettings();
