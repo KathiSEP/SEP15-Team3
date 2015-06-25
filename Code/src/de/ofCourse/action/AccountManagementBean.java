@@ -48,8 +48,14 @@ public class AccountManagementBean implements Pagination {
      */
     private Transaction transaction;
     
+    /**
+     * Stores the elements per page
+     */
     private static final int elementsPerPage = 10;
 
+    /**
+     * Stores the columns to sort
+     */
     private String sortColumn;
 
     /**
@@ -77,6 +83,9 @@ public class AccountManagementBean implements Pagination {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
 
+    /**
+     * Stores the current page
+     */
     private int currentPage;
     
     /**
@@ -104,6 +113,7 @@ public class AccountManagementBean implements Pagination {
         try {
             this.pagination.refreshNumberOfPages(UserDAO
                           .getNumberOfNotAdminActivatedUsers(this.transaction));
+            //Set a table witch users which are not admin activated yet
             this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(
                                        this.transaction, this.getPagination()));
             this.transaction.commit();
@@ -130,6 +140,7 @@ public class AccountManagementBean implements Pagination {
         @SuppressWarnings("unchecked")
         List<User> allUsers = (List<User>) this.users.getWrappedData();
         this.usersToActivate = new ArrayList<User>();
+        
         for(User user : allUsers) {
             if(user.isSelected()) {
                 this.usersToActivate.add(user);
@@ -141,10 +152,12 @@ public class AccountManagementBean implements Pagination {
             this.transaction = Connection.create();
             transaction.start();
             try {
+                //Check if the user activation by the admin was successful
                 if(UserDAO.AdminActivateUsers(this.transaction, 
                                             this.usersToActivate) == false) {
                     LogHandler.getInstance().error(
                             "Error occured during adminActivateUsers().");
+                    
                     } else {
                         //Refresh page content
                         this.pagination.refreshNumberOfPages(UserDAO
