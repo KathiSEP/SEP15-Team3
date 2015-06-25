@@ -35,14 +35,21 @@ public class CourseParticipantsValidator implements Validator {
     public void validate(FacesContext fc, UIComponent component, Object value)
             throws ValidatorException {
         
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
         Language lang = null;
         
+        //Check if the parameter language exists in the session.
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
                     .getCurrentInstance()
@@ -56,6 +63,7 @@ public class CourseParticipantsValidator implements Validator {
         int maxParticipants = 1;
         
         try {
+            //Check if the insert is a number
             maxParticipants = Integer.parseInt(maxParticipantsString);
         } catch(NumberFormatException e) {
             throw new ValidatorException(
@@ -66,6 +74,7 @@ public class CourseParticipantsValidator implements Validator {
                                     + "CourseParticipants", lang)));
         }
         
+        //Check if the insert is a positive number
         if(maxParticipants < 1) {
             throw new ValidatorException(
                     new FacesMessage(

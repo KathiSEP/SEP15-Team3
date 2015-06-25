@@ -54,14 +54,21 @@ public class PasswordValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent component, Object value)
 	    throws ValidatorException {
 	
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
         Language lang = null;
         
+        //Check if the parameter language exists in the session.
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
                     .getCurrentInstance()
@@ -77,15 +84,16 @@ public class PasswordValidator implements Validator {
 	String confirmPassword = uiInputConfirmPassword.getSubmittedValue()
 		.toString();
 
-	    if(!confirmPassword.equals(password)){
+	//Check if the two inserted passwords are equal
+	if(!confirmPassword.equals(password)){
 		throw new ValidatorException(
 		        new FacesMessage(
 		             LanguageManager.getInstance().
 	                     getProperty(
 	                       "authenticate.validator.PasswordEquals", lang)));
-	    }
+	 }
 	
-	
+	//Check if the inserted password has a valid length
 	if(password.length() < 8 || password.length() > 100) {
 	    throw new ValidatorException(
 		    new FacesMessage(
@@ -96,6 +104,7 @@ public class PasswordValidator implements Validator {
 	
 	matcher = pattern.matcher(password);
 	
+	//Check if the format is valid
 	if (!matcher.matches()) {
 	    throw new ValidatorException(
 		    new FacesMessage(
