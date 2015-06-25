@@ -1,11 +1,9 @@
 package de.ofCourse.action;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +19,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.model.Address;
-import de.ofCourse.model.Course;
 import de.ofCourse.model.Language;
-import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
@@ -35,7 +30,6 @@ import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.LanguageManager;
-import de.ofCourse.utilities.PasswordHash;
 
 /**
  * 
@@ -47,15 +41,7 @@ import de.ofCourse.utilities.PasswordHash;
 	LanguageManager.class, FacesContext.class, FacesMessageCreator.class })
 public class UserProfileBeanTest {
 
-	private boolean readOnly;
-	
-	private String password;
-	
 	private Connection conn;
-	
-	private String salutation;
-	
-	private String role;
 	
 	private User user;
 	
@@ -63,7 +49,7 @@ public class UserProfileBeanTest {
 	
 	private SessionUserBean sessionUser;
 	
-	private LanguageManager myLang;
+	private LanguageManager lang;
 	
 	private UserProfileBean bean;
 	
@@ -92,17 +78,13 @@ public class UserProfileBeanTest {
 		
 		//Mock LanguageManagerCreator
 		PowerMockito.mockStatic(LanguageManager.class);
-		myLang = mock(LanguageManager.class);
+		lang = mock(LanguageManager.class);
 		
 		// Mock FacesMessageCreator
 		PowerMockito.mockStatic(FacesMessageCreator.class);
 		
 		// Mock CourseDAO
 		PowerMockito.mockStatic(UserDAO.class);
-		
-		readOnly = false;
-		salutation = "mr";
-		role = "admin";
 		
 		sessionUser = new SessionUserBean();
 		sessionUser.setLanguage(Language.DE);
@@ -139,18 +121,10 @@ public class UserProfileBeanTest {
 		user.setUserStatus(UserStatus.REGISTERED);
 		
 		// Set user data which should be updated
-		Address checkAddress = new Address();
-		checkAddress.setCity("L.A.");
-		checkAddress.setCountry("USA");
-		checkAddress.setHouseNumber(10);
-		checkAddress.setId(2);
-		checkAddress.setStreet("Abbey Road");
-		checkAddress.setZipCode(9723930);
-		
 		checkUser = new User();
 		checkUser.setUserId(10002);
 		checkUser.setAccountBalance(0);
-		checkUser.setAddress(checkAddress);
+		checkUser.setAddress(address);
 
 		SimpleDateFormat checkDateformat = new SimpleDateFormat("dd.MM.yyyy");
 		Date checkDate = null;
@@ -169,66 +143,53 @@ public class UserProfileBeanTest {
 		checkUser.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
 		checkUser.setUserStatus(UserStatus.REGISTERED);
 		
-		bean = new UserProfileBean();
-	}
-	
-	@Test
-	public void testSaveSettings() {
 		pm.put("userID", "10002");
+		
+		bean = new UserProfileBean();
+		bean.setSalutation("mr");
+		bean.setRole("admin");
+		bean.setSessionUser(sessionUser);
 		
 		// Determine the return value of getUser
 		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(user);
 		
-		bean.init();
-		
-		// Determine the return value of nickTaken
-		Mockito.when(UserDAO.nickTaken(conn, "blacky")).thenReturn(true);
+		// Determine the return value of getUser
+		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);
 		
 		// Determine the return value of emailExists
 		Mockito.when(UserDAO.emailExists(conn, user.getEmail())).thenReturn(true);
 		
+		bean.init();
+	}
+	
+	@Test
+	public void testIncorrectSaveSettings() {
 		// Set nickname to "blacky", which is already in use by another user
 		user.setUsername("blacky");
-		bean.setSalutation("mr");
-		bean.setRole("admin");
 		bean.setUser(user);
-		bean.setSessionUser(sessionUser);
-		
-		// Determine the return value of getUser
-		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);
-		
-		Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);
-		
-		// At this point the user data is not updated, because the nickname is already taken
-		bean.saveSettings();
-		
-		// Set new user nickname
-		user.setUsername("Slash90");
 		
 		// Determine the return value of nickTaken
 		Mockito.when(UserDAO.nickTaken(conn, user.getUsername())).thenReturn(true);
 		
-		// Determine the return value of emailExists
-		Mockito.when(UserDAO.emailExists(conn, user.getEmail())).thenReturn(true);
+		Mockito.when(LanguageManager.getInstance()).thenReturn(lang);
 		
-		bean.setSalutation("mr");
-		bean.setRole("admin");
+		// At this point the user data is not updated, because the nickname is already taken
+		bean.saveSettings();
+	}
+	
+	@Test
+	public void testSaveSettings() {		
+		// Set new user nickname
+		user.setUsername("Slash90");
 		bean.setUser(user);
-		
-		// Determine the return value of getUser
-		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);
 		
 		// Determine the return value of nickTaken
 		Mockito.when(UserDAO.nickTaken(conn, user.getUsername())).thenReturn(false);
-		
-		// Determine the return value of emailExists
-		Mockito.when(UserDAO.emailExists(conn, user.getEmail())).thenReturn(true);
 		
 		PowerMockito.verifyStatic();
 		UserDAO.updateUser(conn, user, null, null);
 		
 		bean.saveSettings();
-		
 	}
 
 }
