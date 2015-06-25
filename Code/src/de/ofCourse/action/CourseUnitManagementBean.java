@@ -432,6 +432,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		    for (int id : idsToEdit) {
 			// Fetch course unit in cycle
+			recipients = new ArrayList<String>();
 			tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);
 
 			// Add calculated time differences
