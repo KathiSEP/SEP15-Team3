@@ -892,35 +892,21 @@ public class UserDAO {
 	Address address = new Address();
 
 	// Prepare SQL- Request and database connection.
+	PreparedStatement pS = null;
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT DISTINCT u.id as user_id, "
-	                           + "u.first_name, "
-	                           + "u.name, "
-	                           + "u.nickname, "
-	                           + "u.email, "
-	                           + "u.date_of_birth, "
-	                           + "u.form_of_address, "
-	                           + "u.credit_balance, "
-	                           + "u.role, "
-	                           + "u.status, "
-	                           + "a.id as address_id, "
-	                           + "a.city, "
-	                           + "a.country, "
-	                           + "a.zip_code, "
-	                           + "a.street, "
-	                           + "a.house_nr "
-	            + "FROM users u, user_addresses a "
-	            + "WHERE u.nickname = ? AND a.user_id = u.id";
+	
+	String sql = "SELECT * FROM users WHERE nickname = ?";
 
 	// catch potential SQL-Injection
-	try (PreparedStatement pS = conn.prepareStatement(sql)){
+	try {
+	    pS = conn.prepareStatement(sql);
 	    pS.setString(1, username);
 
 	    // execute preparedStatement, return resultSet as a list
 	    // (here one entry in the list because the user name is unique)
-	    try(ResultSet res = pS.executeQuery()){
+	    ResultSet res = pS.executeQuery();
 	        
         	    if (res.next()) {
         
@@ -945,22 +931,35 @@ public class UserDAO {
         		                              res.getString("role")));
         		user.setUserStatus(UserStatus.fromString(
         		                              res.getString("status")));
+        		conn.commit();
         
-        		address.setId(res.getInt("address_id"));
-        		address.setCity(res.getString("city"));
-        		address.setCountry(res.getString("country"));
-        		address.setZipCode(res.getInt("zip_code"));
-        		address.setStreet(res.getString("street"));
-        		address.setHouseNumber(res.getInt("house_nr"));
+        		sql = "SELECT * FROM user_addresses WHERE user_id = ?";
         		
-        		user.setAddress(address);
+        		PreparedStatement pr = null;
+                        pr = conn.prepareStatement(sql);
+                        pr.setInt(1, user.getUserID());
+
+                        ResultSet res2 = pr.executeQuery();
+
+                        if (res2.next()) {
+        		
+                		address.setId(res2.getInt("address_id"));
+                		address.setCity(res2.getString("city"));
+                		address.setCountry(res2.getString("country"));
+                		address.setZipCode(res2.getInt("zip_code"));
+                		address.setStreet(res2.getString("street"));
+                		address.setHouseNumber(res2.getInt("house_nr"));
+                		user.setAddress(address);
+                        } else {
+                            user.setAddress(null);
+                        }
+        		
         	    } else {
         		user = null;
         	    }
-        	    
-	    } catch (SQLException e) {
-	            throw new SQLException();
-	    }
+                 
+              pS.close();
+              res.close();
 	    
 	} catch (SQLException e) {
 	    throw new InvalidDBTransferException("Error occured during "
