@@ -44,8 +44,10 @@ import de.ofCourse.model.User;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Connection.class, UserDAO.class, PaginationData.class, 
-    FacesMessage.class, FacesMessageCreator.class, InvalidDBTransferException.class, 
-    FacesContext.class, LanguageManager.class})
+                 FacesMessage.class, FacesMessageCreator.class, 
+                 InvalidDBTransferException.class, 
+                 FacesContext.class, LanguageManager.class})
+
 public class AccountManagementBeanTest {
     
     // Create new Bean for testing
@@ -86,13 +88,16 @@ public class AccountManagementBeanTest {
         
         // Specify what should be returned if it's ask for the instance of the
         // FacesContext or the ExternalContext.
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
+        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(
+                                                               facesContext);
 
-        Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
+        Mockito.when(facesContext.getExternalContext()).thenReturn(
+                                                               externalContext);
         
         // Create RequestParameterMap.
         requestParameterMap = new HashMap<String, String>();
-        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(requestParameterMap);
+        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(
+                                                           requestParameterMap);
         
         // Mock the Connection class statically.
         PowerMockito.mockStatic(Connection.class);
@@ -109,20 +114,26 @@ public class AccountManagementBeanTest {
         Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("AccountManagementBean.facesMessage.NoUsers", Language.DE)).
+                getProperty("AccountManagementBean.facesMessage.NoUsers", 
+                                                                Language.DE)).
                 thenReturn("Keine Benutzer ausgewählt!");
         
         Mockito.when(LanguageManager.getInstance().
-                getProperty("AccountManagementBean.facesMessage.ActivationSucceed", Language.DE)).
+                getProperty("AccountManagementBean.facesMessage."
+                                                        + "ActivationSucceed", 
+                                                        Language.DE)).
                 thenReturn("Benutzer erfolgreich aktiviert!");
         
         // Mock the database class statically.
         PowerMockito.mockStatic(UserDAO.class);
         
-        // Specify what the methods of the database should return by specific requests.
-        Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyObject())).thenReturn(true);
+        // Specify what the methods of the database should return by specific 
+        // requests.
+        Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyObject())).
+                                                               thenReturn(true);
 
-        Mockito.when(UserDAO.getNumberOfNotAdminActivatedUsers(connection)).thenReturn(2);
+        Mockito.when(UserDAO.getNumberOfNotAdminActivatedUsers(connection)).
+                                                               thenReturn(2);
 
         // Initialize and fill the return list.
         notAdminActivatedUsers = new ArrayList<User>();
@@ -152,7 +163,8 @@ public class AccountManagementBeanTest {
         pagination.setSortDirection(SortDirection.ASC);
         pagination.setSortColumn(SortColumn.NICKNAME);
         
-        Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).thenReturn(notAdminActivatedUsers);
+        Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).
+                                            thenReturn(notAdminActivatedUsers);
                 
         // Initialize the captor for the FacesMessages.
         clientIdCaptor = ArgumentCaptor.forClass(String.class);
@@ -160,7 +172,7 @@ public class AccountManagementBeanTest {
     }
     
     /**
-     * Eigentliche Testmethode.
+     * Actual test method.
      */
     @Test
     public void test() {
@@ -184,7 +196,8 @@ public class AccountManagementBeanTest {
         accountManagementBean.activateAccounts();
         
         // Check FacesMessage.
-        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
+        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), 
+                                                  facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
         assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());
@@ -202,7 +215,8 @@ public class AccountManagementBeanTest {
         accountManagementBean.activateAccounts();
         
         // Check FacesMessage.
-        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), facesMessageCaptor.capture());
+        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), 
+                                                  facesMessageCaptor.capture());
         assertNull(clientIdCaptor.getValue());
         captured = facesMessageCaptor.getValue();
         assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());
