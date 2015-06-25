@@ -40,9 +40,6 @@ public class Connection implements Transaction {
             conn.commit();
             releaseConnection();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-        	System.out.println("Commit fehlgeschlagen");
-            e.printStackTrace();
             releaseConnection(); 
         }
                      
