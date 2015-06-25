@@ -39,6 +39,10 @@ import de.ofCourse.utilities.PasswordHash;
 @RequestScoped
 public class UserManagementBean {
     
+	private final String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+	
+	private final String URL_ACTIVATE_USERS  = "/facelets/user/systemAdministrator/activateUsers.xhtml?faces-redirect=true";
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -86,14 +90,16 @@ public class UserManagementBean {
     public String createUser() {
     	transaction = Connection.create();
     	transaction.start();
-        String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+        String goToPage = URL_CREATE_USER;
         
         try {
 	        if (UserDAO.emailExists(transaction, user.getEmail())) {
-	            FacesMessageCreator.createFacesMessage(null, "E-Mail bereits vergeben");
+	            FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
+                        "registerUserBean.facesMessage.EmailExisting"));
 	            this.transaction.rollback();
 	        } else if (UserDAO.nickTaken(transaction, user.getUsername())) {
-	        	FacesMessageCreator.createFacesMessage(null, "Benutzername bereits vergeben");
+	        	FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(
+                        "createUser.username.Message"));
 	            this.transaction.rollback();
 	        } else {
 	        	setEnums();
@@ -110,8 +116,9 @@ public class UserManagementBean {
 	        	FacesMessageCreator
                 .createFacesMessage(
                         null,
-                        "Der Nutzer wurde erfolgreich im System registriert.");
-	        	goToPage = "/facelets/user/systemAdministrator/activateUsers.xhtml?faces-redirect=true";
+                        sessionUser.getLabel(
+                                "createUser.successMessage"));
+	        	goToPage = URL_ACTIVATE_USERS;
 	        }
 	        transaction.commit();
         } catch (InvalidDBTransferException e) {
