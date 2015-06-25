@@ -271,6 +271,8 @@ public class UserDAO {
 	    String sql = "SELECT id "
 	               + "FROM \"users\" "
 	               + "WHERE veri_string = ?";
+	    
+	    // Create a new veristring which is not in the database yet.
 	    do {
 		SecureRandom random = new SecureRandom();
 		veriString = new BigInteger(130, random).toString();

@@ -73,6 +73,9 @@ public class RegisterUserBean {
         this.userToRegistrate = userToRegistrate;
     }
     
+    /**
+     * Boolean to check if the agb's are accepted
+     */
     private boolean agbAccepted;
 
     /**
@@ -140,14 +143,21 @@ public class RegisterUserBean {
                 .getCurrentInstance().getExternalContext().getRequest();
         String veriString = request.getParameter("veri");
 
+        //
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
+        //New language object
         Language lang = null;
         
+        //Check if the parameter language exists in the session. 
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to german (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession httpSession = (HttpSession) FacesContext
                     .getCurrentInstance().getExternalContext()
@@ -164,13 +174,18 @@ public class RegisterUserBean {
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
                         LanguageManager.getInstance().
-                        getProperty("registerUserBean.facesMessage.Account", lang));
+                        getProperty(
+                                "registerUserBean.facesMessage.Account", 
+                                lang));
             } else {
                 //FacesMessage: 'The verification string does not exist'
                 FacesMessageCreator.createFacesMessage(
                         "verifizierungString", 
                                 LanguageManager.getInstance().
-                                getProperty("registerUserBean.facesMessage.NoVeriString", lang));
+                                getProperty(
+                                        "registerUserBean.facesMessage."
+                                        + "NoVeriString", 
+                                        lang));
             }
             this.transaction.commit();
         }
