@@ -64,6 +64,7 @@ public class NavigationBean {
      * @return the link to the welcome page
      */
     public String logout() {
+        sessionUser = new SessionUserBean();
     	FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
     	return "/facelets/open/index.xhtml?faces-redirect=true";
     }

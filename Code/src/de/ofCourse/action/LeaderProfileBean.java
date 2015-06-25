@@ -90,7 +90,7 @@ public class LeaderProfileBean implements Pagination {
      */
     @PostConstruct
     private void init() {
-        pagination = new PaginationData(pageElements, 0, SortColumn.TITEL, SortDirection.ASC);
+        pagination = new PaginationData(pageElements, 0, SortColumn.TITLE, SortDirection.ASC);
 
     	transaction = Connection.create();
 

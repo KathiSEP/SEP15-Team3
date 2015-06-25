@@ -33,6 +33,8 @@ public class NavigationBeanTest {
 
     private Language SAMPLE_LANGUAGE = Language.EN;
 
+    private int SAMPLE_ID = 10000;
+
     @Mock
     private SessionUserBean sessionUser;
 
@@ -54,6 +56,11 @@ public class NavigationBeanTest {
         when(fc.getExternalContext()).thenReturn(ec);
 
         navigationBean = new NavigationBean();
+
+        sessionUser = new SessionUserBean();
+        sessionUser.setUserID(SAMPLE_ID);
+        sessionUser.setLanguage(SAMPLE_LANGUAGE);
+        navigationBean.setSessionUser(sessionUser);
     }
 
     /**
@@ -61,7 +68,9 @@ public class NavigationBeanTest {
      */
     @Test
     public void testLogout() {
+        assertEquals(SAMPLE_ID, navigationBean.getSessionUser().getUserID());
         assertEquals("/facelets/open/index.xhtml?faces-redirect=true", navigationBean.logout());
+        assertEquals(0, navigationBean.getSessionUser().getUserID());
     }
 
     /**
@@ -69,14 +78,12 @@ public class NavigationBeanTest {
      */
     @Test
     public void testSetLanguage() {
-        sessionUser = new SessionUserBean();
-
-        sessionUser.setLanguage(SAMPLE_LANGUAGE);
-        navigationBean.setSessionUser(sessionUser);
         assertEquals(Language.EN, navigationBean.getSessionUser().getLanguage());
 
-        sessionUser.setLanguage(Language.DE);
-        navigationBean.setSessionUser(sessionUser);
+        navigationBean.getSessionUser().setLanguage(Language.DE);
+        assertFalse(SAMPLE_LANGUAGE.equals(navigationBean.getSessionUser().getLanguage()));
+
+        navigationBean.getSessionUser().setLanguage(Language.BAY);
         assertFalse(SAMPLE_LANGUAGE.equals(navigationBean.getSessionUser().getLanguage()));
     }
 
