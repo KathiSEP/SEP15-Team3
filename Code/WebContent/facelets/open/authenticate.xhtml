@@ -60,7 +60,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.prename')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="firstnameRegister"
                                                       value="#{registerUserBean.userToRegistrate.firstname}"
-                                                      validatorMessage="Ihr Vorname darf höchstens 100 Zeichen lang sein. ">
+                                                      validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Firstname')}">
                                                       <f:validateLength minimum="0" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -69,7 +69,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.name')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="lastnameRegister"
                                                      value="#{registerUserBean.userToRegistrate.lastname}"
-                                                      validatorMessage="Ihr Nachname darf höchstens 100 Zeichen lang sein. ">
+                                                      validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Lastname')}">
                                                       <f:validateLength minimum="0" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -78,7 +78,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.username')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="usernameRegister"
                                                      value="#{registerUserBean.userToRegistrate.username}"
-                                                     required="true" requiredMessage="Bitte geben Sie einen Benutzernamen ein. ">
+                                                     required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Username')}">
                                                      <f:validator validatorId="userNameValidator"/>
                                         </h:inputText>
                                     </div>
@@ -87,7 +87,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.password')}:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordRegister"
                                                        value="#{registerUserBean.registerPassword}" 
-                                                       required="true" requiredMessage="Bitte geben Sie ein Passwort ein. ">
+                                                       required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Password')}">
                                                        <f:attribute name="confirmPassword" value="#{confirmPassword}" />
                                                      <f:validator validatorId="passwordValidator" />
                                         </h:inputSecret>
@@ -97,7 +97,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.passwordConfirm')}:</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordConfirmRegister"
                                                        value="#{registerUserBean.registerConfirmPassword}"
-                                                       required="true"  requiredMessage="Bitte geben Sie Ihr Passwort zur Bestätigung ein. " binding="#{confirmPassword}">
+                                                       required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.PasswordConfirm')}" binding="#{confirmPassword}">
                                                        
                                         </h:inputSecret>
                                     </div>
@@ -106,7 +106,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.birthday')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="birthdateRegister"
                                                      value="#{registerUserBean.userToRegistrate.dateOfBirth}"
-                                                     converterMessage="Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. " >
+                                                     converterMessage="#{sessionUser.getLabel('authenticate.validatorMessage.DateOfBirthFormat')}" >
                                                      <f:convertDateTime pattern="dd.MM.yyyy" timeZone="Europe/Berlin" />
                                                      <f:validator validatorId="dateOfBirthValidator" />
                                         </h:inputText>
@@ -116,7 +116,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.street')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="streetRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.street}" 
-                                                     validatorMessage="Ihre Eingabe darf höchstens 100 Zeichen lang sein. ">
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Street')}">
                                                      <f:validateLength maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -125,7 +125,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.number')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="houseNumberRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.houseNumber}" 
-                                                     validatorMessage="Ihre Eingabe darf höchstens 9 Zeichen lang sein. ">
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.HouseNumber')}">
                                                      <f:validateLength maximum="9" />
                                         </h:inputText>
                                     </div>
@@ -134,8 +134,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.city')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="locationRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.city}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie eine Stadt ein. "
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein. ">
+                                                     required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CityRequired')}"
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CityLength')}">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -144,8 +144,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.zip')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="zipcodeRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.zipCode}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie eine Postleitzahl ein. "
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein. ">
+                                                     required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeRequired')}"
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeLength')}">
                                                      <f:validateLength minimum ="1" maximum="10" />
                                         </h:inputText>
                                     </div>
@@ -154,8 +154,8 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.country')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="countryRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.country}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie ein Land ein. "
-                                                     validatorMessage="Ihre Eingabe muss zwischen 1 und 100 Zeichen lang sein. ">
+                                                     required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CountryRequired')}"
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CountryLength')}">
                                                      <f:validateLength minimum ="1" maximum="100" />
                                         </h:inputText>
                                     </div>
@@ -164,7 +164,7 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.mail')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="emailRegister"
                                                      value="#{registerUserBean.userToRegistrate.email}" 
-                                                     required="true"  requiredMessage="Bitte geben Sie Ihre E-MAil-Adresse ein. ">
+                                                     required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.MailRequired')}">
                                                      <f:validator validatorId="emailValidator" />
                                         </h:inputText>
                                     </div>
@@ -172,7 +172,7 @@
                                     <br />
                                     <div>
                                         <h:selectBooleanCheckbox value="#{registerUserBean.agbAccepted}" required="true" 
-                                                          requiredMessage="Bitte bestätigen Sie die AGBs."/> 
+                                                          requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.AGB')}"/> 
                                                           #{sessionUser.getLabel('authenticate.row.register.bottomText')}
                                         <a href="#{request.contextPath}/facelets/open/agb.xhtml" target="_blank">#{sessionUser.getLabel('authenticate.row.register.bottomLink')}</a>
                                     </div>
@@ -193,8 +193,8 @@
                                     <div class="input-group">
                                         <span class="input-group-addon" style="width:140px; text-align:right;">#{sessionUser.getLabel('authenticate.row.signIn.username')}:</span>
                                         <h:inputText class="form-control" id="usernameLogin" value="#{authenticateUserBean.loginUser.username}"
-                                                     required="true" requiredMessage="Bitte geben Sie Ihren Benutzernamen ein. " 
-                                                     validatorMessage="Ihr Benutzername muss zwischen 5 und  1oo Zeichen lang sein. "
+                                                     required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Login.UsernameRequired')}" 
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Login.UsernameLength')}"
                                                      style="width:250px;">
                                                      <f:validateLength minimum="5" maximum="100" />
                                        </h:inputText>
@@ -203,8 +203,8 @@
                                     <div class="input-group" style="padding-top:5px;">
                                         <span class="input-group-addon" style="width:140px; text-align:right;">#{sessionUser.getLabel('authenticate.row.signIn.password')}:</span>
                                         <h:inputSecret class="form-control" id="passwordLogin" value="#{authenticateUserBean.loginPassword}" 
-                                                      required="true" requiredMessage="Bitte geben Sie Ihr Passwort ein. " 
-                                                      validatorMessage="Ihr Passwort muss zwischen 8 und 1oo Zeichen lang sein. "
+                                                      required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Login.PasswordRequired')}" 
+                                                      validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Login.PasswordLength')}"
                                                       style="width:250px;">
                                                       <f:validateLength minimum="8" maximum="100" />
                                                       
@@ -228,7 +228,7 @@
                                         <span class="input-group-addon" style="width:140px; text-align:right;">#{sessionUser.getLabel('authenticate.row.resetPassword.mail')}:</span>
                                         <h:inputText class="form-control" id="passwordEMail" style="width:250px;"
                                                       value="#{lostPasswordBean.email}"
-                                                      required="true" requiredMessage="Bitte geben Sie Ihre E-Mail-Adresse ein. " >
+                                                      required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Mail.Adress')}" >
                                                       <f:validator validatorId="emailValidator" />
                                                      
                                         </h:inputText>
