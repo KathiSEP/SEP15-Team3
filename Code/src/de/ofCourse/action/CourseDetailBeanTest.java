@@ -6,6 +6,8 @@ package de.ofCourse.action;
 import static org.junit.Assert.*;
 
 import java.sql.ResultSet;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,10 +47,10 @@ import de.ofCourse.system.Transaction;
     FacesContext.class, PaginationData.class })
 public class CourseDetailBeanTest {
     
-    private CourseDetailBean bean; 
+    private CourseDetailBean bean, courseDetailBean; 
     private Connection connection;
     User userToSignUp;
-    private Course courseWhereToSignUp;
+    private Course courseWhereToSignUp, testCourse;
     private SessionUserBean sessionUser;
     
     List<CourseUnit> resultList = new ArrayList<CourseUnit>();
@@ -113,11 +115,40 @@ public class CourseDetailBeanTest {
         Mockito.when(CourseUnitDAO.getCourseUnitsOf(connection, userToSignUp.getUserID())).thenReturn(resultList);
         
         //Mockito.when(CourseUnitDAO.getResult(resultSet)).thenReturn(resultList);
-        
+
+        //ab hier Code von Ricky Strohmeier
+        testCourse = new Course();
+        testCourse.setCourseID(10050);
+        testCourse.setTitle("Unmodified TestCourse");
+        testCourse.setDescription("This is the unmodifierd TestCourse");
+
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        Date endDate, startDate;
+
+        try {
+            endDate = df.parse("10/12/2015");
+            testCourse.setEnddate(endDate);
+            
+            startDate = df.parse("11/12/2015"); 
+            testCourse.setStartdate(startDate);            
+        } catch(ParseException e) {
+            //ignored
+        }
+
+        testCourse.setMaxUsers(100);
+        courseDetailBean = new CourseDetailBean();
+        courseDetailBean.setCourse(testCourse);
+    }
+
+    /**
+     * This method tests if the editation of a course is working properly.
+     * 
+     * @author Ricky Strohmeier
+     */
+    @Test
+    public void testCourseEditation() {
         
     }
-    
-    
     
     
     /**
