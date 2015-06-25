@@ -12,8 +12,8 @@
 			<ui:define name="content">
 				<div class="container" align="center">
 					<h1>#{sessionUser.getLabel('index.header')}</h1>
-					<h:link outcome="/facelets/open/authenticate.xhtml">
-					<h:graphicImage class="img-responsive" url="/resources/img/logo.png"/>
+					<h:link outcome="/facelets/open/courses/search.xhtml">
+						<h:graphicImage class="img-responsive" url="/resources/img/logo.png"/>
 					</h:link>
 					<br/>
 					<h:outputText value="#{sessionUser.getLabel('index.bottom')}" rendered="#{!(navigationBean.sessionUser.userID != 0)}" />

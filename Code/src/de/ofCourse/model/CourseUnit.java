@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * contains all information about a Courseunit
  * 
- * @author Sebastian
+ * @author Ricky Strohmeier
  *
  */
 public class CourseUnit implements Serializable {
@@ -123,7 +123,7 @@ public class CourseUnit implements Serializable {
      * @return the title of the courseUnit
      */
     public String getTitle() {
-	return this.title;
+        return this.title;
     }
 
     /**
@@ -132,7 +132,7 @@ public class CourseUnit implements Serializable {
      * @return the description of the courseUnit
      */
     public String getDescription() {
-	return this.description;
+        return this.description;
     }
 
 
@@ -142,7 +142,7 @@ public class CourseUnit implements Serializable {
      * @return the Date and the time when the courseUnit ends
      */
     public Date getEndtime() {
-	return this.endtime;
+        return this.endtime;
     }
 
     /**
@@ -151,7 +151,7 @@ public class CourseUnit implements Serializable {
      * @return the address where the courseUnit will be hold
      */
     public Address getAddress() {
-	return this.address;
+        return this.address;
     }
 
     /**
@@ -160,7 +160,7 @@ public class CourseUnit implements Serializable {
      * @return the price the courseUnit costs
      */
     public float getPrice() {
-	return this.price;
+        return this.price;
     }
 
     /**
@@ -169,7 +169,7 @@ public class CourseUnit implements Serializable {
      * @return the maximal amount of users for the course
      */
     public int getMaxUsers() {
-	return this.maxUsers;
+        return this.maxUsers;
     }
 
     /**
@@ -178,7 +178,7 @@ public class CourseUnit implements Serializable {
      * @return the minimal amount of users needed for to the course to take place
      */
     public int getMinUsers() {
-	return this.minUsers;
+        return this.minUsers;
     }
 
     /**
@@ -187,7 +187,7 @@ public class CourseUnit implements Serializable {
      * @return the admin who leads the courseUnits
      */
     public User getCourseAdmin() {
-	return this.courseAdmin;
+        return this.courseAdmin;
     }
 
     /**
@@ -196,7 +196,7 @@ public class CourseUnit implements Serializable {
      * @return the cycle which determs when the courseUnit repeats
      */
     public Cycle getCycle() {
-	return this.cycle;
+        return this.cycle;
     }
 
     /**
@@ -205,7 +205,7 @@ public class CourseUnit implements Serializable {
      * @return the room in a building where the courseUnit take place(gym. for example)
      */
     public String getLocation() {
-	return this.location;
+        return this.location;
     }
 
     /**
@@ -215,7 +215,7 @@ public class CourseUnit implements Serializable {
      *          the new title to set
      */
     public void setTitle(String title) {
-	this.title = title;
+        this.title = title;
     }
 
     /**
@@ -225,7 +225,7 @@ public class CourseUnit implements Serializable {
      *          the new description to set
      */
     public void setDescription(String discription) {
-	this.description = discription;
+        this.description = discription;
     }
 
 
@@ -236,7 +236,7 @@ public class CourseUnit implements Serializable {
      *          the new endTime to set
      */
     public void setEndtime(Date endTime) {
-	this.endtime = endTime;
+        this.endtime = endTime;
     }
 
     /**
@@ -246,7 +246,7 @@ public class CourseUnit implements Serializable {
      *          the new address to set
      */
     public void setAddress(Address address) {
-	this.address = address;
+        this.address = address;
     }
 
     /**
@@ -256,7 +256,7 @@ public class CourseUnit implements Serializable {
      *          the new price to set
      */
     public void setPrice(float price) {
-	this.price = price;
+        this.price = price;
     }
 
     /**
@@ -266,7 +266,7 @@ public class CourseUnit implements Serializable {
      *          the new cycle to set
      */
     public void setCycle(Cycle cycle) {
-	this.cycle = cycle;
+        this.cycle = cycle;
     }
 
     /**
@@ -276,7 +276,7 @@ public class CourseUnit implements Serializable {
      *          the new maxUsers to set
      */
     public void setMaxUsers(int maxUsers) {
-	this.maxUsers = maxUsers;
+        this.maxUsers = maxUsers;
     }
 
     /**
@@ -286,7 +286,7 @@ public class CourseUnit implements Serializable {
      *          the new minUsers to set
      */
     public void setMinUsers(int minUsers) {
-	this.minUsers = minUsers;
+        this.minUsers = minUsers;
     }
 
     /**
@@ -296,7 +296,7 @@ public class CourseUnit implements Serializable {
      *          the new courseAdmin to set
      */
     public void setCourseAdmin(User courseAdmin) {
-	this.courseAdmin = courseAdmin;
+        this.courseAdmin = courseAdmin;
     }
 
     /**
@@ -306,7 +306,7 @@ public class CourseUnit implements Serializable {
      *          new location to set
      */
     public void setLocation(String location) {
-	this.location = location;
+        this.location = location;
     }
 
     /**
@@ -315,7 +315,7 @@ public class CourseUnit implements Serializable {
      * @return the courseUnitID
      */
     public int getCourseUnitID() {
-	return courseUnitID;
+        return courseUnitID;
     }
 
     /**
@@ -325,7 +325,7 @@ public class CourseUnit implements Serializable {
      *         new courseUnitId to set
      */
     public void setCourseUnitID(int courseUnitId) {
-	this.courseUnitID = courseUnitId;
+        this.courseUnitID = courseUnitId;
     }
 
     /**

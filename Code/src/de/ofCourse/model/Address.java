@@ -6,7 +6,7 @@ package de.ofCourse.model;
 /**
  * contains all information about the address of Users and Courses
  * 
- * @author Sebastian
+ * @author Ricky Strohmeier
  *
  */
 public class Address {
@@ -122,7 +122,7 @@ public class Address {
      * @return the id of the address
      */
     public int getId() {
-	return this.id;
+        return this.id;
     }
     
     /**
@@ -131,7 +131,7 @@ public class Address {
      * @return the country where the user lives or course will be hold
      */
     public String getCountry() {
-	return this.country;
+        return this.country;
     }
 
     /**
@@ -140,7 +140,7 @@ public class Address {
      * @return the city where the user lives or the course will be hold
      */
     public String getCity() {
-	return this.city;
+        return this.city;
     }
 
     /**
@@ -149,7 +149,7 @@ public class Address {
      * @return the street where the user lives or the course will be hold
      */
     public String getStreet() {
-	return this.street;
+        return this.street;
     }
 
     /**
@@ -158,7 +158,7 @@ public class Address {
      * @return the houseNumber where the user lives or the course will be hold
      */
     public Integer getHouseNumber() {
-	return this.houseNumber;
+        return this.houseNumber;
     }
 
     /**
@@ -167,7 +167,7 @@ public class Address {
      * @return the zipCode where the user lives or the course will be hold
      */
     public Integer getZipCode() {
-	return this.zipCode;
+        return this.zipCode;
     }
 
     /**
@@ -177,7 +177,7 @@ public class Address {
      *          the new id to set
      */
     public void setId(int id) {
-	this.id = id;
+        this.id = id;
     }
     
     /**
@@ -187,7 +187,7 @@ public class Address {
      *          new country to set
      */
     public void setCountry(String country) {
-	this.country = country;
+        this.country = country;
     }
 
     /**
@@ -197,7 +197,7 @@ public class Address {
      *          the new city to set
      */
     public void setCity(String city) {
-	this.city = city;
+        this.city = city;
     }
 
     /**
@@ -207,7 +207,7 @@ public class Address {
      *          the new street to set
      */
     public void setStreet(String street) {
-	this.street = street;
+        this.street = street;
     }
 
     /**
@@ -217,7 +217,7 @@ public class Address {
      *          the new houseNumber to set
      */
     public void setHouseNumber(Integer houseNumber) {
-	this.houseNumber = houseNumber;
+        this.houseNumber = houseNumber;
     }
 
     /**
@@ -227,7 +227,7 @@ public class Address {
      *          the new zipCode to set
      */
     public void setZipCode(Integer zipCode) {
-	this.zipCode = zipCode;
+        this.zipCode = zipCode;
     }
 
    

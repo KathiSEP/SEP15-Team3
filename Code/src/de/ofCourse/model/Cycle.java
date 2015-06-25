@@ -36,7 +36,7 @@ public class Cycle {
      * @return the id of the associated course
      */
     public int getCourseID() {
-	return this.courseID;
+        return this.courseID;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Cycle {
      * @return the turnus till the next unit should take place
      */
     public Period getTurnus() {
-	return this.turnus;
+        return this.turnus;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Cycle {
      * @return the amount of units which should take place
      */
     public int getNumberOfUnits() {
-	return this.numberOfUnits;
+        return this.numberOfUnits;
     }
 
     /**
@@ -64,7 +64,7 @@ public class Cycle {
      *            the associated courseID
      */
     public void setCourseID(int courseID) {
-	this.courseID = courseID;
+        this.courseID = courseID;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Cycle {
      *            new turnus to set
      */
     public void setTurnus(Period turnus) {
-	this.turnus = turnus;
+        this.turnus = turnus;
     }
 
     /**
@@ -84,7 +84,7 @@ public class Cycle {
      *            new amount of Units to set
      */
     public void setNumberOfUnits(int numberOfUnits) {
-	this.numberOfUnits = numberOfUnits;
+        this.numberOfUnits = numberOfUnits;
     }
 
     /**
@@ -93,7 +93,7 @@ public class Cycle {
      * @return the id of the cycle
      */
     public int getCycleID() {
-	return cycleID;
+        return cycleID;
     }
 
     /**
@@ -103,6 +103,6 @@ public class Cycle {
      *            the given cycle id
      */
     public void setCycleID(int cycleID) {
-	this.cycleID = cycleID;
+        this.cycleID = cycleID;
     }
 }

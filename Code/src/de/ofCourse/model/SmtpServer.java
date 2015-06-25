@@ -7,7 +7,7 @@ package de.ofCourse.model;
  * Contains all Information for the SMTP Server which is needed for
  * the E-Mail dispatch
  * 
- * @author Sebastian
+ * @author Ricky Strohmeier
  *
  */
 public class SmtpServer {
@@ -64,7 +64,7 @@ public class SmtpServer {
      * @return the address of the E-mailhost
      */
     public String getHostaddr() {
-	return hostaddr;
+        return hostaddr;
     }
 
     /**
@@ -74,7 +74,7 @@ public class SmtpServer {
      *            the hostaddr to set
      */
     public void setHostaddr(String hostaddr) {
-	this.hostaddr = hostaddr;
+        this.hostaddr = hostaddr;
     }
 
     /**
@@ -83,7 +83,7 @@ public class SmtpServer {
      * @return the password of the user
      */
     public String getPassword() {
-	return password;
+        return password;
     }
 
     /**
@@ -93,7 +93,7 @@ public class SmtpServer {
      *            the password to set
      */
     public void setPassword(String password) {
-	this.password = password;
+        this.password = password;
     }
 
     /**
@@ -102,7 +102,7 @@ public class SmtpServer {
      * @return the port from the E-mailhost.
      */
     public int getPort() {
-	return port;
+        return port;
     }
 
     /**
@@ -112,7 +112,7 @@ public class SmtpServer {
      *            the port to set
      */
     public void setPort(int port) {
-	this.port = port;
+        this.port = port;
     }
 
     /**
@@ -121,7 +121,7 @@ public class SmtpServer {
      * @return the username
      */
     public String getUsername() {
-	return username;
+        return username;
     }
 
     /**
@@ -131,7 +131,7 @@ public class SmtpServer {
      *            the username to set
      */
     public void setUsername(String username) {
-	this.username = username;
+        this.username = username;
     }
 
 }

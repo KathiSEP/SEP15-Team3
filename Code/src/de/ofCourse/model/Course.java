@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Contains all information about a course
  * 
- * @author Sebastian
+ * @author Ricky Strohmeier
  *
  */
 public class Course implements Serializable {
@@ -65,7 +65,7 @@ public class Course implements Serializable {
      * @return the title of the Course
      */
     public String getTitle() {
-	return title;
+        return title;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Course implements Serializable {
      * @return the description of the Course
      */
     public String getDescription() {
-	return description;
+        return description;
     }
 
     /**
@@ -83,7 +83,7 @@ public class Course implements Serializable {
      * @return the nextCourseUnit which will be hold in the Course
      */
     public CourseUnit getNextCourseUnit() {
-	return nextCourseUnit;
+        return nextCourseUnit;
     }
 
     /**
@@ -92,7 +92,7 @@ public class Course implements Serializable {
      * @return the Date when the Course will start or has started
      */
     public Date getStartdate() {
-	return startdate;
+        return startdate;
     }
 
     /**
@@ -101,7 +101,7 @@ public class Course implements Serializable {
      * @return the Date when the Course will end
      */
     public Date getEnddate() {
-	return enddate;
+        return enddate;
     }
 
     /**
@@ -110,7 +110,7 @@ public class Course implements Serializable {
      * @return the maximal amount of Users the Course can handle
      */
     public Integer getMaxUsers() {
-	return maxUsers;
+        return maxUsers;
     }
 
     /**
@@ -119,7 +119,7 @@ public class Course implements Serializable {
      * @return the logo of the Course
      */
     public byte[] getCourseImage() {
-	return courseImage;
+        return courseImage;
     }
 
 
@@ -130,7 +130,7 @@ public class Course implements Serializable {
      *          new course title
      */
     public void setTitle(String title) {
-	this.title = title;
+        this.title = title;
     }
 
     /**
@@ -140,7 +140,7 @@ public class Course implements Serializable {
      *          new course description to set
      */
     public void setDescription(String description) {
-	this.description = description;
+        this.description = description;
     }
 
     /**
@@ -150,7 +150,7 @@ public class Course implements Serializable {
      *          new nextCourseUnit to set
      */
     public void setNextCourseUnit(CourseUnit nextCourseUnit) {
-	this.nextCourseUnit = nextCourseUnit;
+        this.nextCourseUnit = nextCourseUnit;
     }
 
     /**
@@ -160,7 +160,7 @@ public class Course implements Serializable {
      *          new startDate to set
      */
     public void setStartdate(Date startDate) {
-	this.startdate = startDate;
+        this.startdate = startDate;
     }
 
     /**
@@ -170,7 +170,7 @@ public class Course implements Serializable {
      *          new endDate to set
      */
     public void setEnddate(Date endDate) {
-	this.enddate = endDate;
+        this.enddate = endDate;
     }
 
     /**
@@ -180,7 +180,7 @@ public class Course implements Serializable {
      *          new maximum of users the course can handle to set
      */
     public void setMaxUsers(Integer maxUsers) {
-	this.maxUsers = maxUsers;
+        this.maxUsers = maxUsers;
     }
 
     
@@ -192,7 +192,7 @@ public class Course implements Serializable {
      *          new course logo to set
      */
     public void setCourseImage(byte[] image) {
-	this.courseImage = image;
+        this.courseImage = image;
     }
 
     /**
@@ -201,7 +201,7 @@ public class Course implements Serializable {
      * @return the courseID
      */
     public int getCourseID() {
-	return courseID;
+        return courseID;
     }
 
     /**
@@ -211,7 +211,7 @@ public class Course implements Serializable {
      *          new courseID to set 
      */
     public void setCourseID(int courseID) {
-	this.courseID = courseID;
+        this.courseID = courseID;
     }
 
 }

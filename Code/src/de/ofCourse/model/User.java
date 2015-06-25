@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * contains all Information about a User
  * 
- * @author
+ * @author Ricky Strohmeier
  *
  */
 public class User implements Serializable {
@@ -87,7 +87,7 @@ public class User implements Serializable {
      * @return the address where the users lives
      */
     public Address getAddress() {
-	return this.address;
+        return this.address;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class User implements Serializable {
      * @return the email address of the user
      */
     public String getEmail() {
-	return this.email;
+        return this.email;
     }
 
     /**
@@ -126,7 +126,7 @@ public class User implements Serializable {
      * @return the gender of the user
      */
     public Salutation getSalutation() {
-	return this.salutation;
+        return this.salutation;
     }
 
     /**
@@ -135,7 +135,7 @@ public class User implements Serializable {
      * @return the firstname of the user
      */
     public String getFirstname() {
-	return this.firstname;
+        return this.firstname;
     }
 
     /**
@@ -144,7 +144,7 @@ public class User implements Serializable {
      * @return the lastname of the user
      */
     public String getLastname() {
-	return this.lastname;
+        return this.lastname;
     }
 
     /**
@@ -153,7 +153,7 @@ public class User implements Serializable {
      * @return the username of the user
      */
     public String getUsername() {
-	return this.username;
+        return this.username;
     }
 
    
@@ -164,7 +164,7 @@ public class User implements Serializable {
      * @return the dateOfBirth of the user
      */
     public Date getDateOfBirth() {
-	return this.dateOfBirth;
+        return this.dateOfBirth;
     }
 
     /**
@@ -173,7 +173,7 @@ public class User implements Serializable {
      * @return the profilImage of the user
      */
     public byte[] getProfilImage() {
-	return this.profilImage;
+        return this.profilImage;
     }
 
     /**
@@ -182,7 +182,7 @@ public class User implements Serializable {
      * @return the role of the User in the system
      */
     public UserRole getUserRole() {
-	return this.userRole;
+        return this.userRole;
     }
 
     /**
@@ -191,7 +191,7 @@ public class User implements Serializable {
      * @return the status of the user
      */
     public UserStatus getUserStatus() {
-	return this.userStatus;
+        return this.userStatus;
     }
 
     /**
@@ -200,7 +200,7 @@ public class User implements Serializable {
      * @return the amount of money the users has on his account
      */
     public float getAccountBalance() {
-	return this.accountBalance;
+        return this.accountBalance;
     }
 
     /**
@@ -209,7 +209,7 @@ public class User implements Serializable {
      * @return the ID of the user
      */
     public int getUserID() {
-	return this.userID;
+        return this.userID;
     }
 
     @Override
@@ -246,7 +246,7 @@ public class User implements Serializable {
      *          new address to set
      */
     public void setAddress(Address address) {
-	this.address = address;
+        this.address = address;
     }
 
     /**
@@ -256,7 +256,7 @@ public class User implements Serializable {
      *          new email to set
      */
     public void setEmail(String email) {
-	this.email = email;
+        this.email = email;
     }
 
     /**
@@ -266,7 +266,7 @@ public class User implements Serializable {
      *          new salutation to set
      */
     public void setSalutation(Salutation sal) {
-	this.salutation = sal;
+        this.salutation = sal;
     }
 
     /**
@@ -276,7 +276,7 @@ public class User implements Serializable {
      *          new firstname to set
      */
     public void setFirstname(String firstname) {
-	this.firstname = firstname;
+        this.firstname = firstname;
     }
 
     /**
@@ -286,7 +286,7 @@ public class User implements Serializable {
      *          new lastname to set
      */
     public void setLastname(String lastname) {
-	this.lastname = lastname;
+        this.lastname = lastname;
     }
 
 
@@ -297,7 +297,7 @@ public class User implements Serializable {
      *          new userRole to set
      */
     public void setUserRole(UserRole role) {
-	this.userRole = role;
+        this.userRole = role;
     }
 
     /**
@@ -307,7 +307,7 @@ public class User implements Serializable {
      *          new ID to set
      */
     public void setUserId(int id) {
-	this.userID = id;
+        this.userID = id;
     }
 
     /**
@@ -317,7 +317,7 @@ public class User implements Serializable {
      *          new username to set
      */
     public void setUsername(String username) {
-	this.username = username;
+        this.username = username;
     }
 
     /**
@@ -327,7 +327,7 @@ public class User implements Serializable {
      *          new date of Birth to set
      */
     public void setDateOfBirth(Date dateOfBirth) {
-	this.dateOfBirth = dateOfBirth;
+        this.dateOfBirth = dateOfBirth;
     }
 
     /**
@@ -337,7 +337,7 @@ public class User implements Serializable {
      *          new profil Image to set
      */
     public void setProfilImage(byte[] profilImage) {
-	this.profilImage = profilImage;
+        this.profilImage = profilImage;
     }
 
     /**
@@ -347,7 +347,7 @@ public class User implements Serializable {
      *          new status of the User to set
      */
     public void setUserStatus(UserStatus status) {
-	this.userStatus = status;
+        this.userStatus = status;
     }
 
     /**
@@ -357,24 +357,30 @@ public class User implements Serializable {
      *          new account balance to set
      */
     public void setAccountBalance(float balance) {
-	this.accountBalance = balance;
+        this.accountBalance = balance;
     }
 
     /**
+     * Get method for the selected value
+     * 
      * @return the selected
      */
     public boolean isSelected() {
-	return selected;
+        return selected;
     }
 
     /**
+     * Sets the selected value
+     * 
      * @param selected the selected to set
      */
     public void setSelected(boolean selected) {
-	this.selected = selected;
+        this.selected = selected;
     }
 
     /**
+     * Gets the pwSalt value
+     * 
      * @return the password salt
      */
     public String getPwSalt() {
@@ -382,6 +388,8 @@ public class User implements Serializable {
     }
 
     /**
+     * Sets the pwSalt value
+     * 
      * @param pwSalt password salt
      */
     public void setPwSalt(String pwSalt) {
@@ -389,6 +397,8 @@ public class User implements Serializable {
     }
 
     /**
+     * Gets the value of courseNewsSubscribed
+     * 
      * @return the courseNewsSubscribed
      */
     public boolean isCourseNewsSubscribed() {
@@ -396,6 +406,8 @@ public class User implements Serializable {
     }
 
     /**
+     * Sets the value courseNewsSubscribed
+     * 
      * @param courseNewsSubscribed the courseNewsSubscribed to set
      */
     public void setCourseNewsSubscribed(boolean courseNewsSubscribed) {

@@ -47,9 +47,8 @@ public class NavigationBean {
      * @param language the language to be set.
      */
     public void setLanguage(String language) {
-        HttpSession httpSession = (HttpSession) FacesContext
-                .getCurrentInstance().getExternalContext()
-                .getSession(true);
+        HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
+                                                                                    .getSession(true);
         httpSession.setAttribute("lang", language.toString());
         sessionUser.setLanguage(Language.fromString(language));
     }
