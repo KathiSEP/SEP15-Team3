@@ -26,10 +26,19 @@ public enum Activation {
     
 private String activationType;
     
+    /**
+     * 
+     * @param activationString
+     *                      String to activate
+     */
     private Activation(String activationString) {
         this.activationType = activationString;
     }
     
+    /**
+     * 
+     * @return the activation type
+     */
     public String getActivation() {
         return this.activationType;
     }
@@ -42,6 +51,14 @@ private String activationType;
         return this.name();
     }
     
+    /**
+     * Assign a string which describes the activation enum and creates the 
+     * activation
+     * 
+     * @param activationString
+     *                      String to activate
+     * @return null
+     */
     public static Activation fromString(String activationString) {
         if (activationString != null) {
           for (Activation activation : Activation.values()) {

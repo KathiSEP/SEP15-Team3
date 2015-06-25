@@ -26,9 +26,9 @@ import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
 /**
- * Displays the profile of a user and provides the functionality to edit the data
- * of the user. In case of the user is a course leader the courses managed by
- * the user are displayed as well.
+ * Displays the profile of a user and provides the functionality to edit the
+ * data of the user. In case of the user is a course leader the courses managed
+ * by the user are displayed as well.
  * <p>
  * The user can edit his complete userdata except his id, his user role and his
  * account balance.<br>
@@ -48,9 +48,11 @@ import de.ofCourse.utilities.PasswordHash;
 @ViewScoped
 public class UserProfileBean {
     
-	private final String URL_PROFILE = "/facelets/user/systemAdministrator/profile.xhtml?faces-redirect=false";
+	private final String URL_PROFILE = "/facelets/user/systemAdministrator/" +
+			"profile.xhtml?faces-redirect=false";
 	
-	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/systemAdministrator/adminManagement.xhtml?faces-redirect=true";
+	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/" +
+			"systemAdministrator/adminManagement.xhtml?faces-redirect=true";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -101,14 +103,16 @@ public class UserProfileBean {
     	try {
     	    transaction.start();
     	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
-    	                .getExternalContext().getRequestParameterMap().get("userID"));
+    	                .getExternalContext().getRequestParameterMap()
+    	                .get("userID"));
     		user = UserDAO.getUser(transaction, userID);
     		transaction.commit();
     		
     		DecimalFormat f = new DecimalFormat("#0.00");
     		setCreditBalance(f.format(user.getAccountBalance()));
     	} catch (InvalidDBTransferException e) {
-    		LogHandler.getInstance().error("SQL Exception occoured during executing init() in UserProfileBean");
+    		LogHandler.getInstance().error("SQL Exception occoured during" +
+    				"executing init() in UserProfileBean");
     		transaction.rollback();
     	}
     }
@@ -125,8 +129,10 @@ public class UserProfileBean {
     	
     	try {
     		User checkUser = UserDAO.getUser(transaction, userID);
-    		boolean nickTaken = UserDAO.nickTaken(transaction, user.getUsername());
-    		boolean emailTaken = UserDAO.emailExists(transaction, user.getEmail());
+    		boolean nickTaken = UserDAO.nickTaken(transaction,
+    				user.getUsername());
+    		boolean emailTaken = UserDAO.emailExists(transaction,
+    				user.getEmail());
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
@@ -139,7 +145,8 @@ public class UserProfileBean {
     			transaction.commit();
     			readOnly = true;
     		} else {
-    			FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("profile.message"));
+    			FacesMessageCreator.createFacesMessage(null,
+    					sessionUser.getLabel("profile.message"));
     			transaction.rollback();
     		}
     	} catch (InvalidDBTransferException e) {
@@ -180,7 +187,8 @@ public class UserProfileBean {
      * 
      * @author Patrick Cretu
      */
-    private boolean acceptUserInput(User checkUser, boolean nickTaken, boolean emailTaken) {
+    private boolean acceptUserInput(User checkUser, boolean nickTaken,
+    		boolean emailTaken) {
     	boolean check = false;
     	boolean sameEmail = checkUser.getEmail().equals(user.getEmail());
     	boolean sameNick = checkUser.getUsername().equals(user.getUsername());

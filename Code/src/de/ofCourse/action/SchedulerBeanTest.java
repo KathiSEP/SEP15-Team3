@@ -78,7 +78,8 @@ public class SchedulerBeanTest {
 		weeklyUnits.add(unit);
 		
 		// Determine the return value of getWeeklyCourseUnitsOf
-		Mockito.when(CourseUnitDAO.getWeeklyCourseUnitsOf(conn, 10002, currentMonday)).thenReturn(weeklyUnits);
+		Mockito.when(CourseUnitDAO.getWeeklyCourseUnitsOf(conn, 10002,
+				currentMonday)).thenReturn(weeklyUnits);
 		
 		SessionUserBean sessionUser = new SessionUserBean();
 		sessionUser.setUserID(10002);

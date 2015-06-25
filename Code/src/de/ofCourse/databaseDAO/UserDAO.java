@@ -53,12 +53,24 @@ import de.ofCourse.system.Transaction;
  */
 public class UserDAO {
 
+    /**
+     * The SQL Command to get all Users
+     */
     private final static String ALL_USERS = "SELECT * FROM \"users\" ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+     * The SQL Command to get all Users with this name
+     */
     private final static String GET_USERS_BY_NAME = "SELECT * FROM \"users\" WHERE NAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+     * The SQL Command to get User by Mail
+     */
     private final static String GET_USER_BY_EMAIL = "SELECT * FROM \"users\" WHERE EMAIL = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+     * The SQL Command to get User by Nickname
+     */
     private final static String GET_USER_BY_NICKNAME = "SELECT * FROM \"users\" WHERE NICKNAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     /**
@@ -436,16 +448,13 @@ public class UserDAO {
 	    throws InvalidDBTransferException {
 	
         ArrayList<User> result = null;
-        
-
         try (PreparedStatement pS = conn.prepareStatement(query)) {
 
             pS.setInt(1, limit);
             pS.setInt(2, offset);
             try(ResultSet resultSet = pS.executeQuery()){
                 result = getResult(resultSet);
-            }
-    	
+            }    	
         } catch (SQLException e) {
     	   
     	    throw new InvalidDBTransferException("Error occured during GetAllUsers Methode", e);
@@ -553,31 +562,7 @@ public class UserDAO {
 
     }
 
-    /**
-     * Returns a list of users which titles contain the search term the user has
-     * entered. The list is ordered by the passed parameter.
-     * 
-     * @param trans
-     *            the Transaction object which contains the connection to the
-     *            database
-     * @param pagination
-     *            the Pagination object which contains the amount of elements
-     *            which are to be retrieved
-     * @param searchString
-     *            the user's search term
-     * @param orderParam
-     *            the parameter the list is to be ordered by
-     * @return the list of users ordered by the passed parameter, or null if no
-     *         users were retrieved
-     * @throws InvalidDBTransferException
-     *             if any error occurred during the execution of the method
-     */
-    public static List<User> getUsersOrdered(Transaction trans,
-	    PaginationData pagination, String searchParam, String searchString,
-	    String orderParam) throws InvalidDBTransferException {
 
-	return null;
-    }
 
     /**
      * Returns a user assigned to the specified ID.

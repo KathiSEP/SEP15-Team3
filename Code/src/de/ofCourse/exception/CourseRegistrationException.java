@@ -13,17 +13,23 @@ import de.ofCourse.system.LogHandler;
  * Occurs if a failure happened during the registration process for a course.
  * The CourseRegistrationException is a runtime exception.
  *
- * @author Ricky Strohmeier
+ * @author Schwarz Sebatian
  *
  */
 public class CourseRegistrationException extends RuntimeException{
 
+    /**
+     * serialID
+     */
     private static final long serialVersionUID = -783634204496326525L;
+    /**
+     * Stores the SQL Exception 
+     */
     private SQLException error;
     
     
     /**
-     * 
+     * calls the Constructer of the parent Class
      */
     public CourseRegistrationException(){
         super("A Error occured during signing up for a Course/CourseUnit. "
@@ -32,12 +38,17 @@ public class CourseRegistrationException extends RuntimeException{
                 + " or you dont have enough money to sign up for the courseUnit");
     }
 
+    /**
+     * calls the Constructer of the parent Class and gives a Log Entry
+     */
     public CourseRegistrationException(String message){
         super(message);
         LogHandler.getInstance().error(message);
     }
     
-    
+    /**
+     * calls the Constructer of the parent Class and gives a Log Entry with Stack Trace
+     */
     public CourseRegistrationException(String message, SQLException e){
         super(message);
         this.error = e;

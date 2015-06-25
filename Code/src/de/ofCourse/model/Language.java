@@ -13,10 +13,18 @@ public enum Language {
     
     private String langString;
     
+    /**
+     * 
+     * @param langString language string
+     */
     private Language(String langString) {
         this.langString = langString;
     }
     
+    /**
+     * 
+     * @return the language string
+     */
     public String getLanguage() {
         return this.langString;
     }
@@ -29,6 +37,14 @@ public enum Language {
         return langString;
     }
     
+    /**
+     * Assign a string which describes the language enum and creates the 
+     * language
+     * 
+     * @param langString
+     *                  language string
+     * @return null
+     */
     public static Language fromString(String langString) {
         if (langString != null) {
           for (Language language : Language.values()) {

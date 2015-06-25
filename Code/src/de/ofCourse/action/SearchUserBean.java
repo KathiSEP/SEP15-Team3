@@ -38,7 +38,7 @@ import de.ofCourse.system.Transaction;
  * This class is ManagedBean and controller of the facelet
  * <code>listUsers</code>.
  * 
- * @author Tobias Fuchs
+ * @author Schwarz Sebastian
  *
  */
 @ManagedBean
@@ -56,9 +56,16 @@ public class SearchUserBean implements Pagination {
      */
     private ArrayList<User> searchResult;
 
+    /**
+     * stores the Order Param
+     */
+    
     private String orderParam;
 
-private int currentPage;
+    /**
+     *Stores the currentPage 
+     */
+    private int currentPage;
     
     /**
      * @return the currentPage
@@ -85,7 +92,10 @@ private int currentPage;
      */
     private String searchString;
 
-    private boolean renderTable = true;
+    /**
+     * Stores whether the Table should be rendered or not
+     */
+    private boolean renderTable;
 
     /**
      * This attribute represents a pagination object. It stores all the
@@ -116,9 +126,13 @@ private int currentPage;
     public void setOrderParam(String orderParam) {
         this.orderParam = orderParam;
     }
-
+   
+    /**
+     * Initializes the Page
+     */
     @PostConstruct
     public void init() {
+    	transaction = Connection.create();
         searchParam = "name";
         pagination = new PaginationData(10, 0, SortColumn.NAME, SortDirection.ASC);
     }
@@ -131,17 +145,16 @@ private int currentPage;
      * in the facelet.
      */
     public void search() {
-        transaction = Connection.create();
-        transaction.start();
         
+        transaction.start();        
         ArrayList<User> result;
+        
         try {
             result = getResultArray();
             
             if (result != null) {
                 searchResult = result;
                 setRenderTable(true);
-
                 transaction.commit();
             } else {
                 setRenderTable(false);
@@ -152,27 +165,32 @@ private int currentPage;
                     "Error occured during search");
             transaction.rollback();
         }
-
     }
 
     /**
-     * @return
+     * Returns a List with Users which equals the search command
+     * 
+     * @return a List of Users
      * @throws InvalidDBTransferException
      */
     private ArrayList<User> getResultArray() throws InvalidDBTransferException {
-        ArrayList<User> result;
+        
+    	ArrayList<User> result;
         if (searchParam.equals("name")) {
             pagination
                     .refreshNumberOfPages(UserDAO
                             .getNumberOfUsersWithThisName(transaction,
                                     searchParam));
             result = UserDAO.getUsers(transaction,
-                    pagination, searchParam, searchString);
-
-            
+                    pagination, searchParam, searchString);   
+            LogHandler.getInstance().debug("Die Methode getUsers:"
+                    + searchString + " was succesfull");
+        
         }else{
             result = UserDAO.getUsers(transaction,
-                    pagination, searchParam, searchString); 
+                    pagination, searchParam, searchString);
+            LogHandler.getInstance().debug("Die Methode getUsers:"
+                    + searchString + " was succesfull");
         }
         return result;
     }
@@ -350,12 +368,12 @@ private int currentPage;
     public void setSessionUser(SessionUserBean userSession) {
     }
 
+    /**
+     * This Methode gives all Users of the System
+     */
     public void displayAllUsers() {
         searchParam = "all";
-        transaction = Connection.create();
         transaction.start();
-
-
         try {
             pagination.refreshNumberOfPages(UserDAO
                     .getNumberOfUsers(transaction));
@@ -378,6 +396,11 @@ private int currentPage;
 
     }
 
+    /**
+     * Returns the Link to the selected User Profil
+     * 
+     * @return
+     */
     public String loadProfil() {
         return "/facelets/user/registeredUser/profile.xhtml";
     }

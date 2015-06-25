@@ -125,8 +125,6 @@ public class SearchUserBeanTest {
         pagination.setCurrentPageNumber(0);
         pagination.setElementsPerPage(10);
 
-        pagination.setSortAsc(true);
-        pagination.setSortColumn("name");
         
         bean.init();
 
@@ -137,7 +135,7 @@ public class SearchUserBeanTest {
 
         Mockito.when(UserDAO.getNumberOfUsersWithThisName(conn, "name"))
                 .thenReturn(searchResult2.size());
-        System.out.println("TEst");
+
         Mockito.when(
                 UserDAO.getUsers(conn, pagination, bean.getSearchParam(),
                         bean.getSearchString())).thenReturn(searchResult);
@@ -145,7 +143,7 @@ public class SearchUserBeanTest {
         Mockito.when(
                 UserDAO.getUsers(conn, pagination, bean.getSearchParam(),
                         bean.getSearchString())).thenReturn(searchResult);
-        System.out.println("TEst");
+
 //        Mockito.when(
 //                UserDAO.getAllUsers(conn, pagination, "testSQLBefehl" , bean
 //                        .getPagination().getElementsPerPage(), 0)).thenReturn(
@@ -165,10 +163,8 @@ public class SearchUserBeanTest {
     @Test
     public void testGetResultArray() {
 
-        
-        System.out.println("TEstStart");
         bean.search();
-        System.out.println("TEst");
+
         PowerMockito.verifyStatic();
         
         PowerMockito.verifyStatic();

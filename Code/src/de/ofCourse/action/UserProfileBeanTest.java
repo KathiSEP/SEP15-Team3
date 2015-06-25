@@ -108,7 +108,8 @@ public class UserProfileBeanTest {
 		try {
 			date = dateformat.parse("4.8.1965");
 		} catch (ParseException e) {
-			LogHandler.getInstance().error("Error ocurred in setup() in class UserProfileBeanTest");
+			LogHandler.getInstance().error("Error ocurred in setup() in " +
+					"class UserProfileBeanTest");
 		}
 		
 		user.setDateOfBirth(date);
@@ -131,7 +132,8 @@ public class UserProfileBeanTest {
 		try {
 			checkDate = checkDateformat.parse("4.8.1965");
 		} catch (ParseException e) {
-			LogHandler.getInstance().error("Error ocurred in setup() in class UserProfileBeanTest");
+			LogHandler.getInstance().error("Error ocurred in setup() in " +
+					"class UserProfileBeanTest");
 		}
 		
 		checkUser.setDateOfBirth(checkDate);
@@ -157,7 +159,8 @@ public class UserProfileBeanTest {
 		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);
 		
 		// Determine the return value of emailExists
-		Mockito.when(UserDAO.emailExists(conn, user.getEmail())).thenReturn(true);
+		Mockito.when(UserDAO.emailExists(conn,
+				user.getEmail())).thenReturn(true);
 		
 		bean.init();
 	}
@@ -169,11 +172,13 @@ public class UserProfileBeanTest {
 		bean.setUser(user);
 		
 		// Determine the return value of nickTaken
-		Mockito.when(UserDAO.nickTaken(conn, user.getUsername())).thenReturn(true);
+		Mockito.when(UserDAO.nickTaken(conn,
+				user.getUsername())).thenReturn(true);
 		
 		Mockito.when(LanguageManager.getInstance()).thenReturn(lang);
 		
-		// At this point the user data is not updated, because the nickname is already taken
+		// At this point the user data is not updated,
+		//because the nickname is already taken
 		bean.saveSettings();
 	}
 	
@@ -184,7 +189,8 @@ public class UserProfileBeanTest {
 		bean.setUser(user);
 		
 		// Determine the return value of nickTaken
-		Mockito.when(UserDAO.nickTaken(conn, user.getUsername())).thenReturn(false);
+		Mockito.when(UserDAO.nickTaken(conn,
+				user.getUsername())).thenReturn(false);
 		
 		PowerMockito.verifyStatic();
 		UserDAO.updateUser(conn, user, null, null);

@@ -17,16 +17,23 @@ import javax.faces.event.ExceptionQueuedEventContext;
 /**
  * Handles all occuring exceptions concerning the OfCourse system.
  *
- * @author Ricky Strohmeier
+ * @author Schwarz Sebastian
  *
  */
 public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
+    /**
+     * Stores a Attribut of ExceptionHandler
+     */
     private ExceptionHandler wrapped;
+    
+    /**
+     * A List of all exceptions
+     */
     Iterator<ExceptionQueuedEvent> exceptionList;
     
     /**
-     * 
+     *  initialize the attribute
      */
     public CustomExceptionHandler(ExceptionHandler wrapped) {
         this.wrapped = wrapped;
@@ -90,6 +97,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 
     /**
+     * Redirects to the 404 Error Page
+     * 
      * @param exceptionList
      */
     private void redirectTo404() {
@@ -108,6 +117,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 
     /**
+     * Redirect to the Default Error Page
+     * 
      * @param exceptionList
      */
     private void redirectToDefault() {

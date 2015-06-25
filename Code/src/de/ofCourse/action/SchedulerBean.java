@@ -117,8 +117,9 @@ public class SchedulerBean {
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
-            .error("SQL Exception occoured during executing "
-                    + "getCurrentMonday(Transaction trans, String currentDate)");
+            .error("SQL Exception occoured during executing " +
+                    "getCurrentMonday(Transaction trans, " +
+                    "String currentDate)");
     		transaction.rollback();
     	}
 		return currentMonday;
@@ -146,8 +147,9 @@ public class SchedulerBean {
     	return week;
     }
     
-    private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
-    	int hours = unit.getStartime().getHours();
+    @SuppressWarnings("deprecation")
+	private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
+		int hours = unit.getStartime().getHours();
     	
     	if (hours >= hour && hours < (hour + 2)) {
     		return true;
@@ -155,7 +157,8 @@ public class SchedulerBean {
     	return false;
     }
     
-    private Week createWeek(List<CourseUnit> weekRow) {
+    @SuppressWarnings("deprecation")
+	private Week createWeek(List<CourseUnit> weekRow) {
     	Week week = new Week();
     	Date date = new Date(currentMonday.getTime());
     	
@@ -175,7 +178,8 @@ public class SchedulerBean {
     	return week;
     }
     
-    private String getString(CourseUnit unit) {
+    @SuppressWarnings("deprecation")
+	private String getString(CourseUnit unit) {
     	String unitID = String.valueOf(unit.getCourseUnitID());
     	String title = unit.getTitle();
     	String startHours = String.valueOf(unit.getStartime().getHours());
@@ -191,7 +195,8 @@ public class SchedulerBean {
     	if (endMinutesInt < 10) {
     		endMinutes += "0";
     	}
-    	return startHours + ":" + startMinutes + " - " + endHours + ":" + endMinutes + ": " + "\n" + unitID + " " + title;
+    	return startHours + ":" + startMinutes + " - " + endHours + ":" +
+    		endMinutes + ": " + "\n" + unitID + " " + title;
     }
     
     private void addContent(Week week, String content, WeekDay numDay) {
@@ -281,7 +286,8 @@ public class SchedulerBean {
     	
 	    try {	
 	    	List<CourseUnit> weeklyUnits =
-					CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
+					CourseUnitDAO.getWeeklyCourseUnitsOf(transaction,
+							sessionUser.getUserID(), currentMonday);
 			List<Week> week = new ArrayList<Week>();
 			int startHour = 6;
 			
