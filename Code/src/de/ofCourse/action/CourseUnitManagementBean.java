@@ -312,10 +312,15 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     public String createCourseUnit() {
+	
+
 	//Checks whether the unit to create is in the range of the course
-	if (checkDate()) {
-	    transaction.start();
+	if (checkDate() 
+		&& checkCourseUnitLeader(
+			courseID, 
+			courseUnit.getCourseAdmin().getUserID())) {
 	    
+	    transaction.start();
 	    try {
 		calculateStartAndEndTime(courseUnit);
 		if (regularCourseUnit) {
@@ -1005,7 +1010,38 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	}
     }
 
-
+    private boolean checkCourseUnitLeader(int courseID, int i){
+	transaction.start();
+	boolean isValidLeader = false;
+ 
+	
+	try{
+	List<User> leaders = CourseDAO.getLeaders(transaction, courseID);
+	
+	if(leaders != null && leaders.size()>0){
+	for(User user : leaders){
+	    
+	    if(user.getUserID() == i
+		    && !isValidLeader){
+		isValidLeader = true;
+	    }  
+	   
+	}}
+	transaction.commit();
+	}catch(InvalidDBTransferException e){
+	    transaction.rollback();
+	}
+	
+	if(!isValidLeader){
+	    FacesMessageCreator.createFacesMessage(null,
+		    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.courseLeader")
+		    + " " + courseID +".");
+	}
+	return isValidLeader;	
+    }
+    
+    
+    
     /**
      * {@inheritDoc}
      * 

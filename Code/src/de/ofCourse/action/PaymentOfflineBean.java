@@ -81,17 +81,16 @@ public class PaymentOfflineBean implements Serializable {
 	transaction.start();
 	
 	try {
-	    User tempUser = UserDAO.getUser(	
-		    			transaction,																				
-		    			user.getUserID());
+	    User tempUser = UserDAO.getUser(transaction,																				
+		    			    user.getUserID());
+	    
 	    float accountBalance = tempUser.getAccountBalance();
-	    float newBalance = accountBalance + amountToDeposit;
+	    float newBalance = accountBalance + amountToDeposit;	    
 	    
 	    //Updates the account balance 
-	    UserDAO.updateAccountBalance(
-		    			transaction,
-		    			user.getUserID(), 
-		    			newBalance);
+	    UserDAO.updateAccountBalance(transaction,
+		    			 user.getUserID(), 
+		    			 newBalance);
 	    transaction.commit();
 	    
 	    FacesMessageCreator.createFacesMessage(
