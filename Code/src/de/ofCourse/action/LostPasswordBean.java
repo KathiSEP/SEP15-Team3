@@ -21,18 +21,11 @@ import java.util.Random;
  * address, generating automatically a new one and sending this new generated
  * password to the entered email address.
  * <p>
- * 
- * Before a password is reseted and replaced by a new generated, it is checked
- * whether the entered email address is stored in the system.<br>
- * If <code>true</code>, the old password is reseted, a new one generated and
- * sent to the email address.<br>
- * If <code>false</code>, a error message is displayed on the page.
- * 
+ * The old password is reseted, a new one generated and sent to the email address.
  * <p>
  * This class is ManagedBean of the facelet <code>authenticate</code>.
  * 
  * @author Ricky Strohmeier
- *
  */
 @ManagedBean
 @RequestScoped
@@ -134,21 +127,21 @@ public class LostPasswordBean {
     }
 
     private String generateNewPassword() {
-    	String newPassword = null;
+    	String newPassword;
     	Random random = new Random();
     	int length = random.nextInt(1) + passwordLength;
     	char[] password = new char[length];
     	int iterator = 0;
 
-    	for (int i = 0; i < 3; i++){
+    	for (int i = 0; i < 2; i++){
     		iterator = getNextPosition(random, length, password);
     		password[iterator] = BIGSIGNS.charAt(random.nextInt(BIGSIGNS.length()));
 	    }
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 2; i++) {
 			iterator = getNextPosition(random, length, password);
 			password[iterator] = NUMBERS.charAt(random.nextInt(NUMBERS.length()));
 		}
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 2; i++) {
 			iterator = getNextPosition(random, length, password);
 			password[iterator] = SPECIAL.charAt(random.nextInt(SPECIAL.length()));
 		}
@@ -157,7 +150,7 @@ public class LostPasswordBean {
 				password[i] = SMALLSIGNS.charAt(random.nextInt(SMALLSIGNS.length()));
 			}
 		}
-		newPassword = password.toString();
+		newPassword = new String(password);
     	return newPassword;
     }
 

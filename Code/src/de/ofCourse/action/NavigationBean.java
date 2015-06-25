@@ -58,8 +58,7 @@ public class NavigationBean {
     /**
      * Performs the logout action.<br>
      * By pressing the <code>logout</code> button, the user is logged out. That
-     * means his userStatus is set to <code>ANONYMOUS</code> and he is
-     * redirected to the welcome page.
+     * means he is redirected to the welcome page.
      * 
      * @return the link to the welcome page
      */
