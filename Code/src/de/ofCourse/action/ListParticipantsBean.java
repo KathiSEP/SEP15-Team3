@@ -152,7 +152,7 @@ public class ListParticipantsBean implements Pagination {
         catch (Exception e) {
             // FacesMessage: ' The page was called without a parameter'
             FacesMessageCreator.createFacesMessage(
-                    null,  
+                    "parameter",  
                     LanguageManager.getInstance().
                                     getProperty(
                                             "listParticipantsBean.facesMessage."
@@ -163,7 +163,7 @@ public class ListParticipantsBean implements Pagination {
         if(this.getCourseID() < 0) {
             //FacesMessage: 'The page does not exist'
             FacesMessageCreator.createFacesMessage(
-                    null,  
+                    "parameter",  
                     LanguageManager.getInstance().
                                     getProperty(
                                             "listParticipantsBean.facesMessage."
