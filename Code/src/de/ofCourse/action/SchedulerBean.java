@@ -45,6 +45,8 @@ public class SchedulerBean {
      * Stores the number of days that are in one week
      */
     private final int WEEK_DAYS = 7;
+    
+    private final int HOUR_SLOTS = 9;
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -325,11 +327,11 @@ public class SchedulerBean {
 	    	List<CourseUnit> weeklyUnits =
 					CourseUnitDAO.getWeeklyCourseUnitsOf(transaction, sessionUser.getUserID(), currentMonday);
 			List<Week> week = new ArrayList<Week>();
-			int hour = 6;
+			int startHour = 6;
 			
-			for (int i = 0; i < 9; i++) {
-				week.add(getWeekTuple(weeklyUnits, hour));
-				hour += 2;
+			for (int i = 0; i < HOUR_SLOTS; i++) {
+				week.add(getWeekTuple(weeklyUnits, startHour));
+				startHour += 2;
 			}
 			
 			weekDays = week;

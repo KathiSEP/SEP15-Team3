@@ -86,7 +86,7 @@ public class UserProfileBean {
     private SessionUserBean sessionUser;
     
     @PostConstruct
-    private void init() {
+    public void init() {
     	readOnly = true;
 
     	transaction = Connection.create();
@@ -123,7 +123,7 @@ public class UserProfileBean {
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
     			String salt = null;
-    			if (password.trim().length() > 0) {
+    			if (password != null && password.trim().length() > 0) {
     				salt = PasswordHash.getSalt();
     				pwHash = PasswordHash.hash(password, salt);
     			}
@@ -268,8 +268,8 @@ public class UserProfileBean {
      * @param userToSet
      *            the displayed user
      */
-    public void setUser(User userToSet) {
-        this.user = userToSet;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**

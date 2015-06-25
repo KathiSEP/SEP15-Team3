@@ -120,7 +120,7 @@ public class SearchCourseBeanTest {
 		
 		// Create course
 		Course course = new Course();
-		course.setCourseID(10051);
+		course.setCourseID(10004);
 		course.setTitle("Yoga234");
 		course.setMaxUsers(35);
 		course.setStartdate(startDate);
@@ -160,8 +160,8 @@ public class SearchCourseBeanTest {
 		
 		// Create course
 		Course course = new Course();
-		course.setCourseID(10019);
-		course.setTitle("BildTEst");
+		course.setCourseID(10005);
+		course.setTitle("BildTest");
 		course.setMaxUsers(101);
 		course.setStartdate(startDate);
 		course.setEnddate(endDate);

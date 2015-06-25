@@ -239,9 +239,7 @@ public class SearchCourseBean implements Pagination {
 		transaction.start();
 		
 		pagination.setCurrentPageNumber(0);
-		//pagination.setSortAsc(true);
 		pagination.setSortDirection(SortDirection.ASC);
-		//pagination.setSortColumn(searchParam);
 		pagination.setSortColumn(SortColumn.fromString(searchParam));
 		try {
     		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(transaction, searchParam, searchString));
