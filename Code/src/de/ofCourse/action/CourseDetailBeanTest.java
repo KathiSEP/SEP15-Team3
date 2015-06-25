@@ -139,12 +139,7 @@ public class CourseDetailBeanTest {
 
         testCourse.setMaxUsers(100);
         courseDetailBean = new CourseDetailBean();
-        //courseDetailBean.setCourse(testCourse);
-
-        when(Integer.parseInt(ec.getRequestParameterMap()
-                    .get("SAMPLE_ID")))
-                    .thenReturn(SAMPLE_ID);
-        when(CourseDAO.getCourse(connection, SAMPLE_ID)).thenReturn(testCourse);
+        courseDetailBean.setCourse(testCourse);
     }
 
     /**
@@ -157,10 +152,14 @@ public class CourseDetailBeanTest {
         Course editedCourse = new Course();
         editedCourse.setCourseID(courseDetailBean.getCourse().getCourseID());
 
+        assertEquals(false, courseDetailBean.getEditMode());
         courseDetailBean.enableEditMode();
+        assertEquals(true, courseDetailBean.getEditMode());
+
+        courseDetailBean.saveCourse();
+        assertEquals(false, courseDetailBean.getEditMode());
     }
-    
-    
+
     /**
      * Test method for {@link de.ofCourse.action.CourseDetailBean#signUpForCourse()}.
      */
