@@ -914,6 +914,7 @@ public class CourseDAO {
 
 	String sql = "DELETE FROM \"courses\" "
 	           + " WHERE id = ?";
+	
 	// catch potential SQL-Injection
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
 	    pS.setInt(1, courseID);

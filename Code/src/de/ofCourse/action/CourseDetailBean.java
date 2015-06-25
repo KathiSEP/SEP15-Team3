@@ -918,15 +918,18 @@ public class CourseDetailBean implements Pagination, Serializable {
 
 	    if (CourseDAO.deleteCourse(this.transaction,
 	                                this.course.getCourseID()) == true) {
-	     // FacesMessage: Delete course successful.
+	        
+	        // FacesMessage: Delete course successful.
 		FacesMessageCreator.createFacesMessage(
 		        null,
 		        sessionUser.getLabel(
                                 "courseDetailBean.facesMessage.DeleteCourse"));
 		this.transaction.commit();
+		
 		// Forwarding to the page search, because the delete was
 		// successful.
 		return "/facelets/open/courses/search.xhtml?faces-redirect=true";
+		
 	    } else {
 	        // FacesMessage: Delete course failed.
 		FacesMessageCreator.createFacesMessage(
@@ -958,6 +961,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	try {
 	    if (CourseDAO.addLeaderToCourse(this.transaction,
 		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {
+	        
 	        //FacesMessage: Add courseleader successful
 		FacesMessageCreator.createFacesMessage(
 		        null,
@@ -965,6 +969,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	                      "courseDetailBean.facesMessage.CourseLeaderAdd"));
 		this.transaction.commit();
 		return URL_COURSE_DETAIL_NEW + courseID;
+		
 	    }else{
 	        //FacesMessage: Add course leader failed
                 FacesMessageCreator.createFacesMessage(
@@ -1021,6 +1026,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    
 	    if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,
 		    this.course.getCourseID())) {
+	        
 	        //FacesMessage: Delete course leader successful
 		FacesMessageCreator.createFacesMessage(
 		        null,
@@ -1028,6 +1034,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 	                   "courseDetailBean.facesMessage.CourseLeaderDelete"));
 		this.transaction.commit();
 		return URL_COURSE_DETAIL_NEW + courseID;
+		
 	    } else {
 	        //FacesMEssage: Delete course leader failed.
 		FacesMessageCreator.createFacesMessage(
