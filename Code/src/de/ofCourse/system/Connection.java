@@ -53,8 +53,6 @@ public class Connection implements Transaction {
             conn.rollback();
             releaseConnection(); 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
             releaseConnection(); 
         }
         
