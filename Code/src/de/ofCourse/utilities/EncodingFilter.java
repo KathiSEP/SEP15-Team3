@@ -19,7 +19,7 @@ import javax.servlet.ServletResponse;
  * <p>
  * The <code>EncodingFilter</code> needs to be registered in the web.xml file.
  * 
- * @author Tobias Fuchs
+ * @author Sebastian
  *
  */
 public class EncodingFilter implements Filter {

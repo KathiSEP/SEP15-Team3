@@ -33,7 +33,7 @@ import de.ofCourse.utilities.PropertyManager;
  * application. That includes stopping the maintenance and and shutting down
  * database connection.
  * 
- * @author Tobias Fuchs
+ * @author Schwarz Sebastian
  *
  */
 @ManagedBean(eager = true)
@@ -51,35 +51,26 @@ public class LaunchSystem {
      */
     @PostConstruct
     public void startSystem() {
-        //Initialisiert zum ersten mal alle benötigten Singeltion Instanzen
-        System.out.println("Initialsierung startet");
+
         PropertyManager.getInstance();
         DatabaseConnectionManager.getInstance();
         LogHandler.getInstance();
         
-        LogHandler.getInstance().error("finished");
-        //Erstellt die Datenbank
+        LogHandler.getInstance().debug("LogHandler initialized");
         DatabaseTableCreator.buildUpDatabase();
         SetupAdmin.createInitialAdmin();
         SetupAdmin.setSystemAttributes();
         Maintenance.getInstance().run();
-        //DatabaseTableDestroyer.dropTables();
-        LogHandler.getInstance().error("finished");
+        LogHandler.getInstance().debug("Database created, System started");
         
+        //adds a Shutdown Hook which closes all Connection to the Database in case it crashes
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run(){
                 shutdownMaintenance();
             }
         });
-        
-        System.out.println("Initialsierung abgeschlossen");
-
-    
-    
-    
-    
-    }
+   }
 
     /**
      * Terminates the maintenance thread.
@@ -90,10 +81,5 @@ public class LaunchSystem {
         Maintenance.getInstance().shutDown();
     }
 
-    /**
-     * Initializes log4j
-     * 
-     * @throws IOException
-     */
     
 }

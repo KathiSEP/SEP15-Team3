@@ -66,22 +66,18 @@ public class LogHandler {
      */
     private void logSetup() throws IOException {
         
-        //Provies the Pattern with which the Loging will write his messages
-        PatternLayout layout = new PatternLayout("%-5p [%t]: %m%n");
-        
-        //
-        DailyRollingFileAppender fileAppender = new DailyRollingFileAppender(
+        //Provieds the Pattern with which the Loging will write his messages
+       PatternLayout layout = new PatternLayout("%-5p [%t]: %m%n");
+       DailyRollingFileAppender fileAppender = new DailyRollingFileAppender(
                 layout, PropertyManager.getInstance()
                 .getPropertyLogger("logfilepath")+ "/MyLog" , "'.'yyyy-MM-dd_HH-mm");
-        
-        System.out.println(PropertyManager.getInstance().getPropertyLogger("logfilepath")+ "/MyLog");
+
         logger.addAppender(fileAppender);
         
         // Sets the level input from properties
-        
         logger.setLevel(Level.toLevel(PropertyManager.getInstance()
                 .getPropertyLogger("loglvl")));
-        // TODO Error Handling
+
     }
 
     /**
