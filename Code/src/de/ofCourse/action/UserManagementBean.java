@@ -41,7 +41,7 @@ public class UserManagementBean {
     
 	private final String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
 	
-	private final String URL_ACTIVATE_USERS  = "/facelets/user/systemAdministrator/activateUsers.xhtml?faces-redirect=true";
+	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/activateUsers.xhtml?faces-redirect=true";
 	
     /**
      * Stores the transaction that is used for database interaction.
