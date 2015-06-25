@@ -55,6 +55,9 @@ public class MailBean {
     }
 
 
+	/**
+	 * Sets the Data from the Smtp Server 
+	 */
 	private void smtpSetup() {
 		smtpServer = new SmtpServer();
         smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail("smtphost"));
@@ -87,7 +90,8 @@ public class MailBean {
      *            message of the email
      */
     public void sendMail(List<String> recipients, String subject, String message) {
-        //für testzwecke nur eine mail 
+
+    	//sets the SMTP Server Data new incase they have changed
         Properties prop = new Properties();
         smtpSetup();
         
@@ -103,8 +107,6 @@ public class MailBean {
             }          
         };
      
-      
-        // https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
         prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
         prop.put("mail.smtph.port", smtpServer.getPort());
         prop.put("mail.smtp.auth", "true");
@@ -114,14 +116,12 @@ public class MailBean {
         }else{
             prop.put("mail.smtp.starttls.enable", "true"); 
         }                        
-
         
-        
+        //Sends the Mail in a new Thread incase we get a ServerTimeOut because he waits to long till all
+        //mails are sended
         Thread t = new Thread(new MailThread(prop, loginAuth, smtpServer, recipients, subject, message));
         t.start();
-        
-        
-        
+       
     }
 
     /**
@@ -141,17 +141,15 @@ public class MailBean {
         // User who should get the authentificationMessage will be loaded from Database
         Transaction trans = Connection.create();
         trans.start();
+        
         try{
-           User userToInform = UserDAO.getUser(trans, userID); 
+           User userToInform = UserDAO.getUser(trans, userID);
+           LogHandler.getInstance().debug("The Methode getUser:" + userID + "was succesfull");
            trans.commit();
-         //TODO try catch?
-           // E-Mail Messenge:
+         
            String messenge = createSalutation(userToInform);
            messenge += "Welcome to the OfCourse Family. Thank you very much for your registration. \n";
-           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n";
-           
-                   //koennte man noch schoener machen
-                   
+           messenge += "Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n";                   
            messenge += createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
            messenge += createSignature();
            
@@ -165,15 +163,6 @@ public class MailBean {
         
     }
 
-    /**
-     * Generates a mail that requests an user to conform his email - address.<br>
-     * This method is used if the user changes his email in his profile.
-     * 
-     * @param userID
-     *            ID of the user, who receives the message.
-     */
-    public void sendConfirmationMessage(int userID) {
-    }
 
     /**
      * Returns the smtpServer - object that contains the settings of the smtp
@@ -196,7 +185,7 @@ public class MailBean {
     }
     
     /**
-     * 
+     * Creates a Link to the welcome page from OfCOurse
      * 
      * @return
      */
@@ -205,8 +194,6 @@ public class MailBean {
         String requestScheme = FacesContext.getCurrentInstance().getExternalContext().getRequestScheme();
         String requestHost = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
         String requestContextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-        
-        // arbeiten wir nur auf den standart ports?? dann evtl weglassen
         int requestPorts = FacesContext.getCurrentInstance().getExternalContext().getRequestServerPort();
         
         String link = requestScheme + "://" + requestHost +":" + requestPorts + requestContextPath;
@@ -214,6 +201,13 @@ public class MailBean {
     }
     
     
+    /**
+     * This methode only puts the Mail Adress in a List for that we can us the sendMAil methode
+     * 
+     * @param maildaddress
+     * @param subject
+     * @param messenge
+     */
     private void sendSingleMail(String maildaddress, String subject, String messenge){
         List<String> recipients = new ArrayList<String>();
         recipients.add(maildaddress);
@@ -222,7 +216,7 @@ public class MailBean {
 
 
     /**
-     * 
+     * Creates the Mail for the Lost Password case
      * 
      * @param newPassword
      * @param email
@@ -233,6 +227,7 @@ public class MailBean {
         
         try{
            User userToInform = UserDAO.getUserPerMail(trans, email);
+           LogHandler.getInstance().debug("The Methode getUserPerMail:" + email + "was succesfull");
            
            String subject = "OfCourse new Password Email";
            
@@ -242,8 +237,7 @@ public class MailBean {
            LogHandler.getInstance().debug("Lost Password Mail sended");
            
            trans.commit();
-        } catch (InvalidDBTransferException e){
-            
+        } catch (InvalidDBTransferException e){            
             LogHandler.getInstance().error("Error occured during getUser in the sendLostPassword Methode");
             trans.rollback();
         }
@@ -252,6 +246,8 @@ public class MailBean {
 
 
     /**
+     * Creates the Text for the LostPassword Mail
+     * 
      * @param newPassword
      * @param userToInform
      * @return 
@@ -269,6 +265,8 @@ public class MailBean {
     
     
     /**
+     * Gives the OfCourse Signature for Mails
+     * 
      * @return
      */
     private String createSignature() {
@@ -280,6 +278,8 @@ public class MailBean {
 
 
     /**
+     * Creates the Salutation for every User who gets a mail
+     * 
      * @param user
      * @return
      */
@@ -297,6 +297,8 @@ public class MailBean {
     }
     
     /**
+     * Creates and sends the Mail for the Case a CourseUnit was deleted
+     * 
      * @param recipients
      * @param CourseUnit
      */
@@ -328,6 +330,8 @@ public class MailBean {
     
     
     /**
+     * Creates and Sends the Mail in case a CourseUnit was edited
+     * 
      * @param recipients
      * @param CourseUnit
      */
@@ -336,10 +340,9 @@ public class MailBean {
         
         try{
             CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(transaction, CourseUnit);
-            
+            LogHandler.getInstance().debug("The Methode getCourseUnit:" + CourseUnit + "was succesfull");
             String subject = "CourseUnit: " +  editCourseUnit.getTitle() + " has changed";
-            
-            
+        
             String message = "Dear User, \n \n";
             
             message += "Your CourseUnit:" + editCourseUnit.getTitle() + " at" + editCourseUnit.getStartime() + "has changed. \n";
@@ -357,6 +360,8 @@ public class MailBean {
 
 
     /**
+     * Creates a Link to the specific CourseUnit
+     * 
      * @param courseUnit
      * @return
      */
