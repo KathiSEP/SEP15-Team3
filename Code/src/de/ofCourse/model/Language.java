@@ -1,5 +1,11 @@
 package de.ofCourse.model;
 
+/**
+ * represents the different forms of languages a user can select
+ * 
+ * @author Katharina Hölzl
+ *
+ */
 public enum Language {
     DE("DE"),
     BAY("BAY"),

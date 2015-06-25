@@ -1,5 +1,11 @@
 package de.ofCourse.model;
 
+/**
+ * represents the different forms of columms a table has
+ * 
+ * @author Katharina Hölzl
+ *
+ */
 public enum SortColumn {
     
     NICKNAME("nickname"), 

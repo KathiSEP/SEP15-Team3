@@ -1,5 +1,12 @@
 package de.ofCourse.model;
 
+/**
+ * represents the different forms of directions a column in a table can 
+ * be sorted
+ * 
+ * @author Katharina Hölzl
+ *
+ */
 public enum SortDirection {
     
     ASC("ASC"), 
