@@ -94,6 +94,7 @@ public class SearchCourseBeanTest {
 		orderSearchString = searchString;
 		
 		bean = new SearchCourseBean();
+		bean.init();
 	}
 
 	@Test

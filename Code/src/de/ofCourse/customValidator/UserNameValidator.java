@@ -42,14 +42,21 @@ public class UserNameValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent arg1, Object value)
             throws ValidatorException {
 
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
         Language lang = null;
         
+        //Check if the parameter language exists in the session.
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
                     .getCurrentInstance()
@@ -60,6 +67,7 @@ public class UserNameValidator implements Validator {
         
         String username = value.toString();
 
+        //Check if the insert has a valid length
         if (username.length() < 5 || username.length() > 100) {
             throw new ValidatorException(
                     new FacesMessage(LanguageManager.getInstance().
@@ -70,6 +78,7 @@ public class UserNameValidator implements Validator {
         Transaction transaction = new Connection();
         transaction.start();
         try {
+            //check if the username is already existing in the system
             int id = UserDAO.getUserID(transaction, username);
             transaction.commit();
             if (id != -1) {

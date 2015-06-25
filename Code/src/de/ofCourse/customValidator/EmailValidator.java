@@ -50,14 +50,21 @@ public class EmailValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent component, Object value)
 	    throws ValidatorException {
 	
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
         Language lang = null;
         
+        //Check if the parameter language exists in the session.
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
                     .getCurrentInstance()
@@ -68,6 +75,7 @@ public class EmailValidator implements Validator {
         
 	String email = value.toString();
 	
+	//Check if the mail has a valid length
 	if(email.length() < 1 || email.length() > 319) {
 	    throw new ValidatorException(
 	            new FacesMessage(
@@ -78,6 +86,7 @@ public class EmailValidator implements Validator {
 	
 	matcher = pattern.matcher(email);
 	
+	//Check if the insert has a valid format
 	if (!matcher.matches()) {
 	    throw new ValidatorException(
 	            new FacesMessage(

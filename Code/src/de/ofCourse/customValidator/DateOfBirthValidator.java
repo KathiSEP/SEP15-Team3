@@ -37,14 +37,21 @@ public class DateOfBirthValidator implements Validator {
     public void validate(FacesContext arg0, UIComponent arg1, Object value)
 	    throws ValidatorException {
         
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
         Language lang = null;
         
+        //Check if the parameter language exists in the session.
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
                     .getCurrentInstance()
@@ -57,6 +64,7 @@ public class DateOfBirthValidator implements Validator {
 	Date dateOfBirth = null;
 	
 	try {
+	    //Check if the insert has a right format
 	    dateOfBirth = (Date) value;
 	} catch(Exception e) {
 	    throw new ValidatorException(
@@ -70,6 +78,8 @@ public class DateOfBirthValidator implements Validator {
 	    long hundredFiftyYears = 4730400000000L;
 	    long past = dateToday.getTime() - hundredFiftyYears;
 
+	    //Check if the inserted date is in the future or if its more than 
+	    //150 years ago
 	    if ((spread < 0) || (dateOfBirth.getTime() < past)) {
 		throw new ValidatorException(
 		        new FacesMessage(

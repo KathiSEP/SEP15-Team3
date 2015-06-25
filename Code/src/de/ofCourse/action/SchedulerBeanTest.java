@@ -66,7 +66,6 @@ public class SchedulerBeanTest {
 	
 	@Test
 	public void testDisplayNextWeek() {
-		
 		// Initialize the result list of course units
 		List<CourseUnit> weeklyUnits = new ArrayList<CourseUnit>();
 		CourseUnit unit = new CourseUnit();

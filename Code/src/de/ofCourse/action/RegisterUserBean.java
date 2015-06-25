@@ -143,7 +143,8 @@ public class RegisterUserBean {
                 .getCurrentInstance().getExternalContext().getRequest();
         String veriString = request.getParameter("veri");
 
-        //
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
@@ -156,7 +157,7 @@ public class RegisterUserBean {
             lang = Language.fromString(sessionMap.get("lang").toString());
             
         } else {
-            //Set the language to german (DE) an write the parameter into the 
+            //Set the language to German (DE) an write the parameter into the 
             //session
             lang = Language.DE;
             HttpSession httpSession = (HttpSession) FacesContext

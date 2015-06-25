@@ -52,12 +52,24 @@ public class ListParticipantsBean implements Pagination {
      */
     private Transaction transaction;
     
+    /**
+     * Stores the elements per page
+     */
     private static final int elementsPerPage = 10;
     
+    /**
+     * Stores the columns to sort
+     */
     private String sortColumn;
     
+    /**
+     * Stores the course ID
+     */
     private int courseID;
 
+    /**
+     * Stores the current page
+     */
     private int currentPage;
     
     /**
@@ -104,14 +116,23 @@ public class ListParticipantsBean implements Pagination {
     private void init() {
         this.participants = new ListDataModel<User>();
         this.setCourseID(-1);
+        
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
         Map<String, Object> sessionMap = FacesContext
                 .getCurrentInstance().getExternalContext().getSessionMap();
         
+        //New language object
         Language lang = null;
         
+        //Check if the parameter language exists in the session. 
         if(sessionMap.containsKey("lang")) {
+            //Convert the string (DE, EN, BAY) into a language object
             lang = Language.fromString(sessionMap.get("lang").toString());
+            
         } else {
+            //Set the language to German (DE) an write the parameter into the 
+            //session
             lang = Language.DE;
             HttpSession httpSession = (HttpSession) FacesContext
                     .getCurrentInstance().getExternalContext()
@@ -131,7 +152,7 @@ public class ListParticipantsBean implements Pagination {
         catch (Exception e) {
             // FacesMessage: ' The page was called without a parameter'
             FacesMessageCreator.createFacesMessage(
-                    null,  
+                    "parameter",  
                     LanguageManager.getInstance().
                                     getProperty(
                                             "listParticipantsBean.facesMessage."
@@ -142,7 +163,7 @@ public class ListParticipantsBean implements Pagination {
         if(this.getCourseID() < 0) {
             //FacesMessage: 'The page does not exist'
             FacesMessageCreator.createFacesMessage(
-                    null,  
+                    "parameter",  
                     LanguageManager.getInstance().
                                     getProperty(
                                             "listParticipantsBean.facesMessage."
@@ -193,12 +214,14 @@ public class ListParticipantsBean implements Pagination {
         transaction.start();
         
         try {
+            //Check if remove participants from course was successful
             if(UserDAO.removeParticipantsFromCourse
                     (this.transaction, this.getCourseID(), 
                                            this.getUsersToDelete()) == false) {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
             } else {
+                //Refresh page content
                 this.pagination.refreshNumberOfPages(CourseDAO
                         .getNumberOfParticipants(transaction, 
                                                            this.getCourseID()));
@@ -207,6 +230,7 @@ public class ListParticipantsBean implements Pagination {
                                 this.transaction, 
                                 this.getPagination(),
                                 this.getCourseID()));
+                
                 //FacesMessage: 'Deleting successful'
                 FacesMessageCreator.createFacesMessage(
                         null, 
@@ -370,16 +394,26 @@ public class ListParticipantsBean implements Pagination {
     }
 
     /**
-     * @param sortColumn the sortColumn to set
+     * @param sortColumn 
+     *                 the sortColumn to set
      */
     public void setSortColumn(String sortColumn) {
         this.sortColumn = sortColumn;
     }
 
+    /**
+     * 
+     * @return the participants
+     */
     public DataModel<User> getParticipants() {
         return participants;
     }
 
+    /**
+     * 
+     * @param participants 
+     *                  the participants of the course to set
+     */
     public void setParticipants(DataModel<User> participants) {
         this.participants = participants;
     }
