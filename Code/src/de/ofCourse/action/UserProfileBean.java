@@ -152,18 +152,22 @@ public class UserProfileBean {
     }
     
     private void setEnums() {
-    	if (salutation.equals("ms")) {
+    	if (salutation != null) {
+    		if (salutation.equals("ms")) {
     		user.setSalutation(Salutation.MS);
-    	} else {
-    		user.setSalutation(Salutation.MR);
+	    	} else {
+	    		user.setSalutation(Salutation.MR);
+	    	}
     	}
     	
-    	if (role.equals("admin")) {
+    	if (role != null) {
+    		if (role.equals("admin")) {
     		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
-    	} else if (role.equals("leader")) {
-    		user.setUserRole(UserRole.COURSE_LEADER);
-    	} else {
-    		user.setUserRole(UserRole.REGISTERED_USER);
+	    	} else if (role.equals("leader")) {
+	    		user.setUserRole(UserRole.COURSE_LEADER);
+	    	} else {
+	    		user.setUserRole(UserRole.REGISTERED_USER);
+	    	}
     	}
     }
     
