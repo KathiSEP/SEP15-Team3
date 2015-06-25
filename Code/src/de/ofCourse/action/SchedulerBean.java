@@ -169,7 +169,10 @@ public class SchedulerBean {
     		
     		Calendar cal = Calendar.getInstance();
     		cal.setTime(date);
-    		cal.roll(Calendar.DATE, true);
+    		
+    		//cal.roll(Calendar.DATE, true);
+    		
+    		cal.add(Calendar.DATE, +1);
     		date = new Date(cal.getTime().getTime());
     	}
     	return week;
