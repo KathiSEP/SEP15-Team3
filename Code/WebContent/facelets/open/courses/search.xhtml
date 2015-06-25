@@ -24,7 +24,7 @@
                 </div>
                 <div class="row" style="padding-top:20px;">
                     <div class="col-lg-12">
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading"><strong>#{sessionUser.getLabel('search.row.filterCourses.header')}</strong></div>
                             <div class="panel-body">
                             
@@ -38,7 +38,7 @@
                                                     <f:selectItem itemValue="week" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.weekly')}" />
                                                     <f:selectItem itemValue="total" itemLabel="#{sessionUser.getLabel('search.row.filterCourses.total')}" />
                                                 </h:selectOneMenu>
-                                                <h:commandButton id="courseOffers" class="btn btn-default" value="#{sessionUser.getLabel('search.row.filterCourses.viewButton')}" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
+                                                <h:commandButton id="courseOffers" class="btn btn-info" value="#{sessionUser.getLabel('search.row.filterCourses.viewButton')}" action="#{searchCourseBean.displayCoursesInPeriod()}"/>
                                             </div>
                                             <br/>
                                         </div>
@@ -63,7 +63,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
-                                            <h:commandButton id="searchCourses" class="btn btn-default" value="#{sessionUser.getLabel('search.row.filterCourses.searchButton')}" action="#{searchCourseBean.search()}"/>
+                                            <h:commandButton id="searchCourses" class="btn btn-info" value="#{sessionUser.getLabel('search.row.filterCourses.searchButton')}" action="#{searchCourseBean.search()}"/>
                                         </div>
                                     </div>                                                                  
                                 </h:form>
