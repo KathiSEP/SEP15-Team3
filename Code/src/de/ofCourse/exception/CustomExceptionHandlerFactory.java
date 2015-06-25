@@ -9,15 +9,18 @@ import javax.faces.context.ExceptionHandlerFactory;
 /**
  * Initializes a <code>ExceptionHandler</code> which handles all occuring exceptions.
  *
- * @author Ricky Strohmeier
+ * @author Schwarz Sebastian
  *
  */
 public class CustomExceptionHandlerFactory extends ExceptionHandlerFactory{
 
+    /**
+     * Stores a instance of ExcpetionHandlerFactory
+     */
     private ExceptionHandlerFactory parent;
     
     /**
-     * 
+     * Initializes the attribute of CostumExceptionHandlerFactory
      */
     public CustomExceptionHandlerFactory(ExceptionHandlerFactory parent) {
         this.parent = parent;
