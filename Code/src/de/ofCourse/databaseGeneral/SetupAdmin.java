@@ -9,7 +9,6 @@ import java.sql.Statement;
 
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.system.Connection;
-import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 import de.ofCourse.utilities.PasswordHash;
 
@@ -54,7 +53,6 @@ public class SetupAdmin {
     public static void createInitialAdmin() throws InvalidDBTransferException {
     	String salt = PasswordHash.getSalt();
     	String pw = PasswordHash.hash("Password!123", salt);
-    	
     	salt = "'" + salt + "'";
     	pw = "'" + pw + "'";
     	
@@ -66,63 +64,24 @@ public class SetupAdmin {
     }
     
     private static void executeInitialization(String checkQuery, String initQuery) {
-    	Transaction trans = new Connection();
+    	Transaction trans = Connection.create();
     	trans.start();
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
     	
-    	ResultSet rst = null;
-    	Statement check = null;
-    	Statement init = null;
-    	
-    	try {
-    		check = conn.createStatement();
-    		rst = check.executeQuery(checkQuery);
-    		rst.next();
-    		
-    		if ((Long) rst.getObject(1) < 1) {
-    			init = conn.createStatement();
-    			init.execute(initQuery);
+    	try (Statement check = conn.createStatement()) {
+    		try (ResultSet rst = check.executeQuery(checkQuery)) {
+    			rst.next();
+	    		if ((Long) rst.getObject(1) < 1) {
+	    			try (Statement init = conn.createStatement()) {
+	    				init.execute(initQuery);
+	    			}
+	    		}
     		}
     		trans.commit();
 		} catch (SQLException e) {
-			LogHandler
-		    .getInstance()
-		    .error("SQL Exception occoured during executeInitialization(String checkQuery, String initQuery)");
-			throw new InvalidDBTransferException();
-		} finally {
-			if (rst != null) {
-				try {
-					rst.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing ResultSet in executeInitialization(String checkQuery, String initQuery)");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (check != null) {
-				try {
-					check.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in executeInitialization(String checkQuery, String initQuery)");
-					throw new InvalidDBTransferException();
-				}
-			}
-			
-			if (init != null) {
-				try {
-					init.close();
-				} catch (SQLException e) {
-					LogHandler
-				    .getInstance()
-				    .error("SQL Exception occoured during closing PreparedStatement in executeInitialization(String checkQuery, String initQuery)");
-					throw new InvalidDBTransferException();
-				}
-			}
+			trans.rollback();
+			throw new InvalidDBTransferException("SQL Exception occoured during executeInitialization(String checkQuery, String initQuery)", e);
 		}
     }
 }
