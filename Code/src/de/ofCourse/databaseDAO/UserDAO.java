@@ -885,89 +885,87 @@ public class UserDAO {
     public static User getUser(Transaction trans, String username)
 	    throws InvalidDBTransferException {
 
-	// Generate a new user object and filling with the user name.
-	// Generate a new address object.
-	User user = new User();
-	user.setUsername(username);
-	Address address = new Address();
+     // Generate a new user object and filling with the user name.
+        // Generate a new address object.
+        User user = new User();
+        user.setUsername(username);
+        Address address = new Address();
 
-	// Prepare SQL- Request and database connection.
-	PreparedStatement pS = null;
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
+        // Prepare SQL- Request and database connection.
+        PreparedStatement pS = null;
+        Connection connection = (Connection) trans;
+        java.sql.Connection conn = connection.getConn();
 
-	
-	String sql = "SELECT * FROM users WHERE nickname = ?";
+        String sql = "SELECT * FROM \"users\" WHERE nickname=?";
 
-	// catch potential SQL-Injection
-	try {
-	    pS = conn.prepareStatement(sql);
-	    pS.setString(1, username);
+        // catch potential SQL-Injection
+        try {
+            pS = conn.prepareStatement(sql);
+            pS.setString(1, username);
 
-	    // execute preparedStatement, return resultSet as a list
-	    // (here one entry in the list because the user name is unique)
-	    ResultSet res = pS.executeQuery();
-	        
-        	    if (res.next()) {
-        
-        		// Fill the user object with values from the database.
-        		user.setUserId(res.getInt("user_id"));
-        		user.setFirstname(res.getString("first_name"));
-        		user.setLastname(res.getString("name"));
-        		user.setEmail(res.getString("email"));
-        		
-        		if(res.getDate("date_of_birth") == null) {
-        		    user.setDateOfBirth(null);
-        		} else {
-        		    user.setDateOfBirth(new java.util.Date(res.getDate(
-        			"date_of_birth").getTime()));
-        		}
-        
-        		user.setSalutation(Salutation.fromString(
-        		                    res.getString("form_of_address")));
-        		float accountBalance = res.getFloat("credit_balance");
-        		user.setAccountBalance(accountBalance);
-        		user.setUserRole(UserRole.fromString(
-        		                              res.getString("role")));
-        		user.setUserStatus(UserStatus.fromString(
-        		                              res.getString("status")));
-        		conn.commit();
-        
-        		sql = "SELECT * FROM user_addresses WHERE user_id = ?";
-        		
-        		PreparedStatement pr = null;
-                        pr = conn.prepareStatement(sql);
-                        pr.setInt(1, user.getUserID());
+            // execute preparedStatement, return resultSet as a list
+            // (here one entry in the list because the user name is unique)
+            ResultSet res = pS.executeQuery();
+            if (res.next()) {
 
-                        ResultSet res2 = pr.executeQuery();
+                // Fill the user object with values from the database.
+                user.setUserId(res.getInt("id"));
+                user.setFirstname(res.getString("first_name"));
+                user.setLastname(res.getString("name"));
+                user.setEmail(res.getString("email"));
+                
+                if(res.getDate("date_of_birth") == null) {
+                    user.setDateOfBirth(null);
+                } else {
+                    user.setDateOfBirth(new java.util.Date(res.getDate(
+                        "date_of_birth").getTime()));
+                }
 
-                        if (res2.next()) {
-        		
-                		address.setId(res2.getInt("address_id"));
-                		address.setCity(res2.getString("city"));
-                		address.setCountry(res2.getString("country"));
-                		address.setZipCode(res2.getInt("zip_code"));
-                		address.setStreet(res2.getString("street"));
-                		address.setHouseNumber(res2.getInt("house_nr"));
-                		user.setAddress(address);
-                        } else {
-                            user.setAddress(null);
-                        }
-        		
-        	    } else {
-        		user = null;
-        	    }
-                 
-              pS.close();
-              res.close();
-	    
-	} catch (SQLException e) {
-	    throw new InvalidDBTransferException("Error occured during "
-	                    + "getUser(Transaction trans, String username)", e);
+                user.setSalutation(Salutation.fromString(
+                        res.getString("form_of_address")));
+                float accountBalance = res.getFloat("credit_balance");
+                user.setAccountBalance(accountBalance);
+                user.setUserRole(UserRole.fromString(
+                        res.getString("role")));
+                user.setUserStatus(UserStatus.fromString(
+                        res.getString("status")));
+                
 
-	}
-	// Returns the filled user object.
-	return user;
+                conn.commit();
+
+                sql = "SELECT * FROM \"user_addresses\" WHERE user_id=?";
+                PreparedStatement pr = null;
+                pr = conn.prepareStatement(sql);
+                pr.setInt(1, user.getUserID());
+
+                ResultSet res2 = pr.executeQuery();
+
+                if (res2.next()) {
+                    address.setId(res2.getInt("id"));
+                    address.setCity(res2.getString("city"));
+                    address.setCountry(res2.getString("country"));
+                    address.setZipCode(res2.getInt("zip_code"));
+                    address.setStreet(res2.getString("street"));
+                    address.setHouseNumber(res2.getInt("house_nr"));
+                } else {
+                    address = null;
+                }
+                // Assign the address object to the user object.
+                user.setAddress(address);
+            } else {
+
+                user = null;
+            }
+            pS.close();
+            res.close();
+        } catch (SQLException e) {
+            LogHandler.getInstance().error(
+                    "SQL Exception occoured during executing "
+                            + "getUser(Transaction trans, String username)");
+            throw new InvalidDBTransferException();
+        }
+        // Returns the filled user object.
+        return user;
     }
 
     /**

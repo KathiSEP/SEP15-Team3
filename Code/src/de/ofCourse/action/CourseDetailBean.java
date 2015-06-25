@@ -928,7 +928,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 		        sessionUser.getLabel(
 	                      "courseDetailBean.facesMessage.CourseLeaderAdd"));
 		this.transaction.commit();
-		return URL_COURSE_DETAIL_NEW+ courseID;
+		return URL_COURSE_DETAIL_NEW + courseID;
 	    }else{
 	        //FacesMessage: Add course leader failed
                 FacesMessageCreator.createFacesMessage(
