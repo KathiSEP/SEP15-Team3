@@ -131,6 +131,7 @@ public class UserProfileBean {
     			transaction.commit();
     			readOnly = true;
     		} else {
+    			FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("profile.message"));
     			transaction.rollback();
     		}
     	} catch (InvalidDBTransferException e) {

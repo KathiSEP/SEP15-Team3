@@ -234,6 +234,7 @@
                                         <br/>
 	                                    
 	                                    <h:commandButton id="saveSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.saveButton')}" action="#{userProfileBean.saveSettings()}" />
+	                                    <h:commandButton id="cancelSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.cancelButton')}" action="#{userProfileBean.setReadOnly(true)}" />
                                     </h:panelGroup>
                                 </h:form>
                                 <br/>

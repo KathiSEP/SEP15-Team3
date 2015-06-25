@@ -145,10 +145,9 @@ public class SearchCourseBean implements Pagination {
     public void displayCoursesInPeriod() {
     	transaction = Connection.create();
     	transaction.start();
+    	
     	pagination.setCurrentPageNumber(0);
-    	//pagination.setSortAsc(true);
     	pagination.setSortDirection(SortDirection.ASC);
-    	//pagination.setSortColumn("courseID");
     	pagination.setSortColumn(SortColumn.ID);
     	
     	try {
