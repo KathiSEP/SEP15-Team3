@@ -7,7 +7,6 @@ package de.ofCourse.customValidator;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
@@ -15,7 +14,6 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
-import de.ofCourse.action.SessionUserBean;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Language;
@@ -54,7 +52,8 @@ public class UserNameValidator implements Validator {
         } else {
             lang = Language.DE;
             HttpSession session = (HttpSession) FacesContext
-                    .getCurrentInstance().getExternalContext()
+                    .getCurrentInstance()
+                    .getExternalContext()
                     .getSession(true);
             session.setAttribute("lang", lang.toString());
         }
@@ -64,7 +63,8 @@ public class UserNameValidator implements Validator {
         if (username.length() < 5 || username.length() > 100) {
             throw new ValidatorException(
                     new FacesMessage(LanguageManager.getInstance().
-                            getProperty("authenticate.validator.UserNameLength", lang)));
+                            getProperty(
+                               "authenticate.validator.UserNameLength", lang)));
         }
 
         Transaction transaction = new Connection();
@@ -73,14 +73,14 @@ public class UserNameValidator implements Validator {
             int id = UserDAO.getUserID(transaction, username);
             transaction.commit();
             if (id != -1) {
-                throw new ValidatorException(new FacesMessage(LanguageManager.getInstance().
-                        getProperty("authenticate.validator.UserName", lang)));
+                throw new ValidatorException(
+                     new FacesMessage(LanguageManager.getInstance().
+                            getProperty(
+                                     "authenticate.validator.UserName", lang)));
             }
         } catch (InvalidDBTransferException e) {
             transaction.rollback();
         }
-
-        
 
     }
 
