@@ -1032,9 +1032,11 @@ public class UserDAO {
      */
     public static void updateUser(Transaction trans, User user, String pwHash, String salt)
 	    throws InvalidDBTransferException {
-    	PreparedStatement statement = null;
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
+
+    	String emptyString = new String("null");
+    	int emptyNumber = 0;
     
     	String updateQuery = "UPDATE \"users\" "
     		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, pw_hash = ?, "
@@ -1044,10 +1046,9 @@ public class UserDAO {
     		+ "SET country = ?, city = ?, zip_code = ?, street = ?, house_nr = ? "
     		+ "WHERE user_id = ?";
     
-    	try {
+    	try(PreparedStatement statement = conn.prepareStatement(updateQuery)) {
     	    //Update User Dates
-    	    statement = conn.prepareStatement(updateQuery);
-    	    statement.setString(1, user.getFirstname());
+	        statement.setString(1, user.getFirstname());
     	    statement.setString(2, user.getLastname());
     	    statement.setString(3, user.getUsername());
     	    statement.setString(4, user.getEmail());
@@ -1055,35 +1056,54 @@ public class UserDAO {
     	    statement.setString(6, salt);
     	    statement.setString(7, user.getSalutation().toString());
 
-    	    java.sql.Date birthday = new java.sql.Date(user.getDateOfBirth()
-    	            .getTime());
-    	    
-    	    statement.setDate(8, birthday);
+    	    java.sql.Date birthday;
+    	    if(user.getDateOfBirth() != null) {
+    	        birthday = new java.sql.Date(user.getDateOfBirth().getTime());    	        
+    	        statement.setDate(8, birthday);    	    
+    	    } else {
+    	        birthday = new java.sql.Date(0);
+    	        statement.setDate(8, birthday);
+    	    }
 
     	    statement.setInt(9, user.getUserID());
 
     	    //Update Address
-    	    statement.setString(10, user.getAddress().getCountry());
-    	    statement.setString(11, user.getAddress().getCity());
-    	    statement.setInt(12, user.getAddress().getZipCode());
-    	    statement.setString(13, user.getAddress().getStreet());
-    	    statement.setInt(14, user.getAddress().getHouseNumber());
+    	    if(user.getAddress().getCountry() != null) {
+    	        statement.setString(10, user.getAddress().getCountry());    	        
+    	    } else {
+    	        statement.setString(10, emptyString);
+    	    }
+
+    	    if(user.getAddress().getCity() != null) {
+    	        statement.setString(11, user.getAddress().getCity());    	        
+    	    } else {
+    	        statement.setString(11, emptyString);
+    	    }
+
+    	    if(user.getAddress().getZipCode() != null) {
+    	        statement.setInt(12, user.getAddress().getZipCode());    	        
+    	    } else {
+    	        statement.setInt(12, emptyNumber);
+    	    }
+
+    	    if(user.getAddress().getStreet() != null) {
+    	        statement.setString(13, user.getAddress().getStreet());    	        
+    	    } else {
+    	        statement.setString(13, emptyString);
+    	    }
+
+    	    if(user.getAddress().getHouseNumber() != null) {
+    	        statement.setInt(14, user.getAddress().getHouseNumber());
+    	    } else {
+    	        statement.setInt(14, emptyNumber);
+    	    }
+
     	    statement.setInt(15, user.getUserID());
 
     	    statement.executeUpdate();
-    	    statement.close();
     	} catch (SQLException e) {
-    	    LogHandler.getInstance().error(
-    		    "SQL Exception occoured in updateUser from UserDAO");
+    	    LogHandler.getInstance().error("SQL Exception occoured in updateUser from UserDAO");
     	    throw new InvalidDBTransferException();
-    	} finally {
-    	    try {
-    		statement.close();
-    	    } catch (SQLException e) {
-    		LogHandler
-    			.getInstance()
-    			.error("Exception occoured in updateUser statment.close from UserDAO");
-    	    }
     	}
     }
 

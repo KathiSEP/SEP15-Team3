@@ -839,33 +839,55 @@ public class CourseDAO {
      */
     public static void updateCourse(Transaction trans, Course course)
 	    throws InvalidDBTransferException {
+        String emptyString = new String("nothing entered");
+        java.sql.Date emptyDate = new java.sql.Date(0);
+        int emptyNumber = 0;
 
-	Connection connection = (Connection) trans;
-	java.sql.Connection conn = connection.getConn();
-	PreparedStatement statement = null;
+    	Connection connection = (Connection) trans;
+    	java.sql.Connection conn = connection.getConn();
 
-	String courseQuery = "UPDATE \"courses\" "
-		+ "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
-		+ "WHERE id = ?";
+    	String courseQuery = "UPDATE \"courses\" "
+    		+ "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
+    		+ "WHERE id = ?";
+    
+    	try(PreparedStatement statement = conn.prepareStatement(courseQuery)) {
+    	    if (!course.getDescription().equals(null)) {
+    	        statement.setString(1, course.getDescription());    	        
+    	    } else {
+    	        statement.setString(1, emptyString);
+    	    }
 
-	try {
-	    statement = conn.prepareStatement(courseQuery);
-	    statement.setString(1, course.getDescription());
-	    statement.setInt(2, course.getMaxUsers());
-	    java.sql.Date startDate = new java.sql.Date(course.getStartdate()
-		    .getTime());
-	    statement.setDate(3, startDate);
-	    java.sql.Date endDate = new java.sql.Date(course.getEnddate()
-		    .getTime());
-	    statement.setDate(4, endDate);
-	    statement.setInt(5, course.getCourseID());
-	    statement.executeUpdate();
-	    statement.close();
-	} catch (SQLException e) {
-	    LogHandler.getInstance().error(
-		    "SQL Exception occoured in updateCourse of CourseDAO");
-	    throw new InvalidDBTransferException();
-	}
+    	    if (course.getMaxUsers() != null) {
+    	        statement.setInt(2, course.getMaxUsers());    	        
+    	    } else {
+    	        statement.setInt(2, emptyNumber);
+    	    }
+
+    	    if (course.getStartdate() != null) {
+    	        java.sql.Date startDate = new java.sql.Date(course.getStartdate().getTime());
+    	        statement.setDate(3, startDate);    	        
+    	    } else {
+    	        statement.setDate(3, emptyDate);
+    	    }
+
+    	    if (course.getEnddate() != null) {
+        	    java.sql.Date endDate = new java.sql.Date(course.getEnddate().getTime());
+        	    statement.setDate(4, endDate);
+    	    } else {
+    	        statement.setDate(4, emptyDate);
+    	    }
+
+    	    if (course.getCourseID() != 0) {
+    	        statement.setInt(5, course.getCourseID());
+    	    } else {
+    	        statement.setInt(5, emptyNumber);
+    	    }
+
+    	    statement.executeUpdate();
+    	} catch (SQLException e) {
+    	    LogHandler.getInstance().error("SQL Exception occoured in updateCourse of CourseDAO");
+    	    throw new InvalidDBTransferException();
+    	}
     }
 
     /**
