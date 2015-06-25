@@ -41,7 +41,7 @@ public class UserManagementBean {
     
 	private final String URL_CREATE_USER = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
 	
-	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/activateUsers.xhtml?faces-redirect=true";
+	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/searchUser.xhtml?faces-redirect=true";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -231,7 +231,7 @@ public class UserManagementBean {
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-	return sessionUser;
+    	return sessionUser;
     }
 
     /**
@@ -240,7 +240,8 @@ public class UserManagementBean {
      * @param userSession
      *            session of the user
      */
-    public void setSessionUser(SessionUserBean userSession) {
+    public void setSessionUser(SessionUserBean sessionUser) {
+    	this.sessionUser = sessionUser;
     }
 
 }

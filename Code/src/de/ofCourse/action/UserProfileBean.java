@@ -47,6 +47,10 @@ import de.ofCourse.utilities.PasswordHash;
 @ViewScoped
 public class UserProfileBean {
     
+	private final String URL_PROFILE = "/facelets/user/systemAdministrator/profile.xhtml?faces-redirect=false";
+	
+	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/systemAdministrator/adminManagement.xhtml?faces-redirect=true";
+	
     /**
      * Stores the transaction that is used for database interaction.
      */
@@ -186,7 +190,7 @@ public class UserProfileBean {
     }
     
     public String deleteUser() {
-    	String goToPage = "/facelets/user/systemAdministrator/createUser.xhtml?faces-redirect=false";
+    	String goToPage = URL_PROFILE;
     	transaction = Connection.create();
     	transaction.start();
     	
@@ -194,7 +198,7 @@ public class UserProfileBean {
     		UserDAO.delete(transaction, userID, true);
     		transaction.commit();
     		
-    		goToPage = "/facelets/user/systemAdministrator/listUsers.xhtml?faces-redirect=true";
+    		goToPage = URL_ADMIN_MANAGEMENT;
     	} catch (InvalidDBTransferException e) {
     		LogHandler
             .getInstance()
