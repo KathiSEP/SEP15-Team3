@@ -685,9 +685,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
     private void sortMailAddresses(ArrayList<MailWrapper> mailSend) {
 	List<String> recipients;
 	MailWrapper test;
+	List<MailWrapper> toDelete;
         
         while(!mailSend.isEmpty()){
-        	
+        	toDelete = new ArrayList<MailWrapper>();
             recipients = new ArrayList<String>();
             test = mailSend.iterator().next();
             recipients.add(test.getMail());
@@ -696,11 +697,11 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
             
             for(MailWrapper iterator : mailSend){
             	if(iterator.getUnitId() == courseUnitid){
-            		recipients.add(iterator.getMail());
-            		mailSend.remove(iterator);
+            		recipients.add(iterator.getMail()); 
+            		toDelete.add(iterator);
             	}
             }
-            
+            mailSend.removeAll(toDelete);            
             //Send emails
             mailBean.sendCourseUnitDeleteMail(
         	    recipients,
