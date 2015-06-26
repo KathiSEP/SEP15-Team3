@@ -844,10 +844,14 @@ public class CourseUnitDAO {
     }
 
     /**
+     * Retrieves and subsequently returns the courses within the passed result
+     * set.
      * 
      * @param rst
-     * @return
+     *          the result set containing the courses
+     * @return the list of resulting courses
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -880,9 +884,12 @@ public class CourseUnitDAO {
     }
 
     /**
+     * Sets the properties of the passed course unit object.
      * 
      * @param unit
+     *           the course unit object
      * @param tuple
+     *            the list of properties
      * 
      * @author Patrick Cretu
      */
@@ -897,9 +904,14 @@ public class CourseUnitDAO {
     }
     
     /**
+     * Returns the current week day's date as a string.
      * 
      * @param trans
-     * @return
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @return the current week day as a string value
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -925,10 +937,17 @@ public class CourseUnitDAO {
     }
 
     /**
+     * Returns the date of current week's Monday.
      * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param gap
-     * @return
+     *          the day gap between the current date and the current week's
+     *          Monday
+     * @return the date of current week's Monday
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -954,12 +973,19 @@ public class CourseUnitDAO {
     }
     
     /**
+     * Returns the user's course units within the requested week based on the
+     * passed date
      * 
      * @param trans
-     * @param pagination
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param userID
+     *             the user's ID in the database
      * @param monday
-     * @return
+     *             the date of the current week's Monday
+     * @return the user's course units within the requested week
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
