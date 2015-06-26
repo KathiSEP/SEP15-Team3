@@ -844,12 +844,12 @@ public class CourseUnitDAO {
     }
 
     /**
-     * Retrieves and subsequently returns the courses within the passed result
-     * set.
+     * Retrieves and subsequently returns the course units within the passed
+     * result set.
      * 
      * @param rst
-     *          the result set containing the courses
-     * @return the list of resulting courses
+     *          the result set containing the course units
+     * @return the list of resulting course units
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
      * 

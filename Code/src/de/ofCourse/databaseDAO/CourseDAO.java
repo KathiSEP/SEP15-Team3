@@ -47,25 +47,43 @@ import de.ofCourse.system.Transaction;
  */
 public class CourseDAO {
 
+	/**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_DAY = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\", \"course_units\" " +
     		"WHERE \"course_units\".start_time::date = current_date " +
     		"AND \"course_units\".course_id = \"courses\".id";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\", \"course_units\" " +
 	    "WHERE \"course_units\".start_time::date between current_date " +
 	    "AND current_date + integer '6'";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_TOTAL = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\"";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_ID = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\" WHERE CAST(id AS TEXT) LIKE ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\" WHERE LOWER(title) LIKE LOWER(?)";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\", \"users\", " +
     		"\"course_instructors\" " +
@@ -73,11 +91,17 @@ public class CourseDAO {
     		"AND \"users\".id = \"course_instructors\".course_instructor_id " +
     		"AND \"course_instructors\".course_id = courses.id";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String NUM_COURSES_DATE = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\", \"course_units\" " +
     		"WHERE \"courses\".id = \"course_units\".course_id " +
     		"AND \"course_units\".start_time::date = ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT " +
     		"courses.id, courses.title, courses.max_participants, " +
     		"courses.start_date, courses.end_date FROM \"courses\", " +
@@ -86,6 +110,9 @@ public class CourseDAO {
     		"AND \"course_units\".course_id = \"courses\".id " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT " +
     		"courses.id, courses.title, courses.max_participants, " +
     		"courses.start_date, courses.end_date FROM \"courses\", " +
@@ -95,17 +122,29 @@ public class CourseDAO {
     		"AND \"course_units\".course_id = \"courses\".id " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String ALL_COURSES = "SELECT * FROM \"courses\" " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String GET_COURSES_BY_ID = "SELECT * FROM " +
     		"\"courses\" WHERE CAST(id AS TEXT) LIKE ? " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String GET_COURSES_BY_TITLE = "SELECT * FROM " +
     		"\"courses\" WHERE LOWER(title) LIKE LOWER(?) " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, " +
     		"courses.title, courses.max_participants, courses.start_date," +
     		"courses.end_date FROM \"courses\", \"users\", " +
@@ -115,6 +154,9 @@ public class CourseDAO {
     		"AND \"course_instructors\".course_id = courses.id " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
+    /**
+	 * @author Patrick Cretu
+	 */
     private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT " +
     		"courses.id, courses.title, courses.max_participants, " +
     		"courses.start_date, courses.end_date "+ 
@@ -314,12 +356,18 @@ public class CourseDAO {
     }
 
     /**
+     * Counts the number of courses retrieved based on the search string.
      * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param param
+     *            the parameter by which the user has searched
      * @param searchString
-     * @return
+     *                   the entered user input
+     * @return the number of courses of the result
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -357,12 +405,17 @@ public class CourseDAO {
     }
 
     /**
+     * Executes the count query.
      * 
      * @param conn
+     *           the SQL connection for the database
      * @param query
+     *            the SQL query
      * @param searchString
-     * @return
+     *                   the user's search input
+     * @return the number of resulting courses
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -406,12 +459,19 @@ public class CourseDAO {
     }
 
     /**
+     * Returns the courses retrieved from the database based on the passed
+     * period.
      * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param pagination
+     *                 the object containing the pagination values
      * @param period
-     * @return
+     *             the requested time period
+     * @return the courses retrieved from the database
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -443,14 +503,19 @@ public class CourseDAO {
     }
 
     /**
+     * Executes the SQL query and returns the resulting list of courses.
      * 
      * @param conn
+     *           the SQL connection for the database
      * @param limit
+     *            the number of courses to which the result is limited
      * @param offset
-     * @param orderParam
+     *             the offset
      * @param query
-     * @return
-     * @throws InvalidDBTransferException
+     *            the SQL query
+     * @return the resulting list of courses
+     *  @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -525,15 +590,25 @@ public class CourseDAO {
 			String.format(query, orderParam, dir), isDate);
     }
     
+    
     /**
+     * Executes the SQL query and returns the resulting list of courses.
      * 
      * @param conn
+     *           the SQL connection for the database
      * @param limit
+     *            the number of courses to which the result is limited
      * @param offset
+     *             the offset
      * @param searchString
+     *                   the entered search string
      * @param query
-     * @return
+     *            the SQL query
+     * @return the resulting list of courses
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @throws ParseException
+     *             if any error occurred during the parsing of the date  
      * 
      * @author Patrick Cretu
      */
@@ -573,11 +648,18 @@ public class CourseDAO {
 		return result;
     }
 
+    
+    
+    
     /**
+     * Retrieves and subsequently returns the courses within the passed result
+     * set.
      * 
      * @param rst
-     * @return
+     *          the result set containing the courses
+     * @return the list of resulting courses
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -610,9 +692,12 @@ public class CourseDAO {
     }
 
     /**
+     * Sets the properties of the passed course object.
      * 
      * @param course
+     *           the course object
      * @param tuple
+     *            the list of properties
      * 
      * @author Patrick Cretu
      */
