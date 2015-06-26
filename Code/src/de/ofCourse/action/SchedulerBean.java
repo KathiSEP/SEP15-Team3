@@ -41,6 +41,9 @@ import de.ofCourse.system.Transaction;
 public class SchedulerBean {
 	
     
+	/**
+	 * The number of time slots in the scheduler
+	 */
     private final int HOUR_SLOTS = 9;
 	
     /**
@@ -48,10 +51,19 @@ public class SchedulerBean {
      */
     private Transaction transaction;
     
+    /**
+     * The Monday's date of the current week
+     */
     private java.sql.Date currentMonday;
     
+    /**
+     * The Sunday's date of the current week
+     */
     private java.sql.Date currentSunday;
     
+    /**
+     * Stores the scheduler's tuples of the current week which is displayed
+     */
     private List<Week> weekDays;
     
     /**
@@ -83,6 +95,17 @@ public class SchedulerBean {
     	}
     }
     
+	/**
+	 * Calculates the gap between the passed date and that week's Monday and
+	 * returns the date of the required Monday
+	 * 
+	 * @param trans
+	 * 			  the Transaction object which contains the connection to the
+     *            database
+	 * @param currentDate
+	 *            the passed date as a string value
+	 * @return the date of the requested week's Monday
+	 */
     private Date getCurrentMonday(Transaction trans, String currentDate) {
     	Date currentMonday = null;
     	int gap;
@@ -125,6 +148,10 @@ public class SchedulerBean {
 		return currentMonday;
 	}
     
+    /**
+     * Calculates the date of the current week's Sunday based on the current
+     * week's Monday
+     */
     private void calcCurrentSunday() {
     	Calendar cal = Calendar.getInstance();
     	cal.setTime(currentMonday);
@@ -132,6 +159,16 @@ public class SchedulerBean {
 		currentSunday = new Date(cal.getTime().getTime());
     }
     
+    /**
+     * Returns a week tuple of course units beginning at the passed time
+     * 
+     * @param weeklyUnits
+     *                  the list containing all the user's course unit of the
+     *                  current requested week
+     * @param hour
+     *           the time slot within the scheduler
+     * @return a week tuple of course units beginning at the passed time
+     */
     private Week getWeekTuple(List<CourseUnit> weeklyUnits, int hour) {
     	List<CourseUnit> weekRow = new ArrayList<CourseUnit>();
     	String hourString  = hour + ":00 - \n" + (hour + 2) + ":00";
@@ -147,6 +184,16 @@ public class SchedulerBean {
     	return week;
     }
     
+    /**
+     * Checks if the passed course unit starts at the passed time
+     * 
+     * @param unit
+     *           the course unit which start time is to be checked
+     * @param hour
+     *           the start time of the required time slot
+     * @return true, if the course unit starts at the required time, false
+     * 		   otherwise
+     */
     @SuppressWarnings("deprecation")
 	private boolean startsAtRequestedTime(CourseUnit unit, int hour) {
 		int hours = unit.getStartime().getHours();
@@ -157,6 +204,14 @@ public class SchedulerBean {
     	return false;
     }
     
+    /**
+     * Creates a week tuple containing the course units which start
+     * at the required time
+     * 
+     * @param weekRow
+     *              the list of course units which start within the time slot
+     * @return a week tuple containing the course units within the time slot
+     */
     @SuppressWarnings("deprecation")
 	private Week createWeek(List<CourseUnit> weekRow) {
     	Week week = new Week();
@@ -178,8 +233,17 @@ public class SchedulerBean {
     	return week;
     }
     
+    /**
+     * Formats the labels of a specific slot in the scheduler
+     * 
+     * @param unit
+     *           the course unit containing the values of which the label is
+     *           created
+     * @return the label displayed in the scheduler
+     */
     @SuppressWarnings("deprecation")
 	private String getString(CourseUnit unit) {
+    	
     	String unitID = String.valueOf(unit.getCourseUnitID());
     	String title = unit.getTitle();
     	String startHours = String.valueOf(unit.getStartime().getHours());
@@ -199,6 +263,16 @@ public class SchedulerBean {
     		endMinutes + ": " + "\n" + unitID + " " + title;
     }
     
+    /**
+     * Adds the passed content to the week day's label
+     * 
+     * @param week
+     *           the passed week tuple of the required time slot
+     * @param content
+     *              the text content added to the label
+     * @param numDay
+     *             the week day to which the content is added
+     */
     private void addContent(Week week, String content, WeekDay numDay) {
     	switch (numDay) {
     	case MONDAY:
@@ -271,6 +345,15 @@ public class SchedulerBean {
     	computeWeek(currentMonday, -7);
     }
     
+    /**
+     * Computes the Monday's date of the requested week and executes method
+     * calls to compute the weekly schedule
+     * 
+     * @param date
+     *           the passed date as a lead to compute the Monday
+     * @param interval
+     *               the interval of days added to the passed date
+     */
     private void computeWeek(Date date, int interval) {
     	Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -280,6 +363,10 @@ public class SchedulerBean {
 		getSchedule();
     }
 
+    /**
+     * Retrieves the user's course units of the requested week and computes
+     * the displayed schedule table
+     */
     private void getSchedule() {
     	transaction = Connection.create();
     	transaction.start();
@@ -327,26 +414,56 @@ public class SchedulerBean {
     	this.sessionUser = sessionUser;
     }
 
+    /**
+     * 
+     * @return the current week's Monday
+     */
 	public Date getCurrentMonday() {
 		return currentMonday;
 	}
 
+	/**
+	 * Sets the current week's Monday
+	 * 
+	 * @param currentMonday
+	 *                    the Monday's date
+	 */
 	public void setCurrentMonday(Date currentMonday) {
 		this.currentMonday = currentMonday;
 	}
 
+	/**
+	 * 
+	 * @return the current week's Sunday
+	 */
 	public java.sql.Date getCurrentSunday() {
 		return currentSunday;
 	}
 
+	/**
+	 * Sets the current week's Sunday
+	 * 
+	 * @param currentSunday
+	 *                    the Sunday's date
+	 */
 	public void setCurrentSunday(java.sql.Date currentSunday) {
 		this.currentSunday = currentSunday;
 	}
 
+	/**
+	 * 
+	 * @return the list of week tuples
+	 */
 	public List<Week> getWeekDays() {
 		return weekDays;
 	}
 
+	/**
+	 * Sets the currents week's list of tuples
+	 * 
+	 * @param weekDays
+	 *               the list of week tuples
+	 */
 	public void setWeekDays(List<Week> weekDays) {
 		this.weekDays = weekDays;
 	}
