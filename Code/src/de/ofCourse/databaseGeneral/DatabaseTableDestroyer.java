@@ -10,6 +10,12 @@ import de.ofCourse.system.Connection;
 import de.ofCourse.system.Transaction;
 
 /**
+ * Drops all tables and enum types stored in the database, if requested.
+ * 
+ * <p>
+ * This class is only required in the class
+ * <code>de.ofCourse.system.LaunchSystem</code>.
+ * </p>
  * 
  * @author Patrick Cretu
  *
@@ -55,6 +61,12 @@ public class DatabaseTableDestroyer {
 	private static final String DROP_SYSTEM_ATTRIBUTES =
 			"DROP TABLE system_attributes";
 	
+	/**
+	 * Drops all tables and enum types stored in the database.
+	 * 
+	 * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+	 */
 	public static void dropTables() throws InvalidDBTransferException {
 		List<String> dropStatements = new ArrayList<String>();
     	dropStatements.add(DROP_SYSTEM_ATTRIBUTES);

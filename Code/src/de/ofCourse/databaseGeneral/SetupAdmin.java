@@ -63,10 +63,26 @@ public class SetupAdmin {
     	executeInitialization(CHECK_ADMIN, String.format(INIT_ADMIN, pw, salt));
     }
     
+    /**
+     * Checks whether or not the table system_attributes in the database
+     * has been initially filled. If not, the default values are initialized.
+     * 
+     * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+     */
     public static void setSystemAttributes() throws InvalidDBTransferException {
     	executeInitialization(CHECK_ATTRIBUTES, INIT_ATTRIBUTES);
     }
     
+    /**
+     * Executes the verification and, if necessary, the initialization of the
+     * requested table.
+     * 
+     * @param checkQuery
+     *                 the check SQL query
+     * @param initQuery
+     *                the initializing SQL query
+     */
     private static void executeInitialization(String checkQuery,
     		String initQuery) {
     	
