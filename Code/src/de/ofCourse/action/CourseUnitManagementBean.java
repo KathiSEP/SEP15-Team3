@@ -684,24 +684,27 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      */
     private void sortMailAddresses(ArrayList<MailWrapper> mailSend) {
 	List<String> recipients;
-	Entry<Integer, String> entry;
+	MailWrapper test;
         
         while(!mailSend.isEmpty()){
+        	
             recipients = new ArrayList<String>();
-            entry = mailSend.entrySet().iterator().next();
-            recipients.add(entry.getValue());
-            mailSend.remove(entry.getKey(), entry.getValue());
+            test = mailSend.iterator().next();
+            recipients.add(test.getMail());
+            int courseUnitid = test.getUnitId();
+            mailSend.remove(test);
             
-            while(mailSend.get(entry.getKey()) != null){
-                String mailAdress = mailSend.get(entry.getKey());
-                recipients.add(mailAdress);
-                mailSend.remove(entry.getKey(), mailAdress);
+            for(MailWrapper iterator : mailSend){
+            	if(iterator.getUnitId() == courseUnitid){
+            		recipients.add(iterator.getMail());
+            		mailSend.remove(iterator);
+            	}
             }
             
             //Send emails
             mailBean.sendCourseUnitDeleteMail(
         	    recipients,
-        	    entry.getKey(),
+        	    courseUnitid,
         	    transaction);
         } 
     }
