@@ -43,65 +43,85 @@ import de.ofCourse.system.Transaction;
  * This class is required in the business logic of the system, more precisely in
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
- * 
- * @author Patrick Cretu, Katharina Hölzl
  *
  */
 public class CourseDAO {
 
-    private final static String NUM_COURSES_DAY = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-	    + "WHERE \"course_units\".start_time::date = current_date "
-	    + "AND \"course_units\".course_id = \"courses\".id";
+    private final static String NUM_COURSES_DAY = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\", \"course_units\" " +
+    		"WHERE \"course_units\".start_time::date = current_date " +
+    		"AND \"course_units\".course_id = \"courses\".id";
 
-    private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-	    + "WHERE \"course_units\".start_time::date between current_date AND current_date + integer '6'";
+    private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\", \"course_units\" " +
+	    "WHERE \"course_units\".start_time::date between current_date " +
+	    "AND current_date + integer '6'";
 
-    private final static String NUM_COURSES_TOTAL = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\"";
+    private final static String NUM_COURSES_TOTAL = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\"";
 
-    private final static String NUM_COURSES_ID = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
-	    + "WHERE CAST(id AS TEXT) LIKE ?";
+    private final static String NUM_COURSES_ID = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\" WHERE CAST(id AS TEXT) LIKE ?";
 
-    private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\" "
-	    + "WHERE LOWER(title) LIKE LOWER(?)";
+    private final static String NUM_COURSES_TITLE = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\" WHERE LOWER(title) LIKE LOWER(?)";
 
-    private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"users\", \"course_instructors\" "
-	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
-	    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
-	    + "AND \"course_instructors\".course_id = courses.id";
+    private final static String NUM_COURSES_LEADER = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\", \"users\", " +
+    		"\"course_instructors\" " +
+    		"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
+    		"AND \"users\".id = \"course_instructors\".course_instructor_id " +
+    		"AND \"course_instructors\".course_id = courses.id";
 
-    private final static String NUM_COURSES_DATE = "SELECT COUNT(DISTINCT \"courses\".id) FROM \"courses\", \"course_units\" "
-	    + "WHERE \"courses\".id = \"course_units\".course_id "
-	    + "AND \"course_units\".start_time::date = ?";
+    private final static String NUM_COURSES_DATE = "SELECT COUNT(DISTINCT " +
+    		"\"courses\".id) FROM \"courses\", \"course_units\" " +
+    		"WHERE \"courses\".id = \"course_units\".course_id " +
+    		"AND \"course_units\".start_time::date = ?";
 
-    private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
-	    + "courses.end_date FROM \"courses\", \"course_units\" "
-	    + "WHERE \"course_units\".start_time::date = current_date "
-	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String CURRENT_DATE_COURSES = "SELECT DISTINCT " +
+    		"courses.id, courses.title, courses.max_participants, " +
+    		"courses.start_date, courses.end_date FROM \"courses\", " +
+    		"\"course_units\" " +
+    		"WHERE \"course_units\".start_time::date = current_date " +
+    		"AND \"course_units\".course_id = \"courses\".id " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
-	    + "courses.end_date FROM \"courses\", \"course_units\" "
-	    + "WHERE \"course_units\".start_time::date BETWEEN current_date AND current_date + integer '6' "
-	    + "AND \"course_units\".course_id = \"courses\".id ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String CURRENT_WEEK_COURSES = "SELECT DISTINCT " +
+    		"courses.id, courses.title, courses.max_participants, " +
+    		"courses.start_date, courses.end_date FROM \"courses\", " +
+    		"\"course_units\" " +
+    		"WHERE \"course_units\".start_time::date BETWEEN current_date " +
+    		"AND current_date + integer '6' " +
+    		"AND \"course_units\".course_id = \"courses\".id " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String ALL_COURSES = "SELECT * FROM \"courses\" ORDER BY %s %s"
-	    + " LIMIT ? OFFSET ?";
+    private final static String ALL_COURSES = "SELECT * FROM \"courses\" " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_ID = "SELECT * FROM \"courses\" "
-	    + "WHERE CAST(id AS TEXT) LIKE ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_COURSES_BY_ID = "SELECT * FROM " +
+    		"\"courses\" WHERE CAST(id AS TEXT) LIKE ? " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_TITLE = "SELECT * FROM \"courses\" "
-	    + "WHERE LOWER(title) LIKE LOWER(?) ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_COURSES_BY_TITLE = "SELECT * FROM " +
+    		"\"courses\" WHERE LOWER(title) LIKE LOWER(?) " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, courses.title, courses.max_participants, courses.start_date,"
-	    + "courses.end_date FROM \"courses\", \"users\", \"course_instructors\" "
-	    + "WHERE LOWER(\"users\".name) LIKE LOWER(?) "
-	    + "AND \"users\".id = \"course_instructors\".course_instructor_id "
-	    + "AND \"course_instructors\".course_id = courses.id ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_COURSES_BY_LEADER = "SELECT courses.id, " +
+    		"courses.title, courses.max_participants, courses.start_date," +
+    		"courses.end_date FROM \"courses\", \"users\", " +
+    		"\"course_instructors\" " +
+    		"WHERE LOWER(\"users\".name) LIKE LOWER(?) " +
+    		"AND \"users\".id = \"course_instructors\".course_instructor_id " +
+    		"AND \"course_instructors\".course_id = courses.id " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT courses.id, courses.title, courses.max_participants, courses.start_date,"
-	    + "courses.end_date FROM \"courses\", \"course_units\" "
-	    + "WHERE \"courses\".id = \"course_units\".course_id "
-	    + "AND \"course_units\".start_time::date = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_COURSES_BY_DATE = "SELECT DISTINCT " +
+    		"courses.id, courses.title, courses.max_participants, " +
+    		"courses.start_date, courses.end_date "+ 
+    		"FROM \"courses\", \"course_units\" "+ 
+    		"WHERE \"courses\".id = \"course_units\".course_id " +
+    		"AND \"course_units\".start_time::date = ? " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
     
     
     private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id, courses.title, (SELECT course_units.start_time " 
@@ -341,13 +361,17 @@ public class CourseDAO {
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 		    if (searchString != null) {
 			    if (isDate) {
-				    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+				    SimpleDateFormat format =
+				    		new SimpleDateFormat("dd.MM.yyyy");
 				    Date parsed;
 				    try {
 				    	parsed = format.parse(searchString);
 				    } catch (ParseException e) {
-				    	throw new InvalidDBTransferException("SQL Exception occoured during countCourses(java.sql.Connection conn,"
-							+ "String query, String searchString, boolean isDate)");
+				    	throw new InvalidDBTransferException(
+				    			"SQL Exception occoured during " +
+				    			"countCourses(java.sql.Connection conn," +
+				    			"String query, String searchString, " +
+				    			"boolean isDate)");
 				    }
 				    java.sql.Date date = new java.sql.Date(parsed.getTime());
 				    stmt.setDate(1, date);
@@ -361,8 +385,9 @@ public class CourseDAO {
 		    	numCourses = rst.getInt(1);
 		    }
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"countCourses(java.sql.Connection conn, String query, String searchString)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during countCourses(java.sql.Connection conn, " +
+		    		"String query, String searchString)", e);
 		}
 		return numCourses;
     }
@@ -429,8 +454,10 @@ public class CourseDAO {
 		    	result = getResult(rst);
 		    }
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during getCoursesInPeriod(java.sql.Connection conn, " +
+		    		"int limit, int offset, String orderParam, " +
+		    		"String query)", e);
 		}
 		return result;
     }
@@ -461,7 +488,8 @@ public class CourseDAO {
 		java.sql.Connection conn = connection.getConn();
 		int limit = pagination.getElementsPerPage();
 		int offset = limit * pagination.getCurrentPageNumber();
-		String orderParam = pagination.getSortColumn().getSortColumn().toString();
+		String orderParam =
+				pagination.getSortColumn().getSortColumn().toString();
 		String dir = pagination.getSortDirection().toString();
 		String query = null;
 		boolean isDate = false;
@@ -520,11 +548,14 @@ public class CourseDAO {
 		    }
 		    
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String searchString, String query)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during getCoursesInPeriod(java.sql.Connection conn, " +
+		    		"int limit, int offset, String searchString, " +
+		    		"String query)", e);
 		} catch (ParseException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during countCourses(java.sql.Connection conn,"
-					+ "String query, String searchString, boolean isDate)");
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during countCourses(java.sql.Connection conn," +
+					"String query, String searchString, boolean isDate)");
 		}
 		return result;
     }
@@ -559,7 +590,8 @@ public class CourseDAO {
 		    	return result;
 		    }
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during getResult(ResultSet rst)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during getResult(ResultSet rst)", e);
 		}
 		return null;
     }

@@ -39,25 +39,40 @@ import de.ofCourse.system.Transaction;
  * This class is required in the business logic of the system, more precisely in
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
- * 
- * @author Tobias Fuchs
  *
  */
 public class CourseUnitDAO {
 	
-	private static final String GET_WEEKLY_UNITS = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".title, \"course_units\".fee, " +
-			"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"course_unit_participants\", \"users\" " +
-			"WHERE \"course_units\".id = \"course_unit_participants\".course_unit_id " + 
+	/**
+	 * @author Patrick Cretu
+	 */
+	private static final String GET_WEEKLY_UNITS = "SELECT " +
+			"\"course_units\".id, \"course_units\".course_id, " +
+			"\"course_units\".title, \"course_units\".fee, " +
+			"\"course_units\".start_time, \"course_units\".end_time " +
+			"FROM \"course_units\", \"course_unit_participants\", " +
+			"\"users\" " +
+			"WHERE \"course_units\".id = " +
+			"\"course_unit_participants\".course_unit_id " + 
 			"AND \"course_unit_participants\".participant_id = \"users\".id " + 
 			"AND \"users\".id = ? " +
-			"AND \"course_units\".start_time::date BETWEEN ? AND ?::date + integer '6' " +
+			"AND \"course_units\".start_time::date BETWEEN ? " +
+			"AND ?::date + integer '6' " +
 			"ORDER BY \"course_units\".start_time";
 	
-	private static final String GET_UNITS_OF = "SELECT \"course_units\".id, \"course_units\".course_id, \"course_units\".title, \"course_units\".fee, " +
-		"\"course_units\".start_time, \"course_units\".end_time FROM \"course_units\", \"users\", \"course_unit_participants\" " +
-		"WHERE \"users\".id = \"course_unit_participants\".participant_id " +
-		"AND \"course_unit_participants\".course_unit_id = \"course_units\".id " +
-		"AND \"users\".id = ?";
+	/**
+	 * @author Patrick Cretu
+	 */
+	private static final String GET_UNITS_OF = "SELECT \"course_units\".id, " +
+			"\"course_units\".course_id, \"course_units\".title, " +
+			"\"course_units\".fee, " +
+			"\"course_units\".start_time, \"course_units\".end_time " +
+			"FROM \"course_units\", \"users\", \"course_unit_participants\" " +
+			"WHERE \"users\".id = " +
+			"\"course_unit_participants\".participant_id " +
+			"AND \"course_unit_participants\".course_unit_id = " +
+			"\"course_units\".id " +
+			"AND \"users\".id = ?";
 
 	private final static String GET_PARTICIPANTS_OF = 
 		"SELECT id, name, first_name, nickname, credit_balance, email FROM"
@@ -785,8 +800,10 @@ public class CourseUnitDAO {
 		    }
 	
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"getCoursesInPeriod(java.sql.Connection conn, int limit, int offset, String orderParam, String query)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during getCoursesInPeriod(java.sql.Connection conn, " +
+		    		"int limit, int offset, String orderParam, " +
+		    		"String query)", e);
 		}
 		return result;
     }
@@ -821,7 +838,8 @@ public class CourseUnitDAO {
 		    	return result;
 		    }
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during getResult(ResultSet rst)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during getResult(ResultSet rst)", e);
 		}
 		return result;
     }
@@ -865,7 +883,8 @@ public class CourseUnitDAO {
     		}
 			
 		} catch (SQLException e) {
-			throw new InvalidDBTransferException("SQL Exception occoured during getCurrentWeekDay(Transaction trans)", e);
+			throw new InvalidDBTransferException("SQL Exception occoured " +
+					"during getCurrentWeekDay(Transaction trans)", e);
 		}
     	return currentDay;
     }
@@ -893,7 +912,8 @@ public class CourseUnitDAO {
     		}
     		
 		} catch (SQLException e) {
-			throw new InvalidDBTransferException("SQL Exception occoured during getCurrentMonday(Transaction trans, int gap)", e);
+			throw new InvalidDBTransferException("SQL Exception occoured " +
+					"during getCurrentMonday(Transaction trans, int gap)", e);
 		}
     	return currentMonday;
     }
@@ -908,7 +928,8 @@ public class CourseUnitDAO {
      * 
      * @author Patrick Cretu
      */
-    public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday) {
+    public static List<CourseUnit> getWeeklyCourseUnitsOf(Transaction trans,
+    		int userID, java.sql.Date monday) {
     	
     	Connection connection = (Connection) trans;
     	java.sql.Connection conn = connection.getConn();
@@ -924,8 +945,9 @@ public class CourseUnitDAO {
 			}
 			
 		} catch (SQLException e) {
-			throw new InvalidDBTransferException("SQL Exception occoured during" +
-					"getWeeklyCourseUnitsOf(Transaction trans, int userID, java.sql.Date monday)", e);
+			throw new InvalidDBTransferException("SQL Exception occoured " +
+					"during getWeeklyCourseUnitsOf(Transaction trans, " +
+					"int userID, java.sql.Date monday)", e);
 		}
     	return result;
     }
