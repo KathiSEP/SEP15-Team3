@@ -15,6 +15,7 @@ import java.util.Map;
 
 
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +26,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 
 
+
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.User;
 import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
 /**
@@ -37,7 +40,7 @@ import de.ofCourse.system.Transaction;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
-        PaginationData.class })
+        PaginationData.class, LogHandler.class })
 public class SearchUserBeanTest {
 
     private User user1;
@@ -46,14 +49,18 @@ public class SearchUserBeanTest {
     private User user4;
     private User user5;
     
+    /**
+     * Logger
+     */
+    private LogHandler logger;
+    
     private ResultSet resultSet = null;
 
-    // RequestparameterMap
-    private Map<String, String> pm;
+
 
     private Connection conn;
 
-    private java.sql.Connection sqlConnection;
+
 
     private ArrayList<User> searchResult = new ArrayList<User>();
     private ArrayList<User> searchResult2 = new ArrayList<User>();
@@ -63,6 +70,11 @@ public class SearchUserBeanTest {
 
     @Before
     public void setup() throws SQLException {
+    	
+    	// mocks the lgger
+    	PowerMockito.mockStatic(LogHandler.class);
+    	logger = mock(LogHandler.class);
+    	Mockito.when(LogHandler.getInstance()).thenReturn(logger);
 
         // Mock the connection
         PowerMockito.mockStatic(Connection.class);
@@ -145,9 +157,9 @@ public class SearchUserBeanTest {
                         bean.getSearchString())).thenReturn(searchResult);
 
 //        Mockito.when(
-//                UserDAO.getAllUsers(conn, pagination, "testSQLBefehl" , bean
+//        		UserDAO.getAllUsers(conn, pagination, "testSQLBefehl" , bean
 //                        .getPagination().getElementsPerPage(), 0)).thenReturn(
-//                searchResult);
+//                        		searchResult);
 //        
 //        Mockito.when(
 //                UserDAO.getUsers(conn, pagination, "testSQLBefehl" , bean.getSearchString(), bean
@@ -163,18 +175,14 @@ public class SearchUserBeanTest {
     @Test
     public void testGetResultArray() {
 
-        bean.search();
-
-        PowerMockito.verifyStatic();
-        
-        PowerMockito.verifyStatic();
-        Mockito.when(UserDAO.getNumberOfUsersWithThisName(conn, "name"));
-        
-        Mockito.when(UserDAO.getUsers(conn, pagination, bean.getSearchParam(),
-                bean.getSearchString()));
-
-        
-
+        bean.displayAllUsers();
+    }
+    
+    @Test
+    public void testSearchByName(){
+    	
+    	bean.search();
+    	
     }
 
 }
