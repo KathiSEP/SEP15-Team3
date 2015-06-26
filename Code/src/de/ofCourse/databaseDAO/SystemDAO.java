@@ -31,20 +31,35 @@ import de.ofCourse.system.Transaction;
  */
 public class SystemDAO {
     
+    /**
+     * @author Tobias Fuchs
+     */
     private final static String SET_SIGN_OFF_LIMIT = 
 	    "UPDATE \"system_attributes\" SET withdrawal_hours=?";
     
+    /**
+     * @author Tobias Fuchs
+     */
     private final static String SET_OVERDRAFT_CREDIT = 
 	    "UPDATE \"system_attributes\" " 
             + "SET overdraft_credit=?";
     
+    /**
+     * @author Tobias Fuchs
+     */
     private final static String SET_ACTIVATION_TYPE =
 	    "UPDATE \"system_attributes\" "
 	    + "SET activation_type=?::activation";
     
+    /**
+     * @author Tobias Fuchs
+     */
     private final static String GET_OVERDRAFT_CREDIT = 
 	    "SELECT overdraft_credit FROM \"system_attributes\"";
     
+    /**
+     * @author Tobias Fuchs
+     */
     private final static String GET_SIGN_OFF_LIMIT =
 	    "SELECT withdrawal_hours FROM \"system_attributes\"";
 

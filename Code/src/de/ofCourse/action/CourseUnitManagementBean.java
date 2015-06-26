@@ -480,8 +480,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    courseID)){
 					recipients.add(user.getEmail());
 				    }
-	                    
-	                            
+	                                  
 				}
 				if(!recipients.isEmpty()){
 				    mailBean.sendCourseEditUnitMail(
@@ -490,8 +489,6 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    	id);  
 	                	}
 			    }       
-			    
-			    
 			} else {
 			    LogHandler.getInstance().debug("Unit "
 					    + tempUnit.getCourseUnitID()
@@ -558,7 +555,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	int cycleId = 0;
 	List<String> mailToSend = new ArrayList<String>();
-	ArrayList<MailWrapper> mailSend = new ArrayList<MailWrapper>();
+	List<MailWrapper> mailSend = new ArrayList<MailWrapper>();
 	
 	
 	try {
@@ -606,8 +603,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					user.getUserID(),
 					courseID)){
 				    
-			
-				mailSend.add(new MailWrapper(unitId, user.getEmail()));
+				mailSend.add(new MailWrapper(
+					unitId,
+					user.getEmail()));
 				}
 			    }
 			}
@@ -672,17 +670,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
     /**
      * Fetches for each course unit that is to delete the email addresses from 
-     * the given HashMap and sends the notification mails for each course unit 
+     * the given List and sends the notification mails for each course unit 
      * at once.
      * 
      * @param mailSend 
-     * 		HashMap that contains the tuples with the id of the unit to 
+     * 		List that contains the tuples with the id of the unit to 
      * 		delete as key and the mail address of a participant of the unit 
      * 		as value
      * 
      * @author Fuchs Tobias
      */
-    private void sortMailAddresses(ArrayList<MailWrapper> mailSend) {
+    private void sortMailAddresses(List<MailWrapper> mailSend) {
 	List<String> recipients;
 	MailWrapper test;
 	List<MailWrapper> toDelete;
@@ -693,15 +691,15 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
             test = mailSend.iterator().next();
             recipients.add(test.getMail());
             int courseUnitid = test.getUnitId();
-            mailSend.remove(test);
             
             for(MailWrapper iterator : mailSend){
             	if(iterator.getUnitId() == courseUnitid){
-            		recipients.add(iterator.getMail()); 
+            		recipients.add(iterator.getMail());        
             		toDelete.add(iterator);
             	}
             }
-            mailSend.removeAll(toDelete);            
+            mailSend.removeAll(toDelete);     
+            
             //Send emails
             mailBean.sendCourseUnitDeleteMail(
         	    recipients,

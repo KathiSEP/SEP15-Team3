@@ -74,30 +74,53 @@ public class CourseUnitDAO {
 			"\"course_units\".id " +
 			"AND \"users\".id = ?";
 
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String GET_PARTICIPANTS_OF = 
 		"SELECT id, name, first_name, nickname, credit_balance, email FROM"
 		+ " users WHERE users.id IN"
 		+ " (SELECT participant_id FROM course_unit_participants"
 		+ " WHERE course_unit_id = ?) ORDER BY %s %s"
 		+ " LIMIT ? OFFSET ?";
+	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String GET_UNIT_IDS_OF_CYCLE = 
 		"SELECT id FROM \"course_units\" WHERE"
 		+ " cycle_id=? AND course_units.start_time >= CURRENT_DATE";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String COUNT_NUMBER_OF_PARTICIPANTS = 
 		"SELECT COUNT(*) FROM \"course_unit_participants\" "
 		+ "WHERE course_unit_id = ?";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String GET_PRICE_OF_UNIT = 
 		"SELECT fee FROM \"course_units\" WHERE id=?";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String DELETE_UNIT = "DELETE FROM \"course_units\" "
 		+ "WHERE course_units.id=?";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String DELETE_UNIT_ADDRESS = 
 		"DELETE FROM \"course_unit_addresses\" "
 		+ "WHERE course_unit_id=?";
 	
+	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String UPDATE_UNIT = 
 		"UPDATE \"course_units\" SET course_id=?,"
 		+ " max_participants=?, title=?::TEXT,"
@@ -105,17 +128,26 @@ public class CourseUnitDAO {
 		+ " end_time=?, description=?::TEXT, course_instructor_id=?"
 		+ " WHERE id=?";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String UPDATE_UNIT_ADDRESS =
 		"UPDATE \"course_unit_addresses\" SET "
 		+ "country=?, city=?, zip_code=?,"
 		+ " street=?, house_nr=?, location=?::TEXT WHERE course_unit_id=?";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String CREATE_UNIT_ADDRESS = 
 		"INSERT INTO \"course_unit_addresses\""
 		+ " (course_unit_id, country, city,"
 		+ " zip_code, street, house_nr, location)"
 		+ " VALUES (?, ?, ?, ?, ?, ?, ?::TEXT)";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String CREATE_UNIT = 
 		"INSERT INTO \"course_units\""
 		+ " (course_id, max_participants, title,"
@@ -123,6 +155,9 @@ public class CourseUnitDAO {
 		+ "course_instructor_id, cycle_id)"
 		+ " VALUES (?, ?, ?::TEXT, ?, ?, ?, ?, ?::TEXT, ?, ?) RETURNING id";
 	
+	/**
+	 * @author Tobias Fuchs
+	 */
 	private final static String CREATE_UNIT_IRREG =
 		"INSERT INTO \"course_units\""
 		+ " (course_id, max_participants, title,"

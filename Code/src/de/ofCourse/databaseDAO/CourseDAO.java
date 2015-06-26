@@ -123,16 +123,29 @@ public class CourseDAO {
     		"AND \"course_units\".start_time::date = ? " +
     		"ORDER BY %s %s LIMIT ? OFFSET ?";
     
-    
-    private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id, courses.title, (SELECT course_units.start_time " 
-            + "FROM course_units WHERE courses.id = course_units.course_id AND course_units.start_time > CURRENT_TIMESTAMP " 
-	    + "ORDER BY course_units.start_time LIMIT 1), (SELECT course_unit_addresses.location FROM course_units, " 
-            + "course_unit_addresses WHERE course_units.id = course_unit_addresses.course_unit_id "
-	    + "AND courses.id = course_units.course_id AND course_units.start_time > CURRENT_TIMESTAMP ORDER BY course_units.start_time LIMIT 1) " 
-            + "FROM courses WHERE courses.id IN (SELECT course_id FROM course_participants WHERE participant_id = ?) "
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String GET_MY_COURSES  = "SELECT DISTINCT courses.id," 
+	    + " courses.title, (SELECT course_units.start_time " 
+            + "FROM course_units WHERE courses.id = course_units.course_id " 
+	    + "AND course_units.start_time > CURRENT_TIMESTAMP " 
+	    + "ORDER BY course_units.start_time LIMIT 1), " 
+	    + "(SELECT course_unit_addresses.location FROM course_units, " 
+            + "course_unit_addresses WHERE course_units.id = " 
+	    + "course_unit_addresses.course_unit_id "
+	    + "AND courses.id = course_units.course_id AND " 
+	    + "course_units.start_time > CURRENT_TIMESTAMP ORDER BY " 
+	    + "course_units.start_time LIMIT 1) " 
+            + "FROM courses WHERE courses.id IN (SELECT course_id FROM " 
+	    + "course_participants WHERE participant_id = ?) "
 	    + "ORDER BY %s %s LIMIT ? OFFSET ?";
 
-    private final static String COUNT_MY_COURSES =  "SELECT COUNT(*) FROM \"courses\" WHERE courses.id IN (SELECT course_id " 
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String COUNT_MY_COURSES =  "SELECT COUNT(*) FROM" 
+	    + " \"courses\" WHERE courses.id IN (SELECT course_id " 
 	    + "FROM \"course_participants\" WHERE participant_id = ?)";
     
     /**

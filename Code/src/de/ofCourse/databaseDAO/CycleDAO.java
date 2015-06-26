@@ -30,12 +30,21 @@ import de.ofCourse.system.Transaction;
  */
 public class CycleDAO {
 
+    /**
+     * @author Tobias Fuchs
+     */
     private static final String CREATE_QUERY = "INSERT INTO \"cycles\""
 	    + " (course_id, period, cycle_end)" + " VALUES"
 	    + " (?, ?::period, ?) RETURNING id";
 
+    /**
+     * @author Tobias Fuchs
+     */
     private static final String ID_QUERY = "SELECT cycle_id FROM \"course_units\" WHERE id=?";
     
+    /**
+     * @author Tobias Fuchs
+     */
     private static final String DELETE_QUERY = "DELETE FROM \"cycles\" WHERE id=?";
 
     /**

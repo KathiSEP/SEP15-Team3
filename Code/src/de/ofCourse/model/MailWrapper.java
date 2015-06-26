@@ -1,50 +1,72 @@
 package de.ofCourse.model;
 
+/**
+ * Wraps a course unit id and a user email together.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class MailWrapper {
-    
+
+    /**
+     * Stores the id of a course unit
+     */
     private Integer unitId;
-    
-    
-    public MailWrapper(Integer id, String email){
+
+    /**
+     * Stores the mail address of a user
+     */
+    private String mail;
+
+    /**
+     * Constructor of the MailWrapper class
+     * 
+     * @param id
+     *            course unit id
+     * @param email
+     *            mail of the user
+     */
+    public MailWrapper(Integer id, String email) {
 	unitId = id;
 	mail = email;
-	
     }
-    
-    
-    
+
     /**
-     * @return the unitId
+     * Returns the unit id of the unit.
+     * 
+     * @return id of the course unit
      */
     public Integer getUnitId() {
-        return unitId;
+	return unitId;
     }
 
     /**
-     * @param unitId the unitId to set
+     * Sets the id of the course unit.
+     * 
+     * @param unitId
+     *            the unitId to set
      */
     public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+	this.unitId = unitId;
     }
 
     /**
-     * @return the mail
+     * Returns the mail address of the wrapper object.
+     * 
+     * @return the mail address
      */
     public String getMail() {
-        return mail;
+	return mail;
     }
 
     /**
-     * @param mail the mail to set
+     * Sets the mail address of the wrapper.
+     * 
+     * @param mail
+     *            the mail to set
      */
     public void setMail(String mail) {
-        this.mail = mail;
+	this.mail = mail;
     }
-
-    private String mail;
-    
-    
-    
-    
 
 }
