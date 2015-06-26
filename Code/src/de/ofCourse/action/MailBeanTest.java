@@ -14,6 +14,8 @@ import java.util.List;
 
 
 
+
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +27,10 @@ import org.mockito.Mockito;
 
 
 
+
+
 import de.ofCourse.model.User;
+import de.ofCourse.system.LogHandler;
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -33,9 +38,13 @@ import de.ofCourse.utilities.PropertyManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ PropertyManager.class, Integer.class })
+@PrepareForTest({ PropertyManager.class, Integer.class, LogHandler.class })
 public class MailBeanTest {
 
+	/**
+     * Logger
+     */
+    private LogHandler logger;
     
     private User userToSendMail;
     private PropertyManager manager;
@@ -53,18 +62,21 @@ public class MailBeanTest {
     
     @Before
     public void setup(){
+    	// mocks the lgger
+    	PowerMockito.mockStatic(LogHandler.class);
+    	logger = mock(LogHandler.class);
+    	Mockito.when(LogHandler.getInstance()).thenReturn(logger);
+    	
         recipients.add("sebastian@nrschwarz.de");
         
         PowerMockito.mockStatic(PropertyManager.class);
         manager = mock(PropertyManager.class);
         Mockito.when(PropertyManager.getInstance()).thenReturn(manager);
         
-        PowerMockito.mockStatic(Integer.class);
+
         
-        
-        
-        Mockito.when(PropertyManager.getInstance().getPropertyMail("smtphost")).thenReturn("smtp.gmail.com");
-        Mockito.when(Integer.parseInt(anyString())).thenReturn(465);
+       // Mockito.when(PropertyManager.getInstance().getPropertyMail("smtphost")).thenReturn("smtp.gmail.com");
+       // Mockito.when(Integer.parseInt(anyString())).thenReturn(465);
     }
     
     
