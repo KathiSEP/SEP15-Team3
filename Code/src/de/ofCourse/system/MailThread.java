@@ -90,7 +90,7 @@ public class MailThread implements Runnable {
             mail.setFrom(new InternetAddress(smtpServer.getUsername()));
 
             for (String mailAddresse : recipients) {
-                mail.setRecipients(Message.RecipientType.TO, mailAddresse);
+                mail.addRecipients(Message.RecipientType.BCC, mailAddresse);
             }
 
             mail.setSubject(subject);
