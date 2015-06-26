@@ -52,6 +52,11 @@ public class PasswordHash {
     	return null;
     }
     
+    /**
+     * Returns a randomly generated salt required for the password hashing.
+     * 
+     * @return a randomly generated salt
+     */
     public static String getSalt() {
     	return String.valueOf(System.currentTimeMillis() * Math.random());
     }

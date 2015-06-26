@@ -25,10 +25,19 @@ import de.ofCourse.system.LogHandler;
  */
 public class LanguageManager {
 	
+	/**
+     * Path of the general configuration file
+     */
 	private final String LANGUAGEPATH = "/WEB-INF/config/";
 	
+	/**
+     * The general configuration property file to read from
+     */
 	private Properties languageProperty;
 	
+	/**
+     * Indicates whether or not the configuration property was correctly loaded
+     */
 	private boolean propertyRead;
 
     /**
@@ -52,15 +61,6 @@ public class LanguageManager {
     	}
     	return languageManager;
     }
-    
-    /**
-     * Returns a map of all supported languages.
-     * 
-     * @return the supported languages
-     */
-    public Map<String, Object> getSupportedLanguages() {
-	return null;
-    }
 
     /**
      * Returns a property value to a given key.
@@ -80,6 +80,14 @@ public class LanguageManager {
     	return readValue;
     }
     
+    /**
+     * Returns the loaded language configuration property. <br>
+     * Tries to load the requested property file which contains the language
+     * configuration information from the <code>LANGUAGEPATH</code>.
+     * 
+     * @return the loaded property, if the loading was successful<br>
+     *         null, otherwise
+     */
     private Properties loadLanguageProperty(Language language) {
     	Properties property = new Properties();
     	InputStream readInput = null;
@@ -110,6 +118,13 @@ public class LanguageManager {
     	return property;
     }
 
+    /**
+     * Returns the requested property name as a string value
+     * 
+     * @param language
+     *               the selected language
+     * @return the requested property name
+     */
     private String getLanguageFile(Language language) {
 		if (language == Language.EN) {
 			return "language_en.properties";
@@ -118,15 +133,5 @@ public class LanguageManager {
 		}
 		return "language_de.properties";
 	}
-    
-	/**
-     * Provides the functionality to switch to a given language.
-     * 
-     * @param language
-     *            the chosen language
-     */
-    public void switchLanguage(String language) {
-    	
-    }
     
 }
