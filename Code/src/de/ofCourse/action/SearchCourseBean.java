@@ -65,11 +65,16 @@ public class SearchCourseBean implements Pagination {
      */
     private List<Course> searchResult;
     
+    /**
+     * The parameter required for column sort
+     */
     private String orderParam;
     
+    /**
+     * The currently displayed page
+     */
     private int currentPage;
-    
-    
+     
     /**
      * Stores the search parameter that was selected by the user
      */
@@ -80,16 +85,37 @@ public class SearchCourseBean implements Pagination {
      */
     private String searchString;
     
+    /**
+     * Checks if the result table should to displayed
+     */
     private boolean renderTable;
     
+    /**
+     * Checks if the user's search request contained text input
+     */
     private boolean pagingSearchTerm;
     
+    /**
+     * Checks if the user requested a column sort
+     */
     private boolean columnSort;
     
+    /**
+     * Stores the time period which the user selected in case the user changes
+     * the parameter during column sort or pagination
+     */
     private String orderPeriod;
     
+    /**
+     * Stores the search parameter which the user selected in case the user
+     * changes the parameter during column sort or pagination
+     */
     private String orderSearchParam;
     
+    /**
+     * Stores the text input which the user entered in case the user inputs new
+     * text during column sort or pagination
+     */
     private String orderSearchString;
 
     /**
@@ -154,10 +180,13 @@ public class SearchCourseBean implements Pagination {
     }
     
     /**
-     * Sets outcome parameters
+     * Sets the view's outcome parameters after a result has been retrieved.
      * 
      * @param result
+     *             the list containing the requested courses
      * @param pagingSearchTerm
+     *                       the value whether or not the user searched by text
+     *                       input or by selected period parameters
      */
     private void setResultParams(List<Course> result,
     		boolean pagingSearchTerm) {
@@ -215,6 +244,13 @@ public class SearchCourseBean implements Pagination {
     	}
     }
     
+    /**
+     * Checks if the user input has a valid date format.
+     * 
+     * @param date
+     *           the entered date text
+     * @return true, if the entered date format is valid, otherwise false
+     */
     private boolean isValidDate(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         dateFormat.setLenient(true);
@@ -227,6 +263,9 @@ public class SearchCourseBean implements Pagination {
         return true;
     }
     
+    /**
+     * Sets the required pagination values and executes the course search
+     */
     private void executeSearch() {
 		transaction.start();
 		
@@ -276,10 +315,20 @@ public class SearchCourseBean implements Pagination {
     	this.searchResult = searchResult;
     }
     
+    /**
+     * 
+     * @return the parameter required for column sort
+     */
 	public String getOrderParam() {
 		return orderParam;
 	}
 
+	/**
+	 * Sets the parameter required for column sort
+	 * 
+	 * @param orderParam
+	 *                 the selected order parameter
+	 */
 	public void setOrderParam(String orderParam) {
 		this.orderParam = orderParam;
 	}
@@ -316,22 +365,46 @@ public class SearchCourseBean implements Pagination {
     	this.searchString = searchString;
     }
 
+    /**
+     * 
+     * @return the user's text input
+     */
     public String getSearchString() {
 		return searchString;
 	}
 
+    /**
+     * 
+     * @return true, if the result table should be rendered, false otherwise
+     */
 	public boolean isRenderTable() {
 		return renderTable;
 	}
 	
+	/**
+	 * Sets the value, if the result table should be rendered or not
+	 * 
+	 * @param renderTable
+	 *                  the boolean value
+	 */
 	public void setRenderTable(boolean renderTable) {
 		this.renderTable = renderTable;
 	}
 
+	/**
+	 * 
+	 * @return true, if the user searched by text input, false otherwise
+	 */
 	public boolean isPagingSearchTerm() {
 		return pagingSearchTerm;
 	}
 
+	/**
+	 * Sets the value, if the user searched by text input
+	 * 
+	 * @param pagingSearchTerm
+	 *                       the boolean value
+	 */
 	public void setPagingSearchTerm(boolean pagingSearchTerm) {
 		this.pagingSearchTerm = pagingSearchTerm;
 	}
