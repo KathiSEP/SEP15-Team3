@@ -1,5 +1,4 @@
 /**
- /**
  * This package represents the Data Access Objects of the ofCourse system.
  */
 package de.ofCourse.databaseDAO;
@@ -187,10 +186,18 @@ public class UserDAO {
     }
 
     /**
+     * Checks whether or not the passed nickname is already in use by another
+     * user.
      * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param nickName
-     * @return
+     *               the passed nickname
+     * @return true, if the nickname is already taken, false otherwise
+     * 
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -223,11 +230,17 @@ public class UserDAO {
     }
 
     /**
+     * Uploads the passed image to the user data in the database.
      * 
      * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
      * @param userID
+     *             the user ID which the image is assigned to
      * @param image
+     *            the passed image
      * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
      * 
      * @author Patrick Cretu
      */
@@ -566,9 +579,7 @@ public class UserDAO {
         }
 
     }
-
-
-
+    
     /**
      * Returns a user assigned to the specified ID.
      * 
@@ -1145,13 +1156,15 @@ public class UserDAO {
     }
 
     /**
-     * Deletes a user which is assigned to the passed ID.
+     * Deletes either a user or a user image which is assigned to the passed ID.
      * 
      * @param trans
      *            the Transaction object which contains the connection to the
      *            database
      * @param userID
      *            the ID of the user to be deleted
+     * @param deleteUser
+     *                 value if either the user or the user image is deleted
      * @throws InvalidDBTransferException
      *             if any error occurred during the execution of the method
      * 
