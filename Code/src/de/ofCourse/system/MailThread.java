@@ -19,6 +19,8 @@ import javax.mail.internet.MimeMessage;
 import de.ofCourse.model.SmtpServer;
 
 /**
+ * Executes the email dispached 
+ * 
  * @author Sebastian Schwarz
  *
  */
@@ -26,14 +28,34 @@ import de.ofCourse.model.SmtpServer;
 @RequestScoped
 public class MailThread implements Runnable {
 
+    /**
+     * Stores the smtp properties
+     */
     private Properties prop;
+    /**
+     * Stores the smtpServer
+     */
     private SmtpServer smtpServer;
+    /**
+     * Stores the Recipients
+     */
     private List<String> recipients;
+    /**
+     * Stores the Mail subject
+     */
     private String subject;
+    /**
+     * Stores the Mail Message
+     */
     private String message;
+    /**
+     * Stores the Authenticator
+     */
     private Authenticator loginAuth;
 
     /**
+     * Initialize all the Attributes
+     * 
      * @param loginAuth
      * @param prop
      * @param session
@@ -68,7 +90,7 @@ public class MailThread implements Runnable {
             mail.setFrom(new InternetAddress(smtpServer.getUsername()));
 
             for (String mailAddresse : recipients) {
-                mail.setRecipients(Message.RecipientType.BCC, mailAddresse);
+                mail.setRecipients(Message.RecipientType.TO, mailAddresse);
             }
 
             mail.setSubject(subject);
@@ -82,7 +104,7 @@ public class MailThread implements Runnable {
             transport.close();
 
         } catch (MessagingException e) {
-            //TODO dont know what to do
+          
 
         }
     }
