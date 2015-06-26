@@ -24,7 +24,7 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Grundfunktionen}
 	\begin{tabular}{|p{5.0cm} |p{6.0 cm}|p{3.2cm}|p{3.2cm}|p{3.3cm}|p{1.7cm}|p{1.5cm}|}
 		\hline \textbf{Paketname} & \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h} \\ 
-		\hline  SessionUser          & SessionUserBean.java                     & 02.06.2015 \ \ 08:00         & 02.06.2015 \ \ 09:00        & Sebastian Schwarz     &  1h       &  1h  \\ 
+		\hline  SessionUser          & SessionUserBean.java                     & 02.06.2015 \ \ 08:00         & 02.06.2015 \ \ 09:00        & Sebastian Schwarz     &  1h       &  2h  \\ 
 		\hline  PropertyManager      & PropertyManager.java                     & 01.06.2015 \ \ 16:00         & 01.06.2015 \ \ 20:00        & Tobias Fuchs  &  4h       &  4h\\ 
 		& ofCourse.properties                      &                            &                              &                                         &         &\\
 		\hline  EncodingFilter       & EncodingFilter.java                      & 02.06.2015 \ \ 09:00         & 02.06.2015  \ \  11:00     & Sebastian Schwarz  &  2h       &  2h\\ 
@@ -32,7 +32,7 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 		&  DatabaseConnectionManager- Test.java       & 04.06.2015 \ \ 08:00       & 04.06.2015  \ \  16:00    & Tobias Fuchs &  2h      &   6h\\   
 		\hline  CheckPhase           & CheckPhase.java                            & 02.06.2015 \ \ 08:00       & 02.06.2015  \ \  12:00      & Tobias Fuchs &  4h       &  4h \\
 		\hline  Interface Pagination & Pagination.java                            & 02.06.2015 \ \ 13:00       & 02.06.2015  \ \  13:30      & Tobias Fuchs  & 0.5h     &  0.5 \\
-		\hline  Logging              &                                            & 01.06.2015 \ \ 14:00       & 01.06.2015  \ \  18:00      & Sebastian Schwarz  &  4h       &  4h\\ 
+		\hline  Logging              &                                            & 01.06.2015 \ \ 14:00       & 01.06.2015  \ \  18:00      & Sebastian Schwarz  &  4h       & 5h\\ 
 		\hline  Mailversand          & MailBean.java                              & 03.06.2015 \ \ 08:00       & 03.06.2015  \ \  16:00      & Sebastian Schwarz &  7h       & 11h\\ 	
 		& MailingException.java                      &                            &                            &                             &                     &\\
 		& mail.properties                            &                            &                            &                             &                     &\\
@@ -204,15 +204,15 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\
 		\hline   CourseDetailBean.signUpForCourse()                          & 09.06.2015 \ \ 09:00       & 09.06.2015 \ \ 10:30        & Sebastian Schwarz & 1,5h                 & 3h\\
 		\hline   CourseDetailBean.signOffFromCourse()                        & 09.06.2015 \ \ 10:30       & 09.06.2015 \ \ 12:00        & Sebastian Schwarz & 1,5h                 & 3,5h\\
-		\hline   CourseDetailBean.signUpForCourseUnit()                      & 09.06.2015 \ \ 13:00       & 09.06.2015 \ \ 14:30        & Sebastian Schwarz & 1,5h                 & 2,5h\\
-		\hline   CourseDetailBean.signOffFromCourseUnit()                    & 09.06.2015 \ \ 14:30       & 09.06.2015 \ \ 16:00        & Sebastian Schwarz & 1,5h                 & 3h\\
+		\hline   CourseDetailBean.signUpForCourseUnit()                      & 09.06.2015 \ \ 13:00       & 09.06.2015 \ \ 14:30        & Sebastian Schwarz & 1,5h                 & 3,5h\\
+		\hline   CourseDetailBean.signOffFromCourseUnit()                    & 09.06.2015 \ \ 14:30       & 09.06.2015 \ \ 16:00        & Sebastian Schwarz & 1,5h                 & 5h\\
 		\hline   Weiterleitungen                                             & 09.06.2015 \ \ 16:00       & 09.06.2015 \ \ 16:30        & Sebastian Schwarz & 0,5h                 &\\
-		\hline   CourseRegistrationException.java                            & 09.06.2015 \ \ 16:30       & 09.06.2015 \ \ 17:30        & Sebastian Schwarz & 1h                 &\\
-		\hline   CourseDAO.addUserToCourse(Transaction trans, int userID, int courseID)            & 08.06.2015 \ \ 08:00       & 08.06.2015 \ \ 09:30      & Sebastian Schwarz  & 1,5h                 & 1,5h\\
-		\hline   CourseDAO.removeUserFromCourse(Transaction trans, int userID, int courseID)       & 10.06.2015 \ \ 13:00       & 10.06.2015 \ \ 14:30      & Sebastian Schwarz  & 1,5h                 & 1,5h\\
-		\hline   CourseUnitDAO.addUserToCourseUnit(Transaction trans, int userID, int courseUnitID)& 10.06.2015 \ \ 09:00       & 10.06.2015 \ \ 10:30      & Sebastian Schwarz  & 1,5h                 & 1,5h\\
-		\hline   CourseUnitDAO.removeUserFromCourseUnit(Transaction trans, int userID, int courseUnitID) & 10.06.2015 \ \ 10:30       & 10.06.2015 \ \ 12:00  & Sebastian Schwarz & 1,5h                 & 1,5h\\
-		\hline   SystemDAO.getSignOffLimit(Transaction trans)                 & 08.06.2015 \ \ 16:30       & 08.06.2015 \ \ 17:00     & Sebastian Schwarz   & 0,5h                 &0,5h \\
+		\hline   CourseRegistrationException.java                            & 09.06.2015 \ \ 16:30       & 09.06.2015 \ \ 17:30        & Sebastian Schwarz & 1h                 & 1h\\
+		\hline   CourseDAO.addUserToCourse(Transaction trans, int userID, int courseID)            & 08.06.2015 \ \ 08:00       & 08.06.2015 \ \ 09:30      & Sebastian Schwarz  & 1,5h                 & 2h\\
+		\hline   CourseDAO.removeUserFromCourse(Transaction trans, int userID, int courseID)       & 10.06.2015 \ \ 13:00       & 10.06.2015 \ \ 14:30      & Sebastian Schwarz  & 1,5h                 & 2h\\
+		\hline   CourseUnitDAO.addUserToCourseUnit(Transaction trans, int userID, int courseUnitID)& 10.06.2015 \ \ 09:00       & 10.06.2015 \ \ 10:30      & Sebastian Schwarz  & 1,5h                 & 2h\\
+		\hline   CourseUnitDAO.removeUserFromCourseUnit(Transaction trans, int userID, int courseUnitID) & 10.06.2015 \ \ 10:30       & 10.06.2015 \ \ 12:00  & Sebastian Schwarz & 1,5h                 & 2h\\
+		\hline   SystemDAO.getSignOffLimit(Transaction trans)                 & 08.06.2015 \ \ 16:30       & 08.06.2015 \ \ 17:00     & Sebastian Schwarz   & 0,5h                 & 0,5h \\
 		\hline   SystemDAO.getOverdraftCredit(Transaction trans)              & 08.06.2015 \ \ 17:00       & 08.06.2015 \ \ 17:30     & Sebastian Schwarz   & 0,5h                 & 0,5h\\
 		\hline   CourseRegistrationTest.java &  11.06.2015 \ \ 08:00       & 11.06.2015 \ \ 10:00       & Sebastian Schwarz   & 2h                 &\\
 	    \hline   TransactionTest.java    &  11.06.2015 \ \ 10:00       & 11.06.2015 \ \ 12:00           & Sebastian Schwarz   & 2h                 &\\
@@ -282,14 +282,14 @@ Nicht berücksichtigt wurde bei diesen Angaben die Zeit, welche für die Fehlers
 	\subsection{Benutzer durchsuchen}
 	\begin{tabular}{|p{10.3cm}|p{3.2cm}|p{3.2cm}|p{3.5cm}|p{1.7cm}|p{1.5cm}|}
 		\hline  \textbf{Arbeitspaket} & \textbf{Startzeitpunkt} & \textbf{Endzeitpunkt} & \textbf{Verantwortlicher}  & \textbf{Aufwand in h} & \textbf{Zeit in h}\\ 
-		\hline   listUsers.xhtml                                               & 15.06.2015 \ \ 16:00       & 15.06.2015 \ \ 18:00      & Sebastian Schwarz  & 2h       & 3h\\  
-		\hline   SearchUserBean.java                                           & 15.06.2015 \ \ 13:00       & 15.06.2015 \ \ 16:00        & Sebastian Schwarz & 3h                 & 3h\\  
+		\hline   listUsers.xhtml                                               & 15.06.2015 \ \ 16:00       & 15.06.2015 \ \ 18:00      & Sebastian Schwarz  & 2h       & 4h\\  
+		\hline   SearchUserBean.java                                           & 15.06.2015 \ \ 13:00       & 15.06.2015 \ \ 16:00        & Sebastian Schwarz & 3h                 & 4h\\  
 		\hline   UserDAO.getUsers(Transaction trans,PaginationData pagination) & 16.06.2015 \ \ 08:00       & 16.06.2015 \ \ 09:00        & Sebastian Schwarz & 1h                 & 2h\\  
 		\hline   UserDAO.getUsers(Transaction trans, PaginationData pagination, String searchString, String searchParam) & 15.06.2015 \ \ 08:00       & 15.06.2015 \ \ 09:30       & Sebastian Schwarz  & 1,5h                 & 3h\\  
-		\hline   UserDAO.getUsersOrdered(Transaction trans, PaginationData pagination, String searchString, String searchParam, String orderParam)    & 16.06.2015 \ \ 09:00       & 16.06.2015 \ \ 10:30 & Sebastian Schwarz & 1,5h                 & 2h\\  
-		\hline SearchUserTest.java      &   17.06.2015 \ \ 08:00         &  17.06.2015 \ \ 10:00          & Sebastian Schwarz &        2h           &  2h\\  
+		\hline   UserDAO.getUsersOrdered(Transaction trans, PaginationData pagination, String searchString, String searchParam, String orderParam)    & 16.06.2015 \ \ 09:00       & 16.06.2015 \ \ 10:30 & Sebastian Schwarz & 1,5h                 & 3h\\  
+		\hline SearchUserTest.java      &   17.06.2015 \ \ 08:00         &  17.06.2015 \ \ 10:00          & Sebastian Schwarz &        2h           &  3h\\  
 		\hline   CourseRegistrationTest.java &  11.06.2015 \ \ 08:00       & 11.06.2015 \ \ 10:00       & Sebastian Schwarz   & 2h                 & 3h\\  
-		\hline   TransactionTest.java    &  11.06.2015 \ \ 10:00       & 11.06.2015 \ \ 12:00           & Sebastian Schwarz   & 2h                 & 1h\\  
+		\hline   MailTest.java    &  11.06.2015 \ \ 10:00       & 11.06.2015 \ \ 12:00           & Sebastian Schwarz   & 2h                 & 1h\\  
 		\hline   InvalidDBTransferException.java                       & 06.06.2015  \ \ 14:30       & 06.06.2015 \ \ 16:30        & Sebastian Schwarz  &  1h      & 1,5h\\
 	    \hline
 	
