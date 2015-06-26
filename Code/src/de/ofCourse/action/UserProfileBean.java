@@ -4,7 +4,6 @@
 package de.ofCourse.action;
 
 import java.text.DecimalFormat;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -15,11 +14,9 @@ import javax.servlet.http.Part;
 
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
-import de.ofCourse.model.Course;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -48,9 +45,17 @@ import de.ofCourse.utilities.PasswordHash;
 @ViewScoped
 public class UserProfileBean {
     
+	/**
+	 * The URL which is returned if an administrator unsuccessfully edits the
+	 * user's data
+	 */
 	private final String URL_PROFILE = "/facelets/user/systemAdministrator/" +
 			"profile.xhtml?faces-redirect=false";
 	
+	/**
+	 * The URL which is returned if an administrator successfully edits the
+	 * user's data
+	 */
 	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/" +
 			"systemAdministrator/adminManagement.xhtml?faces-redirect=true";
 	
@@ -65,25 +70,43 @@ public class UserProfileBean {
     private User user;
     
     /**
-     * Stores the managed courses of a user in case of the user is a course
-     * leader
+     * Checks if the user requests to edit his data
      */
-    private List<Course> managedCourses;
-    
     private boolean readOnly;
     
+    /**
+     * The entered user password
+     */
     private String password;
     
+    /**
+     * The entered confirmation password
+     */
     private String confirmPassword;
     
+    /**
+     * The selected user image
+     */
     private Part image;
     
+    /**
+     * The user's ID
+     */
     private int userID;
 
+    /**
+     * The selected user salutation
+     */
     private String salutation;
     
+    /**
+     * The selected user role
+     */
     private String role;
     
+    /**
+     * The user's credit balance
+     */
     private String creditBalance;
 
     /**
@@ -158,6 +181,9 @@ public class UserProfileBean {
     	}
     }
     
+    /**
+     * Sets the selected user salutation and role in the user object.
+     */
     private void setEnums() {
     	if (salutation != null) {
     		if (salutation.equals("ms")) {
@@ -179,13 +205,16 @@ public class UserProfileBean {
     }
     
     /**
+     * Checks whether or not the entered user nickname and e-mail address are
+     * valid.
      * 
      * @param checkUser
+     *                the user of whom the data is checked
      * @param nickTaken
+     *                the value if the entered nickname is already taken
      * @param emailTaken
-     * @return
-     * 
-     * @author Patrick Cretu
+     *                 the value if the entered e-mail address is already taken
+     * @return true, if the user input is valid, false otherwise
      */
     private boolean acceptUserInput(User checkUser, boolean nickTaken,
     		boolean emailTaken) {
@@ -205,6 +234,11 @@ public class UserProfileBean {
     	return check;
     }
     
+    /**
+     * Deletes the user from the database.
+     * 
+     * @return the subsequent URL
+     */
     public String deleteUser() {
     	String goToPage = URL_PROFILE;
     	transaction.start();
@@ -244,6 +278,9 @@ public class UserProfileBean {
     	}
     }
     
+    /**
+     * Deletes the user's profile image from the database.
+     */
     public void deleteProfilePic() {
     	transaction.start();
     	try {
@@ -256,19 +293,6 @@ public class UserProfileBean {
                     + "deleteProfilePic()");
             this.transaction.rollback();
         }
-    }
-    
-    /**
-     * Sets the <code>userRole</code> of the actual user to
-     * <code>INACTIVE</code>.<br>
-     * In order to do so the database entry of the user is also updated.<br>
-     * The entry of the user is still in the database but the user cannot log in
-     * anymore.
-     * 
-     * @return the new user status
-     */
-    public UserStatus setUserInactive() {
-        return null;
     }
 
     /**
@@ -291,53 +315,73 @@ public class UserProfileBean {
     }
 
     /**
-     * Returns the value of the attribute <code>managedCourses</code>.
      * 
-     * @return list of courses that are managed by a course leader
+     * @return the value of "readOnly"
      */
-    public List<Course> getManagedCourses() {
-        return managedCourses;
-    }
-
-    /**
-     * Sets the value of the attribute <code>managedCourses</code> that stores a
-     * list of courses that are managed by a course leader.
-     * 
-     * @param managedCourses
-     *            list of courses that are managed by a course leader
-     */
-    public void setManagedCourses(List<Course> managedCourses) {
-        this.managedCourses = managedCourses;
-    }
-
 	public boolean isReadOnly() {
 		return readOnly;
 	}
 
+	/**
+	 * Sets the value of "readOnly"
+	 * 
+	 * @param readOnly
+	 *               the boolean value
+	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
+	/**
+	 * 
+	 * @return the password value as a string
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	/**
+	 * Sets the password value
+	 * 
+	 * @param password
+	 *               the password value
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	/**
+	 * 
+	 * @return the confirmation password's value
+	 */
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
 
+	/**
+	 * Sets the confirmation password's value
+	 * 
+	 * @param confirmPassword
+	 *                      the confirmation password's value
+	 */
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
 
+	/**
+	 * 
+	 * @return the selected user image
+	 */
 	public Part getImage() {
 		return image;
 	}
 
+	/**
+	 * Sets the selected user image
+	 * 
+	 * @param image
+	 *            the selected user image
+	 */
 	public void setImage(Part image) {
 		this.image = image;
 	}
@@ -382,26 +426,56 @@ public class UserProfileBean {
         return "" + userID;
     }
 
+    /**
+     * 
+     * @return the selected user salutation
+     */
 	public String getSalutation() {
 		return salutation;
 	}
 
+	/**
+	 * Sets the user salutation
+	 * 
+	 * @param salutation
+	 *                 the user salutation
+	 */
 	public void setSalutation(String salutation) {
 		this.salutation = salutation;
 	}
 
+	/**
+	 * 
+	 * @return the selected user role
+	 */
 	public String getRole() {
 		return role;
 	}
 
+	/**
+	 * Sets the user role
+	 * 
+	 * @param role
+	 *           the user role
+	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
 
+	/**
+	 * 
+	 * @return the user's credit balance
+	 */
 	public String getCreditBalance() {
 		return creditBalance;
 	}
 
+	/**
+	 * Sets the user's credit balance
+	 * 
+	 * @param creditBalance
+	 *                    the user's credit balance
+	 */
 	public void setCreditBalance(String creditBalance) {
 		this.creditBalance = creditBalance;
 	}

@@ -39,9 +39,15 @@ import de.ofCourse.utilities.PasswordHash;
 @RequestScoped
 public class UserManagementBean {
     
+	/**
+	 * The URL returned at an unsuccessful attempt of creating a new user
+	 */
 	private final String URL_CREATE_USER = "/facelets/user/" +
 			"systemAdministrator/createUser.xhtml?faces-redirect=false";
 	
+	/**
+	 * The URL returned at the successful creating of a new user
+	 */
 	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/" +
 			"searchUser.xhtml?faces-redirect=true";
 	
@@ -51,19 +57,33 @@ public class UserManagementBean {
     private Transaction transaction;
 
     /**
-     * 
      * Stores the entered or displayed data of the user.
      */
     private User user;
     
+    /**
+     * The selected user salutation.
+     */
     private String salutation;
     
+    /**
+     * The selected user role.
+     */
     private String role;
     
+    /**
+     * The entered user password.
+     */
     private String password;
     
+    /**
+     * The entered confirmation password.
+     */
     private String confirmPassword;
     
+    /**
+     * The selected user image.
+     */
     private Part image;
     
     /**
@@ -136,6 +156,9 @@ public class UserManagementBean {
     	return goToPage;
     }
     
+    /**
+     * Sets the selected user salutation and role in the user object.
+     */
     private void setEnums() {
     	if (salutation.equals("mr")) {
     		user.setSalutation(Salutation.MR);
@@ -171,42 +194,92 @@ public class UserManagementBean {
     	this.user = user;
     }
 
+    /**
+     * 
+     * @return the selected user salutation
+     */
     public String getSalutation() {
 		return salutation;
 	}
 
+    /**
+     * Sets the user salutation
+     * 
+     * @param salutation
+     *                 the selected user salutation
+     */
 	public void setSalutation(String salutation) {
 		this.salutation = salutation;
 	}
 
+	/**
+	 * 
+	 * @return the selected user role
+	 */
 	public String getRole() {
 		return role;
 	}
 
+	/**
+	 * Sets the selected user role
+	 * 
+	 * @param role
+	 *           the selected user role
+	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
 
+	/**
+	 * 
+	 * @return the entered user password
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	/**
+	 * Sets the entered user password
+	 * 
+	 * @param password
+	 *               the entered user password
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	/**
+	 * 
+	 * @return the entered confirmation password
+	 */
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
 
+	/**
+	 * Sets the entered confirmation password
+	 * 
+	 * @param confirmPassword
+	 *                      the entered confirmation password
+	 */
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
 
+	/**
+	 * 
+	 * @return the selected user image
+	 */
 	public Part getImage() {
 		return image;
 	}
 
+	/**
+	 * Sets the selected user image
+	 * 
+	 * @param image
+	 *            the selected user image
+	 */
 	public void setImage(Part image) {
 		this.image = image;
 	}
