@@ -22,6 +22,8 @@ import de.ofCourse.system.Transaction;
 
 /**
  * 
+ * JUnit test for the class SchedulerBean.
+ * 
  * @author Patrick Cretu
  *
  */
@@ -29,12 +31,24 @@ import de.ofCourse.system.Transaction;
 @PrepareForTest({ Transaction.class, Connection.class, CourseUnitDAO.class })
 public class SchedulerBeanTest {
 	
+	/**
+	 * The week's current Monday
+	 */
 	private Date currentMonday;
 	
+	/**
+	 * The week's current Sunday
+	 */
 	private Date currentSunday;
 	
+	/**
+	 * Connection to access the database
+	 */
 	private Connection conn;
 	
+	/**
+	 * The backing bean attribute
+	 */
 	private SchedulerBean bean;
 	
 	@Before
@@ -64,6 +78,9 @@ public class SchedulerBeanTest {
 		bean = new SchedulerBean();
 	}
 	
+	/**
+	 * Tests the backing bean method displayNextWeek()
+	 */
 	@Test
 	public void testDisplayNextWeek() {
 		// Initialize the result list of course units

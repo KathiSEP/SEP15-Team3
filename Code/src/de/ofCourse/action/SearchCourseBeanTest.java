@@ -26,6 +26,8 @@ import de.ofCourse.system.Transaction;
 
 /**
  * 
+ * JUnit test for the class SearchCourseBean.
+ * 
  * @author Patrick Cretu
  *
  */
@@ -34,14 +36,29 @@ import de.ofCourse.system.Transaction;
 	FacesContext.class, PaginationData.class })
 public class SearchCourseBeanTest {
 	
+	/**
+	 * The backing bean attribute
+	 */
 	private SearchCourseBean bean;
 	
+	/**
+	 * The bean's pagination data
+	 */
 	private PaginationData pagination;
 	
+	/**
+	 * The attribute presenting the user's selected search parameter
+	 */
 	private String searchParam;
 	
+	/**
+	 * The attribute presenting the user's selected search input
+	 */
 	private String searchString;
 	
+	/**
+	 * Connection to access the database
+	 */
 	private Connection conn;
 	
 	@Before
@@ -62,6 +79,9 @@ public class SearchCourseBeanTest {
 		bean.init();
 	}
 
+	/**
+	 * Tests the backing bean method searchByTitle()
+	 */
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSearchByTitle() {		
@@ -105,6 +125,9 @@ public class SearchCourseBeanTest {
 		bean.search();
 	}
 	
+	/**
+	 * Tests the backing bean method searchByDate()
+	 */
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSearchByDate() {

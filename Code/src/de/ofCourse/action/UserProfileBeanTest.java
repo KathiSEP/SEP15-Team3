@@ -33,6 +33,8 @@ import de.ofCourse.utilities.LanguageManager;
 
 /**
  * 
+ * JUnit test for the class UserProfileBean.
+ * 
  * @author Patrick Cretu
  *
  */
@@ -41,16 +43,34 @@ import de.ofCourse.utilities.LanguageManager;
 	LanguageManager.class, FacesContext.class, FacesMessageCreator.class })
 public class UserProfileBeanTest {
 
+	/**
+	 * Connection to access the database
+	 */
 	private Connection conn;
 	
+	/**
+	 * The user object of the displayed user to which the changed data is passed
+	 */
 	private User user;
 	
+	/**
+	 * The user object containing the displayed user's stored data
+	 */
 	private User checkUser;
 	
+	/**
+	 * The session user attribute
+	 */
 	private SessionUserBean sessionUser;
 	
+	/**
+	 * The language manager attribue
+	 */
 	private LanguageManager lang;
 	
+	/**
+	 * The backing bean attribute
+	 */
 	private UserProfileBean bean;
 	
 	// RequestparameterMap
@@ -165,6 +185,9 @@ public class UserProfileBeanTest {
 		bean.init();
 	}
 	
+	/**
+	 * Tests the backing bean method saveSettings() with invalid user input
+	 */
 	@Test
 	public void testIncorrectSaveSettings() {
 		// Set nickname to "blacky", which is already in use by another user
@@ -182,6 +205,9 @@ public class UserProfileBeanTest {
 		bean.saveSettings();
 	}
 	
+	/**
+	 * Tests the backing bean method saveSettings() with valid user input
+	 */
 	@Test
 	public void testSaveSettings() {		
 		// Set new user nickname
