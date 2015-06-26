@@ -28,6 +28,7 @@ import de.ofCourse.model.Address;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.CourseUnit;
 import de.ofCourse.model.Cycle;
+import de.ofCourse.model.MailWrapper;
 import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.Period;
 import de.ofCourse.model.SortColumn;
@@ -557,7 +558,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	transaction.start();
 	int cycleId = 0;
 	List<String> mailToSend = new ArrayList<String>();
-	HashMap<Integer, String> mailSend = new HashMap<Integer, String> ();
+	ArrayList<MailWrapper> mailSend = new ArrayList<MailWrapper>();
 	
 	
 	try {
@@ -605,7 +606,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					user.getUserID(),
 					courseID)){
 				    
-				mailSend.put(unitId, user.getEmail());
+			
+				mailSend.add(new MailWrapper(unitId, user.getEmail()));
 				}
 			    }
 			}
@@ -680,7 +682,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * 
      * @author Fuchs Tobias
      */
-    private void sortMailAddresses(HashMap<Integer,String> mailSend) {
+    private void sortMailAddresses(ArrayList<MailWrapper> mailSend) {
 	List<String> recipients;
 	Entry<Integer, String> entry;
         
