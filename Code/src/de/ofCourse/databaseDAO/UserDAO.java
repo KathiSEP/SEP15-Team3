@@ -48,30 +48,32 @@ import de.ofCourse.system.Transaction;
  * the ManagedBeans of the package <code>de.ofCourse.action</code>.
  * </p>
  * 
- * @author Patrick Cretu
- *
  */
 public class UserDAO {
 
     /**
      * The SQL Command to get all Users
      */
-    private final static String ALL_USERS = "SELECT * FROM \"users\" ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String ALL_USERS = "SELECT * FROM \"users\" " +
+    		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
     /**
      * The SQL Command to get all Users with this name
      */
-    private final static String GET_USERS_BY_NAME = "SELECT * FROM \"users\" WHERE NAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_USERS_BY_NAME = "SELECT * FROM \"users\" " +
+    		"WHERE NAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     /**
      * The SQL Command to get User by Mail
      */
-    private final static String GET_USER_BY_EMAIL = "SELECT * FROM \"users\" WHERE EMAIL = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_USER_BY_EMAIL = "SELECT * FROM \"users\" " +
+    		"WHERE EMAIL = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     /**
      * The SQL Command to get User by Nickname
      */
-    private final static String GET_USER_BY_NICKNAME = "SELECT * FROM \"users\" WHERE NICKNAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
+    private final static String GET_USER_BY_NICKNAME = "SELECT * " +
+    		"FROM \"users\" WHERE NICKNAME = ? ORDER BY %s %s LIMIT ? OFFSET ?";
 
     /**
      * Returns the password salt of a user assigned to the passed user name.
@@ -213,8 +215,9 @@ public class UserDAO {
 		    }
 		    
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"executing nickTaken(Transaction trans, String nickname)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during executing nickTaken(Transaction trans, " +
+		    		"String nickname)", e);
 		}
 		return exists;
     }
@@ -242,11 +245,13 @@ public class UserDAO {
 	
 		    stmt.executeUpdate();
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"executing uploadImage(Transaction trans, int userID, Part image)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during executing uploadImage(Transaction trans, " +
+		    		"int userID, Part image)", e);
 		} catch (IOException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"executing uploadImage(Transaction trans, int userID, Part image)");
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during executing uploadImage(Transaction trans, " +
+		    		"int userID, Part image)");
 		}
     }
 
@@ -597,8 +602,9 @@ public class UserDAO {
 		    }
 		    
 		} catch (SQLException e) {
-		    throw new InvalidDBTransferException("SQL Exception occoured during " +
-		    		"executing getUser(Transaction trans, int userID)", e);
+		    throw new InvalidDBTransferException("SQL Exception occoured " +
+		    		"during executing getUser(Transaction trans, " +
+		    		"int userID)", e);
 		}
 		return user;
     }
@@ -1158,7 +1164,8 @@ public class UserDAO {
 		java.sql.Connection conn = connection.getConn();
 		String query = null;
 		String deleteUserQuery = "DELETE FROM \"users\" WHERE id = ?";
-		String deleteImageQuery = "UPDATE \"users\" SET profile_image = NULL WHERE id = ?";
+		String deleteImageQuery = "UPDATE \"users\" SET profile_image = NULL " +
+				"WHERE id = ?";
 		
 		if (deleteUser) {
 			query = deleteUserQuery;
@@ -1171,7 +1178,8 @@ public class UserDAO {
 		    stmt.executeUpdate();
 		} catch (SQLException e) {
 		    throw new InvalidDBTransferException("SQL Exception occoured " +
-		    		"during executing uploadImage(Transaction trans, int userID, Part image)");
+		    		"during executing uploadImage(Transaction trans, " +
+		    		"int userID, Part image)");
 		}
     }
 

@@ -6,6 +6,8 @@ package de.ofCourse.utilities;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import de.ofCourse.system.LogHandler;
+
 /**
  * Provides the services of hashing a given plaintext password concatenated with
  * a salt by using a SHA hash algorithm.
@@ -42,7 +44,10 @@ public class PasswordHash {
             passwordHash = sb.toString();
             return passwordHash;
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			LogHandler
+            .getInstance()
+            .error("NoSuchAlgorithmException occoured during executing " +
+                    "hash(String password, String salt)");
 		}
     	return null;
     }
