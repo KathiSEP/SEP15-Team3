@@ -20,9 +20,9 @@
                         </a>
                     </div>
                     <div class="navbar-collapse collapse navbar-right">
-                        <h:form>
-                            <h:commandButton class="btn btn-danger navbar-btn btn-minsize" value="#{sessionUser.getLabel('navigation.logoutButton')}" action="#{navigationBean.logout}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
-                            <h:commandButton class="btn btn-success btn-minsize navbar-btn" value="#{sessionUser.getLabel('navigation.loginButton')}" action="/facelets/open/authenticate.xhtml" rendered="#{!(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
+                        <h:form id="generalNavigationForm">
+                            <h:commandLink id="logoutLink" class="btn btn-danger navbar-btn btn-minsize" value="#{sessionUser.getLabel('navigation.logoutButton')}" action="#{navigationBean.logout}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
+                            <h:commandLink id="authenticateLink" class="btn btn-success btn-minsize navbar-btn" value="#{sessionUser.getLabel('navigation.loginButton')}" action="/facelets/open/authenticate.xhtml" rendered="#{!(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}" />
                             <h:commandLink action="#{navigationBean.setLanguage('de')}" rendered="#{(navigationBean.sessionUser.userRole == 'REGISTERED_USER' || navigationBean.sessionUser.userRole == 'COURSE_LEADER' || navigationBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
                                 <h:graphicImage url="/resources/img/germanFlag.gif" alt="DE" title="Deutsche Version" width="50"/>
                             </h:commandLink>
