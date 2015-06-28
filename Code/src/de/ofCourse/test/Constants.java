@@ -21,7 +21,8 @@ public class Constants {
     public static final String pageListParticipantsTitle ="Liste aller Kursteilnehmer";
     
     // Variablenbenennung:
-    // Facelet-Name in Großbuchstaben + Typ des HTML-Elements + Beschreibung des HTML-Elements + Typ des Attributs
+    // Facelet-Name in Großbuchstaben + Typ des HTML-Elements + Beschreibung des HTML-Elements + Typ des Attributs 
+    // = " ID des Felders im Facelet"
     
     // Alle Parameter für NAVIGATION
     public static final String NAVIGATIONlinkAuthenticateID = "authenticateLink";
@@ -45,4 +46,25 @@ public class Constants {
     public static final String AUTHENTICATEinputRegisterZipCodeID ="zipcodeRegister";
     public static final String AUTHENTICATEinputRegisterCountryID ="countryRegister";
     public static final String AUTHENTICATEinputRegisterMailID ="emailRegister";
+    
+    // Alle Parameter für CreateCourse
+    public static final String CREATECOURSEformCreateCourseID ="formCreateCourse";
+    public static final String CREATECOURSEinputTitleID = "courseTitle";
+    public static final String CREATECOURSEinputDescriptionID = "courseDescription";
+    public static final String CREATECOURSEinputCourseLeaderID = "IdOfCourseLeader";
+    public static final String CREATECOURSEinputMaxParticipantsID = "courseParticipants";
+    public static final String CREATECOURSEinputStartdateID = "courseStartDate";
+    public static final String CREATECOURSEinputEnddateID = "courseEndDate"; 
+    public static final String CREATECOURSEinputPictureID = "courseImage";
+    
+    // Alle Parameter für AchtivateUsers
+    public static final String ACTIVATEUSERSformActivateUsersID = "formActivateUsers";
+    public static final String ACTIVATEUSERScheckboxActivationID = "checked";
+    
+    //Alle Paramter für listParticipants
+    public static final String LISTPARTICIPANTSformBackToCourseDetailsID = "formBack";
+    public static final String LISTPARTICIPANTScommandButtonBackToCourseDetailsID = "cancel";
+    public static final String LISTPARTICIPANTSformListParticipantsID = "formListParticipants";
+    public static final String LISTPARTICIPANTScheckboxDeleteID = "checked";
+    
 }
