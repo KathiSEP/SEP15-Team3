@@ -209,6 +209,9 @@ public class RegisterUserBean {
         
             String veriString = "";
             
+            // Convert to lower case for checking email
+            this.userToRegistrate.setEmail(this.userToRegistrate.getEmail().toLowerCase());
+            
         
             // Initialize database connection
             this.transaction = Connection.create();
