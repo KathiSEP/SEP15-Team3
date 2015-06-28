@@ -22,7 +22,7 @@
                        
                         <h:message for="firstnameRegister" style="color:red" />
                         <h:message for="lastnameRegister" style="color:red" />
-                        <h:message for="usernameRegister" style="color:red" />
+                        <h:message id="messageUsernameRegister" for="usernameRegister" style="color:red" />
                         <h:message for="passwordRegister" style="color:red" />
                         <h:message for="passwordConfirmRegister" style="color:red" />
                         <h:message for="birthdateRegister" style="color:red" />
@@ -31,7 +31,7 @@
                         <h:message for="locationRegister" style="color:red" />
                         <h:message for="zipcodeRegister" style="color:red" />
                         <h:message for="countryRegister" style="color:red" />
-                        <h:message for="emailRegister" style="color:red" />
+                        <h:message id="messageEmailRegister" for="emailRegister" style="color:red" />
                         <h:message for="usernameLogin" style="color:red" />
                         <h:message for="passwordLogin" style="color:red" />
                         <h:message for="passwordEMail" style="color:red" />
@@ -171,7 +171,7 @@
                                     
                                     <br />
                                     <div>
-                                        <h:selectBooleanCheckbox value="#{registerUserBean.agbAccepted}" required="true" 
+                                        <h:selectBooleanCheckbox id = "selectAGB" value="#{registerUserBean.agbAccepted}" required="true" 
                                                           requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.AGB')}"/> 
                                                           #{sessionUser.getLabel('authenticate.row.register.bottomText')}
                                         <a href="#{request.contextPath}/facelets/open/agb.xhtml" target="_blank">#{sessionUser.getLabel('authenticate.row.register.bottomLink')}</a>

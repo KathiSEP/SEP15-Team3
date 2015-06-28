@@ -33,7 +33,7 @@ public class Constants {
     public static final String AUTHENTICATEformLoginID = "formLogin";
     public static final String AUTHENTICATEinputLoginUsernameID = "usernameLogin";
     public static final String AUTHENTICATEinputLoginPasswordID = "passwordLogin";
-    public static final String AUTHENTICATEformRegisterID = "fromRegister";
+    public static final String AUTHENTICATEformRegisterID = "formRegister";
     public static final String AUTHENTICATEinputRegisterFirstnameID ="firstnameRegister";
     public static final String AUTHENTICATEinputRegisterLastnameID ="lastnameRegister";
     public static final String AUTHENTICATEinputRegisterUsernameID ="usernameRegister";
@@ -46,6 +46,7 @@ public class Constants {
     public static final String AUTHENTICATEinputRegisterZipCodeID ="zipcodeRegister";
     public static final String AUTHENTICATEinputRegisterCountryID ="countryRegister";
     public static final String AUTHENTICATEinputRegisterMailID ="emailRegister";
+    public static final String AUTHENTICATEcheckboxRegisterAGB = "selectAGB";
     
     // Alle Parameter für CreateCourse
     public static final String CREATECOURSEformCreateCourseID ="formCreateCourse";
