@@ -1,45 +1,43 @@
 package de.ofCourse.test;
 
+import java.util.Date;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.ofCourse.model.Address;
 import de.ofCourse.model.User;
 import static net.sourceforge.jwebunit.junit.JWebUnit.*;
 import static org.junit.Assert.*;
 
 public class RegistrationTest {
     
-    private static String RegisterUserFirstName;
-    private static String RegisterUserLastName;
-    private static String RegisterUserNickname;
-    private static String RegisterUserPassword;
-    private static String RegisterUserConfirmPassword;
-    private static String RegisterUserDateOfBirth;
-    private static String RegisterUserStreet;
-    private static String RegisterUserHouseNumber;
-    private static String RegisterUserCity;
-    private static String RegisterUserZipCode;
-    private static String RegisterUserCountry;
-    private static String RegisterUserMail;
-    private static String RegisterUserAGB;
+    private static User registerUser = new User();
+    private static Address registerAddress = new Address();
     
+    private static String registerUserPassword;
+    private static String registerUserConfirmPassword;
+    private static String registerUserDateOfBirth;
     
     @BeforeClass
     public static void prepare() {
         setBaseUrl(Constants.localhostURL);
         
-        RegisterUserFirstName = "Katharina";
-        RegisterUserLastName = "Hölzl";
-        RegisterUserNickname = "Kathi123";
-        RegisterUserPassword = "Kathi123#";
-        RegisterUserConfirmPassword = "Kathi123#";
-        RegisterUserDateOfBirth = "29.05.1993";
-        RegisterUserStreet = "Am Kastenfeld";
-        RegisterUserHouseNumber = "39";
-        RegisterUserCity = "Fürstenzell";
-        RegisterUserZipCode = "94081";
-        RegisterUserCountry = "Deutschland";
-        RegisterUserMail = "Katharina_hoelzl@web.de";
+        registerUser.setFirstname("Katharina");
+        registerUser.setLastname("Hölzl");
+        registerUser.setUsername("Kathi123");
+        
+        registerUserDateOfBirth = "29.05.1993";      
+        registerUserPassword = "Kathi123#";
+        registerUserConfirmPassword = "Kathi123#";
+        
+        registerAddress.setStreet("Am Kastenfeld 39");
+        registerAddress.setHouseNumber(39);
+        registerAddress.setZipCode(94081);
+        registerAddress.setCity("Füstenzell");
+        registerAddress.setCountry("Deutschland");
+        
+        registerUser.setEmail("Katharina_hoelzl@web.de");
     }
     
     /**
@@ -66,22 +64,24 @@ public class RegistrationTest {
         // Form-Element auswählen
         setWorkingForm(Constants.AUTHENTICATEformRegisterID);
         
+        //Test auf "Benutzername existiert bereits"
+        
         // Input-Feld mit Daten belegen
-        selectOptionByValue(Constants.AUTHENTICATEformRegisterID + ":" + "titleRegister", "ms");
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterFirstnameID, RegisterUserFirstName);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterLastnameID, RegisterUserLastName);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterUsernameID, RegisterUserNickname);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterPasswordID, RegisterUserPassword);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterConfirmPasswordID, RegisterUserConfirmPassword);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterDateOfBirthID, RegisterUserDateOfBirth);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterStreetID, RegisterUserStreet);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterHouseNumberID, RegisterUserHouseNumber);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterCityID, RegisterUserCity);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterZipCodeID, RegisterUserZipCode);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterCountryID, RegisterUserCountry);
-        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterMailID, RegisterUserMail);
-        checkCheckbox(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEcheckboxRegisterAGB);
-        assertCheckboxSelected (Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEcheckboxRegisterAGB);
+        selectOptionByValue(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEmenuRegisterTitle, "ms");
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterFirstnameID, registerUser.getFirstname());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterLastnameID, registerUser.getLastname());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterUsernameID, registerUser.getUsername());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterPasswordID, registerUserPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterConfirmPasswordID, registerUserConfirmPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterDateOfBirthID, registerUserDateOfBirth);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterStreetID, registerAddress.getStreet());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterHouseNumberID, registerAddress.getHouseNumber().toString());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterCityID, registerAddress.getCity());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterZipCodeID, registerAddress.getZipCode().toString());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterCountryID, registerAddress.getCountry());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterMailID, registerUser.getEmail());
+        checkCheckbox(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEcheckboxRegisterAGBID);
+        assertCheckboxSelected (Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEcheckboxRegisterAGBID);
         
         // Formulardaten abschicken
         submit();
@@ -90,7 +90,8 @@ public class RegistrationTest {
         // Titel der Index vergleichen
         assertTitleEquals(Constants.pageAuthenticateTitle);
         
-        assertEquals(getElementById("messageUsernameRegister").getTextContent(), "Der Benutzername existiert bereits. ");
+        // Facesmessage überprüfen
+        assertEquals(getElementById(Constants.AUTHENTICATEmessagesRegisterUsernameID).getTextContent(), "Der Benutzername existiert bereits. ");
              
     }
 }
