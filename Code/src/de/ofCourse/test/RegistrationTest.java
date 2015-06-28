@@ -286,7 +286,7 @@ public class RegistrationTest {
         assertTrue(getElementById(Constants.AUTHENTICATEmessagesRegisterPasswordID).getTextContent().contains("Das Passwort muss mindestens 8 Zeichen lang sein, darf aber höchstens 100 Zeichen lang sein. "));
         
         
-   //Test auf korrekte Eingabe aller Daten und Anlegen des Benutzers
+   //Test auf korrekte Eingabe aller Daten und Anlegen des Benutzers in der Datenbank
         
         // Input-Feld mit Daten belegen
         
