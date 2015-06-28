@@ -33,6 +33,9 @@ public class Constants {
     public static final String AUTHENTICATEformLoginID = "formLogin";
     public static final String AUTHENTICATEinputLoginUsernameID = "usernameLogin";
     public static final String AUTHENTICATEinputLoginPasswordID = "passwordLogin";
+    public static final String AUTHENTICATEmessagesLoginUsernameID ="messageUsernameLogin";
+    public static final String AUTHENTICATEmessagesLoginPasswordID = "messagePasswordLogin";
+    
     public static final String AUTHENTICATEformRegisterID = "formRegister";
     public static final String AUTHENTICATEmenuRegisterTitle = "titleRegister";
     public static final String AUTHENTICATEinputRegisterFirstnameID ="firstnameRegister";
@@ -49,6 +52,23 @@ public class Constants {
     public static final String AUTHENTICATEinputRegisterMailID ="emailRegister";
     public static final String AUTHENTICATEcheckboxRegisterAGBID = "selectAGB";
     public static final String AUTHENTICATEmessagesRegisterUsernameID = "messageUsernameRegister";
+    public static final String AUTHENTICATEmessagesRegisterFirstnameID ="messageFirstNameRegister";
+    public static final String AUTHENTICATEmessagesRegisterLastnameID = "messageLastNameRegister";
+    public static final String AUTHENTICATEmessagesRegisterDateOfBirthID = "messageDateOfBirthRegister";
+    public static final String AUTHENTICATEmessagesRegisterPasswordID = "messagePasswordRegister";
+    public static final String AUTHENTICATEmessagesRegisterConfirmPasswordID = "messagePasswordConfirmRegister";
+    public static final String AUTHENTICATEmessagesRegisterStreetID = "messageStreetRegister";
+    public static final String AUTHENTICATEmessagesRegisterHouseNumberID = "messageHouseNumberRegister";
+    public static final String AUTHENTICATEmessagesRegisterZipCodeID = "messageZipCodeRegister";
+    public static final String AUTHENTICATEmessagesRegisterCityID = "messageCityRegister";
+    public static final String AUTHENTICATEmessagesRegisterCountryID = "messageCountryRegister";
+    public static final String AUTHENTICATEmessagesRegisterMailID = "messageEmailRegister";
+    
+    public static final String AUTHENTICATEformForgotPasswordID = "formForgotPassword";
+    public static final String AUTHENTICATEinputForgotPasswordMailID = "passwordEMail";
+    public static final String AUTHENTICATEmessagesForgotPasswordMailID = "messageMailForgotPassword";
+    
+    public static final String AUTHENTICATEGlobalFacesMessages = "facesMessages";
     
     // Alle Parameter für CreateCourse
     public static final String CREATECOURSEformCreateCourseID ="formCreateCourse";

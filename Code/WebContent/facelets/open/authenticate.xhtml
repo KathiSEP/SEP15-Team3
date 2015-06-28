@@ -20,21 +20,21 @@
                     <div class="col-lg-12">
                       <h:messages id="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
                        
-                        <h:message for="firstnameRegister" style="color:red" />
-                        <h:message for="lastnameRegister" style="color:red" />
-                        <h:message id="messageUsernameRegister" for="usernameRegister" style="color:red" />
-                        <h:message for="passwordRegister" style="color:red" />
-                        <h:message for="passwordConfirmRegister" style="color:red" />
-                        <h:message for="birthdateRegister" style="color:red" />
-                        <h:message for="streetRegister" style="color:red" />
-                        <h:message for="houseNumberRegister" style="color:red" />
-                        <h:message for="locationRegister" style="color:red" />
-                        <h:message for="zipcodeRegister" style="color:red" />
-                        <h:message for="countryRegister" style="color:red" />
-                        <h:message id="messageEmailRegister" for="emailRegister" style="color:red" />
-                        <h:message for="usernameLogin" style="color:red" />
-                        <h:message for="passwordLogin" style="color:red" />
-                        <h:message for="passwordEMail" style="color:red" />
+                        <h:message id ="messageFirstNameRegister" for="firstnameRegister" style="color:red" />
+                        <h:message id ="messageLastNameRegister" for="lastnameRegister" style="color:red" />
+                        <h:message id ="messageUsernameRegister" for="usernameRegister" style="color:red" />
+                        <h:message id ="messagePasswordRegister" for="passwordRegister" style="color:red" />
+                        <h:message id ="messagePasswordConfirmRegister" for="passwordConfirmRegister" style="color:red" />
+                        <h:message id ="messageDateOfBirthRegister" for="birthdateRegister" style="color:red" />
+                        <h:message id ="messageStreetRegister" for="streetRegister" style="color:red" />
+                        <h:message id ="messageHouseNumberRegister" for="houseNumberRegister" style="color:red" />
+                        <h:message id ="messageCityRegister" for="locationRegister" style="color:red" />
+                        <h:message id ="messageZipCodeRegister" for="zipcodeRegister" style="color:red" />
+                        <h:message id ="messageCountryRegister" for="countryRegister" style="color:red" />
+                        <h:message id ="messageEmailRegister" for="emailRegister" style="color:red" />
+                        <h:message id ="messageUsernameLogin" for="usernameLogin" style="color:red" />
+                        <h:message id ="messagePasswordLogin" for="passwordLogin" style="color:red" />
+                        <h:message id ="messageMailForgotPassword" for="passwordEMail" style="color:red" />
                         
                     </div>
                 </div>
@@ -125,7 +125,9 @@
                                         <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.number')}:</span>
                                         <h:inputText class="form-control" style="width:300px;" id="houseNumberRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.houseNumber}" 
-                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.HouseNumber')}">
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.HouseNumber')}"
+                                                     converterMessage="#{sessionUser.getLabel('authenticate.validatorMessage.HouseNumberPositiv')}">
+                                                     <f:convertNumber longOnly="true"/>
                                                      <f:validateLength maximum="9" />
                                         </h:inputText>
                                     </div>
@@ -145,7 +147,9 @@
                                         <h:inputText class="form-control" style="width:300px;" id="zipcodeRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.zipCode}" 
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeRequired')}"
-                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeLength')}">
+                                                     validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeLength')}"
+                                                     converterMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodePositivNumber')}">
+                                                     <f:convertNumber longOnly="true"/>
                                                      <f:validateLength minimum ="1" maximum="10" />
                                         </h:inputText>
                                     </div>

@@ -1,7 +1,5 @@
 package de.ofCourse.test;
 
-import java.util.Date;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,6 +16,8 @@ public class RegistrationTest {
     private static String registerUserPassword;
     private static String registerUserConfirmPassword;
     private static String registerUserDateOfBirth;
+    private static String registerUserHouseNumberWrong;
+    private static String registerAddressZipCodeWrong;
     
     @BeforeClass
     public static void prepare() {
@@ -30,6 +30,9 @@ public class RegistrationTest {
         registerUserDateOfBirth = "29.05.1993";      
         registerUserPassword = "Kathi123#";
         registerUserConfirmPassword = "Kathi123#";
+        
+        registerUserHouseNumberWrong = "test";
+        registerAddressZipCodeWrong = "test";
         
         registerAddress.setStreet("Am Kastenfeld 39");
         registerAddress.setHouseNumber(39);
@@ -63,6 +66,7 @@ public class RegistrationTest {
         
         // Form-Element auswählen
         setWorkingForm(Constants.AUTHENTICATEformRegisterID);
+       
         
         //Test auf "Benutzername existiert bereits"
         
@@ -94,6 +98,7 @@ public class RegistrationTest {
         assertEquals(getElementById(Constants.AUTHENTICATEmessagesRegisterUsernameID).getTextContent(), "Der Benutzername existiert bereits. ");
           
         
+        
         //Test auf "E-Mail existiert bereits"
         
         registerUser.setUsername("Kathi1234");
@@ -114,7 +119,36 @@ public class RegistrationTest {
         assertTitleEquals(Constants.pageAuthenticateTitle);
         
         // Facesmessage überprüfen
-        assertTrue(getElementById("facesMessages").getTextContent().contains("Die angegebene E-Mail existiert bereits!"));
+        assertTrue(getElementById(Constants.AUTHENTICATEGlobalFacesMessages).getTextContent().contains("Die angegebene E-Mail existiert bereits!"));
+        
+        
+        // Test auf falsches Eingabeformat bei Hausnummer, Zipcode und Geburtsdatum
+        
+        registerUserDateOfBirth = "test";
+        
+        // Input-Feld mit Daten belegen
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterUsernameID, registerUser.getUsername());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterPasswordID, registerUserPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterConfirmPasswordID, registerUserConfirmPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterHouseNumberID, registerUserHouseNumberWrong);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterZipCodeID, registerAddressZipCodeWrong);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterDateOfBirthID, registerUserDateOfBirth);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterMailID, registerUser.getEmail());
+        
+        // Formulardaten abschicken
+        submit();
+        
+        
+        // Titel der Index vergleichen
+        assertTitleEquals(Constants.pageAuthenticateTitle);
+        
+        // Facesmessage überprüfen
+        assertTrue(getElementById(Constants.AUTHENTICATEmessagesRegisterDateOfBirthID).getTextContent().contains("Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch."));
+        assertTrue(getElementById(Constants.AUTHENTICATEmessagesRegisterHouseNumberID).getTextContent().contains("Bitte geben Sie eine positive Zahl als Hausnummer ein."));
+        assertTrue(getElementById(Constants.AUTHENTICATEmessagesRegisterZipCodeID).getTextContent().contains("Bitte geben Sie eine positive Zahl als Postleitzahl ein."));
+        
+     
+        
         
     }
 }
