@@ -49,7 +49,7 @@ public class RegistrationTest {
         // Formulardaten abschicken
         submit();
         
-        // Titel der Anmelden-Seite vergleichen
+        // Titel der MyCourses-Seite vergleichen
         assertTitleEquals(Constants.pageMyCoursesTitle);
         
         // Auf Logout Link klicken
