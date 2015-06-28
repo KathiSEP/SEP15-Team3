@@ -37,7 +37,7 @@ public class RegistrationTest {
         registerAddress.setCity("Füstenzell");
         registerAddress.setCountry("Deutschland");
         
-        registerUser.setEmail("Katharina_hoelzl@web.de");
+        registerUser.setEmail("katharina_hoelzl@web.de");
     }
     
     /**
@@ -92,6 +92,29 @@ public class RegistrationTest {
         
         // Facesmessage überprüfen
         assertEquals(getElementById(Constants.AUTHENTICATEmessagesRegisterUsernameID).getTextContent(), "Der Benutzername existiert bereits. ");
-             
+          
+        
+        //Test auf "E-Mail existiert bereits"
+        
+        registerUser.setUsername("Kathi1234");
+        registerUserPassword = "Kathi1234#";
+        registerUserConfirmPassword = "Kathi1234#";
+        
+        // Input-Feld mit Daten belegen
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterUsernameID, registerUser.getUsername());
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterPasswordID, registerUserPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterConfirmPasswordID, registerUserConfirmPassword);
+        setTextField(Constants.AUTHENTICATEformRegisterID + ":" + Constants.AUTHENTICATEinputRegisterMailID, registerUser.getEmail());
+        
+        // Formulardaten abschicken
+        submit();
+        
+        
+        // Titel der Index vergleichen
+        assertTitleEquals(Constants.pageAuthenticateTitle);
+        
+        // Facesmessage überprüfen
+        assertTrue(getElementById("facesMessages").getTextContent().contains("Die angegebene E-Mail existiert bereits!"));
+        
     }
 }
