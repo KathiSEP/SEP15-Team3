@@ -144,8 +144,8 @@ public class UserManagementBean {
                         sessionUser.getLabel(
                                 "createUser.successMessage"));
 	        	goToPage = URL_ACTIVATE_USERS;
+	        	transaction.commit();
 	        }
-	        transaction.commit();
         } catch (InvalidDBTransferException e) {
         	LogHandler
             .getInstance()
