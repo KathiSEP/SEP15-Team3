@@ -321,39 +321,40 @@ public class AccessPhaseListener implements PhaseListener {
     private boolean isPermitted(FacesContext fctx, String role) {
 	boolean isPermitted = false;
 
-	switch (role) {
+	if(fctx.getViewRoot()!= null){
+	    switch (role) {
 	
-	case "SYSTEM_ADMINISTRATOR":
-	    for (int i = 0; i < administrators.size() && !isPermitted; ++i) {
-		if (fctx.getViewRoot().getViewId()
-			.equals(administrators.get(i))) {
-		    isPermitted = true;
+	    case "SYSTEM_ADMINISTRATOR":
+		for (int i = 0; i < administrators.size() && !isPermitted; ++i) {
+		    if (fctx.getViewRoot().getViewId()
+			    .equals(administrators.get(i))) {
+			isPermitted = true;
+		    }
 		}
-	    }
 
-	case "COURSE_LEADER":
-	    for (int i = 0; i < courseLeaders.size() && !isPermitted; ++i) {
-		if (fctx.getViewRoot().getViewId().equals(courseLeaders.get(i))) {
-		    isPermitted = true;
+	    case "COURSE_LEADER":
+		for (int i = 0; i < courseLeaders.size() && !isPermitted; ++i) {
+		    if (fctx.getViewRoot().getViewId().equals(courseLeaders.get(i))) {
+			isPermitted = true;
+		    }
 		}
-	    }
 
-	case "REGISTERED_USER":
-	    for (int i = 0; i < registeredUsers.size() && !isPermitted; ++i) {
-		if (fctx.getViewRoot().getViewId()
-			.equals(registeredUsers.get(i))) {
-		    isPermitted = true;
+	    case "REGISTERED_USER":
+		for (int i = 0; i < registeredUsers.size() && !isPermitted; ++i) {
+		    if (fctx.getViewRoot().getViewId()
+			    .equals(registeredUsers.get(i))) {
+			isPermitted = true;
+		    }
 		}
-	    }
 
-	default:
-	    for (int i = 0; i < anonymousUsers.size() && !isPermitted; ++i) {
-		if (fctx.getViewRoot().getViewId()
+	    default:
+		for (int i = 0; i < anonymousUsers.size() && !isPermitted; ++i) {
+		    if (fctx.getViewRoot().getViewId()
 			.equals(anonymousUsers.get(i))) {
-		    isPermitted = true;
+			isPermitted = true;
+		    }
 		}
-	    }
-
+	}
 	}
 	return isPermitted;
     }

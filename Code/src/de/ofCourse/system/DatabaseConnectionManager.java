@@ -7,7 +7,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -41,12 +44,12 @@ public class DatabaseConnectionManager {
     /**
      * List of free connections
      */
-    private final List<Connection> freeConnections;
-
+    private final Deque<Connection> freeConnections;
+       
     /**
-     * Stores the number of connections that are currently in use
+     * List of used connections
      */
-    private int numberOfConnectionsInUse = 0;
+    private final List<Connection> usedConnections;
 
     /**
      * Singleton-object of the DatabaseConnectionManager class
@@ -74,8 +77,8 @@ public class DatabaseConnectionManager {
      * Constructor of the class DatabaseConnectionManager
      */
     private DatabaseConnectionManager() {
-	freeConnections = Collections.synchronizedList(
-					new LinkedList<Connection>());
+	freeConnections = new ArrayDeque<Connection>();
+	usedConnections = new ArrayList<Connection>();
 	try {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
@@ -93,13 +96,10 @@ public class DatabaseConnectionManager {
      */
     public synchronized Connection getConnection() {
 		Connection connection = null;
-		int indexLastElement;
 	
 		// There's a free connection
 		if (!freeConnections.isEmpty()) {
-		    indexLastElement = freeConnections.size() - 1;
-		    connection = freeConnections.get(indexLastElement);
-		    freeConnections.remove(indexLastElement);
+		    connection = freeConnections.pop();
 		    
 		} else {
 		    
@@ -119,7 +119,7 @@ public class DatabaseConnectionManager {
 		 * the configuration
 		 */
 		int difference = numberOfConnection
-			- (freeConnections.size() + numberOfConnectionsInUse);
+			- (freeConnections.size() + usedConnections.size() +1);
 	
 		/*
 		 * If there's no active connection in <code>the freeConnections<\code>
@@ -127,21 +127,19 @@ public class DatabaseConnectionManager {
 		 */
 		if (!isConnectionActive(connection) && difference > 0) {
 		    connection = establishConnection();
-			LogHandler.getInstance().debug("New Connection established.");
+		    LogHandler.getInstance().debug("New Connection established.");
 		}
 	
 		// Check the new connection before giving it free
 		if (!isConnectionActive(connection)) {
-			LogHandler.getInstance().error(
-				"Not able to get a active connection to the database.");
-			
-			return null;
-		} else {
-			++numberOfConnectionsInUse;
-		    LogHandler.getInstance().debug("Connection returned.");
-		    
-		    return connection;
+		    LogHandler.getInstance().error(
+			"Not able to get a active connection to the database.");
+		    throw new RuntimeException();
 		}
+		usedConnections.add(connection);
+		LogHandler.getInstance().debug("Connection returned.");
+		    
+		return connection;		
     }
 
     /**
@@ -151,8 +149,8 @@ public class DatabaseConnectionManager {
 	try {
 	    if (!connection.isClosed() && connection != null) {
 		
-		--numberOfConnectionsInUse;
-		freeConnections.add(connection);
+		usedConnections.remove(connection);
+		freeConnections.push(connection);
 		LogHandler.getInstance().debug("Connection released.");
 	    }
 	} catch (SQLException e) {
@@ -186,7 +184,7 @@ public class DatabaseConnectionManager {
 	    for (int i = 0; i < numberOfConnection; ++i) {
 		Connection conn = establishConnection();
 		if (conn != null) {
-		    databaseConnectionManager.freeConnections.add(conn);
+		    databaseConnectionManager.freeConnections.push(conn);
 		}
 	    }
 	}
@@ -260,11 +258,9 @@ public class DatabaseConnectionManager {
      * all connections.
      */
     public void shutDown() {
-	ListIterator<Connection> it = freeConnections.listIterator(0);
-
-	while (it.hasNext()) {
+	while(!freeConnections.isEmpty()) {
+	    Connection connection = freeConnections.pop();
 	    
-	    Connection connection = it.next();
 	    if (connection != null) {
 		
 		try {
@@ -300,7 +296,6 @@ public class DatabaseConnectionManager {
 		stmt.execute();
 		active = true;
 	    } catch (SQLException e) {
-		freeConnections.remove(connection);
 		active = false;
 	    }
 	}
