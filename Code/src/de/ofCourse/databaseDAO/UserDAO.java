@@ -962,6 +962,8 @@ public class UserDAO {
                 }
                 // Assign the address object to the user object.
                 user.setAddress(address);
+                pr.close();
+                res2.close();
             } else {
 
                 user = null;
