@@ -3,6 +3,8 @@
  */
 package de.ofCourse.action;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.text.DecimalFormat;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +19,7 @@ import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
+import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -117,6 +120,12 @@ public class UserProfileBean {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
     
+    /**
+     * This ManagedProperty represents the mail bean.
+     */
+    @ManagedProperty("#{mailBean}")
+    private MailBean mailBean;
+    
     @PostConstruct
     public void init() {
     	readOnly = true;
@@ -156,6 +165,7 @@ public class UserProfileBean {
     				user.getUsername());
     		boolean emailTaken = UserDAO.emailExists(transaction,
     				user.getEmail());
+    		boolean sendMail = false;
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
@@ -164,8 +174,22 @@ public class UserProfileBean {
     				salt = PasswordHash.getSalt();
     				pwHash = PasswordHash.hash(password, salt);
     			}
+    			
+    			if (!checkUser.getEmail().toLowerCase().equals(user.getEmail().
+    					toLowerCase())) {
+    				user.setUserStatus(UserStatus.NOT_ACTIVATED);
+    				sendMail = true;
+    			}
+    			
     			UserDAO.updateUser(transaction, user, pwHash, salt);
     			transaction.commit();
+    			
+    			if (sendMail) {
+    				SecureRandom random = new SecureRandom();
+    				String veriString = new BigInteger(130, random).toString();
+    				mailBean.sendUpdateMessage(userID, veriString);
+    			}
+    			
     			readOnly = true;
     		} else {
     			FacesMessageCreator.createFacesMessage(null,
@@ -478,6 +502,14 @@ public class UserProfileBean {
 	 */
 	public void setCreditBalance(String creditBalance) {
 		this.creditBalance = creditBalance;
+	}
+
+	public MailBean getMailBean() {
+		return mailBean;
+	}
+
+	public void setMailBean(MailBean mailBean) {
+		this.mailBean = mailBean;
 	}
 	
 }
