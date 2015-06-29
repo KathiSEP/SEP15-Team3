@@ -167,7 +167,7 @@ public class DatabaseConnectionManager {
      * 
      * @return instance of the DatabaseConnectionManager
      */
-    public static DatabaseConnectionManager getInstance() {
+    public synchronized static DatabaseConnectionManager getInstance() {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
 
