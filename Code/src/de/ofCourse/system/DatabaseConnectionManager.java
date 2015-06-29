@@ -113,9 +113,8 @@ public class DatabaseConnectionManager implements Runnable {
 		    return(getConnection());
 		  } else {
 		    usedConnections.add(connection);
-		    return(connection);
+		    return connection;
 		  }
-	   
 	   
 	} else {
 	    for (int i = 0; i < difference; ++i) {
@@ -128,7 +127,7 @@ public class DatabaseConnectionManager implements Runnable {
 	      // Someone freed up a connection, so try again.
 	      return(getConnection());  
 	}
-	}
+    }
 	
 
     
