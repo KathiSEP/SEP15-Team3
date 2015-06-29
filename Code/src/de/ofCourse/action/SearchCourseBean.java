@@ -167,6 +167,8 @@ public class SearchCourseBean implements Pagination {
 	    		setResultParams(result, false);
 	    		transaction.commit();
 	    	} else {
+	    		FacesMessageCreator.createFacesMessage(null,
+						sessionUser.getLabel("search.message.result"));
 	    		setRenderTable(false);
 	    		transaction.rollback();
 	    	}
@@ -282,6 +284,8 @@ public class SearchCourseBean implements Pagination {
         		setResultParams(result, true);
         		transaction.commit();
     		} else {
+    			FacesMessageCreator.createFacesMessage(null,
+						sessionUser.getLabel("search.message.result"));
     			setRenderTable(false);
     			transaction.rollback();
     		}
@@ -438,6 +442,8 @@ public class SearchCourseBean implements Pagination {
 	    		searchResult = result;
 	    		transaction.commit();
 	    	} else {
+	    		FacesMessageCreator.createFacesMessage(null,
+						sessionUser.getLabel("search.message.result"));
 	    		setRenderTable(false);
 	    		transaction.rollback();
 	    	}
@@ -486,6 +492,8 @@ public class SearchCourseBean implements Pagination {
 	    		searchResult = result;
 	    		transaction.commit();
 	    	} else {
+	    		FacesMessageCreator.createFacesMessage(null,
+						sessionUser.getLabel("search.message.result"));
 	    		setRenderTable(false);
 	    		transaction.rollback();
 	    	}
