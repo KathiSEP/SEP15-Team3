@@ -6,7 +6,7 @@ import org.junit.Test;
 import de.ofCourse.model.User;
 import static net.sourceforge.jwebunit.junit.JWebUnit.*;
 
-public class LoginTest {
+public class LoginTest { 
     
     private static User loginUser = new User();
     private static String loginUserPassword;

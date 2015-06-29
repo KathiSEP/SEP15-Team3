@@ -2,7 +2,7 @@ package de.ofCourse.test;
 
 public class Constants {
     //Base URL
-    public static final String localhostURL = "http://localhost:8080/OfCourse/facelets/";
+    public static final String localhostURL = "http://localhost:8003/OfCourse/facelets/";
     
     // Einzelne Seiten: URL und Titel
     public static final String pageIndexURL = "open/index.xhtml";
