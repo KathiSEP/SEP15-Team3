@@ -9,8 +9,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -35,7 +39,7 @@ import de.ofCourse.utilities.PropertyManager;
  * @author Tobias Fuchs
  *
  */
-public class DatabaseConnectionManager {
+public class DatabaseConnectionManager implements Runnable {
 
     /**
      * List of free connections
@@ -93,39 +97,88 @@ public class DatabaseConnectionManager {
     public synchronized Connection getConnection() {
 		Connection connection = null;
 	
-		// There's a free connection
-		if (!freeConnections.isEmpty()) {
-		    connection = freeConnections.pop();   
-		}
-	
 		/*
 		 * Calculates if there are as much as connections in use as granted by
 		 * the configuration
 		 */
 		int difference = numberOfConnection
-			- (freeConnections.size() + usedConnections.size() +1);
+			- (freeConnections.size() + usedConnections.size());
+		
+		
+		// There's a free connection
+		if (!freeConnections.isEmpty()) {
+		    connection = freeConnections.pop();
+		    
+		} else {
+		    
+		    // There's no free connection
+		    try {
+			if(difference > 0){
+			makeBackgroundConnection();
+			}
+			wait();
+		    } catch (InterruptedException e) {
+			    LogHandler.getInstance().error(
+				    "Error occured during waiting"
+				    + " for a connection.");
+			}
+	
+		}
+	
 	
 		/*
 		 * If there's no active connection in <code>the freeConnections<\code>
 		 * list and not the full number of connections are active
-		 */
+		
 		if (!isConnectionActive(connection) && difference > 0) {
 		    connection = establishConnection();
 		    LogHandler.getInstance().debug("New Connection established.");
 		}
-	
+	 */
 		// Check the new connection before giving it free
 		if (!isConnectionActive(connection)) {
 		    LogHandler.getInstance().error(
 			"Not able to get a active connection to the database.");
+		    System.out.println("Size free: " + freeConnections.size() );
+		    System.out.println("Size used: " + usedConnections.size());
 		    throw new RuntimeException();
 		}
+		
 		usedConnections.add(connection);
 		LogHandler.getInstance().debug("Connection returned.");
-		    
+		System.out.println("Size free: " + freeConnections.size() );
+		    System.out.println("Size used: " + usedConnections.size());
 		return connection;		
     }
 
+    
+    private void makeBackgroundConnection() {
+	   
+	    try {
+	      Thread connectThread = new Thread(this);
+	      connectThread.start();
+	    } catch(OutOfMemoryError oome) {
+	      // Give up on new connection
+	    }
+	  }
+
+	  public void run() {
+	    try {
+	      Connection connection = establishConnection();
+	      synchronized(this) {
+	        freeConnections.push(connection);
+	        System.out.println("Created new");
+	        notifyAll();
+	      }
+	    } catch(Exception e) { // SQLException or OutOfMemory
+	      // Give up on new connection and wait for existing one
+	      // to free up.
+	    }
+	  }
+    
+    
+    
+    
     /**
      * Releases the connection after it has been used.
      */
@@ -142,6 +195,8 @@ public class DatabaseConnectionManager {
 			"Error occured during releasing the connection.");
 	   
 	}
+	// Notifies all waiting threads that there's a free connection
+	notifyAll();
     }
 
     /**
@@ -273,7 +328,8 @@ public class DatabaseConnectionManager {
 	
 	if (connection != null) {
 	    
-	    try (PreparedStatement stmt = connection.prepareStatement(query)){	
+	    try (PreparedStatement stmt = connection.prepareStatement(query)){
+	
 		stmt.execute();
 		active = true;
 	    } catch (SQLException e) {
