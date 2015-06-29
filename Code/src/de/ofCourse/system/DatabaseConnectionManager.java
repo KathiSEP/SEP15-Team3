@@ -45,7 +45,7 @@ public class DatabaseConnectionManager implements Runnable {
      * List of free connections
      */
     private final Deque<Connection> freeConnections;
-       
+
     /**
      * List of used connections
      */
@@ -82,9 +82,8 @@ public class DatabaseConnectionManager implements Runnable {
 	try {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
-		LogHandler.getInstance().error(
-			"Error occoured during"
-			+ " loading the database driver!");
+	    LogHandler.getInstance().error(
+		    "Error occoured during" + " loading the database driver!");
 	}
 
     }
@@ -95,105 +94,115 @@ public class DatabaseConnectionManager implements Runnable {
      * @return connection for database access
      */
     public synchronized Connection getConnection() {
-		Connection connection = null;
-	
-		/*
-		 * Calculates if there are as much as connections in use as granted by
-		 * the configuration
-		 */
-		int difference = numberOfConnection
-			- (freeConnections.size() + usedConnections.size());
-		
-		
-		// There's a free connection
-		if (!freeConnections.isEmpty()) {
-		    connection = freeConnections.pop();
-		    
-		} else {
-		    
-		    // There's no free connection
-		    try {
-			for(int i = 0; i < difference; ++i){
-			makeBackgroundConnection();
-			}
-			wait();
-		    } catch (InterruptedException e) {
-			    LogHandler.getInstance().error(
-				    "Error occured during waiting"
-				    + " for a connection.");
-			}
-	
-		}
-	
-	
-		/*
-		 * If there's no active connection in <code>the freeConnections<\code>
-		 * list and not the full number of connections are active
-		
-		if (!isConnectionActive(connection) && difference > 0) {
-		    connection = establishConnection();
-		    LogHandler.getInstance().debug("New Connection established.");
-		}
-	 */
-		// Check the new connection before giving it free
-		if (!isConnectionActive(connection)) {
-		    LogHandler.getInstance().error(
-			"Not able to get a active connection to the database.");
-		    System.out.println("Size free: " + freeConnections.size() );
-		    System.out.println("Size used: " + usedConnections.size());
-		    throw new RuntimeException();
-		}
-		
-		usedConnections.add(connection);
-		LogHandler.getInstance().debug("Connection returned.");
-		System.out.println("Size free: " + freeConnections.size() );
-		    System.out.println("Size used: " + usedConnections.size());
-		return connection;		
-    }
+	Connection connection = null;
 
+	/*
+	 * Calculates if there are as much as connections in use as granted by
+	 * the configuration
+	 */
+	int difference = numberOfConnection
+		- (freeConnections.size() + usedConnections.size());
+
+	// There's a free connection
+	if (!freeConnections.isEmpty()) {
+	    connection  = freeConnections.pop();
+	    
+	    try {
+		if (connection.isClosed()) {
+		    notifyAll(); // Freed up a spot for anybody waiting
+		    return(getConnection());
+		  } else {
+		    usedConnections.add(connection);
+		    return(connection);
+		  }
+	    } catch (SQLException e) {
+		System.out.println("SQL");
+		throw new RuntimeException();
+	    }
+	   
+	} else {
+	    System.out.println("Im Else");
+	    for (int i = 0; i < difference; ++i) {
+		makeBackgroundConnection();
+	    }
+
+	    try {
+	        wait();
+	      } catch(InterruptedException ie) {}
+	      // Someone freed up a connection, so try again.
+	      return(getConnection());
+	    
+	}
+	}
+	
+
+	/*
+	 * If there's no active connection in <code>the freeConnections<\code>
+	 * list and not the full number of connections are active
+	 * 
+	 * if (!isConnectionActive(connection) && difference > 0) { connection =
+	 * establishConnection();
+	 * LogHandler.getInstance().debug("New Connection established."); }
+	 */
+
+	/*// Check the new connection before giving it free
+	if (!isConnectionActive(connection)) {
+	    LogHandler.getInstance().error(
+		    "Not able to get a active connection to the database.");
+	    System.out.println("Size free: " + freeConnections.size());
+	    System.out.println("Size used: " + usedConnections.size());
+	    throw new RuntimeException();
+	}
+
+	usedConnections.add(connection);
+	LogHandler.getInstance().debug("Connection returned.");
+	System.out.println("Size free: " + freeConnections.size());
+	System.out.println("Size used: " + usedConnections.size());
+	return connection;*/
+    
+
+    
+    
     
     private void makeBackgroundConnection() {
-	   
-	    try {
-	      Thread connectThread = new Thread(this);
-	      connectThread.start();
-	    } catch(OutOfMemoryError oome) {
-	      // Give up on new connection
-	    }
-	  }
+	System.out.println("DEs");
+	try {
+	    Thread connectThread = new Thread(this);
+	    connectThread.start();
+	} catch (OutOfMemoryError oome) {
+	    // Give up on new connection
+	}
+    }
 
-	  public void run() {
-	    try {
-	      Connection connection = establishConnection();
-	      synchronized(this) {
-	        freeConnections.push(connection);
-	        System.out.println("Created new");
-	        notifyAll();
-	      }
-	    } catch(Exception e) { // SQLException or OutOfMemory
-	      // Give up on new connection and wait for existing one
-	      // to free up.
+    public void run() {
+	try {
+	    Connection connection = establishConnection();
+	    synchronized (this) {
+		freeConnections.push(connection);
+		System.out.println("Created new");
+		notifyAll();
 	    }
-	  }
-    
-    
-    
-    
+	} catch (Exception e) { // SQLException or OutOfMemory
+	    // Give up on new connection and wait for existing one
+	    // to free up.
+	}
+    }
+
     /**
      * Releases the connection after it has been used.
      */
     public synchronized void releaseConnection(Connection connection) {
 	try {
 	    if (!connection.isClosed() && connection != null) {
-		
+
 		usedConnections.remove(connection);
 		freeConnections.push(connection);
 		LogHandler.getInstance().debug("Connection released.");
 	    }
 	} catch (SQLException e) {
-		LogHandler.getInstance().error(
-			"Error occured during releasing the connection.");
-	   
+	    LogHandler.getInstance().error(
+		    "Error occured during releasing the connection.");
+
 	}
 	// Notifies all waiting threads that there's a free connection
 	notifyAll();
@@ -208,7 +217,7 @@ public class DatabaseConnectionManager implements Runnable {
 	if (databaseConnectionManager == null) {
 	    databaseConnectionManager = new DatabaseConnectionManager();
 
-	    // In case of debug only three connections are established 
+	    // In case of debug only three connections are established
 	    // to preserve database ressources
 	    if (debug) {
 		numberOfConnection = 3;
@@ -241,16 +250,18 @@ public class DatabaseConnectionManager implements Runnable {
     private static Connection establishConnection() {
 	Connection connection = null;
 
-	// In case of tests it is attempted to establish a database connection to
-	// test database to preserve the working database from unnecessary demands
+	// In case of tests it is attempted to establish a database connection
+	// to
+	// test database to preserve the working database from unnecessary
+	// demands
 	if (debug) {
 	    try {
-		
+
 		connection = DriverManager.getConnection(
 			"jdbc:postgresql://localhost:12345/fuchstob",
 			"fuchstob", "eX4Cooth");
 		connection.setAutoCommit(false);
-		
+
 	    } catch (SQLException e) {
 		LogHandler.getInstance().fatal(
 			"Error occured during establishing a database"
@@ -258,12 +269,11 @@ public class DatabaseConnectionManager implements Runnable {
 				+ " credentials are set correctly  and the"
 				+ " connection to the database is alive.");
 
-	    
 	    }
 	} else {
 	    try {
-		
-		connection= DriverManager.getConnection(
+
+		connection = DriverManager.getConnection(
 			"jdbc:postgresql://"
 				+ PropertyManager.getInstance()
 					.getPropertyConfiguration("dbhost")
@@ -277,13 +287,13 @@ public class DatabaseConnectionManager implements Runnable {
 				"dbuser"), PropertyManager.getInstance()
 				.getPropertyConfiguration("dbpassword"));
 		connection.setAutoCommit(false);
-		
+
 	    } catch (SQLException e) {
 		LogHandler.getInstance().fatal(
 			"Error occured during establishing a database"
-			+ "connection. Please check whether the login"
-			+ " credentials are set correctly  and the"
-			+ " connection to the database is alive.");
+				+ "connection. Please check whether the login"
+				+ " credentials are set correctly  and the"
+				+ " connection to the database is alive.");
 
 	    }
 	}
@@ -295,20 +305,20 @@ public class DatabaseConnectionManager implements Runnable {
      * all connections.
      */
     public void shutDown() {
-	while(!freeConnections.isEmpty()) {
+	while (!freeConnections.isEmpty()) {
 	    Connection connection = freeConnections.pop();
-	    
+
 	    if (connection != null) {
-		
+
 		try {
 		    connection.close();
 		    LogHandler.getInstance().debug("Connection closed.");
-		} catch (SQLException e) {  
-			LogHandler.getInstance().error(
-				"Error occured during closing"
-				+ " the connections to the database.");
+		} catch (SQLException e) {
+		    LogHandler.getInstance().error(
+			    "Error occured during closing"
+				    + " the connections to the database.");
 		}
-		
+
 	    }
 	}
 	freeConnections.clear();
@@ -325,10 +335,10 @@ public class DatabaseConnectionManager implements Runnable {
     private boolean isConnectionActive(Connection connection) {
 	boolean active = false;
 	String query = "SELECT 0;";
-	
+
 	if (connection != null) {
-	    
-	    try (PreparedStatement stmt = connection.prepareStatement(query)){	
+
+	    try (PreparedStatement stmt = connection.prepareStatement(query)) {
 		stmt.execute();
 		active = true;
 	    } catch (SQLException e) {
