@@ -48,8 +48,8 @@ public class UserManagementBean {
 	/**
 	 * The URL returned at the successful creating of a new user
 	 */
-	private final String URL_ACTIVATE_USERS  = "/facelets/user/courseLeader/" +
-			"searchUser.xhtml?faces-redirect=true";
+	private final String URL_ADMIN_MANAGEMENT  = "/facelets/user/systemAdministrator/" +
+			"adminManagement.xhtml?faces-redirect=true";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -143,7 +143,7 @@ public class UserManagementBean {
                         null,
                         sessionUser.getLabel(
                                 "createUser.successMessage"));
-	        	goToPage = URL_ACTIVATE_USERS;
+	        	goToPage = URL_ADMIN_MANAGEMENT;
 	        	transaction.commit();
 	        }
         } catch (InvalidDBTransferException e) {
