@@ -113,7 +113,7 @@ public class DatabaseConnectionManager implements Runnable {
 		    
 		    // There's no free connection
 		    try {
-			if(difference > 0){
+			for(int i = 0; i < difference; ++i){
 			makeBackgroundConnection();
 			}
 			wait();
@@ -328,8 +328,7 @@ public class DatabaseConnectionManager implements Runnable {
 	
 	if (connection != null) {
 	    
-	    try (PreparedStatement stmt = connection.prepareStatement(query)){
-	
+	    try (PreparedStatement stmt = connection.prepareStatement(query)){	
 		stmt.execute();
 		active = true;
 	    } catch (SQLException e) {
