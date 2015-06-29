@@ -1,8 +1,11 @@
 package de.ofCourse.test;
 
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -11,6 +14,7 @@ public class OverdraftCreditAdminTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  public static final String messageOverdraftCredit= "messageOverdraftCredit";
 
   @Before
   public void setUp() throws Exception {
@@ -33,6 +37,9 @@ public class OverdraftCreditAdminTest {
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("EUR zehn");
     driver.findElement(By.id("formGiveCredit:giveCredit")).click();
+
+    assert driver.findElement(By.id(messageOverdraftCredit)).getText().contains("Der eingegebene Betrag entspricht nicht den Vorgaben.");
+
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("EUR 10,00");
     driver.findElement(By.id("formGiveCredit:giveCredit")).click();
