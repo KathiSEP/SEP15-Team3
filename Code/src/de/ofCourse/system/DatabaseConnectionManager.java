@@ -92,55 +92,56 @@ public class DatabaseConnectionManager {
      * @return connection for database access
      */
     public synchronized Connection getConnection() {
-	Connection connection = null;
-	int indexLastElement;
-
-	// There's a free connection
-	if (!freeConnections.isEmpty()) {
-	    indexLastElement = freeConnections.size() - 1;
-	    connection = freeConnections.get(indexLastElement);
-	    freeConnections.remove(indexLastElement);
-	    
-	} else {
-	    
-	    // There's no free connection
-	    try {
-		wait(5000);
-	    } catch (InterruptedException e) {
-		    LogHandler.getInstance().error(
-			    "Error occured during waiting"
-			    + " for a connection.");
-		}
-
-	}
-
-	/*
-	 * Calculates if there are as much as connections in use as granted by
-	 * the configuration
-	 */
-	int difference = numberOfConnection
-		- (freeConnections.size() + numberOfConnectionsInUse);
-
-	/*
-	 * If there's no active connection in <code>the freeConnections<\code>
-	 * list and not the full number of connections are active
-	 */
-	if (!isConnectionActive(connection) && difference > 0) {
-	    connection = establishConnection();
-		LogHandler.getInstance().debug("New Connection established.");
-	}
-
-	// Check the new connection before giving it free
-	if (!isConnectionActive(connection)) {
-		LogHandler.getInstance().error(
-			"Not able to get a active connection to the database.");
-	}
-
-	++numberOfConnectionsInUse;
-	    LogHandler.getInstance().debug("Connection returned.");
+		Connection connection = null;
+		int indexLastElement;
 	
-
-	return connection;
+		// There's a free connection
+		if (!freeConnections.isEmpty()) {
+		    indexLastElement = freeConnections.size() - 1;
+		    connection = freeConnections.get(indexLastElement);
+		    freeConnections.remove(indexLastElement);
+		    
+		} else {
+		    
+		    // There's no free connection
+		    try {
+			wait(5000);
+		    } catch (InterruptedException e) {
+			    LogHandler.getInstance().error(
+				    "Error occured during waiting"
+				    + " for a connection.");
+			}
+	
+		}
+	
+		/*
+		 * Calculates if there are as much as connections in use as granted by
+		 * the configuration
+		 */
+		int difference = numberOfConnection
+			- (freeConnections.size() + numberOfConnectionsInUse);
+	
+		/*
+		 * If there's no active connection in <code>the freeConnections<\code>
+		 * list and not the full number of connections are active
+		 */
+		if (!isConnectionActive(connection) && difference > 0) {
+		    connection = establishConnection();
+			LogHandler.getInstance().debug("New Connection established.");
+		}
+	
+		// Check the new connection before giving it free
+		if (!isConnectionActive(connection)) {
+			LogHandler.getInstance().error(
+				"Not able to get a active connection to the database.");
+			
+			return null;
+		} else {
+			++numberOfConnectionsInUse;
+		    LogHandler.getInstance().debug("Connection returned.");
+		    
+		    return connection;
+		}
     }
 
     /**
