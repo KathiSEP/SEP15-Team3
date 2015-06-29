@@ -9,12 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -99,19 +95,7 @@ public class DatabaseConnectionManager {
 	
 		// There's a free connection
 		if (!freeConnections.isEmpty()) {
-		    connection = freeConnections.pop();
-		    
-		} else {
-		    
-		    // There's no free connection
-		    try {
-			wait(5000);
-		    } catch (InterruptedException e) {
-			    LogHandler.getInstance().error(
-				    "Error occured during waiting"
-				    + " for a connection.");
-			}
-	
+		    connection = freeConnections.pop();   
 		}
 	
 		/*
@@ -158,8 +142,6 @@ public class DatabaseConnectionManager {
 			"Error occured during releasing the connection.");
 	   
 	}
-	// Notifies all waiting threads that there's a free connection
-	notifyAll();
     }
 
     /**
@@ -291,8 +273,7 @@ public class DatabaseConnectionManager {
 	
 	if (connection != null) {
 	    
-	    try (PreparedStatement stmt = connection.prepareStatement(query)){
-	
+	    try (PreparedStatement stmt = connection.prepareStatement(query)){	
 		stmt.execute();
 		active = true;
 	    } catch (SQLException e) {
