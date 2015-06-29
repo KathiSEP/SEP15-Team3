@@ -911,7 +911,6 @@ public class CourseDetailBean implements Pagination, Serializable {
     public String deleteCourse() {
 
 	// Create a new transaction object for the database connection.
-	this.transaction = Connection.create();
 	transaction.start();
 
 	try {
@@ -956,7 +955,6 @@ public class CourseDetailBean implements Pagination, Serializable {
     public String addCourseLeader() {
 
 	// Create a new transaction object for the database connection.
-	this.transaction = Connection.create();
 	transaction.start();
 	try {
 	    if (CourseDAO.addLeaderToCourse(this.transaction,
@@ -1013,7 +1011,6 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     public String removeCourseLeaders() {
 	// Create a new transaction object for the database connection.
-	this.transaction = Connection.create();
 	transaction.start();
 
 	String delLeaderString = FacesContext
