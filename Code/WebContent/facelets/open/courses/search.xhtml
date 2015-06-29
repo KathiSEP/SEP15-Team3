@@ -59,7 +59,6 @@
                                             <div class="input-group">
                                                 <h:inputText class="form-control" id="filterInput" style="width:230px;" value="#{searchCourseBean.searchString}"></h:inputText>
                                                 <h:message for="filterInput" style="color:red" />
-                                                <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
@@ -73,7 +72,7 @@
                         <h:panelGroup rendered="#{searchCourseBean.renderTable}">
                         <div class="panel panel-info">
                             <div class="panel-body">
-                                <h:dataTable value="#{searchCourseBean.searchResult}" var="course"
+                                <h:dataTable id="resultTable" value="#{searchCourseBean.searchResult}" var="course"
                                      styleClass="order-table"
                                      headerClass="order-table-header"
                                      rowClasses="order-table-odd-row,order-table-even-row"
@@ -180,7 +179,11 @@
                             </div>
                         </div>  
                         </h:panelGroup>
-                        </h:form>        
+                        </h:form>
+                        
+                        <h:message for="resultTable" style="color:red" />
+                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
+                                
                     </div>
                 </div>
             </body>
