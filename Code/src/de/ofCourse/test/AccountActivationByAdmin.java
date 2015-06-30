@@ -1,19 +1,31 @@
 package de.ofCourse.test;
 
-import java.util.regex.Pattern;
+/**
+ * Testing of account activation by the administrator. This test is geared to 
+ * the test T40-20 from our product brief. 
+ * The user 'Kathi6' will be activated by the administrator in this test. On 
+ * top of that it is asserted that the faces messages are correct and that the 
+ * user will be sent up to the right page.
+ * 
+ * @author Katharina Hölzl
+ */
+
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class AccountActivationByAdmin {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
+  public static final String facesMessages= "facesMessages";
 
   @Before
   public void setUp() throws Exception {
@@ -22,11 +34,13 @@ public class AccountActivationByAdmin {
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
-  //TODO Facesmessages und auf pop up prüfen
+  //TODO  auf pop up prüfen
   @Test
   public void testAccountActivationByAdmin() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+    
+    // Login as administrator
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
@@ -34,8 +48,14 @@ public class AccountActivationByAdmin {
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Administration")).click();
     driver.findElement(By.linkText("Benutzer aktivieren")).click();
+    assert driver.findElement(By.id("userActivation")).getText().equals("Benutzeraktivierung");
+    
+    // Testing activate account
     driver.findElement(By.id("formActivateUsers:participantsTable:0:checked")).click();
     driver.findElement(By.id("formActivateUsers:activate")).click();
+    
+    assert driver.findElement(By.id(facesMessages)).getText().contains("Der Benutzer wurde erfolgreich aktiviert! ");
+    
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
