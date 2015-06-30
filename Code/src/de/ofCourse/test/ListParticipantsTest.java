@@ -1,5 +1,17 @@
 package de.ofCourse.test;
 
+/**
+ * Testing of list participants. This test is geared to the tests T40-180 and 
+ * T50-40 from our product brief. 
+ * The administrator is looking at the participants of the course 'Zweiter Test' 
+ * and deletes one participant from this course. After that he goes back to the 
+ * course detail page of the course 'Zweiter Test' and do the logout. On
+ * top of that it is asserted that the faces message to the user action is 
+ * correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina Hölzl
+ */
+
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +43,8 @@ public class ListParticipantsTest {
   public void testListParticipants() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+    assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
+    
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();

@@ -1,5 +1,15 @@
 package de.ofCourse.test;
 
+/**
+ * Testing of create course. This test is geared to the tests T10-80 and T10-90
+ * from our product brief. Furthermore there are a view more tests for the 
+ * faults that can appear because of invalid user inserts. 
+ * The two courses 'Yoga' and 'Standardtanz' will be created in this test. On
+ * top of that it is asserted that the faces messages to the user insert are 
+ * correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina Hölzl
+ */
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +28,7 @@ public class CreateCourseTest {
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
   
-  public static final String facesMessage= "facesMessage";
+  
   public static final String messageCourseTitle= "messageCourseTitle";
   public static final String messageCourseLeaderID= "messageCourseLeaderID";
   public static final String messageCourseParticipants= "messageCourseParticipants";
@@ -40,6 +50,8 @@ public class CreateCourseTest {
       driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
       // Login as administrator and navigate to the page createCourse
       driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+      assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
+      
       driver.findElement(By.id("formLogin:usernameLogin")).clear();
       driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
       driver.findElement(By.id("formLogin:passwordLogin")).clear();

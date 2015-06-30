@@ -1,10 +1,23 @@
 package de.ofCourse.test;
 
+/**
+ * Testing of create course. This test is geared to the tests T40-10 from our 
+ * product brief.  
+ * The user 'Kathi6' tries to login although her account is not yet activated.
+ * It is asserted that the faces messages to the user insert are correct and 
+ * that the user will be sent up to the right page.
+ * 
+ * @author Katharina Hölzl
+ */
+
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -14,6 +27,8 @@ public class UserNotYetActivated {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
+  public static final String facesMessage= "facesMessage";
 
   @Before
   public void setUp() throws Exception {
@@ -26,6 +41,7 @@ public class UserNotYetActivated {
   public void testUserNotYetActivated() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+    assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     // Testing login: Account not activated
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
@@ -33,6 +49,8 @@ public class UserNotYetActivated {
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formLogin:login")).click();
+    assert driver.findElement(By.id(facesMessage)).getText().contains("Benutzerkonto nicht aktiv! ");
+    assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
   }
 
   @After
