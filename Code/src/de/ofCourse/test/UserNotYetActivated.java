@@ -1,7 +1,7 @@
 package de.ofCourse.test;
 
 /**
- * Testing of create course. This test is geared to the tests T40-10 from our 
+ * Testing of create course. This test is geared to the test T40-10 from our 
  * product brief.  
  * The user 'Kathi6' tries to login although her account is not yet activated.
  * It is asserted that the faces messages to the user insert are correct and 

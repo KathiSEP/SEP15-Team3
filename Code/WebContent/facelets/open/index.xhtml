@@ -11,7 +11,7 @@
 		<body>
 			<ui:define name="content">
 				<div class="container" align="center">
-					<h1>#{sessionUser.getLabel('index.header')}</h1>
+					<h1 id ="indexPage">#{sessionUser.getLabel('index.header')}</h1>
 					<h:link outcome="/facelets/open/courses/search.xhtml">
 						<h:graphicImage class="img-responsive" url="/resources/img/logo.png"/>
 					</h:link>
