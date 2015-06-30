@@ -318,13 +318,17 @@ public class CourseDetailBean implements Pagination, Serializable {
 		    	// If the course is full we throw the			
 		    	// CourseRegistrationException
 		        transaction.rollback();
+		        FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("errorMessage.courseRegistration.maxParticipantsCourse"));
+		        
 		        throw new CourseRegistrationException(sessionUser.getLabel("errorMessage.courseRegistration.maxParticipantsCourse"));
 		    
 		    }
 		} catch (InvalidDBTransferException e) {
 		    transaction.rollback();	    
-		    throw new InvalidDBTransferException("Error occured while User:" + sessionUser.getUserID()
-	                + " signing up for course:" + courseID);
+		    //throw new InvalidDBTransferException("Error occured while User:" + sessionUser.getUserID()
+	        //       + " signing up for course:" + courseID);
+		} catch (CourseRegistrationException e){
+		    transaction.rollback();
 		}
 	
     }
@@ -551,18 +555,25 @@ public class CourseDetailBean implements Pagination, Serializable {
 			} else {
 
 			    transaction.rollback();
-			    throw new CourseRegistrationException(sessionUser
-			                .getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit1")
-			                + courseUnitToSign.getTitle()
-			                + sessionUser.getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit2"));
+			    FacesMessageCreator.createFacesMessage(null, sessionUser
+                        .getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit1")
+                        + courseUnitToSign.getTitle()
+                        + sessionUser.getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit2"));
+			    
+			    //throw new CourseRegistrationException(sessionUser
+			    //            .getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit1")
+			    //            + courseUnitToSign.getTitle()
+			    //            + sessionUser.getLabel("errorMessage.courseRegistration.maxParticipantsCourseUnit2"));
 	
 			}
-
+			
 	    } catch (InvalidDBTransferException e) {
 
 			transaction.rollback();
-			throw new InvalidDBTransferException("Error occured during sign up user:" + 
-			        sessionUser.getUserID() + " for CourseUnit:" + courseUnitID);		    
+			//throw new InvalidDBTransferException("Error occured during sign up user:" + 
+			//        sessionUser.getUserID() + " for CourseUnit:" + courseUnitID, e);		    
+	    } catch (CourseRegistrationException e){
+	        transaction.rollback();
 	    }
 		    
 		
@@ -870,11 +881,16 @@ public class CourseDetailBean implements Pagination, Serializable {
 		    return userWhoTryToSignUp.getAccountBalance()
 			    - courseUnitToSign.getPrice();
 		} else {
+		    FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel("errorMessage.courseRegistration.notEnoughMoney1")
+                    + userWhoTryToSignUp.getUsername()
+                    + sessionUser.getLabel("errorMessage.courseRegistration.notEnoughMoney2")
+                    + courseUnitToSign.getTitle());
+		    
+		    
 		    throw new CourseRegistrationException(sessionUser.getLabel("errorMessage.courseRegistration.notEnoughMoney1")
 				    + userWhoTryToSignUp.getUsername()
 				    + sessionUser.getLabel("errorMessage.courseRegistration.notEnoughMoney2")
 				    + courseUnitToSign.getTitle());
-	
 		}
 
     }

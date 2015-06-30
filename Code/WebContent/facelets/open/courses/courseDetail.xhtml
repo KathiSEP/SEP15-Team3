@@ -21,6 +21,7 @@
 				<div class="row">
                     <div class="col-lg-12">
                       	<h:messages id="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
+                      	<h:message for="anmelden" style = "color:red"></h:message>
                       	<h:message for="startDateCourse" style="color:red"/>
                       	<h:message for="endDateCourse" style="color:red"/>
                       	<h:message for="minPersonsCourse" style="color:red"/>
@@ -215,6 +216,7 @@
 	                            </h:column>
 	                            <h:column>
 	                                <f:facet name="header"/>
+	                                
    	    	                        <h:commandButton id="anmelden" class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.units.signUp')}"
    	    	                        					action="#{courseDetailBean.signUpForCourseUnits}"
    	    	                        					rendered="#{!courseUnit.userIsParticipant and (courseDetailBean.sessionUser.userRole == 'REGISTERED_USER'

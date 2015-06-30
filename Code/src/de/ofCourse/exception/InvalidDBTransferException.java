@@ -25,7 +25,7 @@ public class InvalidDBTransferException extends RuntimeException {
     /**
      * Stores the SQL Exception 
      */
-    private SQLException error;
+    private Exception error;
     
     /**
      * Calls the Constructor of the parent class
@@ -49,7 +49,7 @@ public class InvalidDBTransferException extends RuntimeException {
      * @param message
      * @param e
      */
-    public InvalidDBTransferException(String message, SQLException e){
+    public InvalidDBTransferException(String message, Exception e){
         super(message);
         this.error = e;
         StringWriter errors = new StringWriter();

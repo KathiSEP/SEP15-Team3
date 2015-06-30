@@ -25,7 +25,7 @@ public class CourseRegistrationException extends RuntimeException{
     /**
      * Stores the SQL Exception 
      */
-    private SQLException error;
+    private Exception error;
     
     
     /**
@@ -49,7 +49,7 @@ public class CourseRegistrationException extends RuntimeException{
     /**
      * calls the Constructer of the parent Class and gives a Log Entry with Stack Trace
      */
-    public CourseRegistrationException(String message, SQLException e){
+    public CourseRegistrationException(String message, Exception e){
         super(message);
         this.error = e;
         StringWriter errors = new StringWriter();
