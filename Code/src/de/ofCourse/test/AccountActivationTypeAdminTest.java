@@ -31,13 +31,19 @@ public class AccountActivationTypeAdminTest {
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Administration")).click();
     driver.findElement(By.linkText("Seitenverwaltung")).click();
+   
+    
+    
     assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
-    Select selectBefore = new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))); 
+    Select selectBefore = new Select(driver.findElement(By.id("formActivationType:accountActivationSelection"))); 
     assert selectBefore.getFirstSelectedOption().getText().equals("E-Mail-Verifikation");
-    new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))).selectByVisibleText("E-Mail-Verifikation und Aktivierung durch Administrator");
-    Select selectAfter = new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))); 
+    new Select(driver.findElement(By.id("formActivationType:accountActivationSelection"))).selectByVisibleText("E-Mail-Verifikation und Aktivierung durch Administrator");
+    Select selectAfter = new Select(driver.findElement(By.id("formActivationType:accountActivationSelection"))); 
     assert selectAfter.getFirstSelectedOption().getText().equals("E-Mail-Verifikation und Aktivierung durch Administrator");
-    driver.findElement(By.id("j_idt80:saveAccountActivation")).click();
+    driver.findElement(By.id("formActivationType:saveAccountActivation")).click();
+    assert driver.findElement(By.id("formActivationType:accountActivationMessage")).getText().equals("Der Aktivierungstyp wurde erfolgreich geaendert.");
+    
+    
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
