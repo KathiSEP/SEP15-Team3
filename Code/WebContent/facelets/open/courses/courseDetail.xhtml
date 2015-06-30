@@ -20,7 +20,11 @@
 				
 				<div class="row">
                     <div class="col-lg-12">
-                      <h:messages id="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
+                      	<h:messages id="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
+                      	<h:message for="startDateCourse" style="color:red"/>
+                      	<h:message for="endDateCourse" style="color:red"/>
+                      	<h:message for="minPersonsCourse" style="color:red"/>
+                      	<h:message for="leaderIDField" style="color:red"/>
                     </div>
                 </div>
 				
@@ -120,7 +124,7 @@
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 											<p/>
 										</h:commandButton>
-										<h:commandButton id = "loadParticipantsID" class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
+										<h:commandButton id="loadParticipantsID" class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 										</h:commandButton>
 									</div>
@@ -148,7 +152,9 @@
 											<div class="form-group" style="width:160px;">
 													<label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
 												<h:inputText id="leaderIDField" rendered="#{courseDetailBean.editMode}" class="form-control form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"/>
-												<h:commandButton class="btn btn-success form-group" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}"/>
+												<h:commandButton class="btn btn-success form-group" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
+													<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+												</h:commandButton>
 											</div>
 											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}" action="#{courseDetailBean.deleteCourse}"/>
 										</div>
