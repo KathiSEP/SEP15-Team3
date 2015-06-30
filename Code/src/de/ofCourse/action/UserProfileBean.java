@@ -304,6 +304,7 @@ public class UserProfileBean {
 	    		
 	    		FacesMessageCreator.createFacesMessage(null,
     					sessionUser.getLabel("profile.message.image.success"));
+	    		uploadPic = false;
 	    	} catch (InvalidDBTransferException e) {
 	    		FacesMessageCreator.createFacesMessage(null,
     					sessionUser.getLabel("profile.message.error"));
@@ -327,6 +328,7 @@ public class UserProfileBean {
     		
     		FacesMessageCreator.createFacesMessage(null,
 					sessionUser.getLabel("profile.message.image.delete"));
+    		uploadPic = false;
     	} catch (InvalidDBTransferException e) {
     		FacesMessageCreator.createFacesMessage(null,
 					sessionUser.getLabel("profile.message.error"));

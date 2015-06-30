@@ -252,7 +252,8 @@
                                 
                                 <h:form class="form-horizontal" id="formAdmin">
                                     <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR' and userProfileBean.readOnly == false}">
-                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"/>
+                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"
+                                            onclick="if (!confirm('#{sessionUser.getLabel('profile.row.userData.deleteUserConfirm')}')) return false"/>
                                     </h:panelGroup>
                                         <br/>
                                 </h:form>
@@ -301,7 +302,8 @@
 	                                            </div>
 	                                            
 	                                            <div class="col-lg-4" style="text-align:right;">
-	                                                <h:commandButton id="deleteProfilePicture" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.picture.deletePictureButton')}" action="#{userProfileBean.deleteProfilePic()}"/>
+	                                                <h:commandButton id="deleteProfilePicture" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.picture.deletePictureButton')}" action="#{userProfileBean.deleteProfilePic()}"
+	                                                    onclick="if (!confirm('#{sessionUser.getLabel('profile.row.picture.deletePicConfirm')}')) return false" />
 	                                            </div>
                                             
                                             </h:panelGroup>
