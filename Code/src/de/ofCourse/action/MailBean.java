@@ -64,7 +64,7 @@ public class MailBean {
         smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail("smtpport")));
 
         //Tests whether the admin wants to connect per SSL or TTLS
-        if(PropertyManager.getInstance().getPropertyMail("useSSL") == "true"){
+        if(PropertyManager.getInstance().getPropertyMail("useSSL").equals("true")){
             smtpServer.setSsl(true);
         } else {
             smtpServer.setSsl(false);
