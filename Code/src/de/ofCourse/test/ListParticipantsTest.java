@@ -31,6 +31,7 @@ public class ListParticipantsTest {
   private StringBuffer verificationErrors = new StringBuffer();
   
   public static final String facesMessages= "facesMessages";
+  
 
   @Before
   public void setUp() throws Exception {
@@ -61,6 +62,8 @@ public class ListParticipantsTest {
     
     // Delete one participant from this course
     driver.findElement(By.id("formListParticipants:participantsTable:1:checked")).click();
+    //driver.findElement(By.linkText("Wollen Sie die ausgewählten Teilnehmer wirklich aus dem Kurs entfernen?")).click();
+    //driver.findElement(By.xpath("//a[contains(text(),'Wollen Sie die ausgewählten Teilnehmer wirklich aus dem Kurs entfernen?')]")).click();
     driver.findElement(By.id("formListParticipants:delete")).click();
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die ausgewählten Benutzer wurden erfolgreich aus dem Kurs entfernt! ");

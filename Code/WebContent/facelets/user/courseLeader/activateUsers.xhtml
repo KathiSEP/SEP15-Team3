@@ -138,6 +138,7 @@
                         
 	                        <h:commandButton id="activate" class="btn btn-info"
 	                                    value="#{sessionUser.getLabel('activateUsers.activateButton')}"
+	                                    onclick ="if(!confirm ('Wollen Sie die ausgewählten Teilnehmer wirklich aktivieren?')) return false"
 	                                    action="#{accountManagementBean.activateAccounts}">
 	                        </h:commandButton>
 	                    
