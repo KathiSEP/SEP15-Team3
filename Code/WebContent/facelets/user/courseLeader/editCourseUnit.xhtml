@@ -18,24 +18,24 @@
             </h:form>
             <div class="row">
                 <div class="col-lg-12">
-                    <h:message for="titleCourseUnit" style="color:red" />
-                    <h:message for="dateCourseUnit" style="color:red" />
-                    <h:message for="startTimeCourseUnit" style="color:red" />
-                    <h:message for="endTimeCourseUnit" style="color:red" />
-                    <h:message for="locationCourseUnit" style="color:red" />
-                    <h:message for="streetCourseUnit" style="color:red" />
-                    <h:message for="houseNumberCourseUnit" style="color:red" />
-                    <h:message for="cityCourseUnit" style="color:red" />
-                    <h:message for="zipcodeCourseUnit" style="color:red" />
-                    <h:message for="descriptionCourseUnit" style="color:red" />
-                    <h:message for="priceCourseUnit" style="color:red" />
-                    <h:message for="leaderCourseUnit" style="color:red" />
-                    <h:message for="minUsersCourseUnit" style="color:red" />
-                    <h:message for="maxUsersCourseUnit" style="color:red" />
+                    <h:message id="titleCourseUnitMessage" for="titleCourseUnit" style="color:red" />
+                    <h:message id="dateCourseUnitMessage" for="dateCourseUnit" style="color:red" />
+                    <h:message id="startTimeCourseUnitMessage" for="startTimeCourseUnit" style="color:red" />
+                    <h:message id="endTimeCourseUnitMessage" for="endTimeCourseUnit" style="color:red" />
+                    <h:message id="locationCourseUnitMessage" for="locationCourseUnit" style="color:red" />
+                    <h:message id="streetCourseUnitMessage" for="streetCourseUnit" style="color:red" />
+                    <h:message id="houseNumberCourseUnitMessage" for="houseNumberCourseUnit" style="color:red" />
+                    <h:message id="cityCourseUniMessage" for="cityCourseUnit" style="color:red" />
+                    <h:message id="zipcodeCourseUnitMessage" for="zipcodeCourseUnit" style="color:red" />
+                    <h:message id="descriptionCourseUnitMessage" for="descriptionCourseUnit" style="color:red" />
+                    <h:message id="priceCourseUnittMessage" for="priceCourseUnit" style="color:red" />
+                    <h:message id="leaderCourseUniMessage" for="leaderCourseUnit" style="color:red" />
+                    <h:message id="minUsersCourseUnitMessage" for="minUsersCourseUnit" style="color:red" />
+                    <h:message id="maxUsersCourseUnitMessage" for="maxUsersCourseUnit" style="color:red" />
                     <h:message for="idUser" style="color:red" />
                     <h:message for="nameUser" style="color:red" />
                     <h:message for="firstNameUser" style="color:red" />
-                    <h:message for="countryCourseUnit" style="color:red" />
+                    <h:message id="countryCourseUnitMessage" for="countryCourseUnit" style="color:red" />
                     <h:messages globalOnly="true" layout="table"
                         class="alert alert-danger" />
                 </div>
@@ -332,9 +332,18 @@
                                         <f:param name="courseID"
                                             value="#{courseUnitManagementBean.courseUnit.courseID}" />
                                     </h:commandButton>
+                                    
                                 </h:panelGroup>
+                              <br/>
+                                 <br/>
+                            <h:commandButton value="#{sessionUser.getLabel('courseUnitManagementBean.BackButton')}" class="btn btn-info pull-right" 
+                                             immediate="true" action="#{courseUnitManagementBean.redirectToCourseDetails}">
+                             <f:param name="courseID"
+                                        value="#{courseUnitManagementBean.courseUnit.courseID}" /> 
+                            </h:commandButton>
                             </h:form>
-                        </div>
+                            </div>
+                         
                     </div>
                 </div>
 

@@ -1044,7 +1044,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	return isValidLeader;	
     }
     
-    
+    public String redirectToCourseDetails(){
+	return URL_COURSE_DETAIL;
+    }
     
     /**
      * {@inheritDoc}
