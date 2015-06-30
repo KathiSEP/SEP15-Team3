@@ -90,13 +90,19 @@ public class MailThread implements Runnable {
             mail.setFrom(new InternetAddress(smtpServer.getUsername()));
 
             for (String mailAddresse : recipients) {
-                mail.addRecipients(Message.RecipientType.BCC, mailAddresse);
+                mail.addRecipients(Message.RecipientType.TO, mailAddresse);
             }
 
             mail.setSubject(subject);
             mail.setText(message);
-
-            Transport transport = session.getTransport("smtp");
+            Transport transport;
+            if(smtpServer.isSsl()){
+                transport = session.getTransport("smtp");
+            }
+            else{
+                transport = session.getTransport("smtps");
+            }
+            
 
             transport.connect(smtpServer.getHostaddr(),
                     smtpServer.getUsername(), smtpServer.getPassword());

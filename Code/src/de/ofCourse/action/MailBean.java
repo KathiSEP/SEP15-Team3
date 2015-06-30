@@ -107,12 +107,13 @@ public class MailBean {
             }          
         };
      
-        prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
+        
         prop.put("mail.smtph.port", smtpServer.getPort());
         prop.put("mail.smtp.auth", "true");
         
         if(smtpServer.isSsl()){
             prop.put("mail.smtp.ssl.enable", "true");
+            prop.put("mail.smtp.ssl.trust", smtpServer.getHostaddr());
         }else{
             prop.put("mail.smtp.starttls.enable", "true"); 
         }                        
