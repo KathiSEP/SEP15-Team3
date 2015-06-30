@@ -1056,13 +1056,19 @@ public class UserDAO {
     	int emptyNumber = 0;
     
     	String updateQuery = "UPDATE \"users\" "
-    		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, pw_hash = ?, "
-    		+ "pw_salt = ?, form_of_address = ?::form_of_address, date_of_birth = ?, "
+    		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, "
+    		+ "form_of_address = ?::form_of_address, date_of_birth = ?, "
     		+ "role = ?::role "
     		+ "WHERE id = ?;"
     		+ "UPDATE \"user_addresses\" "
     		+ "SET country = ?, city = ?, zip_code = ?, street = ?, house_nr = ? "
     		+ "WHERE user_id = ?";
+
+    	if (pwHash != null && salt != null){
+    	    updateQuery = updateQuery + "; UPDATE \"users\" "
+    	                              + "SET pw_hash = ?, pw_salt = ? "
+    	                              + "WHERE id = ?";
+    	}
     
     	try(PreparedStatement statement = conn.prepareStatement(updateQuery)) {
     	    //Update User Dates
@@ -1070,55 +1076,59 @@ public class UserDAO {
     	    statement.setString(2, user.getLastname());
     	    statement.setString(3, user.getUsername());
     	    statement.setString(4, user.getEmail());
-    	    statement.setString(5, pwHash);
-    	    statement.setString(6, salt);
-    	    statement.setString(7, user.getSalutation().toString());
+    	    statement.setString(5, user.getSalutation().toString());
 
     	    java.sql.Date birthday;
     	    if(user.getDateOfBirth() != null) {
     	        birthday = new java.sql.Date(user.getDateOfBirth().getTime());    	        
-    	        statement.setDate(8, birthday);    	    
+    	        statement.setDate(6, birthday);    	    
     	    } else {
     	        birthday = new java.sql.Date(0);
-    	        statement.setDate(8, birthday);
+    	        statement.setDate(6, birthday);
     	    }
 
-    	    statement.setString(9, user.getUserRole().toString());
+    	    statement.setString(7, user.getUserRole().toString());
 
-    	    statement.setInt(10, user.getUserID());
+    	    statement.setInt(8, user.getUserID());
 
     	    //Update Address
     	    if(user.getAddress().getCountry() != null) {
-    	        statement.setString(11, user.getAddress().getCountry());    	        
+    	        statement.setString(9, user.getAddress().getCountry());    	        
     	    } else {
-    	        statement.setString(11, emptyString);
+    	        statement.setString(9, emptyString);
     	    }
 
     	    if(user.getAddress().getCity() != null) {
-    	        statement.setString(12, user.getAddress().getCity());    	        
+    	        statement.setString(10, user.getAddress().getCity());    	        
+    	    } else {
+    	        statement.setString(10, emptyString);
+    	    }
+
+    	    if(user.getAddress().getZipCode() != null) {
+    	        statement.setInt(11, user.getAddress().getZipCode());    	        
+    	    } else {
+    	        statement.setInt(11, emptyNumber);
+    	    }
+
+    	    if(user.getAddress().getStreet() != null) {
+    	        statement.setString(12, user.getAddress().getStreet());    	        
     	    } else {
     	        statement.setString(12, emptyString);
     	    }
 
-    	    if(user.getAddress().getZipCode() != null) {
-    	        statement.setInt(13, user.getAddress().getZipCode());    	        
+    	    if(user.getAddress().getHouseNumber() != null) {
+    	        statement.setInt(13, user.getAddress().getHouseNumber());
     	    } else {
     	        statement.setInt(13, emptyNumber);
     	    }
 
-    	    if(user.getAddress().getStreet() != null) {
-    	        statement.setString(14, user.getAddress().getStreet());    	        
-    	    } else {
-    	        statement.setString(14, emptyString);
-    	    }
+    	    statement.setInt(14, user.getUserID());
 
-    	    if(user.getAddress().getHouseNumber() != null) {
-    	        statement.setInt(15, user.getAddress().getHouseNumber());
-    	    } else {
-    	        statement.setInt(15, emptyNumber);
+    	    if (pwHash != null && salt != null){
+    	        statement.setString(15, pwHash);
+    	        statement.setString(16, salt);
+    	        statement.setInt(17, user.getUserID());
     	    }
-
-    	    statement.setInt(16, user.getUserID());
 
     	    statement.executeUpdate();
     	} catch (SQLException e) {
