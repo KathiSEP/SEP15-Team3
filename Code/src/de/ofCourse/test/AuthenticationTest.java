@@ -1,16 +1,21 @@
 package de.ofCourse.test;
 
-import java.util.regex.Pattern;
+/**
+ * Testing of authentication. This test is geared to the test T10-10 from our 
+ * product brief. Furthermore there are a view more tests for the faults that 
+ * can appear because of invalid user inserts. 
+ * The administrator do the login in this test. On top of that it is 
+ * asserted that the faces messages to the user insert are correct and that the 
+ * user will be sent up to the right page.
+ * 
+ *  @author Katharina Hölzl
+ */
 import java.util.concurrent.TimeUnit;
-
 import org.junit.*;
-
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class AuthenticationTest {
   private WebDriver driver;
