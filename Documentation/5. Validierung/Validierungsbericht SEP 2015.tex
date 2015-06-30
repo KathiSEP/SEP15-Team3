@@ -1,0 +1,84 @@
+\documentclass[a4paper, 12pt]{scrreprt}
+\usepackage[german]{babel}
+\usepackage[german]{translator}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ae}
+\usepackage[bookmarks,bookmarksnumbered]{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage[left=2.00cm, right=2.50cm, bottom =3.53cm]{geometry}
+\usepackage{ pdflscape}
+%\usepackage{pdfpages}
+%\usepackage[section]{placeins}
+
+
+\newcommand{\col}[2]{\textcolor{#1}{#2}}
+
+% Zeilenhöhe bei Tabellen
+\newcommand{\zh}[1]{\parbox[0pt][#1][c]{0cm}{}}
+
+\begin{document}
+	\thispagestyle{plain}
+
+\begin{titlepage}
+    \begin{center}
+        \begin{figure}[ht]
+            \centering
+            \includegraphics[width=0.66\textwidth, angle=0]{logo/name_blau_ofCourse.jpg}
+        \end{figure}
+
+    	\begin{title}
+        	\title{\Huge{\textbf{Kurseinheiten-Manager \\ Validierungsbericht\\}}}
+
+		\end{title}
+		\hspace{3cm}
+
+        	Software Engineering Praktikum \\
+        	Sommersemester 2015\\
+        	Universität Passau\\
+
+
+        	Betreuer: Andreas Stahlbauer \\
+        	\hspace{1,5cm}\\
+        	Version: 1.0 \\
+        	\hspace{1,5cm}\\
+        	Datum: 03.07.2015\\[50pt]
+        	Team 3 \\
+    
+		    \ \\
+        
+        \begin{tabular}{ | l | l | l | l |}
+        	\hline
+        	\textbf{Matrikelnummer} & \textbf{Name} & \textbf{Phase} & \textbf{E-Mail}  \\ \hline
+        	63097 & Katharina Hölzl & Pflichtenheft & hoelzlka@fim.uni-passau.de \\ \hline
+        	64504 & Ricky Strohmeier& Entwurf & strohric@fim.uni-passau.de  \\ \hline
+        	61085 & Sebastian Schwarz & Feinspezifikation & sebastian@nrschwarz.de \\ \hline 
+        	64080 & Tobias Fuchs & Implementierung  &  fuchstob@fim.uni-passau.de\\ \hline
+        	58379 & Patrick Cretu  &  Validierung & cretu@fim.uni-passau.de \\ \hline
+        \end{tabular}
+        
+        \ \\
+        \ \\
+       
+        
+        
+    \end{center}
+\end{titlepage}
+
+
+% Platzierung des Inhaltsverzeichnisses
+\tableofcontents
+
+
+\include{Einleitung}
+\include{TestsAusDemPflichtenheft}
+\include{UsabilityTests}
+\include{Lasttests}
+\include{CodeCoverage}
+\end{document}
