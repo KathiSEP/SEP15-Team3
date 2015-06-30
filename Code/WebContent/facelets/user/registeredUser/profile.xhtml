@@ -22,6 +22,26 @@
                             <div class="panel-heading">
                                 <strong>#{sessionUser.getLabel('profile.row.userData.header')}</strong>
                             </div>
+                            
+                            <div class="col-lg-12">
+		                        <h:message for="firstnameRegister" style="color:red" />
+		                        <h:message for="lastnameRegister" style="color:red" />
+		                        <h:message for="usernameRegister" style="color:red" />
+		                        <h:message for="passwordRegister" style="color:red" />
+		                        <h:message for="passwordConfirmRegister" style="color:red" />
+		                        <h:message for="birthdateRegister" style="color:red" />
+		                        <h:message for="streetRegister" style="color:red" />
+		                        <h:message for="houseNumberRegister" style="color:red" />
+		                        <h:message for="locationRegister" style="color:red" />
+		                        <h:message for="zipcodeRegister" style="color:red" />
+		                        <h:message for="countryRegister" style="color:red" />
+		                        <h:message for="emailRegister" style="color:red" />
+		                        <h:message for="saveSettings" style="color:red" />
+		                        <h:message for="editProfilePicture" style="color:red" />
+		                        <h:message for="deleteProfilePicture" style="color:red" />
+		                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
+		                    </div>
+                            
                             <div class="panel-body">
                             
                                 <div class="input-group" style="padding-top:5px;">
@@ -94,22 +114,6 @@
 			                        </h:panelGroup>
                                 </h:form>
                                 
-                                <div class="col-lg-12">
-			                        <h:message for="firstnameRegister" style="color:red" />
-			                        <h:message for="lastnameRegister" style="color:red" />
-			                        <h:message for="usernameRegister" style="color:red" />
-			                        <h:message for="passwordRegister" style="color:red" />
-			                        <h:message for="passwordConfirmRegister" style="color:red" />
-			                        <h:message for="birthdateRegister" style="color:red" />
-			                        <h:message for="streetRegister" style="color:red" />
-			                        <h:message for="houseNumberRegister" style="color:red" />
-			                        <h:message for="locationRegister" style="color:red" />
-			                        <h:message for="zipcodeRegister" style="color:red" />
-			                        <h:message for="countryRegister" style="color:red" />
-			                        <h:message for="emailRegister" style="color:red" />
-			                        <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
-                                </div>
-                            
                                 <h:form class="form-horizontal" id="formChangeSettings">
                                     <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
 	                                    <div class="input-group" >
@@ -248,7 +252,8 @@
                                 
                                 <h:form class="form-horizontal" id="formAdmin">
                                     <h:panelGroup rendered="#{userProfileBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR' and userProfileBean.readOnly == false}">
-                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"/>
+                                        <h:commandButton id="deleteUser" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.userData.deleteButton')}" action="#{userProfileBean.deleteUser()}"
+                                            onclick="if (!confirm('#{sessionUser.getLabel('profile.row.userData.deleteUserConfirm')}')) return false"/>
                                     </h:panelGroup>
                                         <br/>
                                 </h:form>
@@ -269,14 +274,18 @@
                                     
                                     <div class="panel-body">
                                         
-                                        <div class="row" style="padding-top:10px;">
+                                        <div class="panel-body" style="padding-top:10px;">
                                         
                                             <div class="col-lg-8">
                                                 <h:graphicImage value="/image?profilImage=#{userProfileBean.userID}" width="200" height="200" ></h:graphicImage>                                          
                                             </div>
-                                            <br/>
                                             
-                                            <h:panelGroup rendered="#{userProfileBean.readOnly == false}">
+                                            <div class="col-lg-4" style="text-align:right;">
+                                                <h:commandButton id="changeProfilePicture" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.picture.editPictureButton')}" action="#{userProfileBean.setUploadPic(true)}"
+                                                    rendered="#{userProfileBean.uploadPic == false}" />
+                                            </div>
+                                            
+                                            <h:panelGroup rendered="#{userProfileBean.uploadPic}">
                                             
 	                                            <h:inputFile class="btn btn-default" id="userImage" value="#{userProfileBean.image}">
 	                                                <f:validator validatorId="imageValidator"></f:validator>
@@ -289,7 +298,12 @@
 	                                            </div>
 	                                            
 	                                            <div class="col-lg-4" style="text-align:right;">
-	                                                <h:commandButton id="deleteProfilePicture" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.picture.deletePictureButton')}" action="#{userProfileBean.deleteProfilePic()}"/>
+	                                               <h:commandButton id="cancelSettings" class="btn btn-info" value="#{sessionUser.getLabel('profile.row.userData.cancelButton')}" action="#{userProfileBean.setUploadPic(false)}" />
+	                                            </div>
+	                                            
+	                                            <div class="col-lg-4" style="text-align:right;">
+	                                                <h:commandButton id="deleteProfilePicture" class="btn btn-danger" value="#{sessionUser.getLabel('profile.row.picture.deletePictureButton')}" action="#{userProfileBean.deleteProfilePic()}"
+	                                                    onclick="if (!confirm('#{sessionUser.getLabel('profile.row.picture.deletePicConfirm')}')) return false" />
 	                                            </div>
                                             
                                             </h:panelGroup>

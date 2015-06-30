@@ -75,7 +75,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.username')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.username')}: *</span>
                                         <h:inputText class="form-control" style="width:300px;" id="usernameRegister"
                                                      value="#{registerUserBean.userToRegistrate.username}"
                                                      required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Username')}">
@@ -84,7 +84,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.password')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.password')}: *</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordRegister"
                                                        value="#{registerUserBean.registerPassword}" 
                                                        required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Password')}">
@@ -94,7 +94,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.passwordConfirm')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.passwordConfirm')}:*</span>
                                         <h:inputSecret class="form-control" style="width:300px;" id="passwordConfirmRegister"
                                                        value="#{registerUserBean.registerConfirmPassword}"
                                                        required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.PasswordConfirm')}" binding="#{confirmPassword}">
@@ -133,7 +133,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.city')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.city')}: *</span>
                                         <h:inputText class="form-control" style="width:300px;" id="locationRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.city}" 
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CityRequired')}"
@@ -143,7 +143,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.zip')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.zip')}: *</span>
                                         <h:inputText class="form-control" style="width:300px;" id="zipcodeRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.zipCode}" 
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeRequired')}"
@@ -155,7 +155,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.country')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.country')}: *</span>
                                         <h:inputText class="form-control" style="width:300px;" id="countryRegister"
                                                      value="#{registerUserBean.userToRegistrate.address.country}" 
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.CountryRequired')}"
@@ -165,7 +165,7 @@
                                     </div>
                                     
                                     <div class="input-group" style="padding-top:5px;">
-                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.mail')}:</span>
+                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('authenticate.row.register.mail')}: *</span>
                                         <h:inputText class="form-control" style="width:300px;" id="emailRegister"
                                                      value="#{registerUserBean.userToRegistrate.email}" 
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.MailRequired')}">

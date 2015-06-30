@@ -1,13 +1,21 @@
 package de.ofCourse.test;
 
-import java.util.regex.Pattern;
+/**
+ * Testing of add leader to course. This test is geared to the test T50-50 from 
+ * our product brief. Furthermore there are a view more tests for the faults that 
+ * can appear because of invalid user inserts. 
+ * The user with the id '10027' will be added to the course as leader in this 
+ * test. On top of that it is asserted that the faces messages to the user 
+ * insert are correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina Hölzl
+ */
+
 import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class AddLeaderToCourseTest {
   private WebDriver driver;
@@ -22,12 +30,14 @@ public class AddLeaderToCourseTest {
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
-  //TODO auf Facesmessages prüfen !!
+  //TODO auf Facesmessages prüfen und weiterleitung auf seiten!!
   
   @Test
   public void testAddLeaderToCourse() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+    
+    //Login as administrator
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
@@ -36,18 +46,25 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
     driver.findElement(By.linkText("Zweiter Test")).click();
+    
+    // Testing insert is a negative number
     driver.findElement(By.name("courseDetailsID:j_idt84")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("-1234");
     driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    
+    // Testing inserted id does not exist
     driver.findElement(By.name("courseDetailsID:j_idt84")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("123456");
     driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    
+    // Testing insert correct course instructor id
     driver.findElement(By.name("courseDetailsID:j_idt84")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("10027");
     driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 

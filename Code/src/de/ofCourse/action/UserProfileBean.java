@@ -78,6 +78,11 @@ public class UserProfileBean {
     private boolean readOnly;
     
     /**
+     * Checks if the user requests to edit his profile image
+     */
+    private boolean uploadPic;
+    
+    /**
      * The entered user password
      */
     private String password;
@@ -190,13 +195,17 @@ public class UserProfileBean {
     				mailBean.sendUpdateMessage(userID, veriString);
     			}
     			
+    			FacesMessageCreator.createFacesMessage(null,
+						sessionUser.getLabel("profile.message.success"));
     			readOnly = true;
     		} else {
     			FacesMessageCreator.createFacesMessage(null,
-    					sessionUser.getLabel("profile.message"));
+    					sessionUser.getLabel("profile.message.invalid"));
     			transaction.rollback();
     		}
     	} catch (InvalidDBTransferException e) {
+    		FacesMessageCreator.createFacesMessage(null,
+					sessionUser.getLabel("profile.message.error"));
     		LogHandler
             .getInstance()
             .error("SQL Exception occoured during executing "
@@ -292,7 +301,13 @@ public class UserProfileBean {
 	    	try {
 	    		UserDAO.uploadImage(transaction, user.getUserID(), image);
 	    		transaction.commit();
+	    		
+	    		FacesMessageCreator.createFacesMessage(null,
+    					sessionUser.getLabel("profile.message.image.success"));
+	    		uploadPic = false;
 	    	} catch (InvalidDBTransferException e) {
+	    		FacesMessageCreator.createFacesMessage(null,
+    					sessionUser.getLabel("profile.message.error"));
 	    		LogHandler
 	            .getInstance()
 	            .error("SQL Exception occoured during executing "
@@ -310,7 +325,13 @@ public class UserProfileBean {
     	try {
     		UserDAO.delete(transaction, user.getUserID(), false);
     		transaction.commit();
+    		
+    		FacesMessageCreator.createFacesMessage(null,
+					sessionUser.getLabel("profile.message.image.delete"));
+    		uploadPic = false;
     	} catch (InvalidDBTransferException e) {
+    		FacesMessageCreator.createFacesMessage(null,
+					sessionUser.getLabel("profile.message.error"));
     		LogHandler
             .getInstance()
             .error("SQL Exception occoured during executing "
@@ -354,6 +375,24 @@ public class UserProfileBean {
 	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * 
+	 * @return the value of uploadPic
+	 */
+	public boolean isUploadPic() {
+		return uploadPic;
+	}
+
+	/**
+	 * Sets the value of "uploadPic"
+	 * 
+	 * @param uploadPic
+	 *                the boolean value
+	 */
+	public void setUploadPic(boolean uploadPic) {
+		this.uploadPic = uploadPic;
 	}
 
 	/**

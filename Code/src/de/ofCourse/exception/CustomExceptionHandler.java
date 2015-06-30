@@ -64,17 +64,22 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         while ( exceptionList.hasNext() ) {
     
            ExceptionQueuedEvent event = exceptionList.next();
-           ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
-           Throwable thr = context.getException();
+            ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event
+                    .getSource();
+            Throwable thr = context.getException();
 
-           if ( thr.getMessage() == "java.lang.NullPointerException" ) {
-              redirectToDefault();              
-            } else if( thr.getMessage().contains("de.ofCourse.exception.CourseRegistrationException")){
-                redirectToCourseRegistration(thr);  
-            } else {
-              redirectTo404();  
+            while (thr != null) {
+                if (thr instanceof java.lang.RuntimeException) {
+                    thr = thr.getCause();
+                    redirectToDefault();
+                } else {
+                    thr = thr.getCause();
+                    break;
+                }
             }
-           getWrapped().handle();
+
+            redirectTo404();
+
         }
         
      }
