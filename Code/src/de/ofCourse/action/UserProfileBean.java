@@ -192,7 +192,7 @@ public class UserProfileBean {
     			if (sendMail) {
     				SecureRandom random = new SecureRandom();
     				String veriString = new BigInteger(130, random).toString();
-    				mailBean.sendUpdateMessage(userID, veriString);
+    				//mailBean.sendUpdateMessage(userID, veriString);
     			}
     			
     			FacesMessageCreator.createFacesMessage(null,
