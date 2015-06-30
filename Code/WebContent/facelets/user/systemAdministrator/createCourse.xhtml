@@ -63,7 +63,8 @@
                                             <span class="input-group-addon"
                                                 style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.instructorID')}:</span>
                                             <h:inputText class="form-control" style="width:340px;" value="#{courseManagementBean.courseLeaderID}" 
-                                                id="IdOfCourseLeader" converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}">
+                                                id="IdOfCourseLeader" converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}"
+                                                required="true" requiredMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.StartRequired')}">
                                                 <f:validator validatorId="courseInstructorValidator"/>
                                                 </h:inputText>
                                             
