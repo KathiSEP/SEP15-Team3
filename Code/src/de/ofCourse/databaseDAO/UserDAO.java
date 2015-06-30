@@ -1057,7 +1057,8 @@ public class UserDAO {
     
     	String updateQuery = "UPDATE \"users\" "
     		+ "SET first_name = ?, name = ?, nickname = ?, email = ?, pw_hash = ?, "
-    		+ "pw_salt = ?, form_of_address = ?::form_of_address, date_of_birth = ? "
+    		+ "pw_salt = ?, form_of_address = ?::form_of_address, date_of_birth = ?, "
+    		+ "role = ?::role "
     		+ "WHERE id = ?;"
     		+ "UPDATE \"user_addresses\" "
     		+ "SET country = ?, city = ?, zip_code = ?, street = ?, house_nr = ? "
@@ -1082,40 +1083,42 @@ public class UserDAO {
     	        statement.setDate(8, birthday);
     	    }
 
-    	    statement.setInt(9, user.getUserID());
+    	    statement.setString(9, user.getUserRole().toString());
+
+    	    statement.setInt(10, user.getUserID());
 
     	    //Update Address
     	    if(user.getAddress().getCountry() != null) {
-    	        statement.setString(10, user.getAddress().getCountry());    	        
-    	    } else {
-    	        statement.setString(10, emptyString);
-    	    }
-
-    	    if(user.getAddress().getCity() != null) {
-    	        statement.setString(11, user.getAddress().getCity());    	        
+    	        statement.setString(11, user.getAddress().getCountry());    	        
     	    } else {
     	        statement.setString(11, emptyString);
     	    }
 
-    	    if(user.getAddress().getZipCode() != null) {
-    	        statement.setInt(12, user.getAddress().getZipCode());    	        
+    	    if(user.getAddress().getCity() != null) {
+    	        statement.setString(12, user.getAddress().getCity());    	        
     	    } else {
-    	        statement.setInt(12, emptyNumber);
+    	        statement.setString(12, emptyString);
+    	    }
+
+    	    if(user.getAddress().getZipCode() != null) {
+    	        statement.setInt(13, user.getAddress().getZipCode());    	        
+    	    } else {
+    	        statement.setInt(13, emptyNumber);
     	    }
 
     	    if(user.getAddress().getStreet() != null) {
-    	        statement.setString(13, user.getAddress().getStreet());    	        
+    	        statement.setString(14, user.getAddress().getStreet());    	        
     	    } else {
-    	        statement.setString(13, emptyString);
+    	        statement.setString(14, emptyString);
     	    }
 
     	    if(user.getAddress().getHouseNumber() != null) {
-    	        statement.setInt(14, user.getAddress().getHouseNumber());
+    	        statement.setInt(15, user.getAddress().getHouseNumber());
     	    } else {
-    	        statement.setInt(14, emptyNumber);
+    	        statement.setInt(15, emptyNumber);
     	    }
 
-    	    statement.setInt(15, user.getUserID());
+    	    statement.setInt(16, user.getUserID());
 
     	    statement.executeUpdate();
     	} catch (SQLException e) {
