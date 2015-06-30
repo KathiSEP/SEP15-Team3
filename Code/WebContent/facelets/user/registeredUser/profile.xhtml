@@ -235,9 +235,9 @@
                                             <div class="input-group" style="padding-top:5px;">
                                                 <span class="input-group-addon" style="width: 160px; text-align: right;">#{sessionUser.getLabel('profile.row.userData.role')}:</span>
                                                     <h:selectOneMenu class="form-control" id="userRoleSelection" value="#{userProfileBean.role}">
-                                                        <f:selectItem itemValue="registered" itemLabel="#{sessionUser.getLabel('profile.row.userData.registered')}" />
-                                                        <f:selectItem itemValue="leader" itemLabel="#{sessionUser.getLabel('profile.row.userData.leader')}" />
-                                                        <f:selectItem itemValue="admin" itemLabel="#{sessionUser.getLabel('profile.row.userData.admin')}" />
+                                                        <f:selectItem itemValue="REGISTERED_USER" itemLabel="#{sessionUser.getLabel('profile.row.userData.registered')}" />
+                                                        <f:selectItem itemValue="COURSE_LEADER" itemLabel="#{sessionUser.getLabel('profile.row.userData.leader')}" />
+                                                        <f:selectItem itemValue="SYSTEM_ADMINISTRATOR" itemLabel="#{sessionUser.getLabel('profile.row.userData.admin')}" />
                                                     </h:selectOneMenu>
                                             </div>
                                         </h:panelGroup>
