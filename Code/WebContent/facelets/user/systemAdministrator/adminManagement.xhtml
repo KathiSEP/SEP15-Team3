@@ -10,7 +10,7 @@
 	<ui:define name="title">#{sessionUser.getLabel('adminManagement.title')}</ui:define>
 	<ui:define name="content">
 		<body>
-			<h1>#{sessionUser.getLabel('adminManagement.header')}</h1>
+			<h1 id="heading1">#{sessionUser.getLabel('adminManagement.header')}</h1>
 			     <div class="row">
                 <div class="col-lg-12">
                     <h:message for="signOffLimit" style="color:red" />
@@ -66,7 +66,7 @@
 							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.settings.header')}</h3>
 						</div>
 						<div class="panel-body">
-							<h:form>
+							<h:form id="formSignOff">
 								#{sessionUser.getLabel('adminManagement.row.settings.text')}
 								<br />
 								<br />
@@ -85,6 +85,7 @@
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineSignOffLimit}"
 										value="#{sessionUser.getLabel('adminManagement.row.settings.saveButton')}" />
+										<h:message id="signOffMessage" for="saveSignOffLimit" style="color:green" />
 								</div>
 							</h:form>
 						</div>
@@ -130,7 +131,7 @@
 										id="amountToTopUp" reuqired="true"
 										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositAmount')}"
 										converterMessage="#{sessionUser.getLabel('adminManagement.converterMessage.depositAmount')}">
-										<f:convertNumber currencyCode="EUR" currencySymbol="€"
+										<f:convertNumber currencySymbol="€"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
 								</div>
@@ -164,6 +165,7 @@
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineOverdraftCredit}"
 										value="#{sessionUser.getLabel('adminManagement.row.payment.saveButton')}" />
+										<h:message id="creditMessage" for="giveCredit" style="color:green" />
 								</div>
 							</h:form>
 						</div>
@@ -173,7 +175,7 @@
 							<h3 class="panel-title">#{sessionUser.getLabel('adminManagement.row.account.header')}</h3>
 						</div>
 						<div class="panel-body">
-							<h:form>
+							<h:form id="formActivationType">
 								<h4>#{sessionUser.getLabel('adminManagement.row.account.text')}</h4>
 								<div class="input-group">
 									<span class="input-group-addon"
@@ -198,6 +200,8 @@
 										class="btn btn-success pull-right" style="width:135px;"
 										action="#{systemConfigurationBean.determineAccountActivationType}"
 										value="#{sessionUser.getLabel('adminManagement.row.account.saveButton')}" />
+										<h:message id="accountActivationMessage" for="saveAccountActivation" style="color:green" />
+										
 								</div>
 							</h:form>
 						</div>

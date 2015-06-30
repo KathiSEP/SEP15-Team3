@@ -9,9 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -83,7 +81,8 @@ public class DatabaseConnectionManager implements Runnable {
 	    Class.forName(dbDriver);
 	} catch (ClassNotFoundException e) {
 	    LogHandler.getInstance().error(
-		    "Error occoured during" + " loading the database driver!");
+		    "Error occoured during" 
+	            + " loading the database driver!");
 	}
 
     }
@@ -105,27 +104,48 @@ public class DatabaseConnectionManager implements Runnable {
 
 	// There's a free connection
 	if (!freeConnections.isEmpty()) {
-	    connection  = freeConnections.pop();
 	    
-	   
+	    //Get the connection from freeConnections
+	    connection  = freeConnections.pop();
+	        
+	        //If the connection is not active, it is already removed from 
+	        // freeConnections, so there are not the number of connections
+	        // established as determined
+	        // All waiting threads a notified and in the next run of 
+	        // getConnection() a new connection is established to replace the
+	        // inactive one
 		if (!isConnectionActive(connection)) {
-		    notifyAll(); // Freed up a spot for anybody waiting
+		    
+		    try{
+			connection.close();
+		    }
+		    catch(SQLException e){
+			
+		    }
+		    notifyAll();
 		    return(getConnection());
 		  } else {
+		    // If the connection is active, it is returned
 		    usedConnections.add(connection);
 		    return connection;
 		  }
 	   
 	} else {
+	    
+	    //If there are not as much connections established as determined
 	    for (int i = 0; i < difference; ++i) {
-		makeBackgroundConnection();
+		createConnectionThread();
 	    }
 
+	    //Wait there's a free connection
 	    try {
 	        wait();
-	      } catch(InterruptedException ie) {}
-	      // Someone freed up a connection, so try again.
-	      return(getConnection());  
+	      } catch(InterruptedException ie) {
+		  throw new RuntimeException();
+	      }
+	     
+	      // A connection was released or a new one created
+	      return getConnection();  
 	}
     }
 	
@@ -133,15 +153,22 @@ public class DatabaseConnectionManager implements Runnable {
     
     
     
-    private void makeBackgroundConnection() {
+    /**
+     * Starts a new thread, which has the job to create a new connection
+     */
+    private void createConnectionThread() {
 	try {
-	    Thread connectThread = new Thread(this);
-	    connectThread.start();
-	} catch (OutOfMemoryError oome) {
-	    // Give up on new connection
+	    Thread thread = new Thread(this);
+	    thread.start();
+	} catch (OutOfMemoryError e) {
+	    LogHandler.getInstance().error("The connection create thread" 
+	                                    + " is out of memory.");
 	}
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
     public void run() {
 	try {
 	    Connection connection = establishConnection();
@@ -150,6 +177,8 @@ public class DatabaseConnectionManager implements Runnable {
 		notifyAll();
 	    }
 	} catch (Exception e) { 
+	    LogHandler.getInstance().error("Error occured during running " 
+	                                   + "connection thread");
 	}
     }
 
@@ -275,7 +304,6 @@ public class DatabaseConnectionManager implements Runnable {
 	    Connection connection = freeConnections.pop();
 
 	    if (connection != null) {
-
 		try {
 		    connection.close();
 		    LogHandler.getInstance().debug("Connection closed.");
@@ -288,6 +316,25 @@ public class DatabaseConnectionManager implements Runnable {
 	    }
 	}
 	freeConnections.clear();
+	ListIterator<Connection> it = usedConnections.listIterator(0);
+
+	while (it.hasNext()) {
+	    
+	    Connection connection = it.next();
+	    if (connection != null) {
+		
+		try {
+		    connection.close();
+		    LogHandler.getInstance().debug("Connection closed.");
+		} catch (SQLException e) {  
+			LogHandler.getInstance().error(
+				"Error occured during closing"
+				+ " the connections to the database.");
+		}
+		
+	    }
+	}
+	usedConnections.clear();
     }
 
     /**
@@ -313,8 +360,7 @@ public class DatabaseConnectionManager implements Runnable {
 	        }
 	    }
 	} catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    LogHandler.getInstance().error("Connection is not active.");
 	}
 	return active;
     }

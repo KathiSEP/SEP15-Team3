@@ -1,20 +1,17 @@
 package de.ofCourse.test;
 
 import java.util.concurrent.TimeUnit;
-
 import org.junit.*;
-
 import static org.junit.Assert.*;
-
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 
-public class OverdraftCreditAdminTest {
+public class AccountActivationTypeAdminTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
-  public static final String messageOverdraftCredit= "messageOverdraftCredit";
 
   @Before
   public void setUp() throws Exception {
@@ -24,8 +21,8 @@ public class OverdraftCreditAdminTest {
   }
 
   @Test
-  public void testOverdraftCreditAdmin() throws Exception {
-    driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
+  public void testAccountActivationTypeAdmin() throws Exception {
+    driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
@@ -35,15 +32,12 @@ public class OverdraftCreditAdminTest {
     driver.findElement(By.linkText("Administration")).click();
     driver.findElement(By.linkText("Seitenverwaltung")).click();
     assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("zehn");
-    driver.findElement(By.id("formGiveCredit:giveCredit")).click();
-
-    assert driver.findElement(By.id(messageOverdraftCredit)).getText().contains("Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel 10,00.");
-
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("10,00");
-    driver.findElement(By.id("formGiveCredit:giveCredit")).click();
+    Select selectBefore = new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))); 
+    assert selectBefore.getFirstSelectedOption().getText().equals("E-Mail-Verifikation");
+    new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))).selectByVisibleText("E-Mail-Verifikation und Aktivierung durch Administrator");
+    Select selectAfter = new Select(driver.findElement(By.id("j_idt80:accountActivationSelection"))); 
+    assert selectAfter.getFirstSelectedOption().getText().equals("E-Mail-Verifikation und Aktivierung durch Administrator");
+    driver.findElement(By.id("j_idt80:saveAccountActivation")).click();
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 

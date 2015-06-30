@@ -107,6 +107,7 @@ public class SystemConfigurationBean implements Serializable {
 	try{
 	    overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
 	    signOffLimit = SystemDAO.getSignOffLimit(transaction);
+	    accountActivationType = SystemDAO.getActivationType(transaction).toString();
 	    transaction.commit();
 	}
 	catch(InvalidDBTransferException e){
@@ -129,7 +130,12 @@ public class SystemConfigurationBean implements Serializable {
 		    transaction, 
 		    Activation.fromString(getAccountActivationType()));    
 	    transaction.commit();
-	    
+	    //TODO
+	    FacesMessageCreator.createFacesMessage(
+		    "formActivationType:saveAccountActivation",
+		    sessionUser.getLabel(
+			    "systemConfigurationBean.FacesMessage.typeOfActivation")
+			    + ".");
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during setting"
@@ -169,6 +175,11 @@ public class SystemConfigurationBean implements Serializable {
 	try {
 	    SystemDAO.setOverdraftCredit(transaction, overdraftCredit);
 	    transaction.commit();
+	    FacesMessageCreator.createFacesMessage(
+		    "formGiveCredit:giveCredit",
+		    sessionUser.getLabel(
+			    "systemConfigurationBean.FacesMessage.grantCredit")
+			    + overdraftCredit + " Euro.");
 	    
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
@@ -209,7 +220,11 @@ public class SystemConfigurationBean implements Serializable {
 	try {
 	    SystemDAO.setSignOffLimit(transaction, signOffLimit);
 	    transaction.commit();
-	    
+	    FacesMessageCreator.createFacesMessage(
+		    "formSignOff:saveSignOffLimit",
+		    sessionUser.getLabel(
+			    "systemConfigurationBean.FacesMessage.signOff")
+			    + signOffLimit + "h.");
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(
 		    "Error occured during setting"
