@@ -131,7 +131,7 @@
 										id="amountToTopUp" reuqired="true"
 										requiredMessage="#{sessionUser.getLabel('adminManagement.requiredMessage.depositAmount')}"
 										converterMessage="#{sessionUser.getLabel('adminManagement.converterMessage.depositAmount')}">
-										<f:convertNumber currencySymbol="€"
+										<f:convertNumber currencyCode="EUR"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
 								</div>
@@ -155,7 +155,7 @@
 										value="#{systemConfigurationBean.overdraftCredit}"
 										style="width:340px;" id="amountGivenCredit"
 										converterMessage="#{sessionUser.getLabel('adminManagement.converterMessage.depositAmount')}">
-										<f:convertNumber currencyCode="EUR" currencySymbol="€"
+										<f:convertNumber  currencyCode="EUR"
 											groupingUsed="true" maxFractionDigits="2" type="currency" />
 									</h:inputText>
 								</div>

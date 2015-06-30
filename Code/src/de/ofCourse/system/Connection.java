@@ -29,8 +29,9 @@ public class Connection implements Transaction {
 
     @Override
     public void start() {
-        getConnection();
-        
+        if(conn == null){
+            getConnection(); 
+        }       
     }
 
     @Override

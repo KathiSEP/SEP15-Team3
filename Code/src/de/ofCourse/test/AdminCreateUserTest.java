@@ -65,6 +65,9 @@ public class AdminCreateUserTest {
     driver.findElement(By.id("formCreateUser:passwordConfirmRegister")).sendKeys("Test!1990");
     driver.findElement(By.id("formCreateUser:createNewUser")).click();
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
+    
+    //driver.findElement(By.id("gernarl.nag")).
+    
     System.out.println("Loop " + i);
     // ERROR: Caught exception [ERROR: Unsupported command [getEval | ${i}+1 | ]]
     // ERROR: Caught exception [unknown command [endWhile]]
