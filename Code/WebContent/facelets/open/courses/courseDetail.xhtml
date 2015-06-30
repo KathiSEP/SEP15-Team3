@@ -11,7 +11,7 @@
 		<ui:define name="title"><h:outputText value="#{courseDetailBean.getCourse().title}"/></ui:define>
 		<body>
 			<ui:define name="content">
-				<h1>#{sessionUser.getLabel('courseDetail.header')}</h1>
+				<h1 id="courseDetailTitle" >#{sessionUser.getLabel('courseDetail.header')}</h1>
 				<div class="row">
 					<div class="col-lg-12">
 						<p style="font-size:16px;">#{sessionUser.getLabel('courseDetail.welcomeText')} <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
