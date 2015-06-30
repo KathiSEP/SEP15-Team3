@@ -14,7 +14,7 @@
 				     <h1>#{sessionUser.getLabel('listParticipants.header')}</h1>
 				     <div class="row" style="padding-top:20px;">
 	                    <div class="col-lg-11">
-	                    <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
+	                    <h:messages id ="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
 	                    </div>
 	                    <div class="col-lg-1">
 	                        <h:commandButton id="cancel" class="btn btn-info" value="#{sessionUser.getLabel('listParticipants.backButton')}" action="#{listParticipantsBean.backToDetails()}">          

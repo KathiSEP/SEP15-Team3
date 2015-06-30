@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -136,6 +139,8 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

@@ -152,6 +152,8 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseEndDate")).sendKeys("30.09.2015");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
       assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Standardtanz");
+      
+      driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After
