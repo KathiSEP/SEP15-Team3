@@ -940,9 +940,9 @@ public class CourseDetailBean implements Pagination, Serializable {
                                 "courseDetailBean.facesMessage.DeleteCourse"));
 		this.transaction.commit();
 		
-		// Forwarding to the page search, because the delete was
+		// Forwarding to the page site administration, because the delete was
 		// successful.
-		return "/facelets/open/courses/search.xhtml?faces-redirect=true";
+		return "/facelets/user/systemAdministrator/adminManagement.xhtml";
 		
 	    } else {
 	        // FacesMessage: Delete course failed.

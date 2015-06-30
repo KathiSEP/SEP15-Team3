@@ -9,7 +9,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class HelpTest {
+public class LogoutTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -23,17 +23,16 @@ public class HelpTest {
   }
 
   @Test
-  public void testHelp() throws Exception {
+  public void testLogout() throws Exception {
     driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Profil")).click();
-    driver.findElement(By.linkText("Hilfe")).click();
-    driver.findElement(By.xpath("(//a[contains(text(),'Profil')])[2]")).click();
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

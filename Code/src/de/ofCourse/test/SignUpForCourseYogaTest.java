@@ -9,7 +9,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class HelpTest {
+public class SignUpForCourseYogaTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -23,17 +23,21 @@ public class HelpTest {
   }
 
   @Test
-  public void testHelp() throws Exception {
-    driver.get(baseUrl + "OfCourse/");
+  public void testSignUpForCourseYoga() throws Exception {
+    driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
-    driver.findElement(By.linkText("Profil")).click();
-    driver.findElement(By.linkText("Hilfe")).click();
-    driver.findElement(By.xpath("(//a[contains(text(),'Profil')])[2]")).click();
+    driver.findElement(By.linkText("Suche")).click();
+    driver.findElement(By.id("formFilterCourses:filterInput")).clear();
+    driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Yoga");
+    driver.findElement(By.id("formFilterCourses:searchCourses")).click();
+    driver.findElement(By.linkText("10027")).click();
+    driver.findElement(By.id("courseDetailsID:j_idt95:cNews")).click();
+    driver.findElement(By.name("courseDetailsID:j_idt95:j_idt99")).click();
   }
 
   @After

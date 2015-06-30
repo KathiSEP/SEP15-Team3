@@ -9,7 +9,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class HelpTest {
+public class OwnCourseEditTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -23,17 +23,22 @@ public class HelpTest {
   }
 
   @Test
-  public void testHelp() throws Exception {
-    driver.get(baseUrl + "OfCourse/");
+  public void testOwnCourseEdit() throws Exception {
+    driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
     driver.findElement(By.id("formLogin:login")).click();
-    driver.findElement(By.linkText("Profil")).click();
-    driver.findElement(By.linkText("Hilfe")).click();
-    driver.findElement(By.xpath("(//a[contains(text(),'Profil')])[2]")).click();
+    driver.findElement(By.id("myCoursesList:courseTable:0:details")).click();
+    driver.findElement(By.name("courseDetailsID:j_idt79")).click();
+    driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
+    driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("32.08.2015");
+    driver.findElement(By.name("courseDetailsID:j_idt80")).click();
+    driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
+    driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("05.08.2015");
+    driver.findElement(By.name("courseDetailsID:j_idt80")).click();
   }
 
   @After
