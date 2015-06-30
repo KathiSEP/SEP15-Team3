@@ -39,9 +39,11 @@ public class ListParticipantsTest {
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
     driver.findElement(By.linkText("Zweiter Test")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     // look at list participants of the course 'Zweiter Test'
-    driver.findElement(By.name("j_idt51:j_idt88")).click();
+    driver.findElement(By.name("courseDetailsID:loadParticipantsID")).click();
+    assert driver.findElement(By.id("listParticipants")).getText().equals("Liste aller Kursteilnehmer");
     
     // Delete one participant from this course
     driver.findElement(By.id("formListParticipants:participantsTable:1:checked")).click();
@@ -51,6 +53,7 @@ public class ListParticipantsTest {
     
     // go back to the page course detail of the course 'zweiter Test'
     driver.findElement(By.id("formBack:cancel")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     //logout
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();

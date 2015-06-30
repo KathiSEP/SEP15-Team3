@@ -49,7 +49,7 @@ public class CreateCourseTest {
       driver.findElement(By.linkText("Seitenverwaltung")).click();
       assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
       
-      driver.findElement(By.id("j_idt61:createNewCourse")).click();
+      driver.findElement(By.id("courseManagement:createNewCourse")).click();
       assert driver.findElement(By.id("createCourse")).getText().equals("Neuen Kurs anlegen");
       
       // Testing required messages 
@@ -135,7 +135,7 @@ public class CreateCourseTest {
       driver.findElement(By.linkText("Seitenverwaltung")).click();
       assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
       
-      driver.findElement(By.id("j_idt61:createNewCourse")).click();   
+      driver.findElement(By.id("courseManagement:createNewCourse")).click();   
       assert driver.findElement(By.id("createCourse")).getText().equals("Neuen Kurs anlegen");
       
       driver.findElement(By.id("formCreateCourse:courseTitle")).clear();

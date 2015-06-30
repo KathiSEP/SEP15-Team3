@@ -17,7 +17,7 @@
 						<p style="font-size:16px;">#{sessionUser.getLabel('courseDetail.welcomeText')} <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
 					</div>
 				</div>
-				<h:form>
+				<h:form id="courseDetailsID">
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
 						<div class="panel panel-info">
@@ -113,7 +113,7 @@
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 											<p/>
 										</h:commandButton>
-										<h:commandButton class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
+										<h:commandButton id = "loadParticipantsID" class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 										</h:commandButton>
 									</div>
