@@ -17,6 +17,15 @@ public class CreateCourseTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
+  public static final String facesMessage= "facesMessage";
+  public static final String messageCourseTitle= "messageCourseTitle";
+  public static final String messageCourseLeaderID= "messageCourseLeaderID";
+  public static final String messageCourseParticipants= "messageCourseParticipants";
+  public static final String messageStartDate= "messageStartDate";
+  public static final String messageEndDate= "messageEndDate";
+  public static final String messageImage= "messageImage";
+  
 
   @Before
   public void setUp() throws Exception {
@@ -38,10 +47,18 @@ public class CreateCourseTest {
       driver.findElement(By.id("formLogin:login")).click();
       driver.findElement(By.linkText("Administration")).click();
       driver.findElement(By.linkText("Seitenverwaltung")).click();
-      driver.findElement(By.id("j_idt61:createNewCourse")).click();
+      assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
       
-      // Testing required messages
+      driver.findElement(By.id("j_idt61:createNewCourse")).click();
+      assert driver.findElement(By.id("createCourse")).getText().equals("Neuen Kurs anlegen");
+      
+      // Testing required messages 
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      
+      assert driver.findElement(By.id(messageCourseTitle)).getText().contains("Bitte geben Sie einen Titel ein. ");
+      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains("Bitte KursleiterID eingeben. ");
+      assert driver.findElement(By.id(messageStartDate)).getText().contains("Bitte Startdatum eingeben. ");
+      assert driver.findElement(By.id(messageEndDate)).getText().contains("Bitte Enddatum eingeben. ");
       
       // Testing insert negative numbers at course leader ID and max. participants
       driver.findElement(By.id("formCreateCourse:courseTitle")).clear();
@@ -58,12 +75,17 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseEndDate")).sendKeys("12.03.2016");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
       
+      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains("Bitte geben Sie eine positive Zahl als KursleiterID ein.");
+      assert driver.findElement(By.id(messageCourseParticipants)).getText().contains("Bitte positive Zahl eingeben. ");
+      
       // Testing course leader id does not exist
       driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).clear();
       driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).sendKeys("123456");
       driver.findElement(By.id("formCreateCourse:courseParticipants")).clear();
       driver.findElement(By.id("formCreateCourse:courseParticipants")).sendKeys("20");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      
+      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains("Die eingegebene Kursleiter-ID existiert nicht im System. ");
       
       // Testing end date does not exist and start date has a invalid format
       driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).clear();
@@ -74,12 +96,17 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseEndDate")).sendKeys("33.03.2016");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
       
+      assert driver.findElement(By.id(messageStartDate)).getText().contains("Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ");
+      assert driver.findElement(By.id(messageEndDate)).getText().contains("Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ");
+      
       // Testing end date is before the start date
       driver.findElement(By.id("formCreateCourse:courseStartDate")).clear();
       driver.findElement(By.id("formCreateCourse:courseStartDate")).sendKeys("12.03.2015");
       driver.findElement(By.id("formCreateCourse:courseEndDate")).clear();
       driver.findElement(By.id("formCreateCourse:courseEndDate")).sendKeys("03.02.2015");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      
+      assert driver.findElement(By.id(messageStartDate)).getText().contains("Startdatum muss vor dem Enddatum liegen. ");
       
       // Testing wrong image format
       driver.findElement(By.id("formCreateCourse:courseEndDate")).clear();
@@ -88,20 +115,29 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseImage")).sendKeys("C:\\Users\\Kathi\\Desktop\\url.png");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
       
-      //Testing wron image size
+      assert driver.findElement(By.id(messageImage)).getText().contains("Kein gültiges Bildformat. ");
+      
+      //Testing wrong image size
       driver.findElement(By.id("formCreateCourse:courseImage")).clear();
       driver.findElement(By.id("formCreateCourse:courseImage")).sendKeys("C:\\Users\\Public\\Pictures\\Sample Pictures\\Chrysanthemum.jpg");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      
+      assert driver.findElement(By.id(messageImage)).getText().contains("Das Bild muss kleiner als 100 KB sein. ");
       
       // Testing correct data for the course 'Yoga'
       driver.findElement(By.id("formCreateCourse:courseImage")).clear();
       driver.findElement(By.id("formCreateCourse:courseImage")).sendKeys("C:\\Users\\Kathi\\Desktop\\domo.jpg");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
       
       // Testing create a new course 'Standardtanz'
       driver.findElement(By.linkText("Administration")).click();
       driver.findElement(By.linkText("Seitenverwaltung")).click();
-      driver.findElement(By.id("j_idt61:createNewCourse")).click();
+      assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
+      
+      driver.findElement(By.id("j_idt61:createNewCourse")).click();   
+      assert driver.findElement(By.id("createCourse")).getText().equals("Neuen Kurs anlegen");
+      
       driver.findElement(By.id("formCreateCourse:courseTitle")).clear();
       driver.findElement(By.id("formCreateCourse:courseTitle")).sendKeys("Standardtanz");
       driver.findElement(By.id("formCreateCourse:courseDescription")).clear();
@@ -115,6 +151,7 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseEndDate")).clear();
       driver.findElement(By.id("formCreateCourse:courseEndDate")).sendKeys("30.09.2015");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
+      assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Standardtanz");
   }
 
   @After
