@@ -60,6 +60,7 @@ public class UserExistsValidator implements Validator {
 	// Whether the entered id is a valid id
 	try {
 	    if (UserDAO.getUser(transaction, userID) == null) {
+		 transaction.commit();
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
                             "userExistsValidator.message3", lang)));

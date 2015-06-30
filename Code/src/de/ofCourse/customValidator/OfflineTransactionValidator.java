@@ -39,27 +39,8 @@ public class OfflineTransactionValidator implements Validator {
     @Override
     public void validate(FacesContext fctx, UIComponent component, Object value)
 	    throws ValidatorException {
-	
-	Map<String, Object> sessionMap = 
-	        FacesContext
-                .getCurrentInstance()
-                .getExternalContext()
-                .getSessionMap();
 
- Language lang = null;
-        
-        if(sessionMap.containsKey("lang")) {
-            lang = Language.fromString(sessionMap.get("lang").toString());
-        } else {
-            lang = Language.DE;
-            HttpSession session = (HttpSession) FacesContext
-                    .getCurrentInstance()
-                    .getExternalContext()
-                    .getSession(true);
-            session.setAttribute("lang", lang.toString());
-        } 
-	 
-	
+	Language lang = getLanguage();
 
 	String enteredIDString = value.toString();
 	int userID = 0;
@@ -91,20 +72,24 @@ public class OfflineTransactionValidator implements Validator {
 	try {
 	    // Whether the id exists
 	    if (UserDAO.getUser(transaction, userID) == null) {
+		 transaction.commit();
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
 	                     "offlineTransactionValidator.message3", lang)));
 	    }
 
 	    int fetchedID = UserDAO.getUserID(transaction, enteredUserName);
+	 
 	    // Whether the username exists
 	    if (fetchedID == -1) {
+		 transaction.commit();
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
 	                     "offlineTransactionValidator.message4", lang)));
 	    }
 	    // Whether the username and the id belong to the same user
 	    if (fetchedID != userID) {
+		 transaction.commit();
 		throw new ValidatorException(new FacesMessage(
 			LanguageManager.getInstance().getProperty(
 	                     "offlineTransactionValidator.message5", lang)));

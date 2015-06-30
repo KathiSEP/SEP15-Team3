@@ -79,7 +79,6 @@ public class PaymentOfflineBean implements Serializable {
      */
     public void depositAmountOnUserAccount() {
 	transaction.start();
-	
 	try {
 	    User tempUser = UserDAO.getUser(transaction,																				
 		    			    user.getUserID());
@@ -97,7 +96,7 @@ public class PaymentOfflineBean implements Serializable {
 		    "formToUpAccount:spendMoney",
 		    sessionUser.getLabel(
 			    "paymentOfflineBean.FacesMessage.deposit1")
-			    + amountToDeposit 
+			    + amountToDeposit + " " 
 			    + sessionUser
 			    .getLabel("paymentOfflineBean.FacesMessage.deposit2"));
 	    

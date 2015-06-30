@@ -120,18 +120,18 @@ public class DatabaseConnectionManager implements Runnable {
 			connection.close();
 		    }
 		    catch(SQLException e){
-			
+			LogHandler.getInstance().error("Error during closing connection!");
 		    }
 		    notifyAll();
 		    return(getConnection());
 		  } else {
 		    // If the connection is active, it is returned
 		    usedConnections.add(connection);
+		    LogHandler.getInstance().debug("Connection returned");
 		    return connection;
 		  }
 	   
 	} else {
-	    
 	    //If there are not as much connections established as determined
 	    for (int i = 0; i < difference; ++i) {
 		createConnectionThread();
@@ -175,6 +175,7 @@ public class DatabaseConnectionManager implements Runnable {
 	    synchronized (this) {
 		freeConnections.push(connection);
 		notifyAll();
+		LogHandler.getInstance().debug("Created");
 	    }
 	} catch (Exception e) { 
 	    LogHandler.getInstance().error("Error occured during running " 

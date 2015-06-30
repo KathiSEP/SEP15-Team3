@@ -13,12 +13,12 @@
 			<h1 id="heading1">#{sessionUser.getLabel('adminManagement.header')}</h1>
 			     <div class="row">
                 <div class="col-lg-12">
-                    <h:message for="signOffLimit" style="color:red" />
+                    <h:message id="first" for="signOffLimit" style="color:red" />
                     <h:message for="userIDToTopUp" style="color:red" />
                     <h:message for="userNameToTopUp" style="color:red" />
-                    <h:message for="amountToTopUp" style="color:red" />
+                    <h:message id="messageTopUp" for="amountToTopUp" style="color:red" />
                     <h:message id="messageOverdraftCredit" for="amountGivenCredit" style="color:red" />
-                    <h:messages globalOnly="true" layout="table"
+                    <h:messages id="messages" globalOnly="true" layout="table"
                         class="alert alert-danger" />
                 </div>
             </div>
@@ -44,7 +44,7 @@
 									action="#{systemConfigurationBean.loadManageUserPage}" />
 							</h:form>
 							<br /> <br />
-							<h:form id = "courseManagement">
+							<h:form id="courseManagement">
 								<h4>#{sessionUser.getLabel('adminManagement.row.common.courses')}</h4>
 								<h:commandButton id="createNewCourse" class="btn btn-info"
 									style="width:200px;"
