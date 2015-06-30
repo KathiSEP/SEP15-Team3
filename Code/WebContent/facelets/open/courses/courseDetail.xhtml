@@ -17,6 +17,13 @@
 						<p style="font-size:16px;">#{sessionUser.getLabel('courseDetail.welcomeText')} <strong>#{courseDetailBean.getCourse().title}</strong>:</p>
 					</div>
 				</div>
+				
+				<div class="row">
+                    <div class="col-lg-12">
+                      <h:messages id="facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
+                    </div>
+                </div>
+				
 				<h:form id="courseDetailsID">
 				<div class="row" style="padding-top:20px;">
 					<div class="col-lg-5">
