@@ -35,12 +35,15 @@
 							<div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.row.details.header')}</strong></div>
 							<div class="panel-body">
 								<div class="input-group">
-									<span class="input-group-addon" style="width:163px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.id')}</strong></span>
+									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.id')}</strong></span>
 									<h:inputText class="form-control" readonly="true" style="width:170px;" id="idCourse" value="#{courseDetailBean.courseID}"/>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.maxParticipants')}</strong></span>
-									<h:inputText class="form-control" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.maxUsers}"/>
+									<h:inputText class="form-control" id="minPersonsCourse" readonly="#{!courseDetailBean.editMode}" value="#{courseDetailBean.course.maxUsers}">
+										<f:convertNumber longOnly="true"/>
+                                    	<f:validator validatorId="courseParticipantsValidator"/>
+                                   	</h:inputText>
 								</div>
 								<div class="input-group" style="padding-top:5px;">
 									<span class="input-group-addon" style="width:160px; text-align:right;"><strong>#{sessionUser.getLabel('courseDetail.row.details.start')}</strong></span>
@@ -108,23 +111,23 @@
 								<div class="panel-body">
 									<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 									<div class="container">
-										<h:commandButton class="btn btn-warning" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
+										<h:commandButton class="btn btn-warning btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
 															rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
-										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
+										<h:commandButton class="btn btn-success btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
 															rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}">
    	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                        					</h:commandButton>
 									</div>
 									<div class="container">
 										<p/>
-										<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.createUnit')}"
+										<h:commandButton class="btn btn-success btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.createUnit')}"
 															rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}"
 															action="#{courseDetailBean.loadEditCourseUnitPage}">
 											<f:param name="editMode" value="false"/>
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 											<p/>
 										</h:commandButton>
-										<h:commandButton id="loadParticipantsID" class="btn btn-info" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
+										<h:commandButton id="loadParticipantsID" class="btn btn-info btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 										</h:commandButton>
 									</div>
@@ -137,11 +140,11 @@
 											    <h:outputLabel value="#{sessionUser.getLabel('courseDetail.row.management.newsCheckbox')}" for="cNews"/>
 											    <p/>
 											</h:panelGroup>
-											<h:commandButton class="btn btn-success" value="#{sessionUser.getLabel('courseDetail.row.management.signUp')}"
+											<h:commandButton class="btn btn-success btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.signUp')}"
 																rendered="#{!courseDetailBean.isRegistered}" action="#{courseDetailBean.signUpForCourse}">
        	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
    	                       					</h:commandButton>
-											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
+											<h:commandButton class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
       	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
    	                       					</h:commandButton>
 										</h:form>
@@ -149,18 +152,16 @@
 									<h:panelGroup rendered="#{courseDetailBean.editMode}">
 										<div class="container">
 											<p/>
-											<div class="form-group" style="width:160px;">
-													<label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
+											<div class="form-group" style="width:185px;">
+												<label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
 												<h:inputText id="leaderIDField" rendered="#{courseDetailBean.editMode}" class="form-control form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"/>
-												<h:commandButton class="btn btn-success form-group" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
+												<h:commandButton class="btn btn-success form-group btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
 													<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 												</h:commandButton>
 											</div>
-											<h:commandButton class="btn btn-danger" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}" action="#{courseDetailBean.deleteCourse}"/>
+											<h:commandButton class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}" action="#{courseDetailBean.deleteCourse}"/>
 										</div>
 									</h:panelGroup>
-									<p/>
-									<h:messages globalOnly="true" styleClass="alert"/>
 								</div>
 							</div>
 						</h:panelGroup>

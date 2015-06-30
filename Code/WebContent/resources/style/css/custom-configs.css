@@ -6,3 +6,6 @@ ul#footermenu a{
 .btn-minsize {
 	min-width:140px;
 }
+.btn-cdetail-minsize {
+	min-width:185px;
+}
