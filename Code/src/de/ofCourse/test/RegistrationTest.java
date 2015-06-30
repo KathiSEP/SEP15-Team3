@@ -26,12 +26,16 @@ public class RegistrationTest {
   public void testRegistration() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+    
+    // Testing required messages
     new Select(driver.findElement(By.id("formRegister:titleRegister"))).selectByVisibleText("Frau");
     driver.findElement(By.id("formRegister:firstnameRegister")).clear();
     driver.findElement(By.id("formRegister:firstnameRegister")).sendKeys("Katharina");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing user name is already existing
     driver.findElement(By.id("formRegister:lastnameRegister")).clear();
-    driver.findElement(By.id("formRegister:lastnameRegister")).sendKeys("Hölzl");
+    driver.findElement(By.id("formRegister:lastnameRegister")).sendKeys("Hoelzl");
     driver.findElement(By.id("formRegister:usernameRegister")).clear();
     driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("admin1");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
@@ -48,28 +52,28 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina_hoelzl@web.de");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
-    driver.findElement(By.id("formRegister:usernameRegister")).clear();
-    driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("Kathi5");
-    driver.findElement(By.id("formRegister:passwordRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
-    driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
-    driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing AGB not accepted
     driver.findElement(By.id("formRegister:usernameRegister")).clear();
     driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("Kathi6");
-    driver.findElement(By.id("formRegister:register")).click();
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing no passwords inserted
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing mail is already existing
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing wrong mail format
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
@@ -77,6 +81,10 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).clear();
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina_hoelzl");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing wrong insert format (no number)
+    driver.findElement(By.id("formRegister:emailRegister")).clear();
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl934@gmx.de");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
@@ -88,8 +96,8 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("test");
     driver.findElement(By.id("formRegister:register")).click();
-    driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmx.de");
+    
+    // Testing date of birth is in the future
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
@@ -103,28 +111,30 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("94081");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing passwords not equal
+    driver.findElement(By.id("formRegister:birthdateRegister")).clear();
+    driver.findElement(By.id("formRegister:birthdateRegister")).sendKeys("29.05.1993");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    // Testing correct insert of all data
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
-    driver.findElement(By.id("formRegister:birthdateRegister")).clear();
-    driver.findElement(By.id("formRegister:birthdateRegister")).sendKeys("29.05.1993");
     driver.findElement(By.id("formRegister:streetRegister")).clear();
     driver.findElement(By.id("formRegister:streetRegister")).sendKeys("Am Kastenfeld");
     driver.findElement(By.id("formRegister:houseNumberRegister")).clear();
     driver.findElement(By.id("formRegister:houseNumberRegister")).sendKeys("39");
-    driver.findElement(By.id("formRegister:register")).click();
-    driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl934@gmx.de");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
+    driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
   }
 
