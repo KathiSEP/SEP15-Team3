@@ -4,7 +4,7 @@ package de.ofCourse.test;
  * Testing of add leader to course. This test is geared to the test T50-50 from 
  * our product brief. Furthermore there are a view more tests for the faults that 
  * can appear because of invalid user inserts. 
- * The user with the id '10027' will be added to the course as leader in this 
+ * The user with the id '10009' will be added to the course as leader in this 
  * test. On top of that it is asserted that the faces messages to the user 
  * insert are correct and that the user will be sent up to the right page.
  * 
@@ -48,22 +48,22 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.linkText("Zweiter Test")).click();
     
     // Testing insert is a negative number
-    driver.findElement(By.name("courseDetailsID:j_idt84")).click();
+    driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("-1234");
-    driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
     
     // Testing inserted id does not exist
-    driver.findElement(By.name("courseDetailsID:j_idt84")).click();
+    driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("123456");
-    driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
     
     // Testing insert correct course instructor id
-    driver.findElement(By.name("courseDetailsID:j_idt84")).click();
+    driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("10027");
-    driver.findElement(By.name("courseDetailsID:j_idt106")).click();
+    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("10009");
+    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
     
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }

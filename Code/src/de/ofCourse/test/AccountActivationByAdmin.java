@@ -34,7 +34,6 @@ public class AccountActivationByAdmin {
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
-  //TODO  auf pop up prüfen
   @Test
   public void testAccountActivationByAdmin() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
