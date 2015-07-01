@@ -1137,6 +1137,79 @@ public class UserDAO {
     	}
     }
 
+	/**
+     * Updates the e-mail verification and user status, if the user decides to
+     * change his e-mail address.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param veriString
+     * 
+     * @return true if it succeed, else false
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    public static void setVerification(Transaction trans, String veriString, int userID)
+	    throws InvalidDBTransferException {
+		Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+		String query = "UPDATE \"users\" SET email_verification = false, " +
+				"veri_string = ? " +
+				"status = ?::status WHERE id = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)){
+		    
+			stmt.setString(1, veriString);
+		    stmt.setString(2, UserStatus.NOT_ACTIVATED.toString());
+		    stmt.setInt(3, userID);
+		    
+		} catch (SQLException e) {
+		    throw new InvalidDBTransferException(
+		                                "Error occured during verifyUser", e);
+		}
+    }
+    
+    /**
+     * Returns a verification string which is not already stored in the
+     * database.
+     * 
+     * @param trans
+     *            the transaction object which contains the database connection
+     * @return a unique verification string
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     *             
+     * @author Patrick Cretu
+     */
+    public static String checkVeriString (Transaction trans)
+    		throws InvalidDBTransferException {
+    	
+    	Connection connection = (Connection) trans;
+		java.sql.Connection conn = connection.getConn();
+    	String veriString = null;
+    	String query = "SELECT id FROM \"users\" WHERE veri_string = ?";
+    	
+    	try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    		stmt.setString(1, veriString);
+    		try (ResultSet rst = stmt.executeQuery()) {
+    			
+    			do {
+					SecureRandom random = new SecureRandom();
+					veriString = new BigInteger(130, random).toString();
+			    } while (rst.next());
+    			
+    		}
+    		
+    	} catch (SQLException e) {
+    		throw new InvalidDBTransferException("Error occured during " +
+    				"checkVeriString (java.sql.Connection conn)", e);
+		}
+		return veriString;
+    }
+
     /**
      * Overrides a user's password.
      * 
