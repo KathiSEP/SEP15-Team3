@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -19,6 +22,7 @@ public class ViewSchedulerTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  private final String timeTable = "timeTable";
 
   @Before
   public void setUp() throws Exception {
@@ -29,7 +33,7 @@ public class ViewSchedulerTest {
 
   @Test
   public void testViewScheduler() throws Exception {
-    driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
+    driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Slash");
@@ -37,7 +41,9 @@ public class ViewSchedulerTest {
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Terminplaner")).click();
-    driver.findElement(By.name("scheduler:j_idt57:j_idt86")).click();
+    assert driver.findElements(By.id(timeTable)).size() == 1;
+    driver.findElement(By.name("scheduler:timeTable:j_idt85")).click();
+    assert driver.findElements(By.id(timeTable)).size() == 1;
   }
 
   @After
