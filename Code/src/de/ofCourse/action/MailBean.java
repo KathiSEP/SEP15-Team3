@@ -375,7 +375,7 @@ public class MailBean {
      * @param userID
      * @param veriString
      */
-    public void sendUpdateMessage(int userID, String veriString) {
+    public void sendUpdateMessage(int userID, String veriString, String emailNew) {
      // User who should get the authentificationMessage will be loaded from Database
         Transaction trans = Connection.create();
         trans.start();
@@ -393,7 +393,7 @@ public class MailBean {
            
            String subject = "Profil Update";
            
-           sendSingleMail(userToInform.getEmail(), subject, messenge);
+           sendSingleMail(emailNew, subject, messenge);
         } catch (InvalidDBTransferException e){
            trans.rollback(); 
         }
