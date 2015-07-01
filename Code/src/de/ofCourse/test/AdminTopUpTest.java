@@ -43,11 +43,15 @@ public class AdminTopUpTest {
     driver.findElement(By.id("formToUpAccount:userNameToTopUp")).clear();
     driver.findElement(By.id("formToUpAccount:userNameToTopUp")).sendKeys("Ricky1");
     driver.findElement(By.id("formToUpAccount:amountToTopUp")).clear();
+    driver.findElement(By.id("formToUpAccount:amountToTopUp")).sendKeys("-40.00");
+    driver.findElement(By.id("formToUpAccount:spendMoney")).click();
+    assert driver.findElement(By.id("messageTopUp")).getText().equals("Der eingegebene Betrag muss positiv sein. Beispiel 10.0");
+    driver.findElement(By.id("formToUpAccount:amountToTopUp")).clear();
     driver.findElement(By.id("formToUpAccount:amountToTopUp")).sendKeys("40,00");
     driver.findElement(By.id("formToUpAccount:spendMoney")).click();
-    assert driver.findElement(By.id("messageTopUp")).getText().equals("Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel EUR 10,00");
+    assert driver.findElement(By.id("messageTopUp")).getText().equals("Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel 10.0");
     driver.findElement(By.id("formToUpAccount:amountToTopUp")).clear();
-    driver.findElement(By.id("formToUpAccount:amountToTopUp")).sendKeys("EUR 40,00");
+    driver.findElement(By.id("formToUpAccount:amountToTopUp")).sendKeys("40.00");
     driver.findElement(By.id("formToUpAccount:spendMoney")).click();
     assert driver.findElement(By.id("formToUpAccount:moneyMessage")).getText().equals("Der Account wurde mit 40.0 Euro aufgeladen.");
   }

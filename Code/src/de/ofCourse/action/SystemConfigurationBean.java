@@ -68,7 +68,7 @@ public class SystemConfigurationBean implements Serializable {
     /**
      * Stores the overdraft credit that was granted by the administrator
      */
-    private float overdraftCredit;
+    private double overdraftCredit;
 
 
     /**
@@ -105,7 +105,7 @@ public class SystemConfigurationBean implements Serializable {
 	transaction.start();
 	
 	try{
-	    overdraftCredit = SystemDAO.getOverdraftCredit(transaction);
+	    overdraftCredit = (double)SystemDAO.getOverdraftCredit(transaction);
 	    signOffLimit = SystemDAO.getSignOffLimit(transaction);
 	    accountActivationType = SystemDAO.getActivationType(transaction).toString();
 	    transaction.commit();
@@ -173,7 +173,7 @@ public class SystemConfigurationBean implements Serializable {
 	transaction.start();
 
 	try {
-	    SystemDAO.setOverdraftCredit(transaction, overdraftCredit);
+	    SystemDAO.setOverdraftCredit(transaction, (float) overdraftCredit);
 	    transaction.commit();
 	    FacesMessageCreator.createFacesMessage(
 		    "formGiveCredit:giveCredit",
@@ -195,7 +195,7 @@ public class SystemConfigurationBean implements Serializable {
      * 
      * @return the granted credit
      */
-    public float getOverdraftCredit() {
+    public double getOverdraftCredit() {
 	return overdraftCredit;
     }
 
@@ -206,7 +206,7 @@ public class SystemConfigurationBean implements Serializable {
      * @param overdraftCredit
      *            the new overdraft credit
      */
-    public void setOverdraftCredit(float overdraftCredit) {
+    public void setOverdraftCredit(double overdraftCredit) {
 	this.overdraftCredit = overdraftCredit;
     }
 

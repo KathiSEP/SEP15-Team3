@@ -759,7 +759,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * off from a course unit.
      * 
      * @param courseUnit
-     *            the course unit the unser wants to sign up/of from
+     *            the course unit the user wants to sign up/of from
      * @param user
      *            the user whose account balance is to be updated
      * @param signUp
@@ -824,6 +824,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    "Error during adding user manually to course unit.");
 
 	} catch (CourseRegistrationException e) {
+	    transaction.rollback();
 	    LogHandler.getInstance().error(
 		    "Error during adding user manually to course unit. "
 			    + "User has not enough money to "

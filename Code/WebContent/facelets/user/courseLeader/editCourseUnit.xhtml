@@ -133,7 +133,7 @@
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.houseNumber')}"
                                         value="#{courseUnitManagementBean.courseUnit.address.houseNumber}"
                                         validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.houseNumber')}">
-                                        <f:validateLength minimum="0" maximum="10" />
+                                        <f:validateLongRange minimum="1" maximum="1000000000"/>
                                     </h:inputText>
                                 </div>
 
@@ -159,7 +159,7 @@
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.zipCode')}"
                                         validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.zipCode')}">
-                                        <f:validateLength minimum="1" maximum="10" />
+                                        <f:validateLongRange minimum="1" maximum="1000000000"/>
                                     </h:inputText>
                                 </div>
 
@@ -197,9 +197,8 @@
                                         value="#{courseUnitManagementBean.courseUnit.price}"
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.price')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.price')}">
-                                        <f:convertNumber currencyCode="EUR" currencySymbol="€"
-                                            groupingUsed="true" maxFractionDigits="2" type="currency" />
+                                        converterMessage="#{sessionUser.getLabel('converterMessage.money')}">
+                                        <f:validator validatorId="priceValidator"/>
                                     </h:inputText>
                                    </h:panelGroup>
                                 </div>
@@ -228,9 +227,7 @@
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.minUsers')}"
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.minUsers')}"
                                         validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.minUsers')}">
-                                        <f:convertNumber integerOnly="true" type="number"
-                                            maxIntegerDigits="3" />
-                                        <f:validateLength minimum="0" maximum="3" />
+                                        <f:validateLongRange minimum="1" maximum="999"/>
                                     </h:inputText>
                                 </div>
 
@@ -244,9 +241,7 @@
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.maxUsers')}"
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.maxUsers')}"
                                         validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.maxUsers')}">
-                                        <f:convertNumber integerOnly="true" type="number"
-                                            maxIntegerDigits="3" />
-                                        <f:validateLength minimum="0" maximum="3" />
+                                        <f:validateLongRange minimum="1" maximum="999"/>
                                     </h:inputText>
                                 </div>
 
@@ -277,9 +272,7 @@
                                             value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
                                             converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.numberOfUnits')}"
                                             validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.numberOfUnits')}">
-                                            <f:convertNumber integerOnly="true" maxIntegerDigits="3"
-                                                type="number" />
-                                            <f:validateLength minimum="0" maximum="3" />
+                                           <f:validateLongRange minimum="1" maximum="999"/>
                                         </h:inputText>
                                     </div>
                                 </h:panelGroup>
