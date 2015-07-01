@@ -213,7 +213,7 @@
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.idLeader')}"
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.idLeader')}">
-                                        <f:convertNumber integerOnly="true"/>
+                                        <f:convertNumber integerOnly="true" pattern="#####"/>
                                         <f:validator validatorId="courseInstructorValidator" />
                                     </h:inputText>
                                 </div>
@@ -326,9 +326,10 @@
                                         <f:param name="courseID"
                                             value="#{courseUnitManagementBean.courseUnit.courseID}" />
                                     </h:commandButton>
-                                    <h:commandButton id="deleteCourseUnit" onclick="if (!confirm('Wollen Sie die Kurseinheit/en wirklich löschen?')) return false"
+                                    <h:commandButton id="deleteCourseUnit"
                                         action="#{courseUnitManagementBean.deleteCourseUnit}"
-                                        class="btn btn-info pull-right" value="#{sessionUser.getLabel('editCourseUnit.deleteButton')}">
+                                        class="btn btn-info pull-right" value="#{sessionUser.getLabel('editCourseUnit.deleteButton')}"
+                                        onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.unit')}')) return false">
                                         <f:param name="courseID"
                                             value="#{courseUnitManagementBean.courseUnit.courseID}" />
                                     </h:commandButton>
@@ -480,9 +481,9 @@
                                     <br />
                                     <br />
                                     <h:commandButton value="#{sessionUser.getLabel('editCourseUnit.row.addUser.deleteSelected')}"
-                                        onclick="if (!confirm('Wollen Sie die Teilnehmer wirklich löschen?')) return false"
                                         class="btn btn-info pull-right"
-                                        actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}" />
+                                        actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}"
+                                        onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.participant')}')) return false" />
                                 </h:form>
                                 <h:form
                                     rendered="#{courseUnitManagementBean.participants.getRowCount()==0}"
