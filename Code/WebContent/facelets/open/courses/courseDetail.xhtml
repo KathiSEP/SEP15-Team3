@@ -113,9 +113,9 @@
 								<div class="panel-body">
 									<h:panelGroup rendered="#{(courseDetailBean.sessionUser.userRole == 'COURSE_LEADER'  || courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
 									<div class="container">
-										<h:commandButton id = "edit" class="btn btn-warning btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
+										<h:commandButton id ="edit" class="btn btn-warning btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.editButton')}"
 															rendered="#{!courseDetailBean.editMode}" action="#{courseDetailBean.enableEditMode}"/>
-										<h:commandButton class="btn btn-success btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
+										<h:commandButton id="saveChanges" class="btn btn-success btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.saveButton')}"
 															rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.saveCourse}">
    	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                        					</h:commandButton>
@@ -161,7 +161,8 @@
 													<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 												</h:commandButton>
 											</div>
-											<h:commandButton class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}" action="#{courseDetailBean.deleteCourse}"/>
+											<h:commandButton id="deleteCourse" class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}"
+																onclick="if (!confirm('#{sessionUser.getLabel('courseDetail.row.management.deleteConfirm')}')) return false" action="#{courseDetailBean.deleteCourse}"/>
 										</div>
 									</h:panelGroup>
 								</div>
