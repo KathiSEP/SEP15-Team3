@@ -149,7 +149,8 @@
                                                      required="true"  requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeRequired')}"
                                                      validatorMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodeLength')}"
                                                      converterMessage="#{sessionUser.getLabel('authenticate.validatorMessage.ZipCodePositivNumber')}">
-                                                     <f:convertNumber longOnly="true"/>
+                                                     <f:converter converterId="javax.faces.Long"/>
+                                                     <f:validateLongRange minimum="1" maximum="999999999" />
                                                      <f:validateLength minimum ="1" maximum="10" />
                                         </h:inputText>
                                     </div>
