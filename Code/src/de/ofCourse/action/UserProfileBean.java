@@ -171,6 +171,7 @@ public class UserProfileBean {
     				user.getUsername());
     		boolean emailTaken = UserDAO.emailExists(transaction,
     				user.getEmail());
+    		boolean sendMail = false;
     		
     		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {
     			String pwHash = null;
@@ -180,15 +181,20 @@ public class UserProfileBean {
     				pwHash = PasswordHash.hash(password, salt);
     			}
     			
-    			UserDAO.updateUser(transaction, user, pwHash, salt);
-    			
     			if (!checkUser.getEmail().toLowerCase().equals(user.getEmail().
     					toLowerCase())) {
-    				String veriString = UserDAO.checkVeriString(transaction);
-    				UserDAO.setVerification(transaction, veriString, userID);
+    				user.setUserStatus(UserStatus.NOT_ACTIVATED);
+    				sendMail = true;
+    			}
+    			
+    			UserDAO.updateUser(transaction, user, pwHash, salt);
+    			transaction.commit();
+    			
+    			if (sendMail) {
+    				SecureRandom random = new SecureRandom();
+    				String veriString = new BigInteger(130, random).toString();
     				mailBean.sendUpdateMessage(userID, veriString);
     			}
-    			transaction.commit();
     			
     			FacesMessageCreator.createFacesMessage(null,
 						sessionUser.getLabel("profile.message.success"));
