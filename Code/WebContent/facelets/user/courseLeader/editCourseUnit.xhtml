@@ -305,7 +305,7 @@
                                         <div class="checkbox">
                                             <h:panelGroup
                                                 rendered="#{!(courseUnitManagementBean.courseUnit.cycle.cycleID==0)}">
-                                                <label> <h:selectBooleanCheckbox
+                                                <label> <h:selectBooleanCheckbox id="completeCycle"
                                                         value="#{courseUnitManagementBean.completeCycle}" /> 
                                                         #{sessionUser.getLabel('createCourseUnit.cycle.checkCox')}
                                                 </label>
