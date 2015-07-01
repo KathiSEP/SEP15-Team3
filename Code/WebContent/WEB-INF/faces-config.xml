@@ -59,4 +59,8 @@
         <validator-id>offlineTransactionValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.OfflineTransactionValidator</validator-class>
     </validator>
+    <validator>
+        <validator-id>priceValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.PriceValidator</validator-class>
+    </validator>
 </faces-config>
