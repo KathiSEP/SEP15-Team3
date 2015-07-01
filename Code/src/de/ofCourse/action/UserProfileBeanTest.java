@@ -172,6 +172,8 @@ public class UserProfileBeanTest {
 		bean.setRole("admin");
 		bean.setSessionUser(sessionUser);
 		
+		Mockito.when(LanguageManager.getInstance()).thenReturn(lang);
+		
 		// Determine the return value of getUser
 		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(user);
 		
@@ -198,8 +200,6 @@ public class UserProfileBeanTest {
 		Mockito.when(UserDAO.nickTaken(conn,
 				user.getUsername())).thenReturn(true);
 		
-		Mockito.when(LanguageManager.getInstance()).thenReturn(lang);
-		
 		// At this point the user data is not updated,
 		//because the nickname is already taken
 		bean.saveSettings();
@@ -218,10 +218,10 @@ public class UserProfileBeanTest {
 		Mockito.when(UserDAO.nickTaken(conn,
 				user.getUsername())).thenReturn(false);
 		
+		bean.saveSettings();
+		
 		PowerMockito.verifyStatic();
 		UserDAO.updateUser(conn, user, null, null);
-		
-		bean.saveSettings();
 	}
 
 }
