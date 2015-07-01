@@ -370,5 +370,34 @@ public class MailBean {
         String link = createLink() + "/facelets/open/courses/courseDetail.xhtml?courseID=" + courseID;
         return link;
     }
+    
+    /**
+     * @param userID
+     * @param veriString
+     */
+    public void sendUpdateMessage(int userID, String veriString) {
+     // User who should get the authentificationMessage will be loaded from Database
+        Transaction trans = Connection.create();
+        trans.start();
+        
+        try{
+           User userToInform = UserDAO.getUser(trans, userID);
+           LogHandler.getInstance().debug("The Methode getUser:" + userID + "was succesfull");
+           trans.commit();
+         
+           String messenge = createSalutation(userToInform);
+           messenge += "Your Profil was succesfully updated. \n";
+           messenge += "Please press the following link to confirm your new Mailaddress: \n \n";                   
+           messenge += createLink() + "/facelets/open/authenticate.xhtml?veri=" + veriString + "\n\n";
+           messenge += createSignature();
+           
+           String subject = "Profil Update";
+           
+           sendSingleMail(userToInform.getEmail(), subject, messenge);
+        } catch (InvalidDBTransferException e){
+           trans.rollback(); 
+        }
+        
+    }
 
 }
