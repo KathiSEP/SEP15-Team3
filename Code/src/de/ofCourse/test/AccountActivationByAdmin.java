@@ -53,6 +53,8 @@ public class AccountActivationByAdmin {
     // Testing activate account
     driver.findElement(By.id("formActivateUsers:participantsTable:0:checked")).click();
     driver.findElement(By.id("formActivateUsers:activate")).click();
+    //Check alert and close
+    assertTrue(closeAlertAndGetItsText().contains("Wollen Sie die ausgewählten Teilnehmer wirklich aktivieren?"));
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Der Benutzer wurde erfolgreich aktiviert! ");
     
