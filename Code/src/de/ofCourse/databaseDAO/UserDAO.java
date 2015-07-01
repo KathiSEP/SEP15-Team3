@@ -1157,7 +1157,7 @@ public class UserDAO {
 		Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
 		String query = "UPDATE \"users\" SET email_verification = false, " +
-				"veri_string = ? " +
+				"veri_string = ?, " +
 				"status = ?::status WHERE id = ?";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(query)){
@@ -1166,6 +1166,7 @@ public class UserDAO {
 		    stmt.setString(2, UserStatus.NOT_ACTIVATED.toString());
 		    stmt.setInt(3, userID);
 		    
+		    stmt.executeUpdate();
 		} catch (SQLException e) {
 		    throw new InvalidDBTransferException(
 		                                "Error occured during verifyUser", e);
@@ -1189,23 +1190,32 @@ public class UserDAO {
     	
     	Connection connection = (Connection) trans;
 		java.sql.Connection conn = connection.getConn();
-    	String veriString = null;
+		String veriString = "";
+		ResultSet rst = null;
     	String query = "SELECT id FROM \"users\" WHERE veri_string = ?";
     	
     	try (PreparedStatement stmt = conn.prepareStatement(query)) {
-    		stmt.setString(1, veriString);
-    		try (ResultSet rst = stmt.executeQuery()) {
-    			
-    			do {
-					SecureRandom random = new SecureRandom();
-					veriString = new BigInteger(130, random).toString();
-			    } while (rst.next());
-    			
-    		}
     		
+    	    do {
+	    		SecureRandom random = new SecureRandom();
+	    		veriString = new BigInteger(130, random).toString();
+	    		stmt.setString(1, veriString);
+	    		rst = stmt.executeQuery();
+    	    } while (rst.next());
+    	    
     	} catch (SQLException e) {
     		throw new InvalidDBTransferException("Error occured during " +
     				"checkVeriString (java.sql.Connection conn)", e);
+		} finally {
+			if (rst != null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					throw new InvalidDBTransferException("Error occured during " +
+		    				"closing ResultSet in " +
+		    				"checkVeriString (java.sql.Connection conn)", e);
+				}
+			}
 		}
 		return veriString;
     }
