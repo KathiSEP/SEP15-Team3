@@ -51,6 +51,7 @@ public class SearchAndViewCourseTest {
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Standardtanz");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
+    assert driver.findElements(By.id(resultTable)).size() == 1;
     driver.findElement(By.linkText("Standardtanz")).click();
   }
 
