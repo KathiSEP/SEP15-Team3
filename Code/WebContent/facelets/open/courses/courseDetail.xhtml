@@ -79,6 +79,7 @@
    		                            <h:column>	                            
            			                    <f:facet name="header"/>
                     		            <h:commandButton id="löschen" class="btn btn-xs btn-danger" value="#{sessionUser.getLabel('courseDetail.row.leader.deleteButton')}"
+                    		                               onclick ="if(!confirm ('Wollen Sie den Kursleiter wirklich aus dem Kurs entfernen?')) return false"
                     		            					action="#{courseDetailBean.removeCourseLeaders}" rendered="#{courseDetailBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR'}">
                             	        	<f:param name="leaderID" value="#{user.userID}"/>
                                 		</h:commandButton>

@@ -180,7 +180,7 @@ public class CourseDetailBean implements Pagination, Serializable {
      */
     @PostConstruct
     private void init() {
-    	courseID = Integer.parseInt(FacesContext.getCurrentInstance()
+        courseID = Integer.parseInt(FacesContext.getCurrentInstance()
     	            .getExternalContext().getRequestParameterMap().get("courseID"));
     	pagination = new PaginationData(pageElements, 0, SortColumn.START_TIME, SortDirection.ASC);
     
@@ -975,21 +975,21 @@ public class CourseDetailBean implements Pagination, Serializable {
 	    if (CourseDAO.addLeaderToCourse(this.transaction,
 		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {
 	        
+                this.transaction.commit();
 	        //FacesMessage: Add courseleader successful
 		FacesMessageCreator.createFacesMessage(
 		        null,
 		        sessionUser.getLabel(
 	                      "courseDetailBean.facesMessage.CourseLeaderAdd"));
-		this.transaction.commit();
 		return URL_COURSE_DETAIL_NEW + courseID;
 		
 	    }else{
 	        //FacesMessage: Add course leader failed
+                this.transaction.rollback();
                 FacesMessageCreator.createFacesMessage(
                         null,
                         sessionUser.getLabel(
                           "courseDetailBean.facesMessage.CourseLeaderAddFail"));
-                this.transaction.rollback();
                 return URL_STAY_COURSE_DETAIL;
 	    }
 	} catch (InvalidDBTransferException e) {
