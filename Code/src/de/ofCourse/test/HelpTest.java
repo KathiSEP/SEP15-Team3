@@ -27,9 +27,9 @@ public class HelpTest {
     driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Profil")).click();
     driver.findElement(By.linkText("Hilfe")).click();
