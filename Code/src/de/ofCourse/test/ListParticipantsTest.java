@@ -61,7 +61,7 @@ public class ListParticipantsTest {
     assert driver.findElement(By.id("listParticipants")).getText().equals("Liste aller Kursteilnehmer");
     
     // Delete one participant from this course
-    driver.findElement(By.id("formListParticipants:participantsTable:1:checked")).click();
+    driver.findElement(By.id("formListParticipants:participantsTable:0:checked")).click();
     driver.findElement(By.id("formListParticipants:delete")).click();
     // Check alert and close
     assertTrue(closeAlertAndGetItsText().contains("Wollen Sie die ausgewählten Teilnehmer wirklich aus dem Kurs entfernen?"));
