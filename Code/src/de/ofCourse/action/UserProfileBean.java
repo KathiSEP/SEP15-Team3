@@ -186,7 +186,7 @@ public class UserProfileBean {
     					toLowerCase())) {
     				String veriString = UserDAO.checkVeriString(transaction);
     				UserDAO.setVerification(transaction, veriString, userID);
-    				mailBean.sendUpdateMessage(userID, veriString);
+    				mailBean.sendUpdateMessage(userID, veriString, user.getEmail());
     			}
     			transaction.commit();
     			
