@@ -2,19 +2,57 @@
 
 \begin{landscape}
 	\section{Testfälle für den Systemadministrator ohne bestehenden Datensatz}	
-		\begin{tabular}{|p{2.0cm} |p{4.0cm}|p{4.0cm}|p{4.0cm}|p{4.0cm}|p{4.0cm}|}
+		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\ 
-      	    \hline                  &                      &                   &                  &                   &                  \\ 
+      	    \hline    T10-10   &      AuthenticationTest (zusätzlich werden Fehlerfälle geprüft, die bei der Anmeldung auftreten können)   &  erfolgreich &                  &                   &                  \\ 
+			
+			\hline T10-80, T10-90   &      CreateCourseTest  (Das Anlegen der Kurse aus den beiden Testfällen wird in einer Testklasse durchgeführt. Beide Kurse werden angelegt, zusätzlich wird auf weitere Fehlerfälle geprüft)              &      erfolgreich             &                  &                   &                  \\ 
+			\hline       &          &          &        &         &       \\
 			\hline 
 		\end{tabular} \ \\
 		\ \\
 	\section{Testfälle für den Kursleiter}
-		
+		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline 
+		\end{tabular} \ \\
+		\ \\
+				
 	\section{Testfälle für anonymer Benutzer}
-	
+		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline   T30-30    & RegistrationTest (zustätzlich werden weitere Fehlerfälle geprüft, die bei der Registrierung auftreten können)   &   fehlgeschlagen       &    Die E-Mail-Adresse 'Katharina\_hoelzl@web.de wurde akzeptiert, obwohl katharina\_hoelzl@web.de bereits in der Datenbank vorhanden war. Verbesserung in der RegisterUserBean: Mail wird nun zu lower case konvertiert.    &    erfolgreich     &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline 
+		\end{tabular} \ \\
+		\ \\
+			
 	\section{Testfälle für den registrierten Benutzer}
-	
+		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline T40-10   &  UserNotYetActivatedTest        & erfolgreich   &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline 
+		\end{tabular} \ \\
+		\ \\
+			
 	\section{Testfälle mit Datensatz}	
-	
+		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline       &          &          &        &         &       \\
+			\hline 
+		\end{tabular} \ \\
+		\ \\
 	
 \end{landscape}
