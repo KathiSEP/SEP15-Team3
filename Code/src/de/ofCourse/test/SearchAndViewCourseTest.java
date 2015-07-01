@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -19,6 +22,7 @@ public class SearchAndViewCourseTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  private final String resultTable = "resultTable";
 
   @Before
   public void setUp() throws Exception {
@@ -36,11 +40,14 @@ public class SearchAndViewCourseTest {
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
     driver.findElement(By.id("formLogin:login")).click();
+    
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Fußball");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
+    assert driver.findElement(By.id(resultTable)).getText().equals("Ihre Anfrage konnte keine Ergenbnisse liefern");
+    
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Standardtanz");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();

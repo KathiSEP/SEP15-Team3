@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -19,6 +22,8 @@ public class UploadProfileImageTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  private final String userImage = "userImage"; 
+  private final String editProfilePicture = "editProfilePicture";
 
   @Before
   public void setUp() throws Exception {
@@ -36,14 +41,18 @@ public class UploadProfileImageTest {
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
     driver.findElement(By.id("formLogin:login")).click();
+    
     driver.findElement(By.linkText("Profil")).click();
     driver.findElement(By.id("formUpload:changeProfilePicture")).click();
     driver.findElement(By.id("formUpload:userImage")).clear();
     driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\Patrick\\Music\\0004-05-wrong tunes.m4r");
     driver.findElement(By.id("formUpload:editProfilePicture")).click();
+    assert driver.findElement(By.id(userImage)).getText().equals("Kein gültiges Bildformat.  ");
+    
     driver.findElement(By.id("formUpload:userImage")).clear();
     driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\Patrick\\Pictures\\stick.jpg");
     driver.findElement(By.id("formUpload:editProfilePicture")).click();
+    assert driver.findElement(By.id(editProfilePicture)).getText().equals("Ihr Profilbild wurde erfolgreich geändert ");
   }
 
   @After
