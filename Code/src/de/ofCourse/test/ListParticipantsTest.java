@@ -62,12 +62,8 @@ public class ListParticipantsTest {
     
     // Delete one participant from this course
     driver.findElement(By.id("formListParticipants:participantsTable:1:checked")).click();
-//    Alert alert = driver.switchTo().alert();
-//    alert.accept();
-    //driver.switchTo().alert().accept();
-    //driver.findElement(By.linkText("Wollen Sie die ausgewählten Teilnehmer wirklich aus dem Kurs entfernen?")).click();
-    //driver.findElement(By.xpath("//a[button(text(),'Ok')]")).click();
     driver.findElement(By.id("formListParticipants:delete")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Wollen Sie die ausgewählten Teilnehmer wirklich aus dem Kurs entfernen?"));
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die ausgewählten Benutzer wurden erfolgreich aus dem Kurs entfernt! ");
     

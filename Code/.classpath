@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/testing/xalan-2.7.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/testing/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/testing/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kathi/workspace/SEP15-Team3/Code/WebContent/WEB-INF/lib/testing/testng-6.8.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
