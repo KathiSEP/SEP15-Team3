@@ -27,17 +27,15 @@ public class CreateYogaUnitsTest {
 
   @Test
   public void testCreateYogaUnits() throws Exception {
-    driver.get(baseUrl + "OfCourse/");
-    driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
-    driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
-    driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Basti#249");
-    driver.findElement(By.id("formLogin:login")).click();
-    driver.findElement(By.linkText("Suche")).click();
-    driver.findElement(By.id("formFilterCourses:courseOffers")).click();
-    driver.findElement(By.linkText("Yoga")).click();
-    driver.findElement(By.name("courseDetailsID:j_idt89")).click();
+     driver.get(baseUrl + "OfCourse/");
+     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
+     driver.findElement(By.id("formLogin:usernameLogin")).clear();
+     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
+     driver.findElement(By.id("formLogin:passwordLogin")).clear();
+     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Basti#249");
+     driver.findElement(By.id("formLogin:login")).click();
+     driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
+     driver.findElement(By.name("courseDetailsID:j_idt87")).click();
     
     assert driver.findElement(By.id("headingCreatedUnit")).getText().equals("Kurseinheit anlegen");
     driver.findElement(By.id("formCourseUnit:titleCourseUnit")).clear();

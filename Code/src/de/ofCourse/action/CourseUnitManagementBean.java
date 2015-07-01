@@ -876,8 +876,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 		    FacesMessageCreator.createFacesMessage(null,
 			    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
-				    + dateAsString(new Date(beginCourse))
-				    + sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check1")
+				    + dateAsString(new Date(beginCourse)) + " "
+				    + sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.check2")
 				    + dateAsString(new Date(endCourse)) + " !");
 		}
 
