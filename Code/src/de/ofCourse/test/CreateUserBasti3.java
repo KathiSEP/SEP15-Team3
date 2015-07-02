@@ -33,7 +33,7 @@ public class CreateUserBasti3 {
         
     driver.findElement(By.linkText("Administration")).click();
     driver.findElement(By.linkText("Seitenverwaltung")).click();
-    driver.findElement(By.id("j_idt54:createNewUser")).click();
+    driver.findElement(By.id("userManagement:createNewUser")).click();
     new Select(driver.findElement(By.id("formCreateUser:titleRegister"))).selectByVisibleText("Herr");
     driver.findElement(By.id("formCreateUser:firstnameRegister")).clear();
     driver.findElement(By.id("formCreateUser:firstnameRegister")).sendKeys("Sebastian");

@@ -12,7 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ OverdraftCreditAdminTest.class, AuthenticationTest.class, CreateUserBasti3.class, CreateUserPatrickC.class, CreateUserRicky1.class,
+@SuiteClasses({ //OverdraftCreditAdminTest.class, AuthenticationTest.class, CreateUserBasti3.class, CreateUserPatrickC.class, CreateUserRicky1.class,
      CreateCourseTest.class, EditCourseYogaTest.class, CreateYogaUnitTest.class, CreateYogaUnitsTest.class,
      AdaptedEditUnitTest.class, AdaptedDeleteUnitTest.class, SearchAndViewCourseTest.class, ActivationTypeAdminTest.class, 
      RegistrationTest.class, UserNotYetActivatedTest.class, AccountActivationByAdminTest.class, SignUpForCourseYogaTest.class,

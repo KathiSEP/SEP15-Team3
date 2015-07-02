@@ -98,7 +98,7 @@ public class CreateCourseTest {
       
       // Testing end date does not exist and start date has a invalid format
       driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).clear();
-      driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).sendKeys("10027");
+      driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).sendKeys("10001");
       driver.findElement(By.id("formCreateCourse:courseStartDate")).clear();
       driver.findElement(By.id("formCreateCourse:courseStartDate")).sendKeys("123");
       driver.findElement(By.id("formCreateCourse:courseEndDate")).clear();
@@ -135,7 +135,7 @@ public class CreateCourseTest {
       
       // Testing correct data for the course 'Yoga'
       driver.findElement(By.id("formCreateCourse:courseImage")).clear();
-      driver.findElement(By.id("formCreateCourse:courseImage")).sendKeys("C:\\Users\\Kathi\\Desktop\\domo.jpg");
+      driver.findElement(By.id("formCreateCourse:courseImage")).sendKeys("C:\\Users\\Blacky\\Desktop\\domo.jpg");
       driver.findElement(By.id("formCreateCourse:createNewCourse")).click();
       assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
       
@@ -152,7 +152,7 @@ public class CreateCourseTest {
       driver.findElement(By.id("formCreateCourse:courseDescription")).clear();
       driver.findElement(By.id("formCreateCourse:courseDescription")).sendKeys("Grundkurs Standardtanz. Erlernt werden Taenze wie Walzer, DiscoFox, Cha-Cha-Cha, SlowFox und Tango. Die Teilnahme als Paar ist wuenschenswert.");
       driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).clear();
-      driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).sendKeys("10027");
+      driver.findElement(By.id("formCreateCourse:IdOfCourseLeader")).sendKeys("10001");
       driver.findElement(By.id("formCreateCourse:courseParticipants")).clear();
       driver.findElement(By.id("formCreateCourse:courseParticipants")).sendKeys("30");
       driver.findElement(By.id("formCreateCourse:courseStartDate")).clear();

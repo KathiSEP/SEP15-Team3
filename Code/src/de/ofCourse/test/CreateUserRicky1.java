@@ -33,7 +33,7 @@ public class CreateUserRicky1 {
         
     driver.findElement(By.linkText("Administration")).click();
     driver.findElement(By.linkText("Seitenverwaltung")).click();
-    driver.findElement(By.id("j_idt54:createNewUser")).click();
+    driver.findElement(By.id("userManagement:createNewUser")).click();
     new Select(driver.findElement(By.id("formCreateUser:titleRegister"))).selectByVisibleText("Herr");
     driver.findElement(By.id("formCreateUser:firstnameRegister")).clear();
     driver.findElement(By.id("formCreateUser:firstnameRegister")).sendKeys("Ricky");
@@ -59,7 +59,7 @@ public class CreateUserRicky1 {
     driver.findElement(By.id("formCreateUser:passwordRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formCreateUser:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formCreateUser:passwordConfirmRegister")).sendKeys("Muhmuh1!");
-    new Select(driver.findElement(By.id("formCreateUser:userRoleSelection"))).selectByVisibleText("Benutzer");
+    new Select(driver.findElement(By.id("formCreateUser:userRoleSelection"))).selectByVisibleText("Registriert");
     driver.findElement(By.id("formCreateUser:createNewUser")).click(); 
     driver.findElement(By.id("formCreateUser:birthdateRegister")).clear();
     driver.findElement(By.id("formCreateUser:birthdateRegister")).sendKeys("04.10.1991");
