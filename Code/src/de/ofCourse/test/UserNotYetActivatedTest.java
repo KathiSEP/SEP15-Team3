@@ -45,7 +45,7 @@ public class UserNotYetActivatedTest {
     
     // Testing login: Account not activated
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi6");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formLogin:login")).click();

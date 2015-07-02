@@ -3,7 +3,7 @@ package de.ofCourse.test;
 /**
  * Testing of account activation by the administrator. This test is geared to 
  * the test T40-20 from our product brief. 
- * The user 'Kathi6' will be activated by the administrator in this test. On 
+ * One user will be activated by the administrator in this test. On 
  * top of that it is asserted that the faces messages are correct and that the 
  * user will be sent up to the right page.
  * 
