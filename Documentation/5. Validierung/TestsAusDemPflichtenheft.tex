@@ -21,7 +21,7 @@
 	\section{Testfälle für den Kursleiter}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
-			\hline T20-10 & Eigenen Kurs editieren & fehlgeschlagen & Validator prüft beim Speichern auch ob eine Kursleiter ID > 0 ist &         &       \\
+			\hline T20-10 & Eigenen Kurs editieren & erfolgreich &  &         &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
@@ -46,10 +46,10 @@
 			\hline T40-10   &  UserNotYetActivatedTest        & erfolgreich   &        &         &       \\
 			\hline T40-20   & AccountActivationByAdmin Test  & erfolgreich    &        &         &       \\	
 			\hline T40-70   & SignUpForCourseYogaTest & erfolgreich &        &         &       \\	
-			\hline T40-90   & SignUpForKungFuCourseAndUnitsTest & erfolgreich &        &         &       \\	
-			\hline T40-110  & Kostenpflichtige Kurseinheit ohne genug Geld & erfolgreich &        &         &       \\	
+			\hline T40-90   & SignUpForCourseAndUnitsTest & erfolgreich &        &         &       \\	
+			\hline T40-110  & SignUpForCourseunitNoMoneyTest & erfolgreich &        &         &       \\	
 			\hline T40-140  & HelpTest & erfolgreich &        &         &       \\	
-			\hline T40-170  & Anmelden in vollen Kurs & erfolgreich &        &         &       \\	
+			\hline T40-170  & SignUpFullCourseTest & erfolgreich &        &         &       \\	
 			\hline T40-200  & LogoutTest & erfolgreich &        &         &       \\
 			\hline 
 		\end{tabular} \ \\
@@ -60,7 +60,7 @@
 			\hline \textbf{Testnr.(Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			
 			\hline  T50-10 (TF) & AdminTopUpTest: Guthabenkonto eines Nutzers wird durch den Admin aufgeladen &     fehlgeschlagen     & negative Geldbeträge wurden akzeptiert,  Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000       &    erfolgreich     &       \\	
-			\hline T50-70 & erfolgreich &          &        &         &       \\
+			\hline T50-70 & DeleteCourseTest & erfolgreich &        &         &       \\
 			
 			
 			\hline  T40-180, T50-40  & ListParticipantsTest (Die beiden Testfälle 'Teilnehmer ansehen' und 'Teilnehmer aus Kurs entfernen' wurden in eine Testklasse zusammengefasst.) &     erfolgreich     &        &         &       \\
