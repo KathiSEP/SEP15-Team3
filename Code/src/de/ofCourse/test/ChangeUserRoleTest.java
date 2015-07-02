@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -14,6 +17,8 @@ public class ChangeUserRoleTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
+  public static final String facesMessages= "facesMessages";
 
   @Before
   public void setUp() throws Exception {
@@ -43,6 +48,9 @@ public class ChangeUserRoleTest {
     driver.findElement(By.id("formSettings:changeSettings")).click();
     new Select(driver.findElement(By.id("formChangeSettings:userRoleSelection"))).selectByVisibleText("Kursleiter");
     driver.findElement(By.id("formChangeSettings:saveSettings")).click();
+    
+    assert driver.findElement(By.id(facesMessages)).getText().contains("Ihre Benutzerdaten wurden erfolgreich geändert! ");
+    
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 

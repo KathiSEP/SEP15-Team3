@@ -84,7 +84,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:countryRegister")).clear();
     driver.findElement(By.id("formRegister:countryRegister")).sendKeys("Deutschland");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("sebastian@nrschwarz.de");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("g6282972@trbvm.com");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
@@ -112,7 +112,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("sebastian@nrschwarz.de");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("g6282972@trbvm.com");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
@@ -138,7 +138,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("Sebastian@nrschwarz.de");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("G6282972@trbvm.com");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
@@ -158,7 +158,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("test");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmxde");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
@@ -181,7 +181,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("9408112312345");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmxde");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
