@@ -26,19 +26,15 @@ public class AdaptedDeleteUnitTest {
     @Test
     public void testAdaptedDeleteUnit() throws Exception {
 	driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
-	driver.findElement(By.id("generalNavigationForm:authenticateLink"))
-		.click();
+	driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
 	driver.findElement(By.id("formLogin:usernameLogin")).clear();
 	driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
 	driver.findElement(By.id("formLogin:passwordLogin")).clear();
-	driver.findElement(By.id("formLogin:passwordLogin")).sendKeys(
-		"Basti#249");
+	driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
 	driver.findElement(By.id("formLogin:login")).click();
-	driver.findElement(By.id("leadedCoursesList:courseTable:0:details"))
-		.click();
+	driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
 
-	assert driver.findElement(By.id("courseDetailTitle")).getText()
-		.equals("Kursdetails");
+	assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Kursdetails");
 	driver.findElement(By.id("j_idt110:j_idt112:0:bearbeiten")).click();
 
 	Select select = new Select(driver.findElement(By
@@ -46,15 +42,13 @@ public class AdaptedDeleteUnitTest {
 	assert select.getFirstSelectedOption().getText().equals("Niemand");
 
 	driver.findElement(By.id("formCourseUnit:completeCycle")).click();
-	assert driver.findElement(By.id("formCourseUnit:completeCycle"))
-		.isSelected();
+	assert driver.findElement(By.id("formCourseUnit:completeCycle")).isSelected();
 
 	driver.findElement(By.id("formCourseUnit:deleteCourseUnit")).click();
 	assertTrue(closeAlertAndGetItsText().matches(
 		"^Wollen Sie die Kurseinheit/en wirklich loeschen[\\s\\S]$"));
 
-	assert driver.findElement(By.id("courseDetailTitle")).getText()
-		.equals("Kursdetails");
+	assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Kursdetails");
 	driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
     }
 

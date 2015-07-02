@@ -22,16 +22,29 @@
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			\hline T20-10 & Eigenen Kurs editieren & erfolgreich &  &         &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
+			\hline  T20-20 (TF)     & CreateYogaUnitTest: Legt eine einzelne Einheit für den Kurs Yoga  &  erfolgreich      	& 	&  &       \\
+			
+			\hline  T20-30 (TF)     & CreateYogaUnitsTest: Erstellt vier regelmäßige Kurseinheiten für den Kurs Yoga (zusätzliche Fehlertest)  &   fehlgeschlagen      
+			& negative Werte wurden akzeptiert beispielsweise für Anzahl von Kurseinheiten, Preisangabe kompliziert, und zum Teil falsch interpretiert
+			&  erfolgreich       &  Notiz: aussagekräftigere Fehlermeldungen eingefügt, Zurück Button zu den Kursdetails eingefügt      \\
+						
+			\hline  T20-60 (TF)     & AdaptedEditUnitTest: Editiert eine regelmäßige Kurseinheit inklusive Fehlertests 
+			Testfall wurde angepasst, da Testfälle weggelassen wurden, deren Daten benötigt worden wären &   fehlgeschlagen      
+			& Navigation war nicht wie beschrieben möglich
+			&  erfolgreich       &     \\
+						
+			\hline  T20-70 (TF)     & AdaptedDeleteUnitTest: Löscht eine regelmäßige Kurseinheit aus dem System
+			& Testfall wurde angepasst, da Testfälle weggelassen wurden, deren Daten benötigt worden wären			
+			& erfolgreich(mit angepasster Navigation)     
+			& 
+			&     \\
 			\hline 
 		\end{tabular} \ \\
 		\ \\
 				
 	\section{Testfälle für anonymer Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
-			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			\hline   T30-30  (KH)  & RegistrationTest (zustätzlich werden weitere Fehlerfälle geprüft, die bei der Registrierung auftreten können)   &   fehlgeschlagen       &    Die E-Mail-Adresse wurde in Großbuchstaben akzeptiert, obwohl sie bereits in Kleinbuchstaben in der Datenbank vorhanden war. Verbesserung in der RegisterUserBean: Mail wird nun zu lower case konvertiert.    &    erfolgreich     &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
@@ -42,7 +55,7 @@
 			
 	\section{Testfälle für den registrierten Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
-			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			\hline T40-10 (KH)  &  UserNotYetActivatedTest        & erfolgreich   &        &         &       \\
 			\hline T40-20  (KH) & AccountActivationByAdmin Test  & erfolgreich    &        &         &       \\	
 			\hline T40-70   & SignUpForCourseYogaTest & erfolgreich &        &         &       \\	
@@ -58,7 +71,7 @@
 			
 	\section{Testfälle mit Datensatz}	
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
-			\hline \textbf{Testnr.(Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			
 			\hline  T50-10 (TF) & AdminTopUpTest: Guthabenkonto eines Nutzers wird durch den Admin aufgeladen &     fehlgeschlagen     & negative Geldbeträge wurden akzeptiert,  Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000       &    erfolgreich     &       \\	
 			\hline  T50-30 (KH)     &  UpdateUserRoleTest (Getestet wird das aufwerten der Benutzerrolle zum Kursleiter)    &    erfolgreich      &        &         &       \\
