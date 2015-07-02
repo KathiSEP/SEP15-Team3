@@ -80,7 +80,7 @@ public class AccountManagementBeanTest {
     /**
      * Preparations for the test
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "unchecked" })
     @Before
     public void setup() {
         // Mock FacesContext statically .
@@ -129,7 +129,7 @@ public class AccountManagementBeanTest {
         
         // Specify what the methods of the database should return by specific 
         // requests.
-        Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyObject())).
+        Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyList())).
                                                                thenReturn(true);
 
         Mockito.when(UserDAO.getNumberOfNotAdminActivatedUsers(connection)).
