@@ -148,32 +148,40 @@
    	                       					</h:commandButton>
 											<h:commandButton class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
       	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-   	                       					</h:commandButton>
+   	                       					</h:commandButton><br /><br />
+   	                       					<h:commandButton id="deleteCourse" class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}"
+                                                                onclick="if (!confirm('#{sessionUser.getLabel('courseDetail.row.management.deleteConfirm')}')) return false" action="#{courseDetailBean.deleteCourse}"/>
+   	                       					
 										</h:form>
-									</div>
-									<h:panelGroup rendered="#{courseDetailBean.editMode}">
-										<div class="container">
-											<p/>
-											<div class="form-group" style="width:185px;">
-												<label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
-												<h:inputText id="leaderIDField" rendered="#{courseDetailBean.editMode}" class="form-control form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"
-												            converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}">
-												            
-                                                            <f:validator validatorId="courseInstructorValidator"/>
-												</h:inputText>
-												<h:commandButton id ="addCourseLeader" class="btn btn-success form-group btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
-													<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-												</h:commandButton>
-											</div>
-											<h:commandButton id="deleteCourse" class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}"
-																onclick="if (!confirm('#{sessionUser.getLabel('courseDetail.row.management.deleteConfirm')}')) return false" action="#{courseDetailBean.deleteCourse}"/>
-										</div>
-									</h:panelGroup>
+									</div>									
 								</div>
 							</div>
 						</h:panelGroup>
 					</div>
 				</div>
+				</h:form>
+				<h:form rendered="#{courseDetailBean.editMode}">
+				    <div class="panel panel-info" >
+				        <div class="panel-heading"><strong>Kursleiter hinzufügen</strong></div>
+				        <div class="panel-body">
+				            <h:panelGroup rendered="#{courseDetailBean.editMode}">
+                               <div class="container">
+                                   <p/>
+                                   <div class="form-group" style="width:185px;">
+                                       <label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
+                                       <h:inputText id="leaderIDField" rendered="#{courseDetailBean.editMode}" class="form-control form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"
+                                                   converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}">
+                                                   
+                                                   <f:validator validatorId="courseInstructorValidator"/>
+                                       </h:inputText>
+                                       <h:commandButton id ="addCourseLeader" class="btn btn-success form-group btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
+                                           <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+                                       </h:commandButton>
+                                   </div>
+                               </div>
+                           </h:panelGroup>
+				        </div>
+				    </div>
 				</h:form>
 				<h:form>
 					<div class="panel panel-info">
