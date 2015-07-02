@@ -9,7 +9,13 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class OwnCourseEditTest {
+/**
+ * This test checks if a user is able to sign up for a course and one of its units.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+public class SignUpForCourseAndUnitsTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -23,22 +29,20 @@ public class OwnCourseEditTest {
   }
 
   @Test
-  public void testOwnCourseEdit() throws Exception {
-    driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
+  public void testSignUpForKungFuCoursAndUnits() throws Exception {
+    driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("PatrickC");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
-    driver.findElement(By.id("myCoursesList:courseTable:0:details")).click();
-    driver.findElement(By.name("courseDetailsID:j_idt79")).click();
-    driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
-    driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("32.08.2015");
-    driver.findElement(By.name("courseDetailsID:j_idt80")).click();
-    driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
-    driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("05.08.2015");
-    driver.findElement(By.name("courseDetailsID:j_idt80")).click();
+    driver.findElement(By.linkText("Suche")).click();
+    driver.findElement(By.id("formFilterCourses:courseOffers")).click();
+    driver.findElement(By.linkText("Standardtanz")).click();
+    driver.findElement(By.name("courseDetailsID:j_idt94:j_idt98")).click();
+    driver.findElement(By.id("j_idt110:j_idt112:0:anmelden")).click();
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

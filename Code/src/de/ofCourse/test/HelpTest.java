@@ -9,6 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * This test checks if a user can access the help site.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
 public class HelpTest {
   private WebDriver driver;
   private String baseUrl;
@@ -34,6 +40,7 @@ public class HelpTest {
     driver.findElement(By.linkText("Profil")).click();
     driver.findElement(By.linkText("Hilfe")).click();
     driver.findElement(By.xpath("(//a[contains(text(),'Profil')])[2]")).click();
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

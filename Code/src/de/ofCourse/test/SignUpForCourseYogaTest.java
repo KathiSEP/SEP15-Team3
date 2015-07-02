@@ -9,6 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * This test checks if a user is able to sign up for a course.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
 public class SignUpForCourseYogaTest {
   private WebDriver driver;
   private String baseUrl;
@@ -38,6 +44,7 @@ public class SignUpForCourseYogaTest {
     driver.findElement(By.linkText("10027")).click();
     driver.findElement(By.id("courseDetailsID:j_idt95:cNews")).click();
     driver.findElement(By.name("courseDetailsID:j_idt95:j_idt99")).click();
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

@@ -9,6 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * This test checks if a user is able to sign up for a course's units.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
 public class SignUpForYogaCourseunitsTest {
   private WebDriver driver;
   private String baseUrl;

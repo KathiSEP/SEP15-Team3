@@ -9,6 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * This test checks if it is possible to edit a course.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
 public class EditCourseYogaTest {
   private WebDriver driver;
   private String baseUrl;
@@ -27,9 +33,9 @@ public class EditCourseYogaTest {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.id("leadedCoursesList:courseTable:2:details")).click();
     driver.findElement(By.id("courseDetailsID:edit")).click();
@@ -39,6 +45,7 @@ public class EditCourseYogaTest {
     driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
     driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("05.08.2015");
     driver.findElement(By.id("courseDetailsID:saveChanges")).click();
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After
