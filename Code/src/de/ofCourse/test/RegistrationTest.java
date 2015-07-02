@@ -94,7 +94,7 @@ public class RegistrationTest {
     
     // Testing AGB not accepted
     driver.findElement(By.id("formRegister:usernameRegister")).clear();
-    driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("Kathi5");
+    driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("Kathi4");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
@@ -206,17 +206,17 @@ public class RegistrationTest {
     
     // Testing correct insert of all data
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
+    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
+    driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formRegister:streetRegister")).clear();
     driver.findElement(By.id("formRegister:streetRegister")).sendKeys("Am Kastenfeld");
     driver.findElement(By.id("formRegister:houseNumberRegister")).clear();
     driver.findElement(By.id("formRegister:houseNumberRegister")).sendKeys("39");
     driver.findElement(By.id("formRegister:passwordRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("bSdFg7HjK8*");
+    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
+    driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("indexPage")).getText().equals("OfCourse");

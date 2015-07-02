@@ -41,9 +41,9 @@ public class SignUpForCourseYogaTest {
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Yoga");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
-    driver.findElement(By.linkText("10027")).click();
-    driver.findElement(By.id("courseDetailsID:j_idt95:cNews")).click();
-    driver.findElement(By.name("courseDetailsID:j_idt95:j_idt99")).click();
+    driver.findElement(By.linkText("10000")).click();
+    driver.findElement(By.id("courseDetailsID:j_idt94:cNews")).click();
+    driver.findElement(By.name("courseDetailsID:j_idt94:j_idt98")).click();
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
