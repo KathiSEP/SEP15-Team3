@@ -1,11 +1,12 @@
 package de.ofCourse.test;
 
 /**
- * Testing of change user role. This test is geared to the test T40-110 from 
- * our product brief.  
+ * Testing of delete user. This test is geared to the test T50-80 from our 
+ * product brief. 
  * 
  * @author Katharina Hölzl
  */
+
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,13 +18,11 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class ChangeUserRoleTest {
+public class DeleteUserTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
-  
-  public static final String facesMessages= "facesMessages";
 
   @Before
   public void setUp() throws Exception {
@@ -33,7 +32,7 @@ public class ChangeUserRoleTest {
   }
 
   @Test
-  public void testChangeUserRole() throws Exception {
+  public void testDeleteUser() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
@@ -50,11 +49,11 @@ public class ChangeUserRoleTest {
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Kathi5");
     driver.findElement(By.id("formFilterCourses:searchUser")).click();
     driver.findElement(By.id("formResultTable:users:0:details")).click();
-    driver.findElement(By.id("formSettings:changeSettings")).click();
-    new Select(driver.findElement(By.id("formChangeSettings:userRoleSelection"))).selectByVisibleText("Kursleiter");
-    driver.findElement(By.id("formChangeSettings:saveSettings")).click();
     
-    assert driver.findElement(By.id(facesMessages)).getText().contains("Ihre Benutzerdaten wurden erfolgreich geändert! ");
+    driver.findElement(By.id("formSettings:changeSettings")).click();
+    driver.findElement(By.id("formAdmin:deleteUser")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Wollen Sie wirklich den Benutzer löschen?"));
+    assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
     
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
