@@ -39,11 +39,16 @@ public class OverdraftCreditAdminTest {
     driver.findElement(By.linkText("Seitenverwaltung")).click();
     assert driver.findElement(By.id("heading1")).getText().equals("Seitenverwaltung");
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("EUR zehn");
+    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("zehn");
     driver.findElement(By.id("formGiveCredit:giveCredit")).click();
-    assert driver.findElement(By.id(messageOverdraftCredit)).getText().equals("Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel EUR 10,00.");
+    System.out.println(driver.findElement(By.id(messageOverdraftCredit)).getText());
+    assert driver.findElement(By.id(messageOverdraftCredit)).getText().equals("Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel 10.0");
     driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
-    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("EUR 10,00");
+    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("-10.00");
+    driver.findElement(By.id("formGiveCredit:giveCredit")).click();
+    assert driver.findElement(By.id(messageOverdraftCredit)).getText().equals("Der eingegebene Betrag muss positiv sein. Beispiel 10.0");
+    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).clear();
+    driver.findElement(By.id("formGiveCredit:amountGivenCredit")).sendKeys("10.00");
     driver.findElement(By.id("formGiveCredit:giveCredit")).click();
     assert driver.findElement(By.id("formGiveCredit:creditMessage")).getText().equals("Der Ueberziehungskredit wurde festgelegt auf 10.0 Euro.");
    
