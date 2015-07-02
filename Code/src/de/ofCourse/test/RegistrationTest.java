@@ -55,6 +55,9 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:firstnameRegister")).clear();
     driver.findElement(By.id("formRegister:firstnameRegister")).sendKeys("Katharina");
     driver.findElement(By.id("formRegister:register")).click();
+    
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
+    
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messageUsernameRegister)).getText().contains("Bitte geben Sie einen Benutzernamen ein. ");
@@ -84,6 +87,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina_hoelzl@web.de");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messageUsernameRegister)).getText().contains("Der Benutzername existiert bereits. ");
@@ -96,6 +100,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Bitte bestätigen Sie die AGB's! ");
@@ -109,6 +114,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).clear();
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina_hoelzl@web.de");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die angegebene E-Mail existiert bereits! ");
@@ -121,6 +127,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).clear();
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina_hoelzl");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messageEmailRegister)).getText().contains("Kein gültiges E-Mail Format. ");
@@ -134,6 +141,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("Katharina_hoelzl@web.de");
     driver.findElement(By.id("formRegister:selectAGB")).click();
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die angegebene E-Mail existiert bereits! ");
@@ -152,6 +160,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).clear();
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl934@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messageDateOfBirthRegister)).getText().contains("Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. ");
@@ -174,6 +183,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:emailRegister")).clear();
     driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl934@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messageDateOfBirthRegister)).getText().contains("Datum liegt in der Zukunft oder mehr als 150 Jahre zurück. ");
@@ -189,6 +199,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
     
     assert driver.findElement(By.id(messagePasswordRegister)).getText().contains("Die Passwörter müssen übereinstimmen. ");
@@ -207,6 +218,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("bSdFg7HjK8*");
     driver.findElement(By.id("formRegister:register")).click();
+    assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("indexPage")).getText().equals("OfCourse");
   }
 
