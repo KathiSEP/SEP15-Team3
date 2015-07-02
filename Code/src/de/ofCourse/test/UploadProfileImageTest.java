@@ -53,6 +53,8 @@ public class UploadProfileImageTest {
     driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\Patrick\\Pictures\\stick.jpg");
     driver.findElement(By.id("formUpload:editProfilePicture")).click();
     assert driver.findElement(By.id(editProfilePicture)).getText().equals("Ihr Profilbild wurde erfolgreich geändert ");
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

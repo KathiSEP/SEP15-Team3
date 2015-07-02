@@ -46,6 +46,8 @@ public class EditEmailTest {
     driver.findElement(By.id("formChangeSettings:emailRegister")).sendKeys("patrick@gmail.com");
     driver.findElement(By.id("formChangeSettings:saveSettings")).click();
     assert driver.findElement(By.id(saveSettings)).getText().equals("Ihre Benutzerdaten wurden erfolgreich geändert");
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

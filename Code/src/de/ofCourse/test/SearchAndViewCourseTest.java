@@ -53,6 +53,8 @@ public class SearchAndViewCourseTest {
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
     assert driver.findElements(By.id(resultTable)).size() == 1;
     driver.findElement(By.linkText("Standardtanz")).click();
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

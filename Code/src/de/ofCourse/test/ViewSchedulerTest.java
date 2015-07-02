@@ -44,6 +44,8 @@ public class ViewSchedulerTest {
     assert driver.findElements(By.id(timeTable)).size() == 1;
     driver.findElement(By.name("scheduler:timeTable:j_idt85")).click();
     assert driver.findElements(By.id(timeTable)).size() == 1;
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After
