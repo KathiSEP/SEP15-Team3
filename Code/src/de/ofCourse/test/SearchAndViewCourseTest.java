@@ -34,27 +34,17 @@ public class SearchAndViewCourseTest {
   @Test
   public void testSearchAndViewCourse() throws Exception {
     driver.get(baseUrl + "OfCourse/");
-    driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
-    driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Slash");
-    driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
-    driver.findElement(By.id("formLogin:login")).click();
-    
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
-    driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Fu√üball");
+    driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Fuﬂball");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
     assert driver.findElement(By.id(resultTable)).getText().equals("Ihre Anfrage konnte keine Ergenbnisse liefern");
     
     driver.findElement(By.id("formFilterCourses:filterInput")).clear();
     driver.findElement(By.id("formFilterCourses:filterInput")).sendKeys("Standardtanz");
     driver.findElement(By.id("formFilterCourses:searchCourses")).click();
-    assert driver.findElements(By.id(resultTable)).size() == 1;
     driver.findElement(By.linkText("Standardtanz")).click();
-    
-    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After
