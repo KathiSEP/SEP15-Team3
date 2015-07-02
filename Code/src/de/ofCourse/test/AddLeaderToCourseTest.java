@@ -12,8 +12,11 @@ package de.ofCourse.test;
  */
 
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -22,6 +25,8 @@ public class AddLeaderToCourseTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
+  public static final String facesMessages= "facesMessages";
 
   @Before
   public void setUp() throws Exception {
@@ -45,24 +50,29 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
     driver.findElement(By.linkText("Zweiter Test")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     // Testing insert is a negative number
     driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("-1234");
     driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    
+    assert driver.findElement(By.id(facesMessages)).getText().contains("Bitte geben Sie eine positive Kursleiternummer ein (zwischen 0 und 10 Zeichen). ");
     
     // Testing inserted id does not exist
-    driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("123456");
     driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     // Testing insert correct course instructor id
     driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("10009");
     driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
