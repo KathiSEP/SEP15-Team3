@@ -81,7 +81,7 @@ public class AddLeaderToCourseTest {
     
     // Testing insert correct course instructor id
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("10009");
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("10001");
     driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
