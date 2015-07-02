@@ -9,6 +9,12 @@ import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+/**
+ * Tests whether the overdraft credit is changed correctly.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class OverdraftCreditAdminTest {
   private WebDriver driver;
   private String baseUrl;
