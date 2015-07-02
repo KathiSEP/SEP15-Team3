@@ -10,7 +10,7 @@
       	                             Zustätzlich zum wurden noch mehr Fehlerfälle getestet   &  fehlgeschlagen &    negative Werte wurden akzeptiert, Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000              &      erfolgreich             &                  \\ 
       	                             
       	    \hline    T10-40 (TF)   &    ActivationTypeAdminTest: In diesem Test wird die Funktionalität der Änderung des Typs der Accountaktivierung durch den Admin getestet.
-      	      &  erfolgreich &             &                &                  \\                          
+      	      &  erfolgreich &  Notiz: aktuell eingestellte Werte werden nun angezeigt, Erfolgsmeldungen hinzugefügt           &                &                  \\                          
       	                             
 			
 			\hline T10-80, T10-90   &      CreateCourseTest  (Das Anlegen der Kurse aus den beiden Testfällen wird in einer Testklasse durchgeführt. Beide Kurse werden angelegt, zusätzlich wird auf weitere Fehlerfälle geprüft)              &      erfolgreich             &                  &                   &                  \\ 
@@ -55,7 +55,11 @@
 			
 	\section{Testfälle mit Datensatz}	
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
-			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			\hline \textbf{Testnr.(Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			
+			\hline  T50-10 (TF) & AdminTopUpTest: Guthabenkonto eines Nutzers wird durch den Admin aufgeladen &     fehlgeschlagen     & negative Geldbeträge wurden akzeptiert,  Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000       &    erfolgreich     &       \\
+			
+			
 			\hline  T40-180, T50-40  & ListParticipantsTest (Die beiden Testfälle 'Teilnehmer ansehen' und 'Teilnehmer aus Kurs entfernen' wurden in eine Testklasse zusammengefasst.) &     erfolgreich     &        &         &       \\
 			\hline  T50-50  &  AddLeaderToCourseTest (zusätzlich wurden Fehlerfälle geprüft) &  fehlgeschlagen & Es wurde bei der Eingabe der KursleiterID nicht geprüft ob die ID zu einem Kursleiter gehört. Behebung des Fehlers durch hinzufügen des Validators CourseInstructor zum Facelet CourseDetail.xhtml  &  erfolgreich       &       \\
 			\hline       &          &          &        &         &       \\
