@@ -51,7 +51,7 @@ public class CreateYogaUnitTest {
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).sendKeys("Bringe Körper, Geist und Seele in Einklang durch Yogaübungen. Jeder Teilnehmer sollte seine eigene Turnmatte mitnehmen.");
     driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).clear();
-    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10005");
+    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10001");
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).sendKeys("5");
     driver.findElement(By.id("formCourseUnit:maxUsersCourseUnit")).clear();

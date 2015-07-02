@@ -31,7 +31,7 @@ public class CreateYogaUnitsTest {
      driver.findElement(By.id("formLogin:passwordLogin")).clear();
      driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
      driver.findElement(By.id("formLogin:login")).click();
-     driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
+     driver.findElement(By.id("leadedCoursesList:courseTable:1:details")).click();
      driver.findElement(By.name("courseDetailsID:j_idt87")).click();
     
     assert driver.findElement(By.id("headingCreatedUnit")).getText().equals("Kurseinheit anlegen");
@@ -58,7 +58,7 @@ public class CreateYogaUnitsTest {
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).sendKeys("");
     driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).clear();
-    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10005");
+    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10001");
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).sendKeys("5");
     driver.findElement(By.id("formCourseUnit:maxUsersCourseUnit")).clear();
@@ -102,7 +102,7 @@ public class CreateYogaUnitsTest {
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:descriptionCourseUnit")).sendKeys("Bringe Koerper, Geist und Seele in Einklang durch Yogauebungen. Jeder Teilnehmer sollte seine eigene Turnmatte mitnehmen.");
     driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).clear();
-    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10005");
+    driver.findElement(By.id("formCourseUnit:leaderCourseUnit")).sendKeys("10001");
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).clear();
     driver.findElement(By.id("formCourseUnit:minUsersCourseUnit")).sendKeys("5");
     driver.findElement(By.id("formCourseUnit:maxUsersCourseUnit")).clear();

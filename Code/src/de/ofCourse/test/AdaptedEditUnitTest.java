@@ -30,8 +30,8 @@ public class AdaptedEditUnitTest {
 	driver.findElement(By.id("formLogin:passwordLogin")).clear();
 	driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
 	driver.findElement(By.id("formLogin:login")).click();
-	driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
-	driver.findElement(By.id("j_idt110:j_idt112:3:bearbeiten")).click();
+	driver.findElement(By.id("leadedCoursesList:courseTable:1:details")).click();
+	driver.findElement(By.id("j_idt113:j_idt115:0:bearbeiten")).click();
 
 	assert driver.findElement(By.id("headingEditUnit")).getText().equals("Kurseinheit bearbeiten");
 	driver.findElement(By.id("formCourseUnit:dateCourseUnit")).clear();

@@ -32,10 +32,10 @@ public class AdaptedDeleteUnitTest {
 	driver.findElement(By.id("formLogin:passwordLogin")).clear();
 	driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
 	driver.findElement(By.id("formLogin:login")).click();
-	driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
+	driver.findElement(By.id("leadedCoursesList:courseTable:1:details")).click();
 
 	assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Kursdetails");
-	driver.findElement(By.id("j_idt110:j_idt112:0:bearbeiten")).click();
+	driver.findElement(By.id("j_idt113:j_idt115:1:bearbeiten")).click();
 
 	Select select = new Select(driver.findElement(By
 		.id("formCourseUnit:messageCourseUnit")));
