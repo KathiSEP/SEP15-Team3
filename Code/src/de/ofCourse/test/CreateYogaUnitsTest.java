@@ -29,7 +29,7 @@ public class CreateYogaUnitsTest {
      driver.findElement(By.id("formLogin:usernameLogin")).clear();
      driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
      driver.findElement(By.id("formLogin:passwordLogin")).clear();
-     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Basti#249");
+     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
      driver.findElement(By.id("formLogin:login")).click();
      driver.findElement(By.id("leadedCoursesList:courseTable:0:details")).click();
      driver.findElement(By.name("courseDetailsID:j_idt87")).click();

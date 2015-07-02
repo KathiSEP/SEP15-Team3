@@ -37,7 +37,7 @@ public class EditCourseYogaTest {
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
     driver.findElement(By.id("formLogin:login")).click();
-    driver.findElement(By.id("leadedCoursesList:courseTable:2:details")).click();
+    driver.findElement(By.id("leadedCoursesList:courseTable:1:details")).click();
     driver.findElement(By.id("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsID:startDateCourse")).clear();
     driver.findElement(By.id("courseDetailsID:startDateCourse")).sendKeys("32.08.2015");
