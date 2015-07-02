@@ -222,9 +222,9 @@ public class UserProfileBean {
     	}
     	
     	if (role != null) {
-    		if (role.equals("admin")) {
+    		if (role.equals("SYSTEM_ADMINISTRATOR")) {
     		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);
-	    	} else if (role.equals("leader")) {
+	    	} else if (role.equals("COURSE_LEADER")) {
 	    		user.setUserRole(UserRole.COURSE_LEADER);
 	    	} else {
 	    		user.setUserRole(UserRole.REGISTERED_USER);
