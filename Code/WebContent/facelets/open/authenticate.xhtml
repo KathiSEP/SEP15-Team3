@@ -183,7 +183,9 @@
                                         <a href="#{request.contextPath}/facelets/open/agb.xhtml" target="_blank">#{sessionUser.getLabel('authenticate.row.register.bottomLink')}</a>
                                     </div>
                                     <br />
-                                    <h:commandButton id="register" action="#{registerUserBean.registerUser}" class="btn btn-info" value="#{sessionUser.getLabel('authenticate.row.register.bottomButton')}" />
+                                    <h:commandButton id="register" action="#{registerUserBean.registerUser}" class="btn btn-info" 
+                                                        onclick ="if(!confirm ('#{sessionUser.getLabel('authenticate.popUp.Verification')}')) return false"
+                                                        value="#{sessionUser.getLabel('authenticate.row.register.bottomButton')}" />
                                     
                                 </h:form>   
                             </div>
