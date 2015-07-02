@@ -1,17 +1,19 @@
 package de.ofCourse.test;
 
-import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
+/**
+ * Checks whether a single course unit for course Yoga is created.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class CreateYogaUnitTest {
   private WebDriver driver;
   private String baseUrl;

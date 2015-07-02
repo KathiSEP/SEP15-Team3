@@ -10,6 +10,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * Tests whether a regular course unit is deleted correctly.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class AdaptedDeleteUnitTest {
     private WebDriver driver;
     private String baseUrl;

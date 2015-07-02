@@ -9,6 +9,12 @@ import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+/**
+ * Test whether the account balance of an user is charged correctly.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class AdminTopUpTest {
   private WebDriver driver;
   private String baseUrl;

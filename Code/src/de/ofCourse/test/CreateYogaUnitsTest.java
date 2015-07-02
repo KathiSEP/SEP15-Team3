@@ -9,6 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+/**
+ * Checks whether a set of course units for course Yoga is created.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class CreateYogaUnitsTest {
   private WebDriver driver;
   private String baseUrl;
