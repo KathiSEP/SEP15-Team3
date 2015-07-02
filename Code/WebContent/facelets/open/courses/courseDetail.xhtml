@@ -157,10 +157,9 @@
 											<div class="form-group" style="width:185px;">
 												<label for="leaderIDField">#{sessionUser.getLabel('courseDetail.row.management.addLeaderText')}</label>
 												<h:inputText id="leaderIDField" rendered="#{courseDetailBean.editMode}" class="form-control form-group" value="#{courseDetailBean.leaderToAdd.userID}" p:placeholder="ID des Kursleiters"
-												            validatorMessage="#{sessionUser.getLabel('courseDetailBean.Validator.AddCourseLeaderNumber')}"
-                                                            converterMessage="#{sessionUser.getLabel('courseDetailBean.Validator.AddCourseLeaderNumber')}">
-                                                             <f:converter converterId="javax.faces.Long"/>
-                                                            <f:validateLongRange minimum="0" maximum="999999999" />
+												            converterMessage="#{sessionUser.getLabel('createCourse.ValidatorMessage.LeaderID')}">
+												            
+                                                            <f:validator validatorId="courseInstructorValidator"/>
 												</h:inputText>
 												<h:commandButton id ="addCourseLeader" class="btn btn-success form-group btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.addLeader')}" rendered="#{courseDetailBean.editMode}" action="#{courseDetailBean.addCourseLeader}">
 													<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
