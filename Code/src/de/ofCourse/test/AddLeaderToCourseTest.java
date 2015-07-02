@@ -54,17 +54,17 @@ public class AddLeaderToCourseTest {
     
     // Testing insert is a negative number
     driver.findElement(By.name("courseDetailsID:edit")).click();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("-1234");
-    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("-1234");
+    driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Eingegebene Kursleiter-ID ist keine positive Zahl! ");
     
     // Testing insert is no number
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("wertdsg");
-    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("wertdsg");
+    driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Bitte geben Sie eine positive Zahl als KursleiterID ein.");
@@ -72,17 +72,17 @@ public class AddLeaderToCourseTest {
     
     
     // Testing inserted id does not exist
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("123456");
-    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("123456");
+    driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die eingegebene Kursleiter-ID existiert nicht im System.");
     
     // Testing insert correct course instructor id
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsID:leaderIDField")).sendKeys("10009");
-    driver.findElement(By.name("courseDetailsID:addCourseLeader")).click();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("10009");
+    driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();

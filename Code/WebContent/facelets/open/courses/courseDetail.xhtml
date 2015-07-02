@@ -165,9 +165,9 @@
 				    
 				    </div>
 				    <div class="col-lg-7">
-                        <h:form rendered="#{courseDetailBean.editMode}">
+                        <h:form id="courseDetailsLeaderID" rendered="#{courseDetailBean.editMode}">
 		                    <div class="panel panel-info" >
-		                        <div class="panel-heading"><strong>Kursleiter hinzufügen</strong></div>
+		                        <div class="panel-heading"><strong>#{sessionUser.getLabel('courseDetail.form.title')}</strong></div>
 		                        <div class="panel-body">
 		                            <h:panelGroup rendered="#{courseDetailBean.editMode}">
 		                               <div class="container">
