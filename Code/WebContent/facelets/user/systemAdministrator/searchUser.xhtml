@@ -72,7 +72,7 @@
 						<h:panelGroup rendered="#{searchUserBean.renderTable}">
 							<div class="panel panel-info">
 								<div class="panel-body">
-									<h:dataTable value="#{searchUserBean.searchResult}" var="user"
+									<h:dataTable id = "users" value="#{searchUserBean.searchResult}" var="user"
 										styleClass="order-table" headerClass="order-table-header"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										class="table table-bordered table-hover">
