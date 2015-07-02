@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
@@ -20,18 +19,32 @@ import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
 
+/**
+ * 
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 @ManagedBean
 @ViewScoped
 public class LeadedCoursesBean implements Pagination, Serializable {
     
     
     /**
-     * 
+     * Serial id
      */
     private static final long serialVersionUID = 8760737542397078280L;
 
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
     private PaginationData pagination;
     
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
     private Transaction transaction;
     
     /**
@@ -49,29 +62,6 @@ public class LeadedCoursesBean implements Pagination, Serializable {
      */
     private String orderParam;
 
-    public List<Course> getLeadedCourses() {
-        return leadedCourses;
-    }
-
-    public void setLeadedCourses(List<Course> leadedCourses) {
-        this.leadedCourses = leadedCourses;
-    }
-
-    public String getOrderParam() {
-        return orderParam;
-    }
-
-    public void setOrderParam(String orderParam) {
-        this.orderParam = orderParam;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
 
     /**
      * Represents the fetched number of the current displayed page.
@@ -92,14 +82,11 @@ public class LeadedCoursesBean implements Pagination, Serializable {
     @ManagedProperty("#{sessionUser}")
     private SessionUserBean sessionUser;
     
-    public SessionUserBean getSessionUser() {
-        return sessionUser;
-    }
 
-    public void setSessionUser(SessionUserBean sessionUser) {
-        this.sessionUser = sessionUser;
-    }
-
+    /**
+     * Initializes the data needed for pagination, the transaction and
+     * initializes the page with data sets.
+     */
     @PostConstruct
     private void init(){
 	leadedCourses = new ArrayList<Course>();
@@ -144,6 +131,10 @@ public class LeadedCoursesBean implements Pagination, Serializable {
 	return URL_COURSE_DETAIL;
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void goToSpecificPage() {
 	pagination.setCurrentPageNumber(currentPage);
@@ -163,6 +154,10 @@ public class LeadedCoursesBean implements Pagination, Serializable {
 	
     }
 
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sortBySpecificColumn() {
 	//Compute sort direction
@@ -190,14 +185,97 @@ public class LeadedCoursesBean implements Pagination, Serializable {
 	
     }
 
+    /**
+     * Returns the order parameter.
+     * 
+     * @return the order parameter
+     */
+    public String getOrderParam() {
+	return orderParam;
+    }
+
+    /**
+     * Sets the order parameter.
+     * 
+     * @param orderParam
+     *            the order s to set
+     */
+    public void setOrderParam(String orderParam) {
+	this.orderParam = orderParam;
+    }
+
+    /**
+     * Returns the ManagedProperty <code>SessionUser</code>.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+	return sessionUser;
+    }
+
+    /**
+     * Sets the ManagedProperty <code>SessionUser</code>.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+	this.sessionUser = userSession;
+    }
+
+    /**
+     * Returns the current displayed page number.
+     * 
+     * @return the page number
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * Set the current displayed page number. 
+     * 
+     * @param currentPage the page number to set
+     */
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+    
+    
+    /**
+     * Returns a list of courses that the user leads
+     * 
+     * @return list of courses the user leads
+     */
+    public List<Course> getLeadedCourses() {
+        return leadedCourses;
+    }
+
+
+
+    /**
+     * Sets the value of the attribute <code>leadedCourses</code>.
+     * 
+     * @param leadedCourses
+     *            list of courses the user leads
+     */
+    public void setLeadedCourses(List<Course> leadedCourses) {
+        this.leadedCourses = leadedCourses;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PaginationData getPagination() {
 	return pagination;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setPagination(PaginationData pagination) {
 	this.pagination = pagination;
-	
     }
 }
