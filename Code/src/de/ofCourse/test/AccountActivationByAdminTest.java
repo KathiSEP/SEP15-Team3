@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class AccountActivationByAdmin {
+public class AccountActivationByAdminTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
