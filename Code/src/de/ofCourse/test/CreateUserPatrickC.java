@@ -28,7 +28,7 @@ public class CreateUserPatrickC {
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!123");
     driver.findElement(By.id("formLogin:login")).click();
         
     driver.findElement(By.linkText("Administration")).click();

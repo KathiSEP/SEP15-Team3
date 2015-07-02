@@ -12,19 +12,14 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ CreateUserBasti3.class, AccountActivationByAdminTest.class,
-        ActivationTypeAdminTest.class, AdaptedDeleteUnitTest.class,
-        AdaptedEditUnitTest.class, AddLeaderToCourseTest.class,
-        AdminCreateUserTest.class, AdminTopUpTest.class,
-        AuthenticationTest.class, CreateCourseTest.class, 
-        CreateYogaUnitsTest.class, CreateYogaUnitTest.class,
-        EditCourseYogaTest.class, EditEmailTest.class, HelpTest.class,
-        ListParticipantsTest.class, LogoutTest.class, LostPasswordTest.class,
-        OverdraftCreditAdminTest.class, OwnCourseEditTest.class,
-        RegistrationTest.class, SearchAndViewCourseTest.class,
-        SignUpForCourseYogaTest.class, SignUpForKungFuCoursAndUnitsTest.class,
-        SignUpForYogaCourseunitsTest.class, UploadProfileImageTest.class,
-        UserNotYetActivatedTest.class, ViewSchedulerTest.class })
+@SuiteClasses({ OverdraftCreditAdminTest.class, AuthenticationTest.class, CreateUserBasti3.class, CreateUserPatrickC.class, CreateUserRicky1.class,
+     CreateCourseTest.class, EditCourseYogaTest.class, CreateYogaUnitTest.class, CreateYogaUnitsTest.class,
+     AdaptedEditUnitTest.class, AdaptedDeleteUnitTest.class, SearchAndViewCourseTest.class, ActivationTypeAdminTest.class, 
+     RegistrationTest.class, UserNotYetActivatedTest.class, AccountActivationByAdminTest.class, SignUpForCourseYogaTest.class,
+     SignUpForYogaCourseunitsTest.class, UploadProfileImageTest.class, EditEmailTest.class, ListParticipantsTest.class,  
+     LogoutTest.class, ViewSchedulerTest.class,LostPasswordTest.class, AdminTopUpTest.class,  
+     AddLeaderToCourseTest.class, DeleteCourseTest.class, HelpTest.class, DeleteUserTest.class         
+          })
 public class AllTests {
 
 }
