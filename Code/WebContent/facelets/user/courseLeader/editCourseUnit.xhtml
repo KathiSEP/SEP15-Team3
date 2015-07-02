@@ -32,6 +32,7 @@
                     <h:message id="leaderCourseUniMessage" for="leaderCourseUnit" style="color:red" />
                     <h:message id="minUsersCourseUnitMessage" for="minUsersCourseUnit" style="color:red" />
                     <h:message id="maxUsersCourseUnitMessage" for="maxUsersCourseUnit" style="color:red" />
+                    <h:message id="numberOfCourseUnitsMessage" for="numberOfCourseUnits" style="color:red" />
                     <h:message for="idUser" style="color:red" />
                     <h:message for="nameUser" style="color:red" />
                     <h:message for="firstNameUser" style="color:red" />
@@ -198,11 +199,11 @@
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.price')}"
                                         converterMessage="#{sessionUser.getLabel('converterMessage.money')}">
-                                        <f:validator validatorId="priceValidator"/>
+                                        <f:validator validatorId="priceValidator" />
                                     </h:inputText>
                                    </h:panelGroup>
                                 </div>
-
+   
                                 <div class="input-group" style="padding-top: 5px;">
                                     <span class="input-group-addon"
                                         style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.leader')}:</span>
@@ -275,7 +276,7 @@
                                             value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
                                             converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.numberOfUnits')}"
                                             validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.numberOfUnits')}">
-                                           <f:validateLongRange minimum="1" maximum="999"/>
+                                           <f:validateLongRange minimum="0" maximum="999"/>
                                         </h:inputText>
                                     </div>
                                 </h:panelGroup>

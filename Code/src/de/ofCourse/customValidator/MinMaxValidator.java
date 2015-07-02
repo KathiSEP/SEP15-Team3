@@ -6,6 +6,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
@@ -13,19 +14,26 @@ import javax.servlet.http.HttpSession;
 import de.ofCourse.model.Language; 
 import de.ofCourse.utilities.LanguageManager;
  
+/**
+ * Checks whether the entered value for minimal number of users is really smaller
+ * than the entered value for maximal number of users
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@FacesValidator("minMaxValidator")
 public class MinMaxValidator implements Validator {
 
+    /** 
+     * Validates the entered values of minUsers and maxUsers
+     */
     @Override
     public void validate(FacesContext arg0, UIComponent component, Object value)
 	    throws ValidatorException {
 	Language lang = getLanguage();
-	System.out.println("FSDF");
-	
 	String minUsersAsString = value.toString();
-	
 	UIInput uiInputMaxUsers= (UIInput) component.getAttributes().get(
 		"maxUsersCourseUnit");
-	
 	String enteredMaxUsers = uiInputMaxUsers.getSubmittedValue().toString();
 	
 	int minUsers;
@@ -38,13 +46,13 @@ public class MinMaxValidator implements Validator {
 	} catch (NumberFormatException ex) {
 	    throw new ValidatorException(new FacesMessage(
 		    LanguageManager.getInstance().getProperty(
-                            "offlineTransactionValidator.message1", lang)));
+                            "minMaxValidator.message1", lang)));
 	}
 	
-	if(!(minUsers >= maxUsers)){
+	if(minUsers >= maxUsers){
 	    throw new ValidatorException(new FacesMessage(
 		    LanguageManager.getInstance().getProperty(
-                            "offlineTransactionValidator.message1", lang)));
+                            "minMaxValidator.message2", lang)));
 	}
 	
     }
