@@ -30,7 +30,6 @@ public class AddLeaderToCourseTest {
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
-  //TODO auf Facesmessages prüfen und weiterleitung auf seiten!!
   
   @Test
   public void testAddLeaderToCourse() throws Exception {

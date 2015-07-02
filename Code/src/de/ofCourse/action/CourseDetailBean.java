@@ -990,7 +990,7 @@ public class CourseDetailBean implements Pagination, Serializable {
                         null,
                         sessionUser.getLabel(
                           "courseDetailBean.facesMessage.CourseLeaderAddFail"));
-                return URL_STAY_COURSE_DETAIL;
+               
 	    }
 	} catch (InvalidDBTransferException e) {
 	    LogHandler.getInstance().error(e.getMessage());
