@@ -4,7 +4,7 @@ package de.ofCourse.test;
  * Testing of add leader to course. This test is geared to the test T50-50 from 
  * our product brief. Furthermore there are a view more tests for the faults that 
  * can appear because of invalid user inserts. 
- * The user with the id '10009' will be added to the course as leader in this 
+ * The user with the id '10004' will be added to the course as leader in this 
  * test. On top of that it is asserted that the faces messages to the user 
  * insert are correct and that the user will be sent up to the right page.
  * 
@@ -49,15 +49,15 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
-    driver.findElement(By.linkText("Zweiter Test")).click();
-    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    driver.findElement(By.linkText("Yoga")).click();
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
     
     // Testing insert is a negative number
     driver.findElement(By.name("courseDetailsID:edit")).click();
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("-1234");
     driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
-    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Eingegebene Kursleiter-ID ist keine positive Zahl! ");
     
@@ -65,7 +65,7 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("wertdsg");
     driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
-    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Bitte geben Sie eine positive Zahl als KursleiterID ein.");
     
@@ -75,15 +75,15 @@ public class AddLeaderToCourseTest {
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("123456");
     driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
-    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
     
     assert driver.findElement(By.id(facesMessages)).getText().contains("Die eingegebene Kursleiter-ID existiert nicht im System.");
     
     // Testing insert correct course instructor id
     driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).clear();
-    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("10001");
+    driver.findElement(By.id("courseDetailsLeaderID:leaderIDField")).sendKeys("10004");
     driver.findElement(By.name("courseDetailsLeaderID:addCourseLeader")).click();
-    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
+    assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Yoga");
     
     driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }

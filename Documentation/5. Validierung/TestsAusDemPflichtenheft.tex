@@ -4,7 +4,7 @@
 	\section{Testfälle für den Systemadministrator ohne bestehenden Datensatz}	
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\ 
-      	    \hline    T10-10   &      AuthenticationTest (zusätzlich werden Fehlerfälle geprüft, die bei der Anmeldung auftreten können)   &  erfolgreich &                  &                   &                  \\ 
+      	    \hline    T10-10 (KH)   &      AuthenticationTest Hier wurde die Anmeldung im System getestet (zusätzlich werden Fehlerfälle geprüft, die bei der Anmeldung auftreten können)   &  erfolgreich &                  &                   &                  \\ 
       	    
       	     \hline    T10-30 (TF)  &    OverdraftCreditAdminTest: In diesem Test wird die Funktionalität der Änderung des Überziehungskredits durch den Admin getestet.
       	                             Zustätzlich zum wurden noch mehr Fehlerfälle getestet   &  fehlgeschlagen &    negative Werte wurden akzeptiert, Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000              &      erfolgreich             &                  \\ 
@@ -13,7 +13,7 @@
       	      &  erfolgreich &  Notiz: aktuell eingestellte Werte werden nun angezeigt, Erfolgsmeldungen hinzugefügt           &                &                  \\                          
       	                             
 			
-			\hline T10-80, T10-90   &      CreateCourseTest  (Das Anlegen der Kurse aus den beiden Testfällen wird in einer Testklasse durchgeführt. Beide Kurse werden angelegt, zusätzlich wird auf weitere Fehlerfälle geprüft)              &      erfolgreich             &                  &                   &                  \\ 
+			\hline T10-80, T10-90 (KH)   &      CreateCourseTest  (Das Anlegen der Kurse aus den beiden Testfällen wird in einer Testklasse durchgeführt. Beide Kurse werden angelegt, zusätzlich wird auf weitere Fehlerfälle geprüft)              &      erfolgreich             &                  &                   &                  \\ 
 			\hline       &          &          &        &         &       \\
 			\hline 
 		\end{tabular} \ \\
@@ -32,7 +32,7 @@
 	\section{Testfälle für anonymer Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
-			\hline   T30-30    & RegistrationTest (zustätzlich werden weitere Fehlerfälle geprüft, die bei der Registrierung auftreten können)   &   fehlgeschlagen       &    Die E-Mail-Adresse 'Katharina\_hoelzl@web.de wurde akzeptiert, obwohl katharina\_hoelzl@web.de bereits in der Datenbank vorhanden war. Verbesserung in der RegisterUserBean: Mail wird nun zu lower case konvertiert.    &    erfolgreich     &       \\
+			\hline   T30-30  (KH)  & RegistrationTest (zustätzlich werden weitere Fehlerfälle geprüft, die bei der Registrierung auftreten können)   &   fehlgeschlagen       &    Die E-Mail-Adresse wurde in Großbuchstaben akzeptiert, obwohl sie bereits in Kleinbuchstaben in der Datenbank vorhanden war. Verbesserung in der RegisterUserBean: Mail wird nun zu lower case konvertiert.    &    erfolgreich     &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
@@ -43,14 +43,15 @@
 	\section{Testfälle für den registrierten Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr.} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
-			\hline T40-10   &  UserNotYetActivatedTest        & erfolgreich   &        &         &       \\
-			\hline T40-20   & AccountActivationByAdmin Test  & erfolgreich    &        &         &       \\	
+			\hline T40-10 (KH)  &  UserNotYetActivatedTest        & erfolgreich   &        &         &       \\
+			\hline T40-20  (KH) & AccountActivationByAdmin Test  & erfolgreich    &        &         &       \\	
 			\hline T40-70   & SignUpForCourseYogaTest & erfolgreich &        &         &       \\	
 			\hline T40-90   & SignUpForCourseAndUnitsTest & erfolgreich &        &         &       \\	
 			\hline T40-110  & SignUpForCourseunitNoMoneyTest & erfolgreich &        &         &       \\	
 			\hline T40-140  & HelpTest & erfolgreich &        &         &       \\	
 			\hline T40-170  & SignUpFullCourseTest & erfolgreich &        &         &       \\	
 			\hline T40-200  & LogoutTest & erfolgreich &        &         &       \\
+			\hline T40-210 (KH) & LostPasswordTest: getestet wird die Eingabe der E-Mail-Adresse und das senden der Mail & erfolgreich &        &         &       \\
 			\hline 
 		\end{tabular} \ \\
 		\ \\
@@ -60,11 +61,13 @@
 			\hline \textbf{Testnr.(Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
 			
 			\hline  T50-10 (TF) & AdminTopUpTest: Guthabenkonto eines Nutzers wird durch den Admin aufgeladen &     fehlgeschlagen     & negative Geldbeträge wurden akzeptiert,  Eingabeformat kompliziert, falsche Interpretation von z.b. 10.00 als 1000       &    erfolgreich     &       \\	
+			\hline  T50-30 (KH)     &  UpdateUserRoleTest (Getestet wird das aufwerten der Benutzerrolle zum Kursleiter)    &    erfolgreich      &        &         &       \\
+			
 			\hline T50-70 & DeleteCourseTest & erfolgreich &        &         &       \\
+			\hline T50-80 (KH)   &   DeleteUser (Hier wird das Löschen eines Benutzers aus dem System getestet)       &    erfolgreich      &        &         &       \\
 			
-			
-			\hline  T40-180, T50-40  & ListParticipantsTest (Die beiden Testfälle 'Teilnehmer ansehen' und 'Teilnehmer aus Kurs entfernen' wurden in eine Testklasse zusammengefasst.) &     erfolgreich     &        &         &       \\
-			\hline  T50-50  &  AddLeaderToCourseTest (zusätzlich wurden Fehlerfälle geprüft) &  fehlgeschlagen & Es wurde bei der Eingabe der KursleiterID nicht geprüft ob die ID zu einem Kursleiter gehört. Behebung des Fehlers durch hinzufügen des Validators CourseInstructor zum Facelet CourseDetail.xhtml  &  erfolgreich       &       \\
+			\hline  T40-180, T50-40 (KH) & ListParticipantsTest (Die beiden Testfälle 'Teilnehmer ansehen' und 'Teilnehmer aus Kurs entfernen' wurden in eine Testklasse zusammengefasst.) &     erfolgreich     &        &         &       \\
+			\hline  T50-50 (KH) &  AddLeaderToCourseTest: Hier wird das Hinzufügen eines Kursleiters zu einem Kurs getestet (zusätzlich wurden Fehlerfälle geprüft) &  fehlgeschlagen & Es wurde bei der Eingabe der KursleiterID nicht geprüft ob die ID zu einem Kursleiter gehört. Behebung des Fehlers durch hinzufügen des Validators CourseInstructor zum Facelet CourseDetail.xhtml  &  erfolgreich       &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
 			\hline       &          &          &        &         &       \\
