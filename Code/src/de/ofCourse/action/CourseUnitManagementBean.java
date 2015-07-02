@@ -817,6 +817,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	    participants.setWrappedData(temp);
 	    transaction.commit();
 	    userToAdd = new User();
+	    
+	    FacesMessageCreator.createFacesMessage(
+		    "formUserToAddCourseUnit:addUserCourseUnit",
+		     sessionUser.getLabel("courseUnitManagementBean.FacesMessage.addUser"));
 
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();

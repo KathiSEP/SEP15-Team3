@@ -40,7 +40,7 @@
         <validator-class>de.ofCourse.customValidator.CourseInstructorValidator</validator-class>
     </validator>
     <validator>
-        <validator-id>imageValidator</validator-id>
+        <validator-id>imageValidator</validator-id> 
         <validator-class>de.ofCourse.customValidator.ImageValidator</validator-class>
     </validator>   
     <validator>
@@ -58,9 +58,13 @@
      <validator>
         <validator-id>offlineTransactionValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.OfflineTransactionValidator</validator-class>
-    </validator>
+    </validator> 
     <validator>
         <validator-id>priceValidator</validator-id>
         <validator-class>de.ofCourse.customValidator.PriceValidator</validator-class>
+    </validator>
+    <validator>
+        <validator-id>minMaxValidator</validator-id>
+        <validator-class>de.ofCourse.customValidator.MinMaxValidator</validator-class>
     </validator>
 </faces-config>

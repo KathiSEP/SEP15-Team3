@@ -228,7 +228,9 @@
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.minUsers')}"
                                         validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.minUsers')}">
                                         <f:validateLongRange minimum="1" maximum="999"/>
-                                    </h:inputText>
+                                        <f:attribute name="maxUsersCourseUnit" value="#{maxUsersCourseUnit}"/>
+                                        <f:validator validatorId="minMaxValidator"/> 
+                                     </h:inputText>
                                 </div>
 
                                 <div class="input-group" style="padding-top: 5px;">
@@ -240,7 +242,8 @@
                                         required="true"
                                         requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.maxUsers')}"
                                         converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.maxUsers')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.maxUsers')}">
+                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.maxUsers')}"
+                                        binding="#{maxUsersCourseUnit}">
                                         <f:validateLongRange minimum="1" maximum="999"/>
                                     </h:inputText>
                                 </div>
@@ -532,6 +535,7 @@
                                     <h:commandButton id="addUserCourseUnit"
                                         action="#{courseUnitManagementBean.addUserToCourseUnit}"
                                         class="btn btn-info pull-right" value="#{sessionUser.getLabel('editCourseUnit.row.addUser.addUserButton')}" />
+                                        <h:message id="userAddedMessage" for="addUserCourseUnit" style="color:green" />
                                 </h:form>
                             </div>
                         </div>
