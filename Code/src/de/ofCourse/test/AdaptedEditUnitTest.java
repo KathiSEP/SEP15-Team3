@@ -8,6 +8,12 @@ import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+/**
+ * Checks whether a course units a changed correctly.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
 public class AdaptedEditUnitTest {
     private WebDriver driver;
     private String baseUrl;
