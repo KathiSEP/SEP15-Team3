@@ -158,7 +158,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("test");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmx.de");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl923@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
@@ -181,7 +181,7 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:zipcodeRegister")).clear();
     driver.findElement(By.id("formRegister:zipcodeRegister")).sendKeys("9408112312345");
     driver.findElement(By.id("formRegister:emailRegister")).clear();
-    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl93@gmx.de");
+    driver.findElement(By.id("formRegister:emailRegister")).sendKeys("katharina.hoelzl923@gmx.de");
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("authenticate")).getText().equals("Anmeldung");
@@ -217,9 +217,11 @@ public class RegistrationTest {
     driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).clear();
     driver.findElement(By.id("formRegister:passwordConfirmRegister")).sendKeys("Muhmuh1!");
+    
     driver.findElement(By.id("formRegister:register")).click();
     assertTrue(closeAlertAndGetItsText().contains("Nach erfolgreicher Registrierung wird eine Bestätigungsmail an ihre Mail-Adresse geschickt. Bestätigen Sie bitte den darin enthaltenen Verifizierungslink."));
     assert driver.findElement(By.id("indexPage")).getText().equals("OfCourse");
+    
   }
 
   @After

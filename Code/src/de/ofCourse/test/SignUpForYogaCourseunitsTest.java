@@ -2,9 +2,12 @@ package de.ofCourse.test;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -33,16 +36,18 @@ public class SignUpForYogaCourseunitsTest {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("PatrickC");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
     driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.id("myCoursesList:courseTable:0:details")).click();
-    driver.findElement(By.id("j_idt113:j_idt115:0:anmelden")).click();
     driver.findElement(By.id("j_idt113:j_idt115:1:anmelden")).click();
     driver.findElement(By.id("j_idt113:j_idt115:2:anmelden")).click();
     driver.findElement(By.id("j_idt113:j_idt115:3:anmelden")).click();
     driver.findElement(By.id("j_idt113:j_idt115:4:anmelden")).click();
+    
+    
+    driver.findElement(By.id("generalNavigationForm:logoutLink")).click();
   }
 
   @After

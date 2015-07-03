@@ -37,20 +37,20 @@ public class UploadProfileImageTest {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Slash");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Basti3");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     
     driver.findElement(By.linkText("Profil")).click();
     driver.findElement(By.id("formUpload:changeProfilePicture")).click();
     driver.findElement(By.id("formUpload:userImage")).clear();
-    driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\Patrick\\Music\\0004-05-wrong tunes.m4r");
+    driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\blacky\\Desktop\\0004-05-wrong tunes.m4r");
     driver.findElement(By.id("formUpload:editProfilePicture")).click();
     assert driver.findElement(By.id(userImage)).getText().equals("Kein gültiges Bildformat.  ");
     
     driver.findElement(By.id("formUpload:userImage")).clear();
-    driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\Patrick\\Pictures\\stick.jpg");
+    driver.findElement(By.id("formUpload:userImage")).sendKeys("C:\\Users\\blacky\\Desktop\\domo.jpg");
     driver.findElement(By.id("formUpload:editProfilePicture")).click();
     assert driver.findElement(By.id(editProfilePicture)).getText().equals("Ihr Profilbild wurde erfolgreich geändert ");
     

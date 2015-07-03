@@ -36,9 +36,9 @@ public class EditEmailTest {
     driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("DDDDD");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("PatrickC");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Profil")).click();
     driver.findElement(By.id("formSettings:changeSettings")).click();

@@ -18,7 +18,7 @@ public class DeleteCourseTest {
   @Before
   public void setUp() throws Exception {
     driver = new FirefoxDriver();
-    baseUrl = "http://localhost:8003/OfCourse/";
+    baseUrl = "http://localhost:8003/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
@@ -26,14 +26,6 @@ public class DeleteCourseTest {
   public void testDeleteCourse() throws Exception {
     driver.get(baseUrl + "OfCourse/facelets/open/index.xhtml");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
-    driver.findElement(By.id("formRegister:usernameRegister")).clear();
-    driver.findElement(By.id("formRegister:usernameRegister")).sendKeys("the_muh");
-    driver.findElement(By.id("formRegister:passwordRegister")).clear();
-    driver.findElement(By.id("formRegister:passwordRegister")).sendKeys("Hallo123!");
-    driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("the_muh");
-    driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Hallo123!");
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
     driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("admin1");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();

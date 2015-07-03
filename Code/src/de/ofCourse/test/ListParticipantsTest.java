@@ -53,7 +53,7 @@ public class ListParticipantsTest {
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Suche")).click();
     driver.findElement(By.id("formFilterCourses:courseOffers")).click();
-    driver.findElement(By.linkText("Zweiter Test")).click();
+    driver.findElement(By.linkText("Yoga")).click();
     assert driver.findElement(By.id("courseDetailTitle")).getText().equals("Zweiter Test");
     
     // look at list participants of the course 'Zweiter Test'

@@ -36,9 +36,9 @@ public class ViewSchedulerTest {
     driver.get(baseUrl + "OfCourse/");
     driver.findElement(By.id("generalNavigationForm:authenticateLink")).click();
     driver.findElement(By.id("formLogin:usernameLogin")).clear();
-    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Slash");
+    driver.findElement(By.id("formLogin:usernameLogin")).sendKeys("Kathi5");
     driver.findElement(By.id("formLogin:passwordLogin")).clear();
-    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Password!1");
+    driver.findElement(By.id("formLogin:passwordLogin")).sendKeys("Muhmuh1!");
     driver.findElement(By.id("formLogin:login")).click();
     driver.findElement(By.linkText("Terminplaner")).click();
     assert driver.findElements(By.id(timeTable)).size() == 1;
