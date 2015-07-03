@@ -22,24 +22,25 @@
                         <div class="panel-heading">
                             <strong>#{sessionUser.getLabel('createUser.row.userData.header')}</strong>
                         </div>
+                        
+                        <div class="col-lg-12">
+		                    <h:message for="firstnameRegister" style="color:red" />
+		                    <h:message for="lastnameRegister" style="color:red" />
+		                    <h:message for="usernameRegister" style="color:red" />
+		                    <h:message for="passwordRegister" style="color:red" />
+		                    <h:message for="passwordConfirmRegister" style="color:red" />
+		                    <h:message for="birthdateRegister" style="color:red" />
+		                    <h:message for="streetRegister" style="color:red" />
+		                    <h:message for="houseNumberRegister" style="color:red" />
+		                    <h:message for="locationRegister" style="color:red" />
+		                    <h:message for="zipcodeRegister" style="color:red" />
+		                    <h:message for="countryRegister" style="color:red" />
+		                    <h:message for="emailRegister" style="color:red" />
+		                    <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
+		                </div>
+                        
                         <div class="panel-body">
                             <h:form enctype="multipart/form-data" class="form-horizontal" id="formCreateUser">
-                            
-                                <div class="col-lg-12">
-                                    <h:message for="firstnameRegister" style="color:red" />
-                                    <h:message for="lastnameRegister" style="color:red" />
-                                    <h:message for="usernameRegister" style="color:red" />
-                                    <h:message for="passwordRegister" style="color:red" />
-                                    <h:message for="passwordConfirmRegister" style="color:red" />
-                                    <h:message for="birthdateRegister" style="color:red" />
-                                    <h:message for="streetRegister" style="color:red" />
-                                    <h:message for="houseNumberRegister" style="color:red" />
-                                    <h:message for="locationRegister" style="color:red" />
-                                    <h:message for="zipcodeRegister" style="color:red" />
-                                    <h:message for="countryRegister" style="color:red" />
-                                    <h:message for="emailRegister" style="color:red" />
-                                    <h:messages globalOnly="true" layout="table" class="alert alert-danger"/>
-                                </div>
                             
                                 <div class="input-group">
                                     <span class="input-group-addon"
