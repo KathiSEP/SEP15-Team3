@@ -1,0 +1,21 @@
+<project name="CoverageReport" xmlns:jacoco="antlib:org.jacoco.ant">
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="/home/Patrick/JaCoCo/lib/jacocoant.jar"/>
+    </taskdef>
+
+    <jacoco:report>
+        <executiondata>
+            <file file="jacoco.exec"/>
+        </executiondata>
+        <structure name="SEP15-Team3/Code">
+            <classfiles>
+                <fileset dir="build/classes"/>
+            </classfiles>
+            <sourcefiles encoding="UTF-8">
+                <fileset dir="src"/>
+            </sourcefiles>
+        </structure>
+        <html destdir="report"/>
+    </jacoco:report>
+	
+</project>

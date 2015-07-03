@@ -147,6 +147,7 @@ public class UserProfileBean {
     		
     		DecimalFormat f = new DecimalFormat("#0.00");
     		setCreditBalance(f.format(user.getAccountBalance()));
+    		salutation = user.getSalutation().toString();
     		role = user.getUserRole().toString();
     	} catch (InvalidDBTransferException e) {
     		LogHandler.getInstance().error("SQL Exception occoured during" +
