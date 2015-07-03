@@ -33,3 +33,17 @@ verschiedene Sessions zu simulieren.
 
 Dieser Test beinhaltet zu einem Großteil den selben Ablauf wie TestMeasurement, es werden lediglich die Administratorfunktionen nicht durchgeführt, da der Benutzer keine Administratorrechte besitzt. Die Aktionen zwischen dem Login und Logout werden über eine for-Schleife 51 mal wiederholt.
 
+\section{Diagramme}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/gesamt}
+\caption{Gesamtergebnis TestMeasurement}
+\label{fig:TestMeasurement}
+\end{figure}
+
+\section{Fazit der gesamten Auswertung}
+
+Bei zehn zur Verfügung gestellten Datenbankverbindungen blieb die Auslastung des Systems, gemessen anhand der Ladezeit in Millisekunden und der Anzahl an parallel Aktiven Nutzersessions, beinahe gleichmäßig. Die Ladezeiten haben sich, entgegen der Erwartung, kaum verändert (was allerdings an und für sich für ein schnell reagierendes System spricht).
+Bei zwei zur Verfügung gestellten Datenbankverbindungen stieg die Auslastung erwartungsgemäß exponentiell, aber nicht unverhältnismäßig negativ.
+Zusammenfassend lässt sich sagen, dass die Qualtitätsbestimmung aus dem Pflichtenheft bezüglich der Funktionalität die Ansprüche erfüllt. Bei zehn Datenbankverbindungen wird dieses Qualitätsmerkmal sogar überdurchschnittlich gut erreicht.
