@@ -35,6 +35,9 @@ Dieser Test beinhaltet zu einem Großteil den selben Ablauf wie TestMeasurement,
 
 \section{Diagramme}
 
+In diesem Abschnitt werden beispielhaft zwei aussagekräftige Diagramme dargestellt, welche die Auswertung des Gesamtergebnisses und des Logins darstellen. Die y-Achse beschreibt die gemessenen Ladezeiten in Millisekunden, die x-Achse die Anzahl der parallel laufenden Nutzersessions.
+Für die ermittelten Ergebnisse des TestMeasurement wurde jeweils ein Durchschnittswert erstellt und in einer Tabelle dokumentiert. Für die fünf ausgeführten Aktionen (Login, Suche nach allen Kursen, Anmelden zu einer Kurseinheit, Suche eines bestimmten Kurses und Suche nach allen registrierten Nutzern) wurde anschließend der Durchschnittswert in das jeweilige Diagramm eingetragen.
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\linewidth]{img/gesamt}
@@ -42,8 +45,18 @@ Dieser Test beinhaltet zu einem Großteil den selben Ablauf wie TestMeasurement,
 \label{fig:TestMeasurement}
 \end{figure}
 
+\newpage
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/login}
+\caption{Gesamtergebnis Login}
+\label{fig:Login}
+\end{figure}
+
 \section{Fazit der gesamten Auswertung}
 
 Bei zehn zur Verfügung gestellten Datenbankverbindungen blieb die Auslastung des Systems, gemessen anhand der Ladezeit in Millisekunden und der Anzahl an parallel Aktiven Nutzersessions, beinahe gleichmäßig. Die Ladezeiten haben sich, entgegen der Erwartung, kaum verändert (was allerdings an und für sich für ein schnell reagierendes System spricht).
 Bei zwei zur Verfügung gestellten Datenbankverbindungen stieg die Auslastung erwartungsgemäß exponentiell, aber nicht unverhältnismäßig negativ.
+Anzumerken ist noch, dass die Ladezeiten beim Login sich nur geringfügig unterscheiden, unabhängig von der Anzahl der aktiven Benutzer oder Datenbankverbindungen.
 Zusammenfassend lässt sich sagen, dass die Qualtitätsbestimmung aus dem Pflichtenheft bezüglich der Funktionalität die Ansprüche erfüllt. Bei zehn Datenbankverbindungen wird dieses Qualitätsmerkmal sogar überdurchschnittlich gut erreicht.
