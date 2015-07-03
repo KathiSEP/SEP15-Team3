@@ -1,5 +1,24 @@
 \chapter{Tests aus dem Pflichtenheft}
 
+In diesem Kapitel werden die Tests, die im Pflichtenheft verfasst wurden, aufgeführt mit einer kurzen Beschreibung sowie dem Ergebnis der Ausführung.
+Jedes Teammitglied hat die Tests durchgeführt, die seinem Aufgabenbereich aus der Implementierungsphase unterliegen.
+Tests, die zusammengefasst wurden, werden in der Beschreibung aufgeführt.
+
+\section{Gestrichene Tests}
+
+Pflichtenhefttests, die nicht durchgeführt wurden, werden hier kurz aufgeführt:
+
+\begin{itemize}
+
+\item T20-40
+\item T20-50
+\item T50-20
+\item T40-80
+\item T40-100
+\item T40-120
+
+\end{itemize}
+
 \begin{landscape}
 	\section{Testfälle für den Systemadministrator ohne bestehenden Datensatz}	
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
@@ -12,6 +31,24 @@
       	    \hline    T10-40 (TF)   &    ActivationTypeAdminTest: In diesem Test wird die Funktionalität der Änderung des Typs der Accountaktivierung durch den Admin getestet.
       	      &  erfolgreich &  Notiz: aktuell eingestellte Werte werden nun angezeigt, Erfolgsmeldungen hinzugefügt           &                &                  \\                          
       	                             
+      	                             
+			\hline T10-50 (SS) & CreateUserBasti3Test: Erstellen des Benutzers 'Basti3' & erfolgreich & & & \\   	                             
+      	                             
+      	    \hline T10-60 (SS) & CreateUserPatrickTest: Erstellen des Benutzers 'Patrick' & erfolgreich & & & \\
+      	    
+      	    \hline T10-70 (SS) & CreateRicky1Test: Erstellen des Benutzers 'Ricky1' & erfolgreich & & & \\                       
+			
+			
+			
+			\hline 
+		\end{tabular} \ \\
+		\ \\			
+			
+			\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\ 			
+						
+			
+			
 			
 			\hline T10-80, T10-90 (KH)   &      CreateCourseTest  (Das Anlegen der Kurse aus den beiden Testfällen wird in einer Testklasse durchgeführt. Beide Kurse werden angelegt, zusätzlich wird auf weitere Fehlerfälle geprüft)              &      erfolgreich             &                  &                   &                  \\ 
 			\hline       &          &          &        &         &       \\
@@ -45,13 +82,14 @@
 	\section{Testfälle für anonymer Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
 			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			
+			\hline   T30-10  (PC) &	SearchAndViewCourseTest: Hier wird die Kurssuche eines anonymen Benutzers getestet mit anschließender Ansicht der Kursdetails. Beim ersten Versuch wird nach einem nicht vorhandenen Kurs gesucht, der zweite Versuch liefert genau ein Ergebnis. Dieser Test vereinigt die Pflichtenhefttests T30-10 und T30-20. & erfolgreich & & & \\	
+			
 			\hline   T30-30  (KH)  & RegistrationTest (zustätzlich werden weitere Fehlerfälle geprüft, die bei der Registrierung auftreten können)   &   fehlgeschlagen       &    Die E-Mail-Adresse wurde in Großbuchstaben akzeptiert, obwohl sie bereits in Kleinbuchstaben in der Datenbank vorhanden war. Verbesserung in der RegisterUserBean: Mail wird nun zu lower case konvertiert.    &    erfolgreich     &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
+			
 			\hline 
-		\end{tabular} \ \\
-		\ \\
+		\end{tabular}
+		
 			
 	\section{Testfälle für den registrierten Benutzer}
 		\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
@@ -62,7 +100,23 @@
 			\hline T40-90   & SignUpForCourseAndUnitsTest & erfolgreich &        &         &       \\	
 			\hline T40-110  & SignUpForCourseunitNoMoneyTest & erfolgreich &        &         &       \\	
 			\hline T40-140  & HelpTest & erfolgreich &        &         &       \\	
+			
+			\hline T40-150 (PC) & UploadProfileImageTest: Bei diesem Test wird versucht eine Datei mit falschem bzw. vom System nicht akzeptierten Format als Profilbild zu speichern, was zu einer Fehlermeldung führt. Daraufhin wird eine Datei mit gültigem Format als Profilbild gespeichert mit anschließender Erfolgsmeldung. Dieser Test vereinigt die Pflichtenhefttests T40-130 und T40-150.	&	erfolgreich & & & \\
+			
+			\hline T40-160 (PC) & EditEmailTest: Hier wird auf der eigenen Profilseite erfolgreich die E-Mail-Adresse geändert mit anshcließender Erfolgsmeldung. & erfolgreich & & & \\
+			
 			\hline T40-170  & SignUpFullCourseTest & erfolgreich &        &         &       \\	
+			
+			\hline 
+		\end{tabular} \ \\
+		\ \\			
+			
+			\begin{tabular}{|p{2.0cm} |p{5.0cm}|p{3.0cm}|p{5.0cm}|p{4.0cm}|p{4.0cm}|}
+			\hline \textbf{Testnr. (Tester)} & \textbf{Bezeichnung} & \textbf{Ergebnis} & \textbf{Ursache} & \textbf{Ergebnis} & \textbf{Ursache} \\
+			
+			
+			\hline T40-190 (PC) & ViewSchedulerTest: Bei diesem Test sieht sich der Benutzer seinen eigenen Terminplaner der aktuellen Woche an, anschließend klickt er auf die nächste Seite, welche die darauffolgende Woche anzeigt & erfolgreich & & & \\
+			
 			\hline T40-200  & LogoutTest & erfolgreich &        &         &       \\
 			\hline T40-210 (KH) & LostPasswordTest: getestet wird die Eingabe der E-Mail-Adresse und das senden der Mail & erfolgreich &        &         &       \\
 			\hline 
@@ -81,11 +135,9 @@
 			
 			\hline  T40-180, T50-40 (KH) & ListParticipantsTest (Die beiden Testfälle 'Teilnehmer ansehen' und 'Teilnehmer aus Kurs entfernen' wurden in eine Testklasse zusammengefasst.) &     erfolgreich     &        &         &       \\
 			\hline  T50-50 (KH) &  AddLeaderToCourseTest: Hier wird das Hinzufügen eines Kursleiters zu einem Kurs getestet (zusätzlich wurden Fehlerfälle geprüft) &  fehlgeschlagen & Es wurde bei der Eingabe der KursleiterID nicht geprüft ob die ID zu einem Kursleiter gehört. Behebung des Fehlers durch hinzufügen des Validators CourseInstructor zum Facelet CourseDetail.xhtml  &  erfolgreich       &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
-			\hline       &          &          &        &         &       \\
+			
 			\hline 
-		\end{tabular} \ \\
-		\ \\
+		\end{tabular} 
+		
 	
 \end{landscape}
