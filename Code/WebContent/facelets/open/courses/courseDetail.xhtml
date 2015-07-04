@@ -129,13 +129,13 @@
 											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
 											<p/>
 										</h:commandButton>
-										<h:commandButton id="loadParticipantsID" class="btn btn-info btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
-											<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-										</h:commandButton>
 									</div>
 									</h:panelGroup>
 									<div class="container">
-										<p/>
+											<h:commandButton id="loadParticipantsID" class="btn btn-info btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.viewParticipants')}" action="#{courseDetailBean.loadParticipantsPage}">
+												<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
+											</h:commandButton>
+											<p/>
 										<h:form>
 											<h:panelGroup rendered="#{!courseDetailBean.isRegistered}">
 												<h:selectBooleanCheckbox id="cNews" value="#{courseDetailBean.registeredForCourseNews}"/>
@@ -148,7 +148,8 @@
    	                       					</h:commandButton>
 											<h:commandButton class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.signOff')}" rendered="#{courseDetailBean.isRegistered}" action="#{courseDetailBean.signOffFromCourse}">
       	                       					<f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
-   	                       					</h:commandButton><br /><br />
+   	                       					</h:commandButton>
+   	                       					<p/>
    	                       					<h:commandButton rendered="#{courseDetailBean.editMode}" id="deleteCourse" class="btn btn-danger btn-cdetail-minsize" value="#{sessionUser.getLabel('courseDetail.row.management.deleteButton')}"
                                                                 onclick="if (!confirm('#{sessionUser.getLabel('courseDetail.row.management.deleteConfirm')}')) return false" action="#{courseDetailBean.deleteCourse}"/>
    	                       					
