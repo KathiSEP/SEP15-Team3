@@ -3,6 +3,9 @@
  */
 package de.ofCourse.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -132,6 +135,11 @@ public class UserManagementBean {
 	        			pwHash, salt);
 	        	int userID = UserDAO.getUserID(this.transaction,
 	        			user.getUsername());
+	        	
+	        	List<User> activateUser = new ArrayList<User>();
+	        	activateUser.add(user);
+	        	
+	        	UserDAO.AdminActivateUsers(transaction, activateUser);
 	        	UserDAO.verifyUser(transaction, veriString);
 	        	
 	        	if (image != null) {
