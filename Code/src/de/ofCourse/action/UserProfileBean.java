@@ -16,6 +16,7 @@ import javax.servlet.http.Part;
 
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
@@ -154,6 +155,22 @@ public class UserProfileBean {
     				"executing init() in UserProfileBean");
     		transaction.rollback();
     	}
+    }
+    
+    /**
+     * Returns the user's salutaion in the selected language as a string
+     * 
+     * @return the user's salutaion
+     */
+    public String getSalutationLabel() {
+    	if (!sessionUser.getLanguage().equals(Language.EN)) {
+    		if (user.getSalutation().equals(Salutation.MS)) {
+    			return "Frau";
+    		} else {
+    			return "Herr";
+    		}
+    	}
+    	return user.getSalutation().toString().toUpperCase();
     }
 
     /**

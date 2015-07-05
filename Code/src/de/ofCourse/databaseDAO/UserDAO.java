@@ -347,7 +347,7 @@ public class UserDAO {
 	    if (user.getSalutation() == null) {
 		pS.setString(7, null);
 	    } else {
-		pS.setString(7, user.getSalutation().toString());
+		pS.setString(7, user.getSalutation().toString().toUpperCase());
 	    }
 	    pS.setDouble(8, user.getAccountBalance());
 	    pS.setBoolean(9, false);
@@ -1076,7 +1076,7 @@ public class UserDAO {
     	    statement.setString(2, user.getLastname());
     	    statement.setString(3, user.getUsername());
     	    statement.setString(4, user.getEmail());
-    	    statement.setString(5, user.getSalutation().toString());
+    	    statement.setString(5, user.getSalutation().toString().toUpperCase());
 
     	    java.sql.Date birthday;
     	    if(user.getDateOfBirth() != null) {

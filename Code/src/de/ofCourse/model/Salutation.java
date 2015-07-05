@@ -42,7 +42,7 @@ public enum Salutation {
      */
     @Override
     public String toString() {
-        return this.name();
+        return this.salutation;
     }
     
     /**
@@ -56,7 +56,7 @@ public enum Salutation {
     public static Salutation fromString(String salutationString) {
         if (salutationString != null) {
           for (Salutation salutation : Salutation.values()) {
-              if (salutationString.equalsIgnoreCase(salutation.name())) {
+              if (salutationString.equalsIgnoreCase(salutation.salutation)) {
                   return salutation;
               }
           }
