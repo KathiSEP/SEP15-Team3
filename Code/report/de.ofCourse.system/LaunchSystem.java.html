@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LaunchSystem.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.system</a> &gt; <span class="el_source">LaunchSystem.java</span></div><h1>LaunchSystem.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/**</span>
+ * This package represents system functionality.
+ */
+package de.ofCourse.system;
+
+
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+
+
+
+
+
+
+
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+
+
+import de.ofCourse.databaseGeneral.DatabaseTableCreator;
+import de.ofCourse.databaseGeneral.DatabaseTableDestroyer;
+import de.ofCourse.databaseGeneral.SetupAdmin;
+import de.ofCourse.test.AllTests;
+import de.ofCourse.utilities.PropertyManager;
+
+/**
+ * Starts the system ofCourse and sets up all necessary services, intitalizes
+ * the database connection and prepares the database for the system.
+ * 
+ * &lt;p&gt;
+ * It initializes the maintenance thread, the DatabaseConnectionManager that is
+ * responsible for setting up and managing the database connections. Furthermore
+ * the class sets up the required tables in the database and creates an initial
+ * administrator to access the system.&lt;br&gt;
+ * In addition it provides the functionality of a regulated shutdown of the
+ * application. That includes stopping the maintenance and and shutting down
+ * database connection.
+ * 
+ * @author Schwarz Sebastian
+ *
+ */
+@ManagedBean(eager = true)
+@ApplicationScoped
+<span class="fc" id="L48">public class LaunchSystem {</span>
+
+   
+
+    /**
+     * Initializes the maintenance thread method of the Maintenance class.&lt;br&gt;
+     * Furthermore, this method loads the needed database and mail server
+     * properties if the application is started and it creates the
+     * DatabaseConnectionManger that sets up the database connections. In
+     * addition it creates the necessary tables and an initial admin.
+     */
+    @PostConstruct
+    public void startSystem() {
+
+<span class="fc" id="L62">        PropertyManager.getInstance();</span>
+<span class="fc" id="L63">        DatabaseConnectionManager.getInstance();</span>
+<span class="fc" id="L64">        LogHandler.getInstance();</span>
+        
+<span class="fc" id="L66">        LogHandler.getInstance().debug(&quot;LogHandler initialized&quot;);</span>
+<span class="fc" id="L67">        DatabaseTableCreator.buildUpDatabase();</span>
+<span class="fc" id="L68">        SetupAdmin.createInitialAdmin();</span>
+<span class="fc" id="L69">        SetupAdmin.setSystemAttributes();</span>
+<span class="fc" id="L70">        Maintenance.getInstance().run();</span>
+<span class="fc" id="L71">        LogHandler.getInstance().debug(&quot;Database created, System started&quot;);</span>
+        
+        
+        //DatabaseTableDestroyer.dropTables();
+        //adds a Shutdown Hook which closes all Connection to the Database in case it crashes
+<span class="fc" id="L76">        Runtime.getRuntime().addShutdownHook(new Thread(){</span>
+            @Override
+            public void run(){
+<span class="fc" id="L79">                shutdownMaintenance();</span>
+<span class="fc" id="L80">            }</span>
+        });
+        
+        
+<span class="fc" id="L84">   }</span>
+
+    /**
+     * Terminates the maintenance thread.
+     */
+    @PreDestroy
+    public void shutdownMaintenance() {
+<span class="fc" id="L91">        DatabaseConnectionManager.getInstance().shutDown();</span>
+<span class="fc" id="L92">        Maintenance.getInstance().shutDown();</span>
+<span class="fc" id="L93">    }</span>
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

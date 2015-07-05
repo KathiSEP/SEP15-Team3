@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CycleDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.databaseDAO</a> &gt; <span class="el_source">CycleDAO.java</span></div><h1>CycleDAO.java</h1><pre class="source lang-java linenums">package de.ofCourse.databaseDAO;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Cycle;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides methods for transactions with the cycles stored in the database such
+ * as creating, retrieving or updating cycles.
+ * 
+ * &lt;p&gt;
+ * Each method has a Transaction parameter, which contains the SQL connection to
+ * the database, in order to assure that multiple, consecutive method calls
+ * within a certain method use the same connection.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This class is required in the business logic of the system, more precisely in
+ * the ManagedBeans of the package &lt;code&gt;de.ofCourse.action&lt;/code&gt;.
+ * &lt;/p&gt;
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+<span class="nc" id="L31">public class CycleDAO {</span>
+
+    /**
+     * @author Tobias Fuchs
+     */
+    private static final String CREATE_QUERY = &quot;INSERT INTO \&quot;cycles\&quot;&quot;
+	    + &quot; (course_id, period, cycle_end)&quot; + &quot; VALUES&quot;
+	    + &quot; (?, ?::period, ?) RETURNING id&quot;;
+
+    /**
+     * @author Tobias Fuchs
+     */
+    private static final String ID_QUERY = &quot;SELECT cycle_id FROM \&quot;course_units\&quot; WHERE id=?&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private static final String DELETE_QUERY = &quot;DELETE FROM \&quot;cycles\&quot; WHERE id=?&quot;;
+
+    /**
+     * Creates a new cycle an returns the id of the created cycle.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the id of the course the cycle belongs to
+     * @param cycle
+     *            the cycle to create
+     * @return the id of the created cycle
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Tobias Fuchs
+     */
+    public static int createCycle(Transaction trans, int courseID, Cycle cycle)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L67">	int cycleID = 0;</span>
+
+<span class="fc" id="L69">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L70">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L72">	try (PreparedStatement stmt = conn.prepareStatement(CREATE_QUERY)) {</span>
+<span class="fc" id="L73">	    stmt.setInt(1, courseID);</span>
+<span class="fc" id="L74">	    stmt.setString(2, cycle.getTurnus().toString());</span>
+<span class="fc" id="L75">	    stmt.setInt(3, cycle.getNumberOfUnits());</span>
+	    
+<span class="fc" id="L77">	    try (ResultSet res = stmt.executeQuery()) {</span>
+<span class="fc" id="L78">		res.next();</span>
+<span class="fc" id="L79">		cycleID = res.getInt(&quot;id&quot;);</span>
+<span class="pc bpc" id="L80" title="7 of 8 branches missed.">	    }</span>
+<span class="pc bpc" id="L81" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L82">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L83">		    &quot;Error occured during creating a new cycle.&quot;);</span>
+<span class="nc" id="L84">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L86">	return cycleID;</span>
+    }
+
+    /**
+     * Fetches the id of a cycle by a passed course unit id.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseUnitId
+     *            the id of the course unit
+     * @return the id of the cycle
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Tobias Fuchs
+     */
+    public static int getCycleId(Transaction trans, int courseUnitId)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L104">	int cycleID = 0;</span>
+
+<span class="fc" id="L106">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L107">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L109">	try (PreparedStatement stmt = conn.prepareStatement(ID_QUERY)) {</span>
+<span class="fc" id="L110">	    stmt.setInt(1, courseUnitId);</span>
+	    
+<span class="fc" id="L112">	    try (ResultSet res = stmt.executeQuery()) {</span>
+<span class="fc" id="L113">		res.next();</span>
+<span class="fc" id="L114">		cycleID = res.getInt(1);</span>
+<span class="pc bpc" id="L115" title="7 of 8 branches missed.">	    }</span>
+<span class="pc bpc" id="L116" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L117">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L118">		    &quot;Error occured during fetching the cycle id.&quot;);</span>
+<span class="nc" id="L119">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L121">	return cycleID;</span>
+    }
+
+    /**
+     * Deletes the cycle with the given id from database.
+     * 
+     * @param trans the Transaction object which contains the connection to the
+     *            database
+     * @param cycleId 
+     * 		the id of the cylce
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Tobias Fuchs
+     */
+    public static void deleteCycle(Transaction trans, int cycleId)
+	    throws InvalidDBTransferException {
+
+<span class="fc" id="L138">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L139">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L141">	try (PreparedStatement stmt = conn.prepareStatement(DELETE_QUERY)) {</span>
+<span class="fc" id="L142">	    stmt.setInt(1, cycleId);</span>
+<span class="fc" id="L143">	    stmt.executeUpdate();</span>
+
+<span class="pc bpc" id="L145" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L146">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L147">		    &quot;Error occured during deleting cycle!&quot;);</span>
+<span class="nc" id="L148">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L150">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

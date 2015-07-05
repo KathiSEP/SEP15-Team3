@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RegisterUserBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">RegisterUserBeanTest.java</span></div><h1>RegisterUserBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.action;
+
+import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import static org.mockito.Mockito.*;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Address;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.utilities.LanguageManager;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Connection.class, UserDAO.class, FacesMessage.class, 
+                        MailBean.class, FacesMessageCreator.class, 
+                        InvalidDBTransferException.class, FacesContext.class,
+                        LanguageManager.class})
+
+<span class="nc" id="L39">public class RegisterUserBeanTest {</span>
+
+    // Create new Bean for testing
+    private RegisterUserBean registerUserBean; 
+    
+    private SessionUserBean sessionUser;
+    
+    private LanguageManager languageManager;
+    
+    // Mock FacesContext and ExternalContext and MailBean.
+    @Mock
+    private MailBean mailBean;
+    
+    @Mock
+    FacesContext facesContext;
+    
+    @Mock
+    ExternalContext externalContext;
+    
+    // Create captor for the FacesMessages.
+    ArgumentCaptor&lt;String&gt; clientIdCaptor;
+    ArgumentCaptor&lt;FacesMessage&gt; facesMessageCaptor;
+    
+    // Create RequestParameterMap
+    private Map&lt;String, String&gt; requestParameterMap;
+    
+    private Connection connection;
+    private FacesMessage captured;
+    
+    private String correctEmail;
+    private String emailAlreadyInUse;
+    private String correctVeriString;
+    private String wrongVeriString;
+    
+    private int generatedUserID;
+    
+    @Before
+    public void setup() {
+        // Mock FacesContext statically .
+<span class="nc" id="L78">        PowerMockito.mockStatic(FacesContext.class);</span>
+        
+        // Specify what should be returned if it's ask for the instance of the
+        // FacesContext or the ExternalContext.
+<span class="nc" id="L82">        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(</span>
+<span class="nc" id="L83">                                                                 facesContext);</span>
+
+<span class="nc" id="L85">        Mockito.when(facesContext.getExternalContext()).thenReturn(</span>
+<span class="nc" id="L86">                                                              externalContext);</span>
+        
+        // Create RequestParameterMap.
+<span class="nc" id="L89">        requestParameterMap = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L90">        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(</span>
+<span class="nc" id="L91">                                                          requestParameterMap);</span>
+        
+        // Mock the Connection class statically.
+<span class="nc" id="L94">        PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L95">        connection = mock(Connection.class);          </span>
+<span class="nc" id="L96">        Mockito.when(Connection.create()).thenReturn(connection);</span>
+        
+<span class="nc" id="L98">        sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L99">        sessionUser.setLanguage(Language.DE);</span>
+                
+        //Mock LanguageManagerCreator
+<span class="nc" id="L102">        PowerMockito.mockStatic(LanguageManager.class);</span>
+<span class="nc" id="L103">        languageManager = mock(LanguageManager.class);</span>
+ 
+<span class="nc" id="L105">        Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);</span>
+        
+<span class="nc" id="L107">        Mockito.when(LanguageManager.getInstance().</span>
+<span class="nc" id="L108">                getProperty(&quot;registerUserBean.facesMessage.EmailExisting&quot;, </span>
+<span class="nc" id="L109">                                                                Language.DE)).</span>
+<span class="nc" id="L110">                thenReturn(&quot;E-Mail existiert bereits!&quot;);</span>
+        
+<span class="nc" id="L112">        Mockito.when(LanguageManager.getInstance().</span>
+<span class="nc" id="L113">                getProperty(&quot;registerUserBean.facesMessage.&quot;</span>
+                                                    + &quot;SuccessfulRegistration&quot;, 
+<span class="nc" id="L115">                                                                Language.DE)).</span>
+<span class="nc" id="L116">                thenReturn(&quot;Sie haben sich erfolgreich im System registriert. &quot;</span>
+                            + &quot;Bitte best�tigen Sie den Aktivierungslink aus der &quot;
+                            + &quot;Verifizierungsmail!&quot;);
+        
+<span class="nc" id="L120">        Mockito.when(LanguageManager.getInstance().</span>
+<span class="nc" id="L121">                getProperty(&quot;registerUserBean.facesMessage.AGB&quot;, Language.DE)).</span>
+<span class="nc" id="L122">                thenReturn(&quot;Bitte AGBs best�tigen!&quot;);</span>
+         
+        // Mock the database class statically.
+<span class="nc" id="L125">        PowerMockito.mockStatic(UserDAO.class);</span>
+        
+        // Specify what the methods of the database should return by specific 
+        // requests.
+<span class="nc" id="L129">        correctEmail = &quot;katharina_hoelzl@web.de&quot;;</span>
+<span class="nc" id="L130">        Mockito.when(UserDAO.emailExists(connection, correctEmail)).</span>
+<span class="nc" id="L131">                                                            thenReturn(false);</span>
+        
+<span class="nc" id="L133">        emailAlreadyInUse = &quot;fuchs_tobias@web.de&quot;;</span>
+<span class="nc" id="L134">        Mockito.when(UserDAO.emailExists(connection, emailAlreadyInUse)).</span>
+<span class="nc" id="L135">                                                            thenReturn(true);</span>
+        
+<span class="nc" id="L137">        correctVeriString = &quot;1234567890&quot;;</span>
+<span class="nc" id="L138">        Mockito.when(UserDAO.verifyUser(connection, correctVeriString)).</span>
+<span class="nc" id="L139">                                                            thenReturn(true);</span>
+        
+<span class="nc" id="L141">        wrongVeriString = &quot;0987654321&quot;;</span>
+<span class="nc" id="L142">        Mockito.when(UserDAO.verifyUser(connection, wrongVeriString)).</span>
+<span class="nc" id="L143">                                                            thenReturn(false);</span>
+        
+<span class="nc" id="L145">        Mockito.when(UserDAO.createUser(connection, eq(any(User.class)), </span>
+<span class="nc" id="L146">                  anyString(), anyString())).thenReturn(this.correctVeriString);</span>
+        
+<span class="nc" id="L148">        generatedUserID = 1;</span>
+<span class="nc" id="L149">        Mockito.when(UserDAO.getUserID(eq(connection), anyString())).</span>
+<span class="nc" id="L150">                                                   thenReturn(generatedUserID);</span>
+        
+        // Initialize the captor for the FacesMessages.
+<span class="nc" id="L153">        clientIdCaptor = ArgumentCaptor.forClass(String.class);</span>
+<span class="nc" id="L154">        facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);</span>
+<span class="nc" id="L155">    }</span>
+    
+    /**
+     * Actual test method
+     */
+    @Test
+    public void test() {
+<span class="nc" id="L162">        requestParameterMap.put(&quot;veri&quot;, wrongVeriString);</span>
+
+        // Initialize new test bean.
+<span class="nc" id="L165">        registerUserBean = new RegisterUserBean();</span>
+      
+<span class="nc" id="L167">        requestParameterMap.clear();</span>
+<span class="nc" id="L168">        requestParameterMap.put(&quot;veri&quot;, correctVeriString);        </span>
+        
+<span class="nc" id="L170">        registerUserBean = new RegisterUserBean();</span>
+        
+        
+       
+<span class="nc" id="L174">        registerUserBean.setMailBean(mailBean);</span>
+               
+<span class="nc" id="L176">        User user = new User();</span>
+<span class="nc" id="L177">        user.setFirstname(&quot;Katharina&quot;);</span>
+<span class="nc" id="L178">        user.setLastname(&quot;H�lzl&quot;);</span>
+<span class="nc" id="L179">        user.setEmail(emailAlreadyInUse);</span>
+<span class="nc" id="L180">        user.setUsername(&quot;Kathi1&quot;);</span>
+        
+<span class="nc" id="L182">        Address address = new Address();</span>
+<span class="nc" id="L183">        address.setZipCode(94081);</span>
+<span class="nc" id="L184">        address.setCity(&quot;F�rstenzell&quot;);</span>
+<span class="nc" id="L185">        address.setCountry(&quot;Deutschland&quot;);</span>
+        
+<span class="nc" id="L187">        user.setAddress(address);</span>
+        
+<span class="nc" id="L189">        registerUserBean.setSaluString(&quot;ms.&quot;);</span>
+<span class="nc" id="L190">        registerUserBean.setRegisterPassword(&quot;Test123#&quot;);</span>
+<span class="nc" id="L191">        registerUserBean.setRegisterConfirmPassword(&quot;Test123#&quot;);       </span>
+        
+<span class="nc" id="L193">        registerUserBean.setUserToRegistrate(user);</span>
+        
+<span class="nc" id="L195">        registerUserBean.setSessionUser(sessionUser);</span>
+        
+        // Check AGB
+<span class="nc" id="L198">        assertEquals(registerUserBean.registerUser(), </span>
+<span class="nc" id="L199">                    &quot;/facelets/open/authenticate.xhtml?faces-redirect=false&quot;);        </span>
+
+        // Check FacesMessage 
+<span class="nc" id="L202">        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), </span>
+<span class="nc" id="L203">                                                facesMessageCaptor.capture());</span>
+<span class="nc" id="L204">        assertNull(clientIdCaptor.getValue());</span>
+<span class="nc" id="L205">        captured = facesMessageCaptor.getValue();</span>
+<span class="nc" id="L206">        assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());</span>
+<span class="nc" id="L207">        assertEquals(&quot;Bitte AGBs best�tigen!&quot;, captured.getSummary());</span>
+        
+<span class="nc" id="L209">        registerUserBean.setAgbAccepted(true);</span>
+        
+        // Check if mail exists
+<span class="nc" id="L212">        assertEquals(registerUserBean.registerUser(), </span>
+<span class="nc" id="L213">                     &quot;/facelets/open/authenticate.xhtml?faces-redirect=false&quot;);</span>
+        
+        // Check FacesMessage 
+<span class="nc" id="L216">        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), </span>
+<span class="nc" id="L217">                                                 facesMessageCaptor.capture());</span>
+<span class="nc" id="L218">        assertNull(clientIdCaptor.getValue());</span>
+<span class="nc" id="L219">        captured = facesMessageCaptor.getValue();</span>
+<span class="nc" id="L220">        assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());</span>
+<span class="nc" id="L221">        assertEquals(&quot;E-Mail existiert bereits!&quot;, captured.getSummary());</span>
+        
+<span class="nc" id="L223">        user.setEmail(correctEmail);</span>
+        
+        // Test with correct mail
+<span class="nc" id="L226">        assertEquals(registerUserBean.registerUser(), </span>
+<span class="nc" id="L227">                              &quot;/facelets/open/index.xhtml?faces-redirect=true&quot;);</span>
+        
+        // Check FacesMessage
+<span class="nc" id="L230">        verify(facesContext, times(3)).addMessage(clientIdCaptor.capture(), </span>
+<span class="nc" id="L231">                                                  facesMessageCaptor.capture());</span>
+<span class="nc" id="L232">        assertNull(clientIdCaptor.getValue());</span>
+<span class="nc" id="L233">        captured = facesMessageCaptor.getValue();</span>
+<span class="nc" id="L234">        assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());</span>
+<span class="nc" id="L235">        assertEquals(&quot;Sie haben sich erfolgreich im System registriert. &quot;</span>
+                            + &quot;Bitte best�tigen Sie den Aktivierungslink aus der &quot;
+<span class="nc" id="L237">                            + &quot;Verifizierungsmail!&quot;, captured.getSummary());</span>
+<span class="nc" id="L238">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

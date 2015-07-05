@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseDetailBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">CourseDetailBean.java</span></div><h1>CourseDetailBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.annotation.PostConstruct;
+
+import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.CourseRegistrationException;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.model.UserStatus;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Displays the details of a course and its course units and provides the
+ * functionality to edit the data of the course. In addition it manages the sign
+ * up and sign off action of courses and course units.
+ * &lt;p&gt;
+ * 
+ * A user can sign up for a course if he's not already signed in.&lt;br&gt;
+ * He also can sign up for course units of the course. This is only possible if
+ * the user is signed in in the respective course. The payment for a course unit
+ * is done automatically by the system, that means that the price of the course
+ * unit the user wants to sign in is automatically transfered from the users
+ * account. That means that a user only can sign up for a course unit if he has
+ * enough money on his account.&lt;br&gt;
+ * If the user signs off from a course unit the paid money for the course unit
+ * is transfered back to the users account automatically.
+ * 
+ * This class is Bean and controller of the facelet &lt;code&gt;coursDetails&lt;/code&gt;.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L60">public class CourseDetailBean implements Pagination, Serializable {</span>
+
+    /**
+     * Serial ID
+     */
+    private static final long serialVersionUID = 4941379076876916373L;
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores the displayed or entered data of the course.
+     */
+    private Course course;
+
+    /**
+     * Stores whether a user registers for course news.
+     */
+    private boolean registeredForCourseNews;
+
+    /**
+     * Stores a list of course units that the user has selected
+     */
+    private List&lt;CourseUnit&gt; selectedCourseUnits;
+
+    /**
+     * Stores a list of leaders of the course
+     */
+    private List&lt;User&gt; leadersOfCourse;
+
+    /**
+     * Stores the course units that belong to the course
+     */
+    private List&lt;CourseUnit&gt; courseUnitsOfCourse;
+
+    /**
+     * Stores the leader to be add
+     */
+    private User leaderToAdd;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * Represents the courseDetail page
+     */
+    private final static String URL_STAY_COURSE_DETAIL = 
+            &quot;/facelets/open/courses/courseDetail.xhtml?faces-redirect=false&quot;;
+    
+    /**
+     * Represents the new CourseDetail page
+     */
+    private final static String URL_COURSE_DETAIL_NEW =
+            &quot;/facelets/open/courses/courseDetail.xhtml?faces-redirect=true&quot;
+            + &quot;&amp;courseID=&quot;;
+    
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    private boolean editMode;
+    private boolean isRegistered;
+    private int courseID;
+<span class="fc" id="L133">    private static int pageElements = 10;</span>
+
+    private int currentPage;
+
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L141">        return currentPage;</span>
+    }
+
+    /**
+     * @param currentPage
+     *            the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L149">        this.currentPage = currentPage;</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Saves the edited course data and sets the course details page to its
+     * not-editable state. In order to save the edited course, the database
+     * entry of the course is updated with the new data and the
+     * &lt;code&gt;courseDetails&lt;/code&gt; page is returned.
+     * 
+     * @author Ricky Strohmeier
+     */
+    public void saveCourse() {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">    	if (getEditMode()) {</span>
+<span class="fc" id="L162">    	    transaction = Connection.create();</span>
+    	    try {
+<span class="fc" id="L164">        		transaction.start();</span>
+<span class="fc" id="L165">        		CourseDAO.updateCourse(transaction, course);</span>
+<span class="fc" id="L166">        		transaction.commit();</span>
+<span class="pc" id="L167">    	    } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L168">        		transaction.rollback();</span>
+<span class="nc" id="L169">        		LogHandler.getInstance().error(&quot;Error occured in saveCourse method of CourseDetailBean&quot;);</span>
+    	    }
+<span class="fc" id="L171">    	    setEditMode(false);</span>
+    	}
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Initializes the course details page with the details of the course that
+     * is to display.
+     * 
+     * @author Ricky Strohmeier
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L183">        courseID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L184">    	            .getExternalContext().getRequestParameterMap().get(&quot;courseID&quot;));</span>
+<span class="fc" id="L185">    	pagination = new PaginationData(pageElements, 0, SortColumn.START_TIME, SortDirection.ASC);</span>
+    
+<span class="fc" id="L187">    	leaderToAdd = new User();</span>
+<span class="fc" id="L188">    	transaction = Connection.create();</span>
+    
+    	try {
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">    	    if (courseID &gt; 0) {</span>
+<span class="fc" id="L192">        		transaction.start();</span>
+<span class="fc" id="L193">        		course = CourseDAO.getCourse(transaction, courseID);</span>
+<span class="fc" id="L194">        		pagination.refreshNumberOfPages(CourseUnitDAO.getNumberOfCourseUnits(transaction, courseID));</span>
+<span class="fc" id="L195">        		leadersOfCourse = CourseDAO.getLeaders(transaction, courseID);</span>
+<span class="fc" id="L196">        		courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(transaction, courseID, pagination);</span>
+        
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        		for (int i = 0; i &lt; courseUnitsOfCourse.size(); i++) {</span>
+<span class="fc" id="L199">        		    courseUnitsOfCourse.get(i).setUserIsParticipant(</span>
+<span class="fc" id="L200">        		                UserDAO.userIsParticipantInCourseUnit(transaction, sessionUser.getUserID(),</span>
+<span class="fc" id="L201">                                                                        courseUnitsOfCourse.get(i).getCourseUnitID()));</span>
+        		}
+
+<span class="fc" id="L204">		        isRegistered = UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID);</span>
+    	    }
+<span class="fc" id="L206">    	    transaction.commit();</span>
+<span class="pc" id="L207">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L208">    	    transaction.rollback();</span>
+<span class="nc" id="L209">    	    LogHandler.getInstance().error(&quot;Error occured in init method of CourseDetailBean&quot;);</span>
+<span class="nc" id="L210">    	    courseID = 0;</span>
+<span class="nc" id="L211">    	    isRegistered = false;</span>
+<span class="nc" id="L212">    	    course = new Course();</span>
+    	}
+<span class="fc" id="L214">    }</span>
+
+    /**
+     * Enables the edit mode of the facelet.
+     * 
+     * @author Ricky Strohmeier
+     */
+    public void enableEditMode() {
+<span class="fc" id="L222">        setEditMode(true);</span>
+<span class="fc" id="L223">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;course&lt;/code&gt;.
+     * 
+     * @return the course
+     */
+    public Course getCourse() {
+<span class="fc" id="L231">        return course;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;course&lt;/code&gt;.
+     * 
+     * @param course
+     *            the new course
+     */
+    public void setCourse(Course course) {
+<span class="nc" id="L241">        this.course = course;</span>
+<span class="nc" id="L242">    }</span>
+
+    /**
+     * Returns whether the user has registered for course news.
+     * 
+     * @return whether the user has registered for course news
+     */
+    public boolean getRegisteredForCourseNews() {
+<span class="fc" id="L250">        return registeredForCourseNews;</span>
+    }
+
+    /**
+     * Set-method for the registered for course news attribute.
+     * 
+     * @param registeredForCourseNews
+     *            true if registered, false if not
+     * @author Ricky Strohmeier
+     */
+    public void setRegisteredForCourseNews(boolean registeredForCourseNews) {
+<span class="fc" id="L261">        this.registeredForCourseNews = registeredForCourseNews;</span>
+<span class="fc" id="L262">    }</span>
+
+    /**
+     * Signs a user up for a course and returns the updated page.&lt;br&gt;
+     * Signing up for the course means that the user is set as participant of
+     * the course and the course is added to the courses of the user. Also the
+     * database entry of the course is updated.
+     * 
+     * &lt;p&gt;
+     * If there goes something wrong during the sign up action, a
+     * CourseRegistrationException is thrown.
+     * 
+     * @return link to the page
+     * @author Schwarz Sebastian
+     * @throws CourseRegistrationException
+     *             if a exception occurs during the sign up process
+     * @throws InvalidDBTransferException
+     */
+    public void signUpForCourse() throws CourseRegistrationException, InvalidDBTransferException {
+
+<span class="fc" id="L282">		transaction.start();</span>
+	
+		try {
+		    // First i fetch the number of Participants and the maximum amount a
+		    // Course can handle
+<span class="fc" id="L287">		    int numberOfParticipants = CourseDAO.getNumberOfParticipants(transaction,</span>
+<span class="fc" id="L288">			    courseID);</span>
+<span class="fc" id="L289">		    Course courseToSignUp = CourseDAO.getCourse(transaction, courseID);</span>
+	
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">		    if (courseToSignUp.getMaxUsers() &gt; numberOfParticipants) {</span>
+
+		    	// Add user to course_participant list on the database server
+<span class="fc" id="L294">				CourseDAO.addUserToCourse(transaction, sessionUser.getUserID(),</span>
+<span class="fc" id="L295">					courseID);</span>
+<span class="fc" id="L296">				LogHandler.getInstance().debug(</span>
+<span class="fc" id="L297">			            &quot;Methode addUserToCourse was succesfull&quot;);</span>
+
+				//Checks if the User wants to be informed about course news, if so put him
+				//in the Database List 
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">				if (registeredForCourseNews) {</span>
+<span class="fc" id="L302">					CourseDAO.addUserToInformUser(transaction,</span>
+<span class="fc" id="L303">							sessionUser.getUserID(), courseID);</span>
+<span class="fc" id="L304">					LogHandler.getInstance().debug(</span>
+<span class="fc" id="L305">				            &quot;Methode addUserUserToInformUser was succesfull&quot;);</span>
+				}
+			
+<span class="fc" id="L308">				LogHandler.getInstance().debug(</span>
+<span class="fc" id="L309">				&quot;User:&quot; + sessionUser.getUserID()</span>
+<span class="fc" id="L310">					+ &quot;Succesfull signed for course:&quot; + courseID);</span>
+<span class="fc" id="L311">				transaction.commit();</span>
+				
+				//Sets the Boolean to true for the button
+<span class="fc" id="L314">				isRegistered = true;</span>
+		    
+<span class="fc" id="L316">		    } else {</span>
+			
+		    	// If the course is full we throw the			
+		    	// CourseRegistrationException
+<span class="nc" id="L320">		        transaction.rollback();</span>
+<span class="nc" id="L321">		        FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourse&quot;));</span>
+		        
+<span class="nc" id="L323">		        throw new CourseRegistrationException(sessionUser.getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourse&quot;));</span>
+		    
+		    }
+<span class="nc" id="L326">		} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L327">		    transaction.rollback();	    </span>
+		    //throw new InvalidDBTransferException(&quot;Error occured while User:&quot; + sessionUser.getUserID()
+	        //       + &quot; signing up for course:&quot; + courseID);
+<span class="nc" id="L330">		} catch (CourseRegistrationException e){</span>
+<span class="nc" id="L331">		    transaction.rollback();</span>
+		}
+	
+<span class="fc" id="L334">    }</span>
+
+    /**
+     * Signs a user off from a course and returns the updated page.&lt;br&gt;
+     * Signing off from the course means that the user is removed as participant
+     * of the course and the course is removed from the courses of the user.
+     * Also the database entry of the course is updated.
+     * 
+     * &lt;p&gt;
+     * If there goes something wrong during the sign off action a
+     * CourseRegistrationException is thrown.
+     * 
+     * @return link to the page
+     * @author Schwarz Sebastian
+     * @throws CourseRegistrationException
+     *             if a exception occours during the sign off process
+     */
+    public void signOffFromCourse() throws CourseRegistrationException {
+
+<span class="nc" id="L353">		transaction.start();</span>
+	
+		try {
+<span class="nc" id="L356">		    User userWhoTryToSignOff = UserDAO.getUser(transaction,</span>
+<span class="nc" id="L357">			    sessionUser.getUserID());</span>
+<span class="nc" id="L358">		    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L359">		            &quot;Methode getUser(&quot; + sessionUser.getUserID() + &quot;) was succesfull&quot;);</span>
+		    
+		    // Fetching a List of all CourseUnits the User takes part in
+<span class="nc" id="L362">		    List&lt;CourseUnit&gt; signedCourseUnits = CourseUnitDAO</span>
+<span class="nc" id="L363">			    .getCourseUnitsOf(transaction,</span>
+<span class="nc" id="L364">				    userWhoTryToSignOff.getUserID());</span>
+<span class="nc" id="L365">		    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L366">		            &quot;Methode signedCourseUnits of:&quot; + sessionUser.getUserID() </span>
+<span class="nc" id="L367">		            	+&quot; was succesfull&quot;);</span>
+		    
+		    // Getting a List of CourseUnits which only belongs to the Course and
+		    // the User is signed Up
+<span class="nc" id="L371">		    ArrayList&lt;CourseUnit&gt; courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);</span>
+	
+		    // If the list is not empty the users gets signed Off from every
+		    // CourseUnit which belongs to the Course and he is signedUp to
+<span class="nc bnc" id="L375" title="All 2 branches missed.">		    if (!courseUnitsToSignOff.isEmpty()) {</span>
+<span class="nc" id="L376">				float money = 0;</span>
+<span class="nc bnc" id="L377" title="All 2 branches missed.">				for (int i = 0; i &lt; courseUnitsToSignOff.size(); i++) {</span>
+<span class="nc" id="L378">				    CourseUnitDAO.removeUserFromCourseUnit(transaction,</span>
+<span class="nc" id="L379">					    sessionUser.getUserID(), courseUnitsToSignOff</span>
+<span class="nc" id="L380">						    .get(i).getCourseUnitID());</span>
+<span class="nc" id="L381">				    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L382">				            &quot;Methode removeUserFromCouseUnit:&quot; + sessionUser.getUserID()</span>
+<span class="nc" id="L383">				            	+&quot; was succesfull&quot;);</span>
+				    
+<span class="nc" id="L385">				    money += courseUnitsToSignOff.get(i).getPrice();</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">				    for (int x = 0; x &lt; courseUnitsOfCourse.size(); x++) {</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">						if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff</span>
+<span class="nc" id="L388">							.get(i).getCourseUnitID()) {</span>
+<span class="nc" id="L389">						    courseUnitsOfCourse.get(x).setUserIsParticipant(</span>
+<span class="nc" id="L390">							    false);</span>
+<span class="nc" id="L391">						    break;</span>
+						}
+				    }	
+				}
+	
+<span class="nc" id="L396">				float newAccountBalance = userWhoTryToSignOff</span>
+<span class="nc" id="L397">					.getAccountBalance() + money;</span>
+<span class="nc" id="L398">				UserDAO.updateAccountBalance(transaction,</span>
+<span class="nc" id="L399">					sessionUser.getUserID(), newAccountBalance);</span>
+<span class="nc" id="L400">				LogHandler.getInstance().debug(</span>
+<span class="nc" id="L401">			            &quot;Methode updateAccountBalance:&quot; + sessionUser.getUserID() </span>
+<span class="nc" id="L402">			            	+ &quot; was succesfull&quot;);</span>
+				
+<span class="nc" id="L404">				CourseDAO.removeUserFromCourse(transaction,</span>
+<span class="nc" id="L405">					sessionUser.getUserID(), courseID);</span>
+<span class="nc" id="L406">				LogHandler.getInstance().debug(</span>
+<span class="nc" id="L407">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID() </span>
+<span class="nc" id="L408">			            	+&quot; was succesfull&quot;);</span>
+	
+<span class="nc" id="L410">		    } else {</span>
+<span class="nc" id="L411">				CourseDAO.removeUserFromCourse(transaction,</span>
+<span class="nc" id="L412">					sessionUser.getUserID(), courseID);</span>
+<span class="nc" id="L413">				LogHandler.getInstance().debug(</span>
+<span class="nc" id="L414">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID()</span>
+<span class="nc" id="L415">			            	+&quot; was succesfull&quot;);</span>
+		    }
+	
+		    // if the User was in the InformUser List we have to Delete him there
+<span class="nc" id="L419">		    if (UserDAO.userWantsToBeInformed(transaction,</span>
+<span class="nc bnc" id="L420" title="All 2 branches missed.">			    sessionUser.getUserID(), courseID)) {</span>
+<span class="nc" id="L421">				CourseDAO.removeUserToInformUser(transaction,</span>
+<span class="nc" id="L422">					sessionUser.getUserID(), courseID);</span>
+<span class="nc" id="L423">				LogHandler.getInstance().debug(</span>
+<span class="nc" id="L424">			            &quot;Methode removeUserToInformUser:&quot; + sessionUser.getUserID()</span>
+<span class="nc" id="L425">			            	+&quot; was succesfull&quot;);</span>
+		    }
+	
+<span class="nc" id="L428">		    transaction.commit();</span>
+<span class="nc" id="L429">		    isRegistered = false;</span>
+		
+<span class="nc" id="L431">		} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L432">		    transaction.rollback();</span>
+<span class="nc" id="L433">		    throw new CourseRegistrationException(&quot;Error occured while trying to sign off from course&quot;);</span>
+		}
+
+<span class="nc" id="L436">    }</span>
+
+    /**
+     * Finds all the CourseUnits from the specific Course the user is signed in
+     * 
+     * @author Schwarz Sebastian
+     * @param signedCourseUnits
+     * @return List of CourseUnits which belongs to the Course and the User is participant
+     */
+    private ArrayList&lt;CourseUnit&gt; findCourseUnitsOfThisCourse(
+	    List&lt;CourseUnit&gt; signedCourseUnits) {
+	
+		// This array stores the CourseUnitIDs which belong to the course the
+		// user wants to sign off
+<span class="nc" id="L450">		ArrayList&lt;CourseUnit&gt; courseUnitsOfThatCourse = new ArrayList&lt;CourseUnit&gt;();</span>
+	
+		// If the user has not signed up to any courseUnits the Methode returns
+		// a empty list
+<span class="nc bnc" id="L454" title="All 2 branches missed.">		if (!signedCourseUnits.isEmpty()) {</span>
+	
+		    // If the user is in no courseUnit which belongs to the course he
+		    // wants to leave the methode returns a empty list
+<span class="nc bnc" id="L458" title="All 2 branches missed.">		    for (int i = 0; i &lt; signedCourseUnits.size(); i++) {</span>
+<span class="nc bnc" id="L459" title="All 2 branches missed.">				if (signedCourseUnits.get(i).getCourseID() == courseID) {</span>
+<span class="nc" id="L460">				    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));</span>
+				}
+		    }
+<span class="nc" id="L463">		    return courseUnitsOfThatCourse;</span>
+		} else {
+<span class="nc" id="L465">		    return courseUnitsOfThatCourse;</span>
+		}
+
+    }
+
+    /**
+     * Signs a user up for a course unit and returns the updated page.&lt;br&gt;
+     * Signing up for the course unit means that the user is set as participant
+     * of the course unit and the course unit is added to the course units of
+     * the user. Also the database entry of the course unit is updated.
+     * 
+     * &lt;p&gt;
+     * The user can only sign up for the course unit if it's not already full
+     * and if the user has enough money on his account to pay for the unit.
+     * During the signing up action the price of the course unit is
+     * automatically removed from the account of the user. If there goes
+     * something wrong during the sign up action, a CourseRegistrationException
+     * is thrown and the paid price is transfered back to the account of the
+     * user.
+     * 
+     * @return link to the page
+     * 
+     * @throws CourseRegistrationException
+     *             if a exception occurs during the sign up process
+     * @return
+     * @throws CourseRegistrationException
+     * @author Schwarz Sebastian
+     */
+    public void signUpForCourseUnits() throws CourseRegistrationException {
+	
+<span class="nc" id="L495">        transaction.start();</span>
+<span class="nc bnc" id="L496" title="All 2 branches missed.">		if (!UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)){</span>
+<span class="nc" id="L497">		    signUpForCourse();</span>
+		}
+		
+		
+<span class="nc" id="L501">		transaction.start();	</span>
+		//Gets the CourseUnitID from the faclet
+<span class="nc" id="L503">	    int courseUnitID = Integer.parseInt(FacesContext</span>
+<span class="nc" id="L504">		    .getCurrentInstance().getExternalContext()</span>
+<span class="nc" id="L505">		    .getRequestParameterMap().get(&quot;courseUnitID&quot;));</span>
+	    try {
+
+<span class="nc" id="L508">			CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(</span>
+<span class="nc" id="L509">				transaction, courseUnitID);</span>
+<span class="nc" id="L510">			LogHandler.getInstance().debug(&quot;Methode getCourseUnit:&quot; + courseUnitID </span>
+<span class="nc" id="L511">						+&quot; was succesfull&quot;);</span>
+			
+<span class="nc" id="L513">			User userWhoTryToSignUp = UserDAO.getUser(transaction,</span>
+<span class="nc" id="L514">				sessionUser.getUserID());</span>
+<span class="nc" id="L515">			LogHandler.getInstance().debug(&quot;Methode getUser:&quot; + sessionUser.getUserID()</span>
+<span class="nc" id="L516">					+&quot; was succesfull&quot;);</span>
+			
+<span class="nc" id="L518">			int currentAmountOfParticipants = CourseUnitDAO</span>
+<span class="nc" id="L519">				.getNumberOfParticipants(transaction, courseUnitID);</span>
+<span class="nc" id="L520">			LogHandler.getInstance().debug(&quot;Methode getNumberOfParticipants of:&quot; + courseUnitID </span>
+<span class="nc" id="L521">					+&quot; was succesfull&quot;);</span>
+	
+			//Checks whether the CourseUnit is maxed out or not
+<span class="nc" id="L524">			if (courseUnitIsFull(courseUnitToSign,</span>
+<span class="nc bnc" id="L525" title="All 2 branches missed.">				currentAmountOfParticipants)) {</span>
+	
+			    // The methode calculates the new Amount of monez
+<span class="nc" id="L528">			    float newAccountBalance = signingUpForUser(</span>
+<span class="nc" id="L529">				    courseUnitToSign, userWhoTryToSignUp);</span>
+	
+			    // Updates the Account and signs up the User for the CourseUnit
+<span class="nc" id="L532">			    CourseUnitDAO.addUserToCourseUnit(transaction,</span>
+<span class="nc" id="L533">				    sessionUser.getUserID(), courseUnitID);</span>
+<span class="nc" id="L534">			    LogHandler.getInstance().debug(&quot;Methode addUserToCourseUnit, User:&quot; </span>
+<span class="nc" id="L535">				    + sessionUser.getUserID() +&quot; Course:&quot;+ courseUnitID +&quot; was succesfull&quot;);</span>
+			    
+<span class="nc" id="L537">			    UserDAO.updateAccountBalance(transaction,</span>
+<span class="nc" id="L538">				    sessionUser.getUserID(), newAccountBalance);</span>
+<span class="nc" id="L539">			    LogHandler.getInstance().debug(&quot;Methode updateAccountBalance of:&quot; </span>
+<span class="nc" id="L540">				    + sessionUser.getUserID()  +&quot; was succesfull&quot;);</span>
+	
+			    //Refreshes the LoginButton
+<span class="nc bnc" id="L543" title="All 2 branches missed.">			    for (int i = 0; i &lt; courseUnitsOfCourse.size(); i++) {</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">					if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {</span>
+<span class="nc" id="L545">					    courseUnitsOfCourse.get(i).setUserIsParticipant(</span>
+<span class="nc" id="L546">						    true);</span>
+<span class="nc" id="L547">					    break;</span>
+					}
+			    }
+	
+<span class="nc" id="L551">			    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L552">				    &quot;User succesfully added to CourseUnit&quot;);</span>
+	
+<span class="nc" id="L554">			    transaction.commit();</span>
+<span class="nc" id="L555">			} else {</span>
+
+<span class="nc" id="L557">			    transaction.rollback();</span>
+<span class="nc" id="L558">			    FacesMessageCreator.createFacesMessage(null, sessionUser</span>
+<span class="nc" id="L559">                        .getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourseUnit1&quot;)</span>
+<span class="nc" id="L560">                        + courseUnitToSign.getTitle()</span>
+<span class="nc" id="L561">                        + sessionUser.getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourseUnit2&quot;));</span>
+			    
+			    //throw new CourseRegistrationException(sessionUser
+			    //            .getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourseUnit1&quot;)
+			    //            + courseUnitToSign.getTitle()
+			    //            + sessionUser.getLabel(&quot;errorMessage.courseRegistration.maxParticipantsCourseUnit2&quot;));
+	
+			}
+			
+<span class="nc" id="L570">	    } catch (InvalidDBTransferException e) {</span>
+
+<span class="nc" id="L572">			transaction.rollback();</span>
+			//throw new InvalidDBTransferException(&quot;Error occured during sign up user:&quot; + 
+			//        sessionUser.getUserID() + &quot; for CourseUnit:&quot; + courseUnitID, e);		    
+<span class="nc" id="L575">	    } catch (CourseRegistrationException e){</span>
+<span class="nc" id="L576">	        transaction.rollback();</span>
+	    }
+		    
+		
+
+<span class="nc" id="L581">    }</span>
+
+    /**
+     * Signs a user off from a course unit and returns the updated page.&lt;br&gt;
+     * Signing off from the course unit means that the user is removed as
+     * participant of the course unit and the course unit is removed from the
+     * course units of the user. Also the database entry of the course unit is
+     * updated.
+     * 
+     * &lt;p&gt;
+     * The user can only sign off from the course unit if he is signed in.
+     * During the signing off action the price of the course unit is
+     * automatically transfered to the account of the user. If there goes
+     * something wrong during the sign up action, a CourseRegistrationException
+     * is thrown.
+     * 
+     * @return link to the page
+     * @author Schwarz Sebastian
+     * @throws CourseRegistrationException
+     *             if a exception occurs during the sign off process
+     */
+    public void signOffFromCourseUnits() throws CourseRegistrationException {
+	
+<span class="nc" id="L604">		transaction.start();</span>
+
+		//Gets the CourseUnitID from the Faclet
+<span class="nc" id="L607">		int courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="nc" id="L608">			.getExternalContext().getRequestParameterMap()</span>
+<span class="nc" id="L609">			.get(&quot;courseUnitID&quot;));</span>
+		
+		try {
+<span class="nc" id="L612">		    CourseUnit courseUnitToSignOff = CourseUnitDAO.getCourseUnit(transaction,</span>
+<span class="nc" id="L613">			    courseUnitID);</span>
+<span class="nc" id="L614">		    LogHandler.getInstance().debug(&quot;Methode getCourseUnit:&quot; </span>
+<span class="nc" id="L615">				    + courseUnitID  +&quot; was succesfull&quot;);</span>
+		    
+<span class="nc" id="L617">		    User userWhoTryToSignOff = UserDAO.getUser(transaction,</span>
+<span class="nc" id="L618">			    sessionUser.getUserID());</span>
+<span class="nc" id="L619">		    LogHandler.getInstance().debug(&quot;Methode getUser:&quot; </span>
+<span class="nc" id="L620">				    + sessionUser.getUserID()  +&quot; was succesfull&quot;);</span>
+<span class="nc" id="L621">		    signOffFromSpecificCourseUnit(transaction, courseUnitToSignOff,</span>
+<span class="nc" id="L622">			    userWhoTryToSignOff);</span>
+	
+		    // Refreshes the LoginButton
+<span class="nc bnc" id="L625" title="All 2 branches missed.">		    for (int i = 0; i &lt; courseUnitsOfCourse.size(); i++) {</span>
+<span class="nc bnc" id="L626" title="All 2 branches missed.">				if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {</span>
+<span class="nc" id="L627">				    courseUnitsOfCourse.get(i).setUserIsParticipant(false);</span>
+<span class="nc" id="L628">				    break;</span>
+				}
+		    }
+<span class="nc" id="L631">		    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L632">			    &quot;User sucessfully signed off from courseUnit&quot;);</span>
+	
+<span class="nc" id="L634">		    transaction.commit();</span>
+<span class="nc" id="L635">		} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L636">		    transaction.rollback();</span>
+<span class="nc" id="L637">		    throw new CourseRegistrationException(&quot;User not signed off from courseUnit&quot;);</span>
+		}
+<span class="nc" id="L639">    }</span>
+
+    /**
+     * This Methode signsOff from a CourseUNit and updates the Account Balance of the User
+     * 
+     * @param trans
+     *@author Sebastian Schwarz
+     * @param courseUnitToSignOff
+     * @param userWhoTryToSignOff
+     * @throws InvalidDBTransferException
+     */
+    private void signOffFromSpecificCourseUnit(Transaction trans,
+	    CourseUnit courseUnitToSignOff, User userWhoTryToSignOff)
+	    throws InvalidDBTransferException {
+		
+<span class="nc" id="L654">    	CourseUnitDAO.removeUserFromCourseUnit(trans, sessionUser.getUserID(),</span>
+<span class="nc" id="L655">			courseUnitToSignOff.getCourseUnitID());</span>
+<span class="nc" id="L656">		float newAccountBalance = signingOffFromCourseUnit(courseUnitToSignOff,</span>
+<span class="nc" id="L657">			userWhoTryToSignOff);</span>
+<span class="nc" id="L658">		UserDAO.updateAccountBalance(trans, sessionUser.getUserID(),</span>
+<span class="nc" id="L659">			newAccountBalance);</span>
+<span class="nc" id="L660">    }</span>
+
+    /**
+     * Returns whether the CourseUnit is maxed out or not
+     * 
+     * @author Sebastian
+     * @param courseUnitToSign
+     * @param currentAmountOfParticipants
+     * @return
+     */
+    private boolean courseUnitIsFull(CourseUnit courseUnitToSign,
+	    int currentAmountOfParticipants) {
+    	
+<span class="nc bnc" id="L673" title="All 2 branches missed.">    	return courseUnitToSign.getMaxUsers() &gt; currentAmountOfParticipants;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;selectedCourseUnits&lt;/code&gt;.
+     * 
+     * @return list of selected course units
+     */
+    public List&lt;CourseUnit&gt; getSelectedCourseUnits() {
+<span class="nc" id="L682">        return selectedCourseUnits;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;selectedCourseUnits&lt;/code&gt;.
+     * 
+     * @param selectedCourseUnits
+     *            the new list of selected course units
+     */
+    public void setSelectedCourseUnits(List&lt;CourseUnit&gt; selectedCourseUnits) {
+<span class="nc" id="L692">        this.selectedCourseUnits = selectedCourseUnits;</span>
+<span class="nc" id="L693">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;leadersOfCourse&lt;/code&gt;.
+     * 
+     * @return list of leaders
+     */
+    public List&lt;User&gt; getLeadersOfCourse() {
+<span class="fc" id="L701">        return leadersOfCourse;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;leadersOfCourse&lt;/code&gt;.
+     * 
+     * @param leaders
+     *            the new list of leaders
+     */
+    public void setLeadersOfCourse(List&lt;User&gt; leaders) {
+<span class="nc" id="L711">        this.leadersOfCourse = leaders;</span>
+<span class="nc" id="L712">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;courseUnitsOfCourse&lt;/code&gt;.
+     * 
+     * @return list of course units
+     */
+    public List&lt;CourseUnit&gt; getCourseUnitsOfCourse() {
+<span class="fc" id="L720">        return courseUnitsOfCourse;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseUnitsOfCourse&lt;/code&gt;.
+     * 
+     * @param courseUnits
+     *            the new list of course units
+     */
+    public void setCourseUnitsOfCourse(List&lt;CourseUnit&gt; courseUnits) {
+<span class="nc" id="L730">	this.courseUnitsOfCourse = courseUnits;</span>
+<span class="nc" id="L731">    }</span>
+
+    /**
+     * Redirect the user to a page where the participants of the course are
+     * displayed
+     * 
+     * @return link to the next page
+     */
+    public String loadParticipantsPage() {
+<span class="fc" id="L740">        return &quot;/facelets/user/registeredUser/listParticipants.xhtml&quot;;</span>
+    }
+
+    /**
+     * Redirects the user to a page where he can edit a course unit.
+     * 
+     * @return link to the next page
+     * @author Ricky Strohmeier
+     */
+    public String loadEditCourseUnitPage() {
+<span class="fc" id="L750">        return &quot;/facelets/user/courseLeader/editCourseUnit.xhtml&quot;;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     * @author Ricky Strohmeier
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L759">    	pagination.setCurrentPageNumber(this.currentPage);</span>
+<span class="nc" id="L760">    	transaction.start();</span>
+
+    	try {
+<span class="nc" id="L763">    	    courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(</span>
+<span class="nc" id="L764">    	                                        transaction, courseID, pagination);</span>
+<span class="nc" id="L765">    	    transaction.commit();</span>
+<span class="nc" id="L766">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L767">    	    LogHandler.getInstance().error(&quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L768">    	    transaction.rollback();</span>
+    	}
+<span class="nc" id="L770">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+	// TODO Auto-generated method stub
+<span class="nc" id="L778">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L785">        return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L793">        this.pagination = pagination;</span>
+<span class="nc" id="L794">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="fc" id="L802">        return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L812">        this.sessionUser = userSession;</span>
+<span class="fc" id="L813">    }</span>
+
+    /**
+     * Returns the edit mode flag.
+     * 
+     * @return true when in edit mode, false if not
+     */
+    public boolean getEditMode() {
+<span class="fc" id="L821">        return editMode;</span>
+    }
+
+    /**
+     * Set-method for the edit mode flag.
+     * 
+     * @param editMode
+     *            the boolean flag to be set
+     */
+    public void setEditMode(boolean editMode) {
+<span class="fc" id="L831">        this.editMode = editMode;</span>
+<span class="fc" id="L832">    }</span>
+
+    /**
+     * Returns the course's id.
+     * 
+     * @return the courseID
+     */
+    public int getCourseID() {
+<span class="fc" id="L840">        return courseID;</span>
+    }
+
+    /**
+     * Set-method for the course's id.
+     * 
+     * @param courseID
+     *            the courseID to set
+     */
+    public void setCourseID(int courseID) {
+<span class="nc" id="L850">        this.courseID = courseID;</span>
+<span class="nc" id="L851">    }</span>
+
+    /**
+     * Returns the new Account Balance of the User
+     * @author Sebastian
+     * @param courseUnitToSignOff
+     * @param userWhoTryToSignOff
+     * @return
+     */
+    private float signingOffFromCourseUnit(CourseUnit courseUnitToSignOff,
+	    User userWhoTryToSignOff) {
+	
+<span class="nc" id="L863">    	return userWhoTryToSignOff.getAccountBalance()</span>
+<span class="nc" id="L864">    			+ courseUnitToSignOff.getPrice();</span>
+    }
+
+    /**
+     * Checks whether the User has enough Money for the CourseUnit or not and returns
+     * his new Account Balance
+     * 
+     * @author Sebastian
+     * @param courseUnitToSign
+     * @param userWhoTryToSignUp
+     * @return
+     */
+    private float signingUpForUser(CourseUnit courseUnitToSign,
+	    User userWhoTryToSignUp) {
+		
+<span class="nc" id="L879">    	if (userWhoTryToSignUp.getAccountBalance() &gt;= courseUnitToSign</span>
+<span class="nc bnc" id="L880" title="All 2 branches missed.">			.getPrice()) {</span>
+<span class="nc" id="L881">		    return userWhoTryToSignUp.getAccountBalance()</span>
+<span class="nc" id="L882">			    - courseUnitToSign.getPrice();</span>
+		} else {
+<span class="nc" id="L884">		    FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(&quot;errorMessage.courseRegistration.notEnoughMoney1&quot;)</span>
+<span class="nc" id="L885">                    + userWhoTryToSignUp.getUsername()</span>
+<span class="nc" id="L886">                    + sessionUser.getLabel(&quot;errorMessage.courseRegistration.notEnoughMoney2&quot;)</span>
+<span class="nc" id="L887">                    + courseUnitToSign.getTitle());</span>
+		    
+		    
+<span class="nc" id="L890">		    throw new CourseRegistrationException(sessionUser.getLabel(&quot;errorMessage.courseRegistration.notEnoughMoney1&quot;)</span>
+<span class="nc" id="L891">				    + userWhoTryToSignUp.getUsername()</span>
+<span class="nc" id="L892">				    + sessionUser.getLabel(&quot;errorMessage.courseRegistration.notEnoughMoney2&quot;)</span>
+<span class="nc" id="L893">				    + courseUnitToSign.getTitle());</span>
+		}
+
+    }
+
+    /**
+     * Get method to see if the user is registered to this course.
+     * 
+     * @return the isRegistered
+     * @author Ricky Strohmeier
+     */
+    public boolean getIsRegistered() {
+<span class="fc" id="L905">        return isRegistered;</span>
+    }
+
+    /**
+     * Set method for the is registered boolean.
+     * 
+     * @param isRegistered
+     *            the isRegistered to set
+     * @author Ricky Strohmeier
+     */
+    public void setIsRegistered(boolean isRegistered) {
+<span class="nc" id="L916">        this.isRegistered = isRegistered;</span>
+<span class="nc" id="L917">    }</span>
+
+    /**
+     * Deletes the course from the system.
+     * 
+     * @return to the page search.xhtml
+     * 
+     * @author Katharina H�lzl
+     */
+    public String deleteCourse() {
+
+	// Create a new transaction object for the database connection.
+<span class="fc" id="L929">	transaction.start();</span>
+
+	try {
+
+<span class="fc" id="L933">	    if (CourseDAO.deleteCourse(this.transaction,</span>
+<span class="pc bpc" id="L934" title="1 of 2 branches missed.">	                                this.course.getCourseID()) == true) {</span>
+	        
+	        // FacesMessage: Delete course successful.
+<span class="fc" id="L937">		FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L938">		        null,</span>
+<span class="fc" id="L939">		        sessionUser.getLabel(</span>
+<span class="fc" id="L940">                                &quot;courseDetailBean.facesMessage.DeleteCourse&quot;));</span>
+<span class="fc" id="L941">		this.transaction.commit();</span>
+		
+		// Forwarding to the page site administration, because the delete was
+		// successful.
+<span class="fc" id="L945">		return &quot;/facelets/user/systemAdministrator/adminManagement.xhtml&quot;;</span>
+		
+	    } else {
+	        // FacesMessage: Delete course failed.
+<span class="nc" id="L949">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L950">		        null,</span>
+<span class="nc" id="L951">		        sessionUser.getLabel(</span>
+<span class="nc" id="L952">                             &quot;courseDetailBean.facesMessage.DeleteCourseFail&quot;));</span>
+<span class="nc" id="L953">		this.transaction.rollback();</span>
+<span class="nc" id="L954">		return URL_STAY_COURSE_DETAIL;</span>
+	    }
+
+<span class="nc" id="L957">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L958">	    LogHandler.getInstance().error(e.getMessage());</span>
+<span class="nc" id="L959">	    this.transaction.rollback();</span>
+	}
+
+<span class="nc" id="L962">	return URL_STAY_COURSE_DETAIL;</span>
+    }
+
+    /**
+     * Adds a course leader to a course.
+     * 
+     * @author Katharina H�lzl
+     */
+    public String addCourseLeader() {
+
+	// Create a new transaction object for the database connection.
+<span class="nc" id="L973">	transaction.start();</span>
+	try {
+<span class="nc" id="L975">	    if (CourseDAO.addLeaderToCourse(this.transaction,</span>
+<span class="nc bnc" id="L976" title="All 2 branches missed.">		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {</span>
+	        
+<span class="nc" id="L978">                this.transaction.commit();</span>
+	        //FacesMessage: Add courseleader successful
+<span class="nc" id="L980">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L981">		        null,</span>
+<span class="nc" id="L982">		        sessionUser.getLabel(</span>
+<span class="nc" id="L983">	                      &quot;courseDetailBean.facesMessage.CourseLeaderAdd&quot;));</span>
+<span class="nc" id="L984">		return URL_COURSE_DETAIL_NEW + courseID;</span>
+		
+	    }else{
+	        //FacesMessage: Add course leader failed
+<span class="nc" id="L988">                this.transaction.rollback();</span>
+<span class="nc" id="L989">                FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L990">                        null,</span>
+<span class="nc" id="L991">                        sessionUser.getLabel(</span>
+<span class="nc" id="L992">                          &quot;courseDetailBean.facesMessage.CourseLeaderAddFail&quot;));</span>
+               
+	    }
+<span class="nc" id="L995">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L996">	    LogHandler.getInstance().error(e.getMessage());</span>
+<span class="nc" id="L997">	    this.transaction.rollback();</span>
+	  
+	}
+<span class="nc" id="L1000">	return URL_STAY_COURSE_DETAIL;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;leaderToAdd&lt;/code&gt;.
+     * 
+     * @return the leader to be add
+     */
+    public User getLeaderToAdd() {
+<span class="fc" id="L1009">        return leaderToAdd;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;leaderToAdd&lt;/code&gt;.
+     * 
+     * @param leaderToAdd
+     *            the leader to be add
+     */
+    public void setLeaderToAdd(User leaderToAdd) {
+<span class="nc" id="L1019">        this.leaderToAdd = leaderToAdd;</span>
+<span class="nc" id="L1020">    }</span>
+
+    /**
+     * removes the target course leaders from the course
+     * 
+     * @author Katharina H�lzl
+     */
+    public String removeCourseLeaders() {
+	// Create a new transaction object for the database connection.
+<span class="nc" id="L1029">	transaction.start();</span>
+
+<span class="nc" id="L1031">	String delLeaderString = FacesContext</span>
+<span class="nc" id="L1032">		.getCurrentInstance().getExternalContext().</span>
+<span class="nc" id="L1033">		                      getRequestParameterMap().get(&quot;leaderID&quot;);</span>
+	int delLeaderID;
+	
+	try {
+<span class="nc" id="L1037">	    delLeaderID = Integer.parseInt(delLeaderString);</span>
+	    
+<span class="nc" id="L1039">	    if (CourseDAO.removeLeaderFromCourse(this.transaction, delLeaderID,</span>
+<span class="nc bnc" id="L1040" title="All 2 branches missed.">		    this.course.getCourseID())) {</span>
+	        
+	        //FacesMessage: Delete course leader successful
+<span class="nc" id="L1043">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L1044">		        null,</span>
+<span class="nc" id="L1045">		        sessionUser.getLabel(</span>
+<span class="nc" id="L1046">	                   &quot;courseDetailBean.facesMessage.CourseLeaderDelete&quot;));</span>
+<span class="nc" id="L1047">		this.transaction.commit();</span>
+<span class="nc" id="L1048">		return URL_COURSE_DETAIL_NEW + courseID;</span>
+		
+	    } else {
+	        //FacesMEssage: Delete course leader failed.
+<span class="nc" id="L1052">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L1053">		        null,</span>
+<span class="nc" id="L1054">		        sessionUser.getLabel(</span>
+<span class="nc" id="L1055">		                  &quot;courseDetailBean.facesMessage.&quot;</span>
+		                  + &quot;CourseLeaderDeleteFail&quot;));
+<span class="nc" id="L1057">		this.transaction.rollback();</span>
+<span class="nc" id="L1058">		return URL_STAY_COURSE_DETAIL;</span>
+	    }
+<span class="nc" id="L1060">	} catch (NumberFormatException e) {</span>
+	    // ID is no number
+<span class="nc" id="L1062">	    this.transaction.rollback();</span>
+	    //FacesMessage: Delete failed because id is not a positive number
+<span class="nc" id="L1064">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L1065">	            null,</span>
+<span class="nc" id="L1066">	            sessionUser.getLabel(</span>
+<span class="nc" id="L1067">	                           &quot;courseDetailBean.facesMessage.&quot;</span>
+	                           + &quot;CourseLeaderIDNotPositiv&quot;));
+	}
+<span class="nc" id="L1070">	return URL_STAY_COURSE_DETAIL;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

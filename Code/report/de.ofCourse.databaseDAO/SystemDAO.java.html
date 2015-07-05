@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SystemDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.databaseDAO</a> &gt; <span class="el_source">SystemDAO.java</span></div><h1>SystemDAO.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the Data Access Objects of the ofCourse system.
+ */
+package de.ofCourse.databaseDAO;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Activation;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Fetches data concerning the system settings like e.g. the granted overdraft
+ * credit from the database and updates this data if it is edited by the
+ * administrator.
+ * 
+ * &lt;p&gt;
+ * Each method has a Transaction parameter, which contains the SQL connection to
+ * the database, in order to assure that multiple, consecutive method calls
+ * within a certain method use the same connection.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This class is required in the business logic of the system, more precisely in
+ * the ManagedBeans of the package &lt;code&gt;de.ofCourse.action&lt;/code&gt;.
+ * &lt;/p&gt;
+ *
+ */
+<span class="nc" id="L32">public class SystemDAO {</span>
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String SET_SIGN_OFF_LIMIT = 
+	    &quot;UPDATE \&quot;system_attributes\&quot; SET withdrawal_hours=?&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String SET_OVERDRAFT_CREDIT = 
+	    &quot;UPDATE \&quot;system_attributes\&quot; &quot; 
+            + &quot;SET overdraft_credit=?&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String SET_ACTIVATION_TYPE =
+	    &quot;UPDATE \&quot;system_attributes\&quot; &quot;
+	    + &quot;SET activation_type=?::activation&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String GET_OVERDRAFT_CREDIT = 
+	    &quot;SELECT overdraft_credit FROM \&quot;system_attributes\&quot;&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String GET_SIGN_OFF_LIMIT =
+	    &quot;SELECT withdrawal_hours FROM \&quot;system_attributes\&quot;&quot;;
+
+    /**
+     * Returns the value of the overdraft credit stored in the database.
+     * 
+     * @author Sebastian
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @return the overdraft credit
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static int getOverdraftCredit(Transaction trans)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L80">        int overdraftCredit = 0;</span>
+	
+<span class="fc" id="L82">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L83">	java.sql.Connection conn = connection.getConn();</span>
+	
+<span class="fc" id="L85">	try(PreparedStatement stmt = conn.prepareStatement(GET_OVERDRAFT_CREDIT)){</span>
+	    
+<span class="fc" id="L87">	    try(ResultSet res = stmt.executeQuery()){</span>
+<span class="fc" id="L88">		res.next();</span>
+<span class="fc" id="L89">		overdraftCredit = res.getInt(&quot;overdraft_credit&quot;);</span>
+<span class="pc bpc" id="L90" title="7 of 8 branches missed.">	    }</span>
+
+<span class="pc bpc" id="L92" title="7 of 8 branches missed.">	}catch(SQLException e){</span>
+<span class="nc" id="L93">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L94">		    &quot;Error occured during fetching the&quot; </span>
+<span class="nc" id="L95">	            + &quot; overdraft credit from database&quot;, e);</span>
+	}
+<span class="fc" id="L97">	return overdraftCredit;</span>
+    }
+
+    /**
+     * Updates the value of the overdraft credit in the database.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param credit
+     *            the new value of the granted overdraft credit
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias
+     */
+    public static void setOverdraftCredit(Transaction trans, float credit)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L114">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L115">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L117">	try (PreparedStatement stmt = conn.prepareStatement(SET_OVERDRAFT_CREDIT)) {</span>
+
+	    // Update the account activation in the database
+<span class="fc" id="L120">	    stmt.setFloat(1, credit);</span>
+<span class="fc" id="L121">	    stmt.executeUpdate();</span>
+
+<span class="pc bpc" id="L123" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L124">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L125">		    &quot;Error occured during setting overdraft credit.&quot;, e);</span>
+	}
+<span class="fc" id="L127">    }</span>
+
+    /**
+     * Returns the current type of activation from the database.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @return type of activation
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static Activation getActivationType(Transaction trans)
+	    throws InvalidDBTransferException {
+
+<span class="fc" id="L144">	Activation activation = null;</span>
+
+	// Prepare SQL- Request and Database connection
+<span class="fc" id="L147">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L148">	java.sql.Connection conn = connection.getConn();</span>
+
+	// database query
+<span class="fc" id="L151">	String sql = &quot;SELECT activation_type FROM \&quot;system_attributes\&quot;&quot;;</span>
+
+	// catch potential SQL-Injection
+<span class="fc" id="L154">	try (PreparedStatement pS = conn.prepareStatement(sql)) {</span>
+
+	    //execute preparedStatement, return resultSet as a list
+            // (here one entry in the list because the activation is unique).
+<span class="fc" id="L158">	    try(ResultSet res = pS.executeQuery()){</span>
+
+        	    // N�chten Eintrag aufrufen, gibt true zur�ck, falls es 
+        	    // weiteren Eintrag gibt, ansonsten null. 
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        	    if (res.next()) {</span>
+<span class="fc" id="L163">        	        activation = Activation.fromString(</span>
+<span class="fc" id="L164">        	                             res.getString(&quot;activation_type&quot;));</span>
+<span class="fc" id="L165">        	    } else {</span>
+<span class="nc" id="L166">        		return null;</span>
+        	    }
+<span class="pc bpc" id="L168" title="9 of 10 branches missed.">	    }catch (SQLException e) {</span>
+<span class="nc" id="L169">                throw new SQLException();</span>
+	    }
+<span class="pc bpc" id="L171" title="9 of 10 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L172">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L173">                                &quot;Error occured during getActivationType&quot;, e);</span>
+	}
+	// returns the activation method.
+<span class="fc" id="L176">	return activation;</span>
+    }
+
+    /**
+     * Updates the current type of activation in the database.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param type
+     *            type of activation
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias
+     */
+    public static void setActivationType(Transaction trans, Activation type)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L193">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L194">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L196">	try (PreparedStatement stmt = conn.prepareStatement(SET_ACTIVATION_TYPE)) {</span>
+
+	    // Update the overdraft credit in the database
+<span class="fc" id="L199">	    stmt.setString(1, type.toString());</span>
+<span class="fc" id="L200">	    stmt.executeUpdate();</span>
+<span class="pc bpc" id="L201" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L202">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L203">		    &quot;Error occured during setting activation type.&quot;, e);</span>
+	}
+<span class="fc" id="L205">    }</span>
+
+    /**
+     * Returns the limit in hours until that a user can signOff from a course.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @return the sign off limit
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static int getSignOffLimit(Transaction trans)
+	    throws InvalidDBTransferException {
+	//Default value
+<span class="fc" id="L220">	int signOffLimit = 3;</span>
+	
+<span class="fc" id="L222">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L223">	java.sql.Connection conn = connection.getConn();</span>
+	
+<span class="fc" id="L225">	try(PreparedStatement stmt = conn.prepareStatement(GET_SIGN_OFF_LIMIT)){</span>
+	    
+<span class="fc" id="L227">	    try(ResultSet res = stmt.executeQuery()){</span>
+<span class="fc" id="L228">		res.next();</span>
+<span class="fc" id="L229">		signOffLimit = res.getInt(&quot;withdrawal_hours&quot;);</span>
+<span class="pc bpc" id="L230" title="7 of 8 branches missed.">	    }</span>
+
+<span class="pc bpc" id="L232" title="7 of 8 branches missed.">	}catch(SQLException e){</span>
+<span class="nc" id="L233">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L234">		    &quot;Error occured during fetching the&quot; </span>
+<span class="nc" id="L235">	            + &quot; sign off limit from database&quot;, e);</span>
+	}
+<span class="fc" id="L237">	return signOffLimit;</span>
+
+    }
+
+    /**
+     * Sets the sign off limit in hours until that a user can signOff from a
+     * course.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param limit
+     *            the new sign off limit
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Fuchs Tobias            
+     */
+    public static void setSignOffLimit(Transaction trans, int limit)
+	    throws InvalidDBTransferException {
+	
+<span class="nc" id="L257">	Connection connection = (Connection) trans;</span>
+<span class="nc" id="L258">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="nc" id="L260">	try (PreparedStatement stmt = conn.prepareStatement(SET_SIGN_OFF_LIMIT)) {</span>
+
+	    // Update the sign off limit in the database
+<span class="nc" id="L263">	    stmt.setInt(1, limit);</span>
+<span class="nc" id="L264">	    stmt.executeUpdate();</span>
+<span class="nc bnc" id="L265" title="All 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L266">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L267">		    &quot;Error occured during setting the sign off limit.&quot;, e);</span>
+	}
+<span class="nc" id="L269">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JMeterTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">JMeterTest.java</span></div><h1>JMeterTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import static org.junit.Assert.*;
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class JMeterTest {
+
+
+    private FirefoxDriver driver;
+    private String baseUrl;
+
+
+<span class="nc" id="L21">    public JMeterTest(){</span>
+<span class="nc" id="L22">        System.out.println(&quot;Ich bin verzweifelt&quot;);</span>
+<span class="nc" id="L23">    }</span>
+    
+    
+
+    @Before
+    public void setUp() throws Exception {
+<span class="nc" id="L29">        driver = new FirefoxDriver();</span>
+<span class="nc" id="L30">        baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L31">        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+ 
+<span class="nc" id="L33">    }</span>
+
+
+
+    @Test
+    public void test() throws Exception {
+<span class="nc" id="L39">        driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+
+<span class="nc" id="L41">        driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;))</span>
+<span class="nc" id="L42">                .click();</span>
+<span class="nc" id="L43">        Thread.sleep(1000);</span>
+<span class="nc" id="L44">        driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L45">        driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;blacky&quot;);</span>
+<span class="nc" id="L46">        driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L47">        driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(</span>
+<span class="nc" id="L48">                &quot;Test!1990&quot;);</span>
+<span class="nc" id="L49">        Thread.sleep(2000);</span>
+
+<span class="nc" id="L51">        driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+
+<span class="nc" id="L53">        Thread.sleep(1000);</span>
+<span class="nc" id="L54">        driver.findElement(By.linkText(&quot;Suche&quot;)).click();</span>
+<span class="nc" id="L55">        Thread.sleep(1000);</span>
+<span class="nc" id="L56">        driver.findElement(By.id(&quot;formFilterCourses:courseOffers&quot;)).click();</span>
+<span class="nc" id="L57">        Thread.sleep(2000);</span>
+<span class="nc" id="L58">        driver.findElement(By.linkText(&quot;Zweiter Test&quot;)).click();</span>
+<span class="nc" id="L59">        Thread.sleep(1000);</span>
+<span class="nc" id="L60">        driver.findElement(By.name(&quot;courseDetailsID:j_idt94:j_idt98&quot;)).click();</span>
+<span class="nc" id="L61">        driver.findElement(By.id(&quot;j_idt110:j_idt112:0:anmelden&quot;)).click();</span>
+<span class="nc" id="L62">        Thread.sleep(2000);</span>
+<span class="nc" id="L63">        driver.findElement(By.id(&quot;j_idt110:j_idt112:2:anmelden&quot;)).click();</span>
+<span class="nc" id="L64">        Thread.sleep(2000);</span>
+<span class="nc" id="L65">        driver.findElement(By.name(&quot;courseDetailsID:j_idt94:j_idt100&quot;)).click();</span>
+<span class="nc" id="L66">        Thread.sleep(2000);</span>
+<span class="nc" id="L67">        driver.findElement(By.linkText(&quot;Suche&quot;)).click();</span>
+<span class="nc" id="L68">        driver.findElement(By.id(&quot;formFilterCourses:filterInput&quot;)).clear();</span>
+<span class="nc" id="L69">        driver.findElement(By.id(&quot;formFilterCourses:filterInput&quot;)).sendKeys(</span>
+<span class="nc" id="L70">                &quot;Yoga&quot;);</span>
+<span class="nc" id="L71">        Thread.sleep(2000);</span>
+<span class="nc" id="L72">        driver.findElement(By.id(&quot;formFilterCourses:searchCourses&quot;)).click();</span>
+<span class="nc" id="L73">        Thread.sleep(1000);</span>
+<span class="nc" id="L74">        driver.findElement(By.linkText(&quot;Yoga&quot;)).click();</span>
+<span class="nc" id="L75">        Thread.sleep(1000);</span>
+<span class="nc" id="L76">        driver.findElement(By.name(&quot;courseDetailsID:j_idt94:j_idt98&quot;)).click();</span>
+<span class="nc" id="L77">        Thread.sleep(1000);</span>
+<span class="nc" id="L78">        driver.findElement(By.name(&quot;courseDetailsID:j_idt94:j_idt100&quot;)).click();</span>
+<span class="nc" id="L79">        Thread.sleep(1000);</span>
+        
+
+        
+<span class="nc" id="L83">        driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+        
+        
+<span class="nc" id="L86">        assertEquals(0, 0);</span>
+<span class="nc" id="L87">    }</span>
+
+    
+   @After
+   public void tearDown(){
+<span class="nc" id="L92">       System.out.println(&quot;Tear Down&quot;);</span>
+<span class="nc" id="L93">   }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

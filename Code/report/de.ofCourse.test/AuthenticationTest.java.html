@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AuthenticationTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">AuthenticationTest.java</span></div><h1>AuthenticationTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of authentication. This test is geared to the test T10-10 from our 
+ * product brief. Furthermore there are a view more tests for the faults that 
+ * can appear because of invalid user inserts. 
+ * The administrator do the login in this test. On top of that it is 
+ * asserted that the faces messages to the user insert are correct and that the 
+ * user will be sent up to the right page.
+ * 
+ *  @author Katharina H�lzl
+ */
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+<span class="nc bnc" id="L20" title="All 2 branches missed.">public class AuthenticationTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L23">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L24">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+  public static final String facesMessages= &quot;facesMessages&quot;;
+  public static final String messageUsernameLogin= &quot;messageUsernameLogin&quot;;
+<span class="nc" id="L28">  public static final String messagePasswordLogin= &quot;messagePasswordLogin&quot;;</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L32">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L33">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L34">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L35">  }</span>
+
+  @Test
+  public void testAuthentication() throws Exception {
+<span class="nc" id="L39">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L40">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc bnc" id="L41" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+    // Testing required messages
+<span class="nc" id="L44">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L47" title="All 4 branches missed.">    assert driver.findElement(By.id(messageUsernameLogin)).getText().contains(&quot;Bitte geben Sie Ihren Benutzernamen ein. &quot;);</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">    assert driver.findElement(By.id(messagePasswordLogin)).getText().contains(&quot;Bitte geben Sie Ihr Passwort ein. &quot;);</span>
+    
+    // Testing user name and password length
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L52">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;adm&quot;);</span>
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L54">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;adm&quot;);</span>
+<span class="nc" id="L55">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc bnc" id="L56" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L58" title="All 4 branches missed.">    assert driver.findElement(By.id(messageUsernameLogin)).getText().contains(&quot;Ihr Benutzername muss zwischen 5 und 100 Zeichen lang sein. &quot;);</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">    assert driver.findElement(By.id(messagePasswordLogin)).getText().contains(&quot;Ihr Passwort muss zwischen 8 und 100 Zeichen lang sein. &quot;);</span>
+    
+    // Testing wrong password
+<span class="nc" id="L62">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L63">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L64">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L65">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;abgerdsfres&quot;);</span>
+<span class="nc" id="L66">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc bnc" id="L67" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L69" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Benutzername oder Passwort falsch! &quot;);</span>
+    
+    // Testing wrong user name
+<span class="nc" id="L72">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L73">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin12&quot;);</span>
+<span class="nc" id="L74">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L75">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L76">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc bnc" id="L77" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L79" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Benutzername oder Passwort falsch! &quot;);</span>
+    
+    // Testing correct user name and password
+<span class="nc" id="L82">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L83">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L84">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L85">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L86">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc bnc" id="L87" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;myCoursesPage&quot;)).getText().equals(&quot;Meine Kurse&quot;);</span>
+    
+<span class="nc" id="L89">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L90">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L94">    driver.quit();</span>
+<span class="nc" id="L95">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L97">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L99">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L103">      driver.findElement(by);</span>
+<span class="nc" id="L104">      return true;</span>
+<span class="nc" id="L105">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L106">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L112">      driver.switchTo().alert();</span>
+<span class="nc" id="L113">      return true;</span>
+<span class="nc" id="L114">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L115">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L121">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L122">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L124">        alert.accept();</span>
+<span class="nc" id="L125">      } else {</span>
+<span class="nc" id="L126">        alert.dismiss();</span>
+      }
+<span class="nc" id="L128">      return alertText;</span>
+<span class="nc" id="L129">    } finally {</span>
+<span class="nc" id="L130">      acceptNextAlert = true;</span>
+<span class="nc" id="L131">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

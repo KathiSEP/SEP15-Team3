@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LanguageManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.utilities</a> &gt; <span class="el_source">LanguageManager.java</span></div><h1>LanguageManager.java</h1><pre class="source lang-java linenums">/**
+ * This package provides utility functionality for the ofCourse system.
+ */
+package de.ofCourse.utilities;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.faces.context.FacesContext;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.system.LogHandler;
+
+/**
+ * Represents a LanguageManager that handles the available languages and is
+ * responsible to read out the language properties.&lt;br&gt;
+ * Uses specified parameters in faces-config.xml and uses the property files
+ * language_de.properties and language_en.properties under the path
+ * &lt;ServletContext-Path&gt;/languages/
+ * 
+ * @author Patrick Cretu
+ *
+ */
+<span class="fc" id="L26">public class LanguageManager {</span>
+	
+	/**
+     * Path of the general configuration file
+     */
+<span class="fc" id="L31">	private final String LANGUAGEPATH = &quot;/WEB-INF/config/&quot;;</span>
+	
+	/**
+     * The general configuration property file to read from
+     */
+	private Properties languageProperty;
+	
+	/**
+     * Indicates whether or not the configuration property was correctly loaded
+     */
+	private boolean propertyRead;
+
+    /**
+     * Singleton-object of the LanguageManager class
+     */
+    private static LanguageManager languageManager;
+
+    /**
+     * The supported languages
+     */
+    private Map&lt;String, Object&gt; availableLanguages;
+
+    /**
+     * Returns an instance of the LanguageManager class.
+     * 
+     * @return instance of the LanguageManager
+     */
+    public static LanguageManager getInstance() {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">    	if (languageManager == null) {</span>
+<span class="fc" id="L60">    	    languageManager = new LanguageManager();</span>
+    	}
+<span class="fc" id="L62">    	return languageManager;</span>
+    }
+
+    /**
+     * Returns a property value to a given key.
+     * 
+     * @param key
+     *            the key to determine the property value
+     * 
+     * @return the value of the found property
+     */
+    public String getProperty(String key, Language language) {
+<span class="fc" id="L74">    	String readValue = null;</span>
+<span class="fc" id="L75">    	languageProperty = loadLanguageProperty(language);</span>
+
+<span class="pc bpc" id="L77" title="2 of 4 branches missed.">    	if (propertyRead &amp;&amp; !languageProperty.equals(null)) {</span>
+<span class="fc" id="L78">    	    readValue = languageProperty.getProperty(key).toString();</span>
+    	}
+<span class="fc" id="L80">    	return readValue;</span>
+    }
+    
+    /**
+     * Returns the loaded language configuration property. &lt;br&gt;
+     * Tries to load the requested property file which contains the language
+     * configuration information from the &lt;code&gt;LANGUAGEPATH&lt;/code&gt;.
+     * 
+     * @return the loaded property, if the loading was successful&lt;br&gt;
+     *         null, otherwise
+     */
+    private Properties loadLanguageProperty(Language language) {
+<span class="fc" id="L92">    	Properties property = new Properties();</span>
+<span class="fc" id="L93">    	InputStream readInput = null;</span>
+    
+    	try {
+<span class="fc" id="L96">    	    readInput = FacesContext</span>
+<span class="fc" id="L97">    		    .getCurrentInstance()</span>
+<span class="fc" id="L98">    		    .getExternalContext()</span>
+<span class="fc" id="L99">    		    .getResourceAsStream(</span>
+<span class="fc" id="L100">    			    LANGUAGEPATH + getLanguageFile(language));</span>
+<span class="fc" id="L101">    	    property.load(readInput);</span>
+<span class="fc" id="L102">    	    propertyRead = true;</span>
+<span class="pc" id="L103">    	} catch (IOException e) {</span>
+<span class="nc" id="L104">    	    propertyRead = false;</span>
+<span class="nc" id="L105">    	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L106">    		    &quot;Error during loading the config property.&quot;);</span>
+<span class="nc" id="L107">    	} finally {</span>
+<span class="pc bpc" id="L108" title="5 of 6 branches missed.">    	    if (readInput != null) {</span>
+	    		try {
+<span class="pc" id="L110">	    		    readInput.close();</span>
+<span class="pc" id="L111">	    		} catch (IOException e) {</span>
+<span class="nc" id="L112">	    		    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L113">	    			    &quot;Error occured during&quot;</span>
+	    				    + &quot; loading language property.&quot;);
+	    		}
+    	    }
+<span class="nc" id="L117">    	}</span>
+<span class="fc" id="L118">    	return property;</span>
+    }
+
+    /**
+     * Returns the requested property name as a string value
+     * 
+     * @param language
+     *               the selected language
+     * @return the requested property name
+     */
+    private String getLanguageFile(Language language) {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">		if (language == Language.EN) {</span>
+<span class="nc" id="L130">			return &quot;language_en.properties&quot;;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">		} else if (language == Language.BAY) {</span>
+<span class="nc" id="L132">		    return &quot;language_bay.properties&quot;;</span>
+		}
+<span class="fc" id="L134">		return &quot;language_de.properties&quot;;</span>
+	}
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

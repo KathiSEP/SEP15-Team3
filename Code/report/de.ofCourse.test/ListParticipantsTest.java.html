@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ListParticipantsTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">ListParticipantsTest.java</span></div><h1>ListParticipantsTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of list participants. This test is geared to the tests T40-180 and 
+ * T50-40 from our product brief. 
+ * The administrator is looking at the participants of the course 'Zweiter Test' 
+ * and deletes one participant from this course. After that he goes back to the 
+ * course detail page of the course 'Zweiter Test' and do the logout. On
+ * top of that it is asserted that the faces message to the user action is 
+ * correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina H�lzl
+ */
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+<span class="nc bnc" id="L27" title="All 2 branches missed.">public class ListParticipantsTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L30">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L31">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+<span class="nc" id="L33">  public static final String facesMessages= &quot;facesMessages&quot;;</span>
+  
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L38">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L39">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L40">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L41">  }</span>
+
+  @Test
+  public void testListParticipants() throws Exception {
+<span class="nc" id="L45">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L46">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc bnc" id="L47" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc" id="L49">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L50">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L52">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L54">    driver.findElement(By.linkText(&quot;Suche&quot;)).click();</span>
+<span class="nc" id="L55">    driver.findElement(By.id(&quot;formFilterCourses:courseOffers&quot;)).click();</span>
+<span class="nc" id="L56">    driver.findElement(By.linkText(&quot;Yoga&quot;)).click();</span>
+<span class="nc bnc" id="L57" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Zweiter Test&quot;);</span>
+    
+    // look at list participants of the course 'Zweiter Test'
+<span class="nc" id="L60">    driver.findElement(By.name(&quot;courseDetailsID:loadParticipantsID&quot;)).click();</span>
+<span class="nc bnc" id="L61" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;listParticipants&quot;)).getText().equals(&quot;Liste aller Kursteilnehmer&quot;);</span>
+    
+    // Delete one participant from this course
+<span class="nc" id="L64">    driver.findElement(By.id(&quot;formListParticipants:participantsTable:0:checked&quot;)).click();</span>
+<span class="nc" id="L65">    driver.findElement(By.id(&quot;formListParticipants:delete&quot;)).click();</span>
+    // Check alert and close
+<span class="nc" id="L67">    assertTrue(closeAlertAndGetItsText().contains(&quot;Wollen Sie die ausgew�hlten Teilnehmer wirklich aus dem Kurs entfernen?&quot;));</span>
+    
+<span class="nc bnc" id="L69" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Die ausgew�hlten Benutzer wurden erfolgreich aus dem Kurs entfernt! &quot;);</span>
+    
+    // go back to the page course detail of the course 'zweiter Test'
+<span class="nc" id="L72">    driver.findElement(By.id(&quot;formBack:cancel&quot;)).click();</span>
+<span class="nc bnc" id="L73" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Zweiter Test&quot;);</span>
+    
+    //logout
+<span class="nc" id="L76">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L77">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L81">    driver.quit();</span>
+<span class="nc" id="L82">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L84">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L86">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L90">      driver.findElement(by);</span>
+<span class="nc" id="L91">      return true;</span>
+<span class="nc" id="L92">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L93">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L99">      driver.switchTo().alert();</span>
+<span class="nc" id="L100">      return true;</span>
+<span class="nc" id="L101">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L102">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L108">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L109">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L111">        alert.accept();</span>
+<span class="nc" id="L112">      } else {</span>
+<span class="nc" id="L113">        alert.dismiss();</span>
+      }
+<span class="nc" id="L115">      return alertText;</span>
+<span class="nc" id="L116">    } finally {</span>
+<span class="nc" id="L117">      acceptNextAlert = true;</span>
+<span class="nc" id="L118">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

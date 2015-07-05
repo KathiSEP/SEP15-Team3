@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PaymentOfflineBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">PaymentOfflineBean.java</span></div><h1>PaymentOfflineBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides the functionality of toping up the account balance of a user by the
+ * administrator.&lt;br&gt;
+ * To do this the administrator has to enter the amount to deposit and the name
+ * and id of the user on which the money is to be deposited.&lt;br&gt;
+ * So it is possible to pass money that was paid to the administrator to the
+ * users account.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean of the &lt;code&gt;adminManagement&lt;/code&gt; facelet.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@ManagedBean
+@RequestScoped
+<span class="fc" id="L36">public class PaymentOfflineBean implements Serializable {</span>
+
+    /**
+     * Serial id
+     */
+    private static final long serialVersionUID = 6305315564441571151L;
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores the data of the user who gets the money on his account
+     */
+    private User user;
+
+    /**
+     * Stores the amount of money that is to be deposited on the account of a
+     * user
+     */
+    private float amountToDeposit;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Tops up an user account in the system with a certain amount of money. 
+     * If a user has paid a certain amount of money to the administrator, the
+     * administrator can top up the users account.
+     * &lt;p&gt;
+     * To do so he has to enter the name of the user, the id of the user and the
+     * amount that is to deposit.&lt;br&gt;
+     * If the entered name and the entered id belongs to the same user, the
+     * amount is deposited on the users account, that means the account balance
+     * of the user is updated in the database.&lt;br&gt;
+     * 
+     * @author Tobias Fuchs
+     */
+    public void depositAmountOnUserAccount() {
+<span class="nc" id="L81">	transaction.start();</span>
+	try {
+<span class="nc" id="L83">	    User tempUser = UserDAO.getUser(transaction,																				</span>
+<span class="nc" id="L84">		    			    user.getUserID());</span>
+	    
+<span class="nc" id="L86">	    float accountBalance = tempUser.getAccountBalance();</span>
+<span class="nc" id="L87">	    float newBalance = accountBalance + amountToDeposit;	    </span>
+	    
+	    //Updates the account balance 
+<span class="nc" id="L90">	    UserDAO.updateAccountBalance(transaction,</span>
+<span class="nc" id="L91">		    			 user.getUserID(), </span>
+<span class="nc" id="L92">		    			 newBalance);</span>
+<span class="nc" id="L93">	    transaction.commit();</span>
+	    
+<span class="nc" id="L95">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L96">		    &quot;formToUpAccount:spendMoney&quot;,</span>
+<span class="nc" id="L97">		    sessionUser.getLabel(</span>
+<span class="nc" id="L98">			    &quot;paymentOfflineBean.FacesMessage.deposit1&quot;)</span>
+<span class="nc" id="L99">			    + amountToDeposit + &quot; &quot; </span>
+<span class="nc" id="L100">			    + sessionUser</span>
+<span class="nc" id="L101">			    .getLabel(&quot;paymentOfflineBean.FacesMessage.deposit2&quot;));</span>
+	    
+<span class="nc" id="L103">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L104">	    transaction.rollback();</span>
+<span class="nc" id="L105">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L106">		    &quot;Error occured during depositing money on the account of user: &quot;</span>
+<span class="nc" id="L107">			    + user.getUserID());</span>
+	    
+<span class="nc" id="L109">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L110">		    &quot;formToUpAccount:spendMoney&quot;,</span>
+<span class="nc" id="L111">		    sessionUser.getLabel(&quot;paymentOfflineBean.FacesMessage.deposit3&quot;));</span>
+	}
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Initializes the bean
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L120">	user = new User();</span>
+<span class="fc" id="L121">	transaction = Connection.create();</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;user&lt;/code&gt; that stores the user
+     * who get's the money on his account
+     * 
+     * @return the user who gets the money on his account
+     */
+    public User getUser() {
+<span class="fc" id="L131">	return user;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;user&lt;/code&gt; that stores the
+     * information who get's the money on his account
+     * 
+     * @param user
+     *            the new user who is about to get the money
+     */
+    public void setUser(User user) {
+<span class="nc" id="L142">	this.user = user;</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;users&lt;/code&gt; that stores the
+     * amount of money that is to deposit on a user account.
+     * 
+     * @return amount of money to deposit
+     */
+    public float getAmountToDeposit() {
+<span class="fc" id="L152">	return amountToDeposit;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;amountToDeposit&lt;/code&gt; that stores
+     * the amount of money that is to deposit on a user account.
+     * 
+     * @param amountToDeposit
+     *            the amount of money to deposit
+     */
+    public void setAmountToDeposit(float amountToDeposit) {
+<span class="nc" id="L163">	this.amountToDeposit = amountToDeposit;</span>
+
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L173">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L183">	this.sessionUser = userSession;</span>
+<span class="fc" id="L184">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

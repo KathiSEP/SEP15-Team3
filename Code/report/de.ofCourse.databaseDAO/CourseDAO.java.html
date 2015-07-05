@@ -1,0 +1,1388 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.databaseDAO</a> &gt; <span class="el_source">CourseDAO.java</span></div><h1>CourseDAO.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the Data Access Objects of the ofCourse system.
+ */
+package de.ofCourse.databaseDAO;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.Part;
+
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Address;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides methods for transactions with the courses stored in the database
+ * such as creating, retrieving, updating or deleting courses. Also adds or
+ * removes users and course leaders to a course.
+ * 
+ * &lt;p&gt;
+ * Each method has a Transaction parameter, which contains the SQL connection to
+ * the database, in order to assure that multiple, consecutive method calls
+ * within a certain method use the same connection.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This class is required in the business logic of the system, more precisely in
+ * the ManagedBeans of the package &lt;code&gt;de.ofCourse.action&lt;/code&gt;.
+ * &lt;/p&gt;
+ *
+ */
+<span class="nc" id="L48">public class CourseDAO {</span>
+
+	/**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_DAY = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot;, \&quot;course_units\&quot; &quot; +
+    		&quot;WHERE \&quot;course_units\&quot;.start_time::date = current_date &quot; +
+    		&quot;AND \&quot;course_units\&quot;.course_id = \&quot;courses\&quot;.id&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_WEEK = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot;, \&quot;course_units\&quot; &quot; +
+	    &quot;WHERE \&quot;course_units\&quot;.start_time::date between current_date &quot; +
+	    &quot;AND current_date + integer '6'&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_TOTAL = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot;&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_ID = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot; WHERE CAST(id AS TEXT) LIKE ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_TITLE = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot; WHERE LOWER(title) LIKE LOWER(?)&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_LEADER = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot;, \&quot;users\&quot;, &quot; +
+    		&quot;\&quot;course_instructors\&quot; &quot; +
+    		&quot;WHERE LOWER(\&quot;users\&quot;.name) LIKE LOWER(?) &quot; +
+    		&quot;AND \&quot;users\&quot;.id = \&quot;course_instructors\&quot;.course_instructor_id &quot; +
+    		&quot;AND \&quot;course_instructors\&quot;.course_id = courses.id&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String NUM_COURSES_DATE = &quot;SELECT COUNT(DISTINCT &quot; +
+    		&quot;\&quot;courses\&quot;.id) FROM \&quot;courses\&quot;, \&quot;course_units\&quot; &quot; +
+    		&quot;WHERE \&quot;courses\&quot;.id = \&quot;course_units\&quot;.course_id &quot; +
+    		&quot;AND \&quot;course_units\&quot;.start_time::date = ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String CURRENT_DATE_COURSES = &quot;SELECT DISTINCT &quot; +
+    		&quot;courses.id, courses.title, courses.max_participants, &quot; +
+    		&quot;courses.start_date, courses.end_date FROM \&quot;courses\&quot;, &quot; +
+    		&quot;\&quot;course_units\&quot; &quot; +
+    		&quot;WHERE \&quot;course_units\&quot;.start_time::date = current_date &quot; +
+    		&quot;AND \&quot;course_units\&quot;.course_id = \&quot;courses\&quot;.id &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String CURRENT_WEEK_COURSES = &quot;SELECT DISTINCT &quot; +
+    		&quot;courses.id, courses.title, courses.max_participants, &quot; +
+    		&quot;courses.start_date, courses.end_date FROM \&quot;courses\&quot;, &quot; +
+    		&quot;\&quot;course_units\&quot; &quot; +
+    		&quot;WHERE \&quot;course_units\&quot;.start_time::date BETWEEN current_date &quot; +
+    		&quot;AND current_date + integer '6' &quot; +
+    		&quot;AND \&quot;course_units\&quot;.course_id = \&quot;courses\&quot;.id &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String ALL_COURSES = &quot;SELECT * FROM \&quot;courses\&quot; &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String GET_COURSES_BY_ID = &quot;SELECT * FROM &quot; +
+    		&quot;\&quot;courses\&quot; WHERE CAST(id AS TEXT) LIKE ? &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String GET_COURSES_BY_TITLE = &quot;SELECT * FROM &quot; +
+    		&quot;\&quot;courses\&quot; WHERE LOWER(title) LIKE LOWER(?) &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String GET_COURSES_BY_LEADER = &quot;SELECT courses.id, &quot; +
+    		&quot;courses.title, courses.max_participants, courses.start_date,&quot; +
+    		&quot;courses.end_date FROM \&quot;courses\&quot;, \&quot;users\&quot;, &quot; +
+    		&quot;\&quot;course_instructors\&quot; &quot; +
+    		&quot;WHERE LOWER(\&quot;users\&quot;.name) LIKE LOWER(?) &quot; +
+    		&quot;AND \&quot;users\&quot;.id = \&quot;course_instructors\&quot;.course_instructor_id &quot; +
+    		&quot;AND \&quot;course_instructors\&quot;.course_id = courses.id &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+	 * @author Patrick Cretu
+	 */
+    private final static String GET_COURSES_BY_DATE = &quot;SELECT DISTINCT &quot; +
+    		&quot;courses.id, courses.title, courses.max_participants, &quot; +
+    		&quot;courses.start_date, courses.end_date &quot;+ 
+    		&quot;FROM \&quot;courses\&quot;, \&quot;course_units\&quot; &quot;+ 
+    		&quot;WHERE \&quot;courses\&quot;.id = \&quot;course_units\&quot;.course_id &quot; +
+    		&quot;AND \&quot;course_units\&quot;.start_time::date = ? &quot; +
+    		&quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+    
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String GET_MY_COURSES  = &quot;SELECT DISTINCT courses.id,&quot; 
+	    + &quot; courses.title, (SELECT course_units.start_time &quot; 
+            + &quot;FROM course_units WHERE courses.id = course_units.course_id &quot; 
+	    + &quot;AND course_units.start_time &gt; CURRENT_TIMESTAMP &quot; 
+	    + &quot;ORDER BY course_units.start_time LIMIT 1), &quot; 
+	    + &quot;(SELECT course_unit_addresses.location FROM course_units, &quot; 
+            + &quot;course_unit_addresses WHERE course_units.id = &quot; 
+	    + &quot;course_unit_addresses.course_unit_id &quot;
+	    + &quot;AND courses.id = course_units.course_id AND &quot; 
+	    + &quot;course_units.start_time &gt; CURRENT_TIMESTAMP ORDER BY &quot; 
+	    + &quot;course_units.start_time LIMIT 1) &quot; 
+            + &quot;FROM courses WHERE courses.id IN (SELECT course_id FROM &quot; 
+	    + &quot;course_participants WHERE participant_id = ?) &quot;
+	    + &quot;ORDER BY %s %s LIMIT ? OFFSET ?&quot;;
+
+    /**
+     * @author Tobias Fuchs
+     */
+    private final static String COUNT_MY_COURSES =  &quot;SELECT COUNT(*) FROM&quot; 
+	    + &quot; \&quot;courses\&quot; WHERE courses.id IN (SELECT course_id &quot; 
+	    + &quot;FROM \&quot;course_participants\&quot; WHERE participant_id = ?)&quot;;
+    
+    /**
+     * Deletes all the courses from the system where the end date is before 
+     * the actual date
+     * 
+     * @param trans
+     *          the Transaction object which contains the connection to the
+     *          database
+     * @return true if the maintenance was successful, else false
+     * @throws InvalidDBTransferException
+     *                          if any error occurred during the execution of 
+     *                          the method
+     * @author Katharina H�lzl
+     */
+    public static boolean doCourseMaintenance(Transaction trans)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L208">	boolean success = false;</span>
+
+<span class="fc" id="L210">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L211">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L213">	String sql = &quot;DELETE FROM courses &quot;</span>
+	           + &quot;WHERE end_date &lt; CURRENT_TIMESTAMP&quot;;
+
+	// catch potential SQL-Injection
+<span class="fc" id="L217">	try (PreparedStatement pS = conn.prepareStatement(sql)) {</span>
+<span class="fc" id="L218">	    pS.executeUpdate();</span>
+<span class="pc bpc" id="L219" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L220">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L221">	                        &quot;Error occured during doCourseMaintenance&quot;, e);</span>
+
+	}
+<span class="fc" id="L224">	return success;</span>
+    }
+
+    /**
+     * Checks, whether the inserted id of the course leader exists in the system
+     * or not.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseLeaderID
+     *            ID of the course leader
+     * @return true if the id of the course leader exists in the system, else
+     *         false
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static boolean courseLeaderExists(Transaction trans,
+	    int courseLeaderID) throws InvalidDBTransferException {
+
+<span class="fc" id="L246">	boolean courseLeaderExists = false;</span>
+
+	// Prepare SQL- INSERT and database connection
+<span class="fc" id="L249">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L250">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L252">	String sql = &quot;SELECT * &quot;</span>
+	           + &quot;FROM users &quot;
+	           + &quot;WHERE id = ? AND role != ?::role&quot;;
+
+	// catch potential SQL-Injection
+<span class="fc" id="L257">	try (PreparedStatement pS = conn.prepareStatement(sql)){</span>
+
+	    // Filling PreparedStatement.
+<span class="fc" id="L260">	    pS.setInt(1, courseLeaderID);</span>
+<span class="fc" id="L261">	    pS.setString(2, UserRole.REGISTERED_USER.toString());</span>
+
+<span class="fc" id="L263">	    try(ResultSet res = pS.executeQuery()){</span>
+<span class="fc" id="L264">	        courseLeaderExists = res.next();</span>
+
+<span class="pc bpc" id="L266" title="7 of 8 branches missed.">	    }catch (SQLException e) {</span>
+<span class="nc" id="L267">	            throw new SQLException();</span>
+	        }
+	    
+<span class="pc bpc" id="L270" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L271">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L272">	                        &quot;Error occured during courseLeaderExists&quot;, e);</span>
+	}
+<span class="fc" id="L274">	return courseLeaderExists;</span>
+    }
+
+    /**
+     * Adds a new course to the list of courses in the database.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param course
+     *            the course to be added
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static int createCourse(Transaction trans, Course course,
+	    Part courseImage) throws InvalidDBTransferException {
+
+<span class="fc" id="L293">	final int errorGeneratingCourse = -1;</span>
+
+<span class="fc" id="L295">	int generatedCourseID = errorGeneratingCourse;</span>
+
+	// Prepare SQL- INSERT and database connection.
+<span class="fc" id="L298">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L299">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L301">	String sql = &quot;Insert into \&quot;courses\&quot; (title, max_participants, &quot;</span>
+	                                    + &quot;start_date, end_date, &quot;
+	                                    + &quot;description, image) &quot;
+	           + &quot;values (?, ?, ?, ?, ?, ?) &quot;
+	           + &quot;RETURNING id&quot;;
+
+	// catch potential SQL-Injection
+<span class="fc" id="L308">	try (PreparedStatement pS = conn.prepareStatement(sql)){</span>
+
+	    // Filling PreparedStatement, check in optional fields if the user
+	    // has inserted the data or if the value null must be written into
+	    // the database.
+<span class="pc bpc" id="L313" title="2 of 4 branches missed.">	    if (course.getTitle() == null || course.getTitle().length() &lt; 1) {</span>
+<span class="nc" id="L314">		pS.setString(1, null);</span>
+<span class="nc" id="L315">	    } else {</span>
+<span class="fc" id="L316">		pS.setString(1, course.getTitle());</span>
+	    }
+	    
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">	    if (course.getMaxUsers() == null) {</span>
+<span class="nc" id="L320">		pS.setInt(2, 1);</span>
+<span class="nc" id="L321">	    } else {</span>
+<span class="fc" id="L322">		pS.setInt(2, course.getMaxUsers());</span>
+	    }
+	    
+<span class="fc" id="L325">	    pS.setDate(3, new java.sql.Date(course.getStartdate().getTime()));</span>
+<span class="fc" id="L326">	    pS.setDate(4, new java.sql.Date(course.getEnddate().getTime()));</span>
+	    
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">	    if (course.getDescription() == null</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">		    || course.getDescription().length() &lt; 1) {</span>
+<span class="nc" id="L330">		pS.setString(5, null);</span>
+<span class="nc" id="L331">	    } else {</span>
+<span class="fc" id="L332">		pS.setString(5, course.getDescription());</span>
+	    }
+	    
+<span class="pc bpc" id="L335" title="1 of 4 branches missed.">	    if (courseImage != null &amp;&amp; courseImage.getInputStream() != null) {</span>
+<span class="fc" id="L336">		InputStream inputStream = courseImage.getInputStream();</span>
+<span class="fc" id="L337">		pS.setBinaryStream(6, inputStream, courseImage.getSize());</span>
+<span class="fc" id="L338">	    } else {</span>
+<span class="fc" id="L339">		pS.setBinaryStream(6, null, 0);</span>
+	    }
+	    
+<span class="fc" id="L342">	    try(ResultSet res = pS.executeQuery()){</span>
+<span class="fc" id="L343">	        res.next();</span>
+<span class="fc" id="L344">	        generatedCourseID = res.getInt(&quot;id&quot;);</span>
+<span class="pc bpc" id="L345" title="7 of 8 branches missed.">	    } catch (SQLException e) {</span>
+<span class="nc" id="L346">                throw new SQLException(&quot;Error occured during createCourse&quot;, e);</span>
+            }
+	    
+<span class="pc bpc" id="L349" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L350">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L351">	                                &quot;Error occured during createCourse&quot;, e);</span>
+<span class="nc" id="L352">	} catch (IOException e) {</span>
+<span class="nc" id="L353">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L355">	return generatedCourseID;</span>
+    }
+
+    /**
+     * Counts the number of courses retrieved based on the search string.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param param
+     *            the parameter by which the user has searched
+     * @param searchString
+     *                   the entered user input
+     * @return the number of courses of the result
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    public static int getNumberOfCourses(Transaction trans, String param,
+	    String searchString) throws InvalidDBTransferException {
+    	
+<span class="fc" id="L377">		Connection connection = (Connection) trans;</span>
+<span class="fc" id="L378">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L379">		String query = null;</span>
+		
+<span class="pc bpc" id="L381" title="18 of 22 branches missed.">		switch (param) {</span>
+		case &quot;day&quot;:
+<span class="nc" id="L383">		    query = NUM_COURSES_DAY;</span>
+<span class="nc" id="L384">		    return countCourses(conn, query, null, false);</span>
+		case &quot;week&quot;:
+<span class="nc" id="L386">		    query = NUM_COURSES_WEEK;</span>
+<span class="nc" id="L387">		    return countCourses(conn, query, null, false);</span>
+		case &quot;total&quot;:
+<span class="fc" id="L389">		    query = NUM_COURSES_TOTAL;</span>
+<span class="fc" id="L390">		    return countCourses(conn, query, null, false);</span>
+		case &quot;id&quot;:
+<span class="nc" id="L392">		    query = NUM_COURSES_ID;</span>
+<span class="nc" id="L393">		    return countCourses(conn, query, searchString, false);</span>
+		case &quot;title&quot;:
+<span class="fc" id="L395">		    query = NUM_COURSES_TITLE;</span>
+<span class="fc" id="L396">		    return countCourses(conn, query, searchString, false);</span>
+		case &quot;leader&quot;:
+<span class="nc" id="L398">		    query = NUM_COURSES_LEADER;</span>
+<span class="nc" id="L399">		    return countCourses(conn, query, searchString, false);</span>
+		case &quot;start_date&quot;:
+<span class="nc" id="L401">		    query = NUM_COURSES_DATE;</span>
+<span class="nc" id="L402">		    return countCourses(conn, query, searchString, true);</span>
+		}
+<span class="nc" id="L404">		return 0;</span>
+    }
+
+    /**
+     * Executes the count query.
+     * 
+     * @param conn
+     *           the SQL connection for the database
+     * @param query
+     *            the SQL query
+     * @param searchString
+     *                   the user's search input
+     * @return the number of resulting courses
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    private static int countCourses(java.sql.Connection conn, String query,
+	    String searchString, boolean isDate)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L425">		int numCourses = 0;</span>
+	
+<span class="fc" id="L427">		try (PreparedStatement stmt = conn.prepareStatement(query)) {</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">		    if (searchString != null) {</span>
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">			    if (isDate) {</span>
+<span class="nc" id="L430">				    SimpleDateFormat format =</span>
+<span class="nc" id="L431">				    		new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+				    Date parsed;
+				    try {
+<span class="nc" id="L434">				    	parsed = format.parse(searchString);</span>
+<span class="nc" id="L435">				    } catch (ParseException e) {</span>
+<span class="nc" id="L436">				    	throw new InvalidDBTransferException(</span>
+<span class="nc" id="L437">				    			&quot;SQL Exception occoured during &quot; +</span>
+				    			&quot;countCourses(java.sql.Connection conn,&quot; +
+				    			&quot;String query, String searchString, &quot; +
+				    			&quot;boolean isDate)&quot;);
+				    }
+<span class="nc" id="L442">				    java.sql.Date date = new java.sql.Date(parsed.getTime());</span>
+<span class="nc" id="L443">				    stmt.setDate(1, date);</span>
+<span class="nc" id="L444">				} else {</span>
+<span class="fc" id="L445">				    stmt.setString(1, searchString);</span>
+				}
+		    }
+	
+<span class="fc" id="L449">		    try (ResultSet rst = stmt.executeQuery()) {</span>
+<span class="fc" id="L450">		    	rst.next();</span>
+<span class="fc" id="L451">		    	numCourses = rst.getInt(1);</span>
+<span class="pc bpc" id="L452" title="7 of 8 branches missed.">		    }</span>
+<span class="pc bpc" id="L453" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="nc" id="L454">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+		    		&quot;during countCourses(java.sql.Connection conn, &quot; +
+<span class="nc" id="L456">		    		&quot;String query, String searchString)&quot;, e);</span>
+		}
+<span class="fc" id="L458">		return numCourses;</span>
+    }
+
+    /**
+     * Returns the courses retrieved from the database based on the passed
+     * period.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param pagination
+     *                 the object containing the pagination values
+     * @param period
+     *             the requested time period
+     * @return the courses retrieved from the database
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    public static List&lt;Course&gt; getCourses(Transaction trans,
+	    PaginationData pagination, String period)
+	    throws InvalidDBTransferException {
+    	
+<span class="fc" id="L482">		Connection connection = (Connection) trans;</span>
+<span class="fc" id="L483">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L484">		int limit = pagination.getElementsPerPage();</span>
+<span class="fc" id="L485">		int offset = limit * pagination.getCurrentPageNumber();</span>
+<span class="fc" id="L486">		String orderParam = pagination.getSortColumn().toString();</span>
+<span class="fc" id="L487">		String dir = pagination.getSortDirection().toString();</span>
+		String query;
+	
+<span class="pc bpc" id="L490" title="6 of 7 branches missed.">		switch (period) {</span>
+		case &quot;day&quot;:
+<span class="nc" id="L492">		    query = CURRENT_DATE_COURSES;</span>
+<span class="nc" id="L493">		    break;</span>
+		case &quot;week&quot;:
+<span class="nc" id="L495">		    query = CURRENT_WEEK_COURSES;</span>
+<span class="nc" id="L496">		    break;</span>
+		default:
+<span class="fc" id="L498">		    query = ALL_COURSES;</span>
+		    break;
+		}
+<span class="fc" id="L501">		return getCoursesInPeriod(conn, limit, offset,</span>
+<span class="fc" id="L502">			String.format(query, orderParam, dir));</span>
+    }
+
+    /**
+     * Executes the SQL query and returns the resulting list of courses.
+     * 
+     * @param conn
+     *           the SQL connection for the database
+     * @param limit
+     *            the number of courses to which the result is limited
+     * @param offset
+     *             the offset
+     * @param query
+     *            the SQL query
+     * @return the resulting list of courses
+     *  @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    private static List&lt;Course&gt; getCoursesInPeriod(java.sql.Connection conn,
+	    int limit, int offset, String query)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L525">		List&lt;Course&gt; result = null;</span>
+		
+<span class="fc" id="L527">		try (PreparedStatement stmt = conn.prepareStatement(query)) {</span>
+<span class="fc" id="L528">		    stmt.setInt(1, limit);</span>
+<span class="fc" id="L529">		    stmt.setInt(2, offset);</span>
+	
+<span class="fc" id="L531">		    try (ResultSet rst = stmt.executeQuery()) {</span>
+<span class="fc" id="L532">		    	result = getResult(rst);</span>
+<span class="pc bpc" id="L533" title="7 of 8 branches missed.">		    }</span>
+<span class="pc bpc" id="L534" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="nc" id="L535">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+		    		&quot;during getCoursesInPeriod(java.sql.Connection conn, &quot; +
+		    		&quot;int limit, int offset, String orderParam, &quot; +
+<span class="nc" id="L538">		    		&quot;String query)&quot;, e);</span>
+		}
+<span class="fc" id="L540">		return result;</span>
+    }
+
+    /**
+     * Returns a list of courses which titles contain the search term the user
+     * has entered.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param pagination
+     *            the Pagination object which contains the amount of elements
+     *            which are to be retrieved
+     * @param searchString
+     *            the user's search term
+     * @return the list of courses, or null if no courses were retrieved
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    public static List&lt;Course&gt; getCourses(Transaction trans,
+	    PaginationData pagination, String searchParam, String searchString)
+	    throws InvalidDBTransferException {
+    	
+<span class="fc" id="L565">		Connection connection = (Connection) trans;</span>
+<span class="fc" id="L566">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L567">		int limit = pagination.getElementsPerPage();</span>
+<span class="fc" id="L568">		int offset = limit * pagination.getCurrentPageNumber();</span>
+<span class="fc" id="L569">		String orderParam =</span>
+<span class="fc" id="L570">				pagination.getSortColumn().getSortColumn().toString();</span>
+<span class="fc" id="L571">		String dir = pagination.getSortDirection().toString();</span>
+<span class="fc" id="L572">		String query = null;</span>
+<span class="fc" id="L573">		boolean isDate = false;</span>
+	
+<span class="pc bpc" id="L575" title="8 of 10 branches missed.">		switch (searchParam) {</span>
+		case &quot;title&quot;:
+<span class="fc" id="L577">		    query = GET_COURSES_BY_TITLE;</span>
+<span class="fc" id="L578">		    break;</span>
+		case &quot;leader&quot;:
+<span class="nc" id="L580">		    query = GET_COURSES_BY_LEADER;</span>
+<span class="nc" id="L581">		    break;</span>
+		case &quot;start_date&quot;:
+<span class="nc" id="L583">		    query = GET_COURSES_BY_DATE;</span>
+<span class="nc" id="L584">		    isDate = true;</span>
+<span class="nc" id="L585">		    break;</span>
+		default:
+<span class="nc" id="L587">		    query = GET_COURSES_BY_ID;</span>
+		}
+<span class="fc" id="L589">		return getCourses(conn, limit, offset, searchString,</span>
+<span class="fc" id="L590">			String.format(query, orderParam, dir), isDate);</span>
+    }
+    
+    
+    /**
+     * Executes the SQL query and returns the resulting list of courses.
+     * 
+     * @param conn
+     *           the SQL connection for the database
+     * @param limit
+     *            the number of courses to which the result is limited
+     * @param offset
+     *             the offset
+     * @param searchString
+     *                   the entered search string
+     * @param query
+     *            the SQL query
+     * @return the resulting list of courses
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @throws ParseException
+     *             if any error occurred during the parsing of the date  
+     * 
+     * @author Patrick Cretu
+     */
+    private static List&lt;Course&gt; getCourses(java.sql.Connection conn, int limit,
+	    int offset, String searchString, String query, boolean isDate)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L618">		List&lt;Course&gt; result = null;</span>
+	
+<span class="fc" id="L620">		try (PreparedStatement stmt = conn.prepareStatement(query)) {</span>
+	
+<span class="pc bpc" id="L622" title="1 of 2 branches missed.">		    if (isDate) {</span>
+<span class="nc" id="L623">				SimpleDateFormat format = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="nc" id="L624">				Date parsed = format.parse(searchString);</span>
+<span class="nc" id="L625">				java.sql.Date date = new java.sql.Date(parsed.getTime());</span>
+<span class="nc" id="L626">				stmt.setDate(1, date);</span>
+<span class="nc" id="L627">		    } else {</span>
+<span class="fc" id="L628">				String search = &quot;%&quot; + searchString + &quot;%&quot;;</span>
+<span class="fc" id="L629">				stmt.setString(1, search);</span>
+		    }
+<span class="fc" id="L631">		    stmt.setInt(2, limit);</span>
+<span class="fc" id="L632">		    stmt.setInt(3, offset);</span>
+	
+<span class="fc" id="L634">		    try (ResultSet rst = stmt.executeQuery()) {</span>
+<span class="fc" id="L635">		    	result = getResult(rst);</span>
+<span class="pc bpc" id="L636" title="7 of 8 branches missed.">		    }</span>
+		    
+<span class="pc bpc" id="L638" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="nc" id="L639">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+		    		&quot;during getCoursesInPeriod(java.sql.Connection conn, &quot; +
+		    		&quot;int limit, int offset, String searchString, &quot; +
+<span class="nc" id="L642">		    		&quot;String query)&quot;, e);</span>
+<span class="nc" id="L643">		} catch (ParseException e) {</span>
+<span class="nc" id="L644">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+		    		&quot;during countCourses(java.sql.Connection conn,&quot; +
+					&quot;String query, String searchString, boolean isDate)&quot;);
+		}
+<span class="fc" id="L648">		return result;</span>
+    }
+
+    
+    
+    
+    /**
+     * Retrieves and subsequently returns the courses within the passed result
+     * set.
+     * 
+     * @param rst
+     *          the result set containing the courses
+     * @return the list of resulting courses
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Patrick Cretu
+     */
+    private static List&lt;Course&gt; getResult(ResultSet rst)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L668">		List&lt;Course&gt; result = new ArrayList&lt;Course&gt;();</span>
+		try {
+<span class="fc" id="L670">		    int cols = rst.getMetaData().getColumnCount();</span>
+	
+<span class="fc bfc" id="L672" title="All 2 branches covered.">		    while (rst.next()) {</span>
+<span class="fc" id="L673">				int i = 1;</span>
+<span class="fc" id="L674">				List&lt;Object&gt; tuple = new ArrayList&lt;Object&gt;();</span>
+<span class="fc" id="L675">				Course course = new Course();</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">				while (i &lt;= cols) {</span>
+<span class="fc" id="L677">				    Object o = rst.getObject(i);</span>
+<span class="fc" id="L678">				    tuple.add(o);</span>
+<span class="fc" id="L679">				    i++;</span>
+				}
+<span class="fc" id="L681">				setProperties(course, tuple);</span>
+<span class="fc" id="L682">				result.add(course);</span>
+		    }
+<span class="fc bfc" id="L684" title="All 2 branches covered.">		    if (!result.isEmpty()) {</span>
+<span class="fc" id="L685">		    	return result;</span>
+		    }
+<span class="nc" id="L687">		} catch (SQLException e) {</span>
+<span class="nc" id="L688">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+<span class="nc" id="L689">		    		&quot;during getResult(ResultSet rst)&quot;, e);</span>
+		}
+<span class="fc" id="L691">		return null;</span>
+    }
+
+    /**
+     * Sets the properties of the passed course object.
+     * 
+     * @param course
+     *           the course object
+     * @param tuple
+     *            the list of properties
+     * 
+     * @author Patrick Cretu
+     */
+    private static void setProperties(Course course, List&lt;Object&gt; tuple) {
+<span class="fc" id="L705">		course.setCourseID((Integer) tuple.get(0));</span>
+<span class="fc" id="L706">		course.setTitle((String) tuple.get(1));</span>
+<span class="fc" id="L707">		course.setMaxUsers((Integer) tuple.get(2));</span>
+<span class="fc" id="L708">		course.setStartdate((Date) tuple.get(3));</span>
+<span class="fc" id="L709">		course.setEnddate((Date) tuple.get(4));</span>
+<span class="fc" id="L710">    }</span>
+
+    /**
+     * Returns a list of users which are leaders of the course with the passed
+     * course ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the course's ID
+     * @return the list of users containing the course's leaders, or null if the
+     *         course has no course leaders
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
+     */
+    public static List&lt;User&gt; getLeaders(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L729">	ArrayList&lt;User&gt; leaders = new ArrayList&lt;User&gt;();</span>
+
+<span class="fc" id="L731">	String leadersQuery = &quot;SELECT \&quot;name\&quot;, \&quot;first_name\&quot;, \&quot;email\&quot;, \&quot;id\&quot; FROM &quot;</span>
+		+ &quot;\&quot;users\&quot; WHERE id IN &quot;
+		+ &quot;(SELECT course_instructor_id FROM \&quot;course_instructors\&quot; &quot;
+		+ &quot;WHERE course_id = ?)&quot;;
+
+<span class="fc" id="L736">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L737">	java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L738">	PreparedStatement statement = null;</span>
+	ResultSet resultSet;
+
+	try {
+<span class="fc" id="L742">	    statement = conn.prepareStatement(leadersQuery);</span>
+<span class="fc" id="L743">	    statement.setInt(1, courseID);</span>
+<span class="fc" id="L744">	    resultSet = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L746" title="All 2 branches covered.">	    while (resultSet.next()) {</span>
+<span class="fc" id="L747">		User leader = new User();</span>
+
+<span class="pc bpc" id="L749" title="1 of 2 branches missed.">		if (resultSet.getString(&quot;name&quot;) != null) {</span>
+<span class="fc" id="L750">		    leader.setLastname(resultSet.getString(&quot;name&quot;));</span>
+<span class="fc" id="L751">		} else {</span>
+<span class="nc" id="L752">		    leader.setLastname(&quot;geheim&quot;);</span>
+		}
+
+<span class="pc bpc" id="L755" title="1 of 2 branches missed.">		if (resultSet.getString(&quot;first_name&quot;) != null) {</span>
+<span class="fc" id="L756">		    leader.setFirstname(resultSet.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L757">		} else {</span>
+<span class="nc" id="L758">		    leader.setFirstname(&quot;geheim&quot;);</span>
+		}
+<span class="fc" id="L760">		leader.setEmail(resultSet.getString(&quot;email&quot;));</span>
+<span class="fc" id="L761">		leader.setUserId(resultSet.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L762">		leaders.add(leader);</span>
+	    }
+<span class="fc" id="L764">	    statement.close();</span>
+<span class="fc" id="L765">	    resultSet.close(); </span>
+<span class="pc" id="L766">	} catch (SQLException e) {</span>
+<span class="nc" id="L767">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L768">		    &quot;Error occoured in getLeaders from CourseDAO&quot;);</span>
+<span class="nc" id="L769">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L771">	return leaders;</span>
+    }
+
+    /**
+     * Returns a course assigned to the specified ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the course's ID
+     * @return the course assigned to the course ID, or null if no such course
+     *         was found
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
+     */
+    public static Course getCourse(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L790">	Course course = new Course();</span>
+<span class="fc" id="L791">	String courseQuery = &quot;SELECT * FROM \&quot;courses\&quot; WHERE id = ?&quot;;</span>
+
+<span class="fc" id="L793">    	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L794">    	java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L795">    	PreparedStatement statement = null;</span>
+<span class="fc" id="L796">    	ResultSet resultSet = null;</span>
+    
+    	try {
+<span class="fc" id="L799">    	    statement = conn.prepareStatement(courseQuery);</span>
+<span class="fc" id="L800">    	    statement.setInt(1, courseID);</span>
+<span class="fc" id="L801">    	    resultSet = statement.executeQuery();</span>
+<span class="fc" id="L802">    	    resultSet.next();</span>
+<span class="fc" id="L803">    	    course.setTitle(resultSet.getString(&quot;title&quot;));</span>
+<span class="fc" id="L804">    	    course.setMaxUsers(resultSet.getInt(&quot;max_participants&quot;));</span>
+<span class="fc" id="L805">    	    course.setStartdate(resultSet.getDate(&quot;start_date&quot;));</span>
+<span class="fc" id="L806">    	    course.setEnddate(resultSet.getDate(&quot;end_date&quot;));</span>
+<span class="fc" id="L807">    	    course.setDescription(resultSet.getString(&quot;description&quot;));</span>
+<span class="fc" id="L808">    	    course.setCourseID(resultSet.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L809">    	    course.setCourseImage(resultSet.getBytes(&quot;image&quot;));</span>
+<span class="fc" id="L810">    	    statement.close();</span>
+<span class="fc" id="L811">    	    resultSet.close();</span>
+<span class="pc" id="L812">    	} catch (SQLException e) {</span>
+<span class="nc" id="L813">    	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L814">    		    &quot;Error occoured in getCourse from CourseDAO&quot;);</span>
+<span class="nc" id="L815">    	    throw new InvalidDBTransferException();</span>
+    	}
+<span class="fc" id="L817">    	return course;</span>
+    }
+
+    /**
+     * Returns a list of courses which the user with the passed ID participates
+     * in.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @return the list of courses which the user participates in, or null if
+     *         the user doesn't participate in any course
+     * 
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     *            
+     * @author Fuchs Tobias
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    public static List&lt;Course&gt; getCoursesOf(Transaction trans,
+	    PaginationData pagination, int userID)
+	    throws InvalidDBTransferException {
+	
+<span class="fc" id="L842">	String direction = pagination.getSortDirection().toString();</span>
+<span class="fc" id="L843">	List&lt;Course&gt; coursesOf = new ArrayList&lt;Course&gt;();</span>
+	
+	//Formats the SQL - Statement
+<span class="fc" id="L846">	String getMyCoursesQuery = String.format(GET_MY_COURSES,</span>
+<span class="fc" id="L847">		pagination.getSortColumn(), direction);</span>
+	
+	
+<span class="fc" id="L850">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L851">	java.sql.Connection conn = connection.getConn();</span>
+
+	//Calculates the offset
+<span class="fc" id="L854">	int calculateOffset = pagination.getElementsPerPage()</span>
+<span class="fc" id="L855">		* pagination.getCurrentPageNumber();</span>
+	
+	//Fetch the courses of a user
+<span class="fc" id="L858">	try (PreparedStatement stmt = conn.prepareStatement(getMyCoursesQuery)) {</span>
+
+<span class="fc" id="L860">	    stmt.setInt(1, userID);</span>
+<span class="fc" id="L861">	    stmt.setInt(2, pagination.getElementsPerPage());</span>
+<span class="fc" id="L862">	    stmt.setInt(3, calculateOffset);</span>
+	   
+<span class="fc" id="L864">	    try(ResultSet fetchedCourses = stmt.executeQuery()){</span>
+	    
+		Timestamp stamp;
+		Date date;
+		Course fetchedCourse;
+		CourseUnit courseUnit;
+		Address unitAddress;
+		// Fills the list coursesOf with courses from the database.
+		// At this time only id an title is set
+<span class="pc bpc" id="L873" title="1 of 2 branches missed.">		while (fetchedCourses.next()) {</span>
+<span class="nc" id="L874">		    fetchedCourse = new Course();</span>
+<span class="nc" id="L875">		    courseUnit = new CourseUnit();</span>
+		    
+<span class="nc" id="L877">		    fetchedCourse.setCourseID(fetchedCourses.getInt(&quot;id&quot;));</span>
+		
+<span class="nc bnc" id="L879" title="All 2 branches missed.">		    if (fetchedCourses.getString(&quot;title&quot;) != null) {</span>
+<span class="nc" id="L880">			fetchedCourse.setTitle(fetchedCourses.getString(&quot;title&quot;));</span>
+<span class="nc" id="L881">		    } else {</span>
+<span class="nc" id="L882">			fetchedCourse.setTitle(&quot;Nicht angegeben&quot;);</span>
+		    }
+		
+		    
+<span class="nc" id="L886">		    stamp = fetchedCourses.getTimestamp(&quot;start_time&quot;);</span>
+<span class="nc bnc" id="L887" title="All 2 branches missed.">		    if (stamp != null) {</span>
+<span class="nc" id="L888">			date = new Date(stamp.getYear(),</span>
+<span class="nc" id="L889">				stamp.getMonth(),</span>
+<span class="nc" id="L890">				stamp.getDate(), </span>
+<span class="nc" id="L891">				stamp.getHours(),</span>
+<span class="nc" id="L892">				stamp.getMinutes());</span>
+<span class="nc" id="L893">		    courseUnit.setStartime(date);</span>
+		    }
+		    
+<span class="nc" id="L896">		    unitAddress = new Address();</span>
+<span class="nc bnc" id="L897" title="All 2 branches missed.">		    if(fetchedCourses.getString(&quot;location&quot;)!= null){</span>
+<span class="nc" id="L898">			    unitAddress.setLocation(</span>
+<span class="nc" id="L899">				    fetchedCourses.getString(&quot;location&quot;));</span>
+<span class="nc" id="L900">		    }</span>
+		    else{
+<span class="nc" id="L902">			    unitAddress.setLocation(&quot;Nicht angegeben&quot;);</span>
+		    }
+<span class="nc" id="L904">		courseUnit.setAddress(unitAddress);</span>
+<span class="nc" id="L905">		fetchedCourse.setNextCourseUnit(courseUnit);</span>
+<span class="nc" id="L906">		coursesOf.add(fetchedCourse);</span>
+	    }
+<span class="pc bpc" id="L908" title="7 of 8 branches missed.">	  }</span>
+<span class="pc bpc" id="L909" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L910">	    LogHandler.getInstance().error(&quot;Error occoured during fetching&quot; </span>
+	                     + &quot; the next set of courses of a user.&quot;);
+<span class="nc" id="L912">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L914">	return coursesOf;</span>
+    }
+
+    /**
+     * Returns the number of courses which the user with the passed ID
+     * participates in.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @return the number of courses the user participates in
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     *             
+     * @author Fuchs Tobias
+     */
+    public static int getNumberOfMyCourses(Transaction trans, int userID)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L934">	int numberOfCourses = 0;</span>
+	
+<span class="fc" id="L936">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L937">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L939">	try (PreparedStatement  stmt = conn.prepareStatement(COUNT_MY_COURSES)) {</span>
+<span class="fc" id="L940">	    stmt.setInt(1, userID);</span>
+	    
+<span class="fc" id="L942">	    try(ResultSet resultSet = stmt.executeQuery()){</span>
+<span class="fc" id="L943">	    resultSet.next();</span>
+<span class="fc" id="L944">	    numberOfCourses = resultSet.getInt(1);</span>
+<span class="pc bpc" id="L945" title="7 of 8 branches missed.">	    }</span>
+	    
+<span class="pc bpc" id="L947" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+	    LogHandler
+<span class="nc" id="L949">		    .getInstance()</span>
+<span class="nc" id="L950">		    .error(&quot;Error occoured during fetching the number of&quot; </span>
+			    + &quot; courses of a certain user.&quot;);
+<span class="nc" id="L952">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="fc" id="L954">	return numberOfCourses;</span>
+    }
+
+    /**
+     * Updates a course stored in the database. The course's attributes are
+     * replaced by the ones of the passed course.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param course
+     *            the course to be updated
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * @author Ricky Strohmeier
+     */
+    public static void updateCourse(Transaction trans, Course course)
+	    throws InvalidDBTransferException {
+<span class="fc" id="L972">        String emptyString = new String(&quot;nothing entered&quot;);</span>
+<span class="fc" id="L973">        java.sql.Date emptyDate = new java.sql.Date(0);</span>
+<span class="fc" id="L974">        int emptyNumber = 0;</span>
+
+<span class="fc" id="L976">    	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L977">    	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L979">    	String courseQuery = &quot;UPDATE \&quot;courses\&quot; &quot;</span>
+    		+ &quot;SET description = ?, max_participants = ?, start_date = ?, end_date = ? &quot;
+    		+ &quot;WHERE id = ?&quot;;
+    
+<span class="fc" id="L983">    	try(PreparedStatement statement = conn.prepareStatement(courseQuery)) {</span>
+<span class="pc bpc" id="L984" title="1 of 2 branches missed.">    	    if (!course.getDescription().equals(null)) {</span>
+<span class="fc" id="L985">    	        statement.setString(1, course.getDescription());    	        </span>
+<span class="fc" id="L986">    	    } else {</span>
+<span class="nc" id="L987">    	        statement.setString(1, emptyString);</span>
+    	    }
+
+<span class="pc bpc" id="L990" title="1 of 2 branches missed.">    	    if (course.getMaxUsers() != null) {</span>
+<span class="fc" id="L991">    	        statement.setInt(2, course.getMaxUsers());    	        </span>
+<span class="fc" id="L992">    	    } else {</span>
+<span class="nc" id="L993">    	        statement.setInt(2, emptyNumber);</span>
+    	    }
+
+<span class="pc bpc" id="L996" title="1 of 2 branches missed.">    	    if (course.getStartdate() != null) {</span>
+<span class="fc" id="L997">    	        java.sql.Date startDate = new java.sql.Date(course.getStartdate().getTime());</span>
+<span class="fc" id="L998">    	        statement.setDate(3, startDate);    	        </span>
+<span class="fc" id="L999">    	    } else {</span>
+<span class="nc" id="L1000">    	        statement.setDate(3, emptyDate);</span>
+    	    }
+
+<span class="pc bpc" id="L1003" title="1 of 2 branches missed.">    	    if (course.getEnddate() != null) {</span>
+<span class="fc" id="L1004">        	    java.sql.Date endDate = new java.sql.Date(course.getEnddate().getTime());</span>
+<span class="fc" id="L1005">        	    statement.setDate(4, endDate);</span>
+<span class="fc" id="L1006">    	    } else {</span>
+<span class="nc" id="L1007">    	        statement.setDate(4, emptyDate);</span>
+    	    }
+
+<span class="pc bpc" id="L1010" title="1 of 2 branches missed.">    	    if (course.getCourseID() != 0) {</span>
+<span class="fc" id="L1011">    	        statement.setInt(5, course.getCourseID());</span>
+<span class="fc" id="L1012">    	    } else {</span>
+<span class="nc" id="L1013">    	        statement.setInt(5, emptyNumber);</span>
+    	    }
+
+<span class="fc" id="L1016">    	    statement.executeUpdate();</span>
+<span class="pc bpc" id="L1017" title="7 of 8 branches missed.">    	} catch (SQLException e) {</span>
+<span class="nc" id="L1018">    	    LogHandler.getInstance().error(&quot;SQL Exception occoured in updateCourse of CourseDAO&quot;);</span>
+<span class="nc" id="L1019">    	    throw new InvalidDBTransferException();</span>
+    	}
+<span class="fc" id="L1021">    }</span>
+
+    /**
+     * Deletes a course which is assigned to the passed ID.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param courseID
+     *            the ID of the course to be deleted
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static boolean deleteCourse(Transaction trans, int courseID)
+	    throws InvalidDBTransferException {
+
+<span class="fc" id="L1039">	boolean successful = false;</span>
+
+	// Prepare SQL- Request and database connection.
+<span class="fc" id="L1042">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1043">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L1045">	String sql = &quot;DELETE FROM \&quot;courses\&quot; &quot;</span>
+	           + &quot; WHERE id = ?&quot;;
+	
+	// catch potential SQL-Injection
+<span class="fc" id="L1049">	try (PreparedStatement pS = conn.prepareStatement(sql)) {</span>
+<span class="fc" id="L1050">	    pS.setInt(1, courseID);</span>
+
+	    // execute preparedStatement, return resultSet as a list
+	    // (here one entry in the list because the user id is unique)
+<span class="pc bpc" id="L1054" title="1 of 2 branches missed.">	    if (pS.executeUpdate() == 1) {</span>
+<span class="fc" id="L1055">		successful = true;</span>
+<span class="fc" id="L1056">	    } else {</span>
+<span class="nc" id="L1057">		successful = false;</span>
+	    }
+<span class="pc bpc" id="L1059" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="nc" id="L1060">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L1061">	                                &quot;Error occured during deleteCourse&quot;, e);</span>
+
+	}
+<span class="fc" id="L1064">	return successful;</span>
+    }
+
+    /**
+     * Adds a user to a course's list of participants.
+     * &lt;p&gt;
+     * A tuple of the user's ID and the course's ID is added to the table
+     * containing course participants in the database.
+     * &lt;/p&gt;
+     * 
+     * 
+     * @author Sebastian
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void addUserToCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+
+<span class="fc" id="L1089">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1090">        java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L1092">        String addUserToCourse = &quot;INSERT INTO \&quot;course_participants\&quot; (participant_id,course_id) VALUES (?,?)&quot;;</span>
+
+        try {
+<span class="fc" id="L1095">            setRelationMethode(userID, courseID, conn, addUserToCourse);</span>
+
+<span class="pc" id="L1097">	        } catch (SQLException e) {</span>
+	    
+<span class="nc" id="L1099">	            throw new InvalidDBTransferException(&quot;Error occured during addUserToCOurse&quot;, e);</span>
+	        }
+<span class="fc" id="L1101">    }</span>
+
+    /**
+     * Removes a user from a course's list of participants.
+     * &lt;p&gt;
+     * The tuple of the user's ID and the course's ID is removed from the table
+     * of course participants in the database.
+     * &lt;/p&gt;
+     * 
+     * @author Sebastian
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     */
+    public static void removeUserFromCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+
+<span class="nc" id="L1124">        Connection connection = (Connection) trans;</span>
+<span class="nc" id="L1125">        java.sql.Connection conn = connection.getConn();</span>
+
+<span class="nc" id="L1127">        String removeUserFromCourse = &quot;DELETE FROM \&quot;course_participants\&quot; WHERE participant_id = ? AND course_id = ?&quot;;</span>
+
+        try {
+<span class="nc" id="L1130">            setRelationMethode(userID, courseID, conn, removeUserFromCourse);</span>
+
+<span class="nc" id="L1132">        } catch (SQLException e) {           </span>
+<span class="nc" id="L1133">            throw new InvalidDBTransferException(&quot;Error occured while trying to delete User:&quot; + userID</span>
+<span class="nc" id="L1134">                + &quot; from course:&quot; + courseID, e);</span>
+        }
+
+<span class="nc" id="L1137">    }</span>
+
+    /**
+     * Adds a user to a course's list of course leaders.
+     * &lt;p&gt;
+     * A tuple of the user's ID and the course's ID is added to the table
+     * containing course leaders in the database.
+     * &lt;/p&gt;
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the user's ID
+     * @param courseID
+     *            the course's ID
+     * @return true if the course leader could be add to the course, else false
+     * @throws InvalidDBTransferException
+     *             if any error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static boolean addLeaderToCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+
+<span class="fc" id="L1162">	boolean successful = false;</span>
+
+	// Prepare SQL- INSERT and database connection.
+
+<span class="fc" id="L1166">	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1167">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="fc" id="L1169">	String sql = &quot;INSERT into \&quot;course_instructors\&quot; &quot;</span>
+	            + &quot;(course_instructor_id, course_id) &quot; 
+	            + &quot;values (?, ?)&quot;;
+
+	// catch potential SQL-Injection
+	try {
+
+<span class="pc bpc" id="L1176" title="1 of 2 branches missed.">	    if (setRelationMethode(userID, courseID, conn, sql) == 1) {</span>
+<span class="fc" id="L1177">		successful = true;</span>
+<span class="fc" id="L1178">	    } else {</span>
+<span class="nc" id="L1179">		successful = false;</span>
+	    }
+
+<span class="nc" id="L1182">	} catch (SQLException e) {</span>
+<span class="nc" id="L1183">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L1184">	                          &quot;Error occured during addLeaderToCourse&quot;, e);</span>
+
+	}
+<span class="fc" id="L1187">	return successful;</span>
+    }
+
+    /**
+     * Removes a course leader from a course's list of course leaders.
+     * &lt;p&gt;
+     * The tuple of the course leader's ID and the course's ID is removed from
+     * the table of course leaders in the database.
+     * &lt;/p&gt;
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param userID
+     *            the course leader's ID
+     * @param courseID
+     *            the course's ID
+     * @throws InvalidDBTransferException
+     * @return true if the course leader could be removed, else false. if any
+     *         error occurred during the execution of the method
+     * 
+     * @author Katharina H�lzl
+     */
+    public static boolean removeLeaderFromCourse(Transaction trans, int userID,
+	    int courseID) throws InvalidDBTransferException {
+
+<span class="nc" id="L1213">	boolean successful = false;</span>
+	// Prepare SQL- request and database connection.
+
+<span class="nc" id="L1216">	Connection connection = (Connection) trans;</span>
+<span class="nc" id="L1217">	java.sql.Connection conn = connection.getConn();</span>
+
+<span class="nc" id="L1219">	String sql = &quot;DELETE FROM \&quot;course_instructors\&quot; &quot;</span>
+	           + &quot;WHERE course_id = ? &quot;
+	           + &quot;AND course_instructor_id = ?&quot;;
+	
+	// catch potential SQL-Injection
+	try {
+<span class="nc bnc" id="L1225" title="All 2 branches missed.">	    if (setRelationMethode(courseID, userID, conn, sql) == 1) {</span>
+<span class="nc" id="L1226">		successful = true;</span>
+<span class="nc" id="L1227">	    } else {</span>
+<span class="nc" id="L1228">		successful = false;</span>
+	    }
+
+<span class="nc" id="L1231">	} catch (SQLException e) {</span>
+<span class="nc" id="L1232">	    throw new InvalidDBTransferException(</span>
+<span class="nc" id="L1233">	                      &quot;Error occured during removeLeaderFromCourse&quot;, e);</span>
+
+	}
+<span class="nc" id="L1236">	return successful;</span>
+    }
+
+    /**
+     * Returns the Number of Participants of that Course
+     * 
+     * @author Sebastian
+     * @param trans
+     * @param courseID
+     * @return Number of Participants as Integer
+     */
+    public static Integer getNumberOfParticipants(Transaction trans,
+	    int courseID) {
+        
+<span class="fc" id="L1250">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1251">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1252">        String countSQLstat = &quot;SELECT COUNT(*) FROM \&quot;course_participants\&quot; WHERE course_id=?&quot;;</span>
+        
+<span class="fc" id="L1254">        try(PreparedStatement pS = conn.prepareStatement(countSQLstat)) {</span>
+	    
+<span class="fc" id="L1256">            pS.setInt(1, courseID);           </span>
+<span class="fc" id="L1257">            try(ResultSet resultSet = pS.executeQuery()){</span>
+                
+<span class="fc" id="L1259">                resultSet.next();</span>
+<span class="fc" id="L1260">                int numberOfParticipants = resultSet.getInt(1);</span>
+<span class="pc" id="L1261">                return numberOfParticipants;  </span>
+<span class="pc bpc" id="L1262" title="7 of 8 branches missed.">            }</span>
+<span class="pc bpc" id="L1263" title="7 of 8 branches missed.">        } catch (SQLException e) {</span>
+            
+<span class="nc" id="L1265">            throw new InvalidDBTransferException(&quot;Exception occured during getNumberOfParticipants&quot;, e);</span>
+        }
+
+    }
+
+    /**
+     * 
+     * Adds a User to the User_Inform Table of the Database. 
+     * 
+     * @author Sebastian
+     * @param trans
+     * @param userID
+     * @param courseID
+     */
+    public static void addUserToInformUser(Transaction trans, int userID,
+	    int courseID) {
+
+<span class="fc" id="L1282">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1283">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1284">        String addUserToInformUser = &quot;INSERT INTO \&quot;inform_users\&quot; (user_id,course_id) VALUES (?,?)&quot;;</span>
+        
+        try {
+<span class="fc" id="L1287">            setRelationMethode(userID, courseID, conn, addUserToInformUser);</span>
+
+        
+<span class="pc" id="L1290">        } catch (SQLException e) {</span>
+<span class="nc" id="L1291">            throw new InvalidDBTransferException(&quot;Exception occured during addUserToInformUser&quot;, e);</span>
+        }
+<span class="fc" id="L1293">    }</span>
+
+    /**
+     * This DAO Methode removes a User from The Inform_Users Table.(For example when the Users
+     * leaves the course where he signed up for Course News)
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param userID
+     * @param courseID
+     */
+    public static void removeUserToInformUser(Transaction trans, int userID,
+	    int courseID) {
+
+<span class="nc" id="L1307">        Connection connection = (Connection) trans;</span>
+<span class="nc" id="L1308">        java.sql.Connection conn = connection.getConn();</span>
+
+<span class="nc" id="L1310">        String removeUserToInformUser = &quot;DELETE FROM \&quot;inform_users\&quot; WHERE user_id=? AND course_id=?&quot;;</span>
+	
+        try {
+<span class="nc" id="L1313">            setRelationMethode(userID, courseID, conn, removeUserToInformUser);</span>
+            
+<span class="nc" id="L1315">	    } catch (SQLException e) {	    </span>
+<span class="nc" id="L1316">	        throw new InvalidDBTransferException(&quot;Exception occured during RemoveUserToInformUser&quot;, e);</span>
+	    }        
+<span class="nc" id="L1318">    }</span>
+
+    /**
+     * This is a extracted Methode which sets the values and excute a simple sql command.
+     * 
+     * 
+     * @author Sebastian
+     * @param userID
+     * @param courseID
+     * @param conn
+     * @param preparedStmt
+     * @throws SQLException
+     */
+    static int setRelationMethode(int userID, int courseID,
+	    java.sql.Connection conn, String preparedStmt) throws SQLException {
+	
+<span class="fc" id="L1334">        try(PreparedStatement pS = conn.prepareStatement(preparedStmt)){</span>
+            
+<span class="fc" id="L1336">            pS.setInt(1, userID);</span>
+<span class="fc" id="L1337">            pS.setInt(2, courseID);</span>
+<span class="fc" id="L1338">            int success = pS.executeUpdate();</span>
+            
+<span class="pc" id="L1340">            return success;</span>
+<span class="pc bpc" id="L1341" title="7 of 8 branches missed.">        }			</span>
+    }
+
+    
+    /**
+     * Returns the Picture as Byte Array from the Database
+     * 
+     * 
+     * @author Sebastian Schwarz
+     * @param trans
+     * @param courseID
+     * @return picture 
+     *              as byte Array
+     */
+    public static byte[] getImage(Transaction trans, int courseID) {
+	
+<span class="fc" id="L1357">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1358">        java.sql.Connection conn = connection.getConn();</span>
+        byte[] picture;
+
+<span class="fc" id="L1361">        String selectImage = &quot;SELECT image FROM \&quot;courses\&quot; WHERE id=?&quot;;</span>
+
+<span class="fc" id="L1363">        try(PreparedStatement pS = conn.prepareStatement(selectImage)) {</span>
+	    
+<span class="fc" id="L1365">            pS.setInt(1, courseID);</span>
+	    
+<span class="fc" id="L1367">            try(ResultSet resultSet = pS.executeQuery()){</span>
+	        
+<span class="pc bpc" id="L1369" title="1 of 2 branches missed.">                if (resultSet.next()) {</span>
+                    
+<span class="fc" id="L1371">                    picture = resultSet.getBytes(&quot;image&quot;);  </span>
+<span class="fc" id="L1372">                    return picture;</span>
+	        } else {
+	        	
+	            //Returns null so that the HTTP Serlvet can load the dummy picutre
+<span class="nc" id="L1376">	            return null;</span>
+	        }  
+<span class="pc bpc" id="L1378" title="9 of 10 branches missed.">	    }</span>
+	    
+<span class="pc bpc" id="L1380" title="9 of 10 branches missed.">	} catch (SQLException e) {</span>
+	    
+<span class="nc" id="L1382">	    throw new InvalidDBTransferException(&quot;Exception occured during &quot;</span>
+<span class="nc" id="L1383">	            + &quot;loading course Picture from Database&quot;, e);</span>
+	    }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

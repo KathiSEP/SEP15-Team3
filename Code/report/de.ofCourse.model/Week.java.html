@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Week.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">Week.java</span></div><h1>Week.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+/**
+ * Contains each week day's content
+ * 
+ * @author Patrick Cretu
+ *
+ */
+<span class="fc" id="L12">public class Week {</span>
+
+	/**
+	 * The hour of the tuples start time
+	 */
+	private String hour;
+	
+	/**
+	 * The week's Monday content
+	 */
+	private String monday;
+	
+	/**
+	 * The week's Tuesday content
+	 */
+	private String tuesday;
+	
+	/**
+	 * The week's Wednesday content
+	 */
+	private String wednesday;
+	
+	/**
+	 * The week's Thursday content
+	 */
+	private String thursday;
+	
+	/**
+	 * The week's Friday content
+	 */
+	private String friday;
+	
+	/**
+	 * The week's Saturday content
+	 */
+	private String saturday;
+	
+	/**
+	 * The week's Sunday content
+	 */
+	private String sunday;
+
+	/**
+	 * 
+	 * @return the tuple's start time
+	 */
+	public String getHour() {
+<span class="fc" id="L59">		return hour;</span>
+	}
+
+	/**
+	 * Sets the week's start time
+	 * 
+	 * @param hour
+	 *           the start time
+	 */
+	public void setHour(String hour) {
+<span class="fc" id="L69">		this.hour = hour;</span>
+<span class="fc" id="L70">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Monday content
+	 */
+	public String getMonday() {
+<span class="fc" id="L77">		return monday;</span>
+	}
+
+	/**
+	 * Sets the week's Monday content
+	 * 
+	 * @param monday
+	 *             the Monday content
+	 */
+	public void setMonday(String monday) {
+<span class="nc" id="L87">		this.monday = monday;</span>
+<span class="nc" id="L88">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Tuesday content
+	 */
+	public String getTuesday() {
+<span class="fc" id="L95">		return tuesday;</span>
+	}
+
+	/**
+	 * Sets the week's Tuesday content
+	 * 
+	 * @param tuesday
+	 *              the Tuesday content
+	 */
+	public void setTuesday(String tuesday) {
+<span class="nc" id="L105">		this.tuesday = tuesday;</span>
+<span class="nc" id="L106">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Wednesday content
+	 */
+	public String getWednesday() {
+<span class="fc" id="L113">		return wednesday;</span>
+	}
+
+	/**
+	 * Sets the week's Wednesday content
+	 * 
+	 * @param wednesday
+	 *                the Wednesday content
+	 */
+	public void setWednesday(String wednesday) {
+<span class="nc" id="L123">		this.wednesday = wednesday;</span>
+<span class="nc" id="L124">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Thursday content
+	 */
+	public String getThursday() {
+<span class="fc" id="L131">		return thursday;</span>
+	}
+
+	/**
+	 * Sets the week's Thursday content
+	 * 
+	 * @param thursday
+	 *               the Thursday content
+	 */
+	public void setThursday(String thursday) {
+<span class="nc" id="L141">		this.thursday = thursday;</span>
+<span class="nc" id="L142">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Friday content
+	 */
+	public String getFriday() {
+<span class="fc" id="L149">		return friday;</span>
+	}
+
+	/**
+	 * Sets the week's Friday content
+	 * 
+	 * @param friday
+	 *             the Friday content
+	 */
+	public void setFriday(String friday) {
+<span class="nc" id="L159">		this.friday = friday;</span>
+<span class="nc" id="L160">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Saturday content
+	 */
+	public String getSaturday() {
+<span class="fc" id="L167">		return saturday;</span>
+	}
+
+	/**
+	 * Sets the week's Saturday content
+	 * 
+	 * @param saturday
+	 *               the Saturday content
+	 */
+	public void setSaturday(String saturday) {
+<span class="nc" id="L177">		this.saturday = saturday;</span>
+<span class="nc" id="L178">	}</span>
+
+	/**
+	 * 
+	 * @return the week's Sunday content
+	 */
+	public String getSunday() {
+<span class="fc" id="L185">		return sunday;</span>
+	}
+
+	/**
+	 * Sets the week's Sunday content
+	 * 
+	 * @param sunday
+	 *             the Sunday content
+	 */
+	public void setSunday(String sunday) {
+<span class="nc" id="L195">		this.sunday = sunday;</span>
+<span class="nc" id="L196">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SearchUserBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SearchUserBeanTest.java</span></div><h1>SearchUserBeanTest.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.action;
+
+
+import static org.mockito.Mockito.mock;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
+
+
+
+
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+
+
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * @author Sebastian Schwarz
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
+        PaginationData.class, LogHandler.class })
+<span class="nc" id="L44">public class SearchUserBeanTest {</span>
+
+    private User user1;
+    private User user2;
+    private User user3;
+    private User user4;
+    private User user5;
+    
+    /**
+     * Logger
+     */
+    private LogHandler logger;
+    
+<span class="nc" id="L57">    private ResultSet resultSet = null;</span>
+
+
+
+    private Connection conn;
+
+
+
+<span class="nc" id="L65">    private ArrayList&lt;User&gt; searchResult = new ArrayList&lt;User&gt;();</span>
+<span class="nc" id="L66">    private ArrayList&lt;User&gt; searchResult2 = new ArrayList&lt;User&gt;();</span>
+    private PaginationData pagination;
+
+    private SearchUserBean bean;
+
+    @Before
+    public void setup() throws SQLException {
+    	
+    	// mocks the lgger
+<span class="nc" id="L75">    	PowerMockito.mockStatic(LogHandler.class);</span>
+<span class="nc" id="L76">    	logger = mock(LogHandler.class);</span>
+<span class="nc" id="L77">    	Mockito.when(LogHandler.getInstance()).thenReturn(logger);</span>
+
+        // Mock the connection
+<span class="nc" id="L80">        PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L81">        conn = mock(Connection.class);</span>
+<span class="nc" id="L82">        Mockito.when(Connection.create()).thenReturn(conn);</span>
+
+        // PowerMockito.mockStatic(java.sql.Connection.class);
+        // sqlConnection = mock(java.sql.Connection.class);
+
+        // Mock UnitDAO
+<span class="nc" id="L88">        PowerMockito.mockStatic(UserDAO.class);</span>
+
+<span class="nc" id="L90">        bean = new SearchUserBean();</span>
+
+<span class="nc" id="L92">        user1 = new User();</span>
+<span class="nc" id="L93">        user1.setUserId(1);</span>
+<span class="nc" id="L94">        user1.setFirstname(&quot;Sebastian&quot;);</span>
+<span class="nc" id="L95">        user1.setLastname(&quot;Schwarz&quot;);</span>
+<span class="nc" id="L96">        user1.setDateOfBirth(new Date(1990, 2, 8));</span>
+<span class="nc" id="L97">        user1.setEmail(&quot;sebastian@nrschwarz.de&quot;);</span>
+
+<span class="nc" id="L99">        user2 = new User();</span>
+<span class="nc" id="L100">        user2.setUserId(2);</span>
+<span class="nc" id="L101">        user2.setFirstname(&quot;Ricky&quot;);</span>
+<span class="nc" id="L102">        user2.setLastname(&quot;Strohmeier&quot;);</span>
+<span class="nc" id="L103">        user2.setDateOfBirth(new Date(1993, 6, 15));</span>
+<span class="nc" id="L104">        user2.setEmail(&quot;ricky@nichtdieRichtigemail.de&quot;);</span>
+
+<span class="nc" id="L106">        user3 = new User();</span>
+<span class="nc" id="L107">        user3.setUserId(3);</span>
+<span class="nc" id="L108">        user3.setFirstname(&quot;Patrick&quot;);</span>
+<span class="nc" id="L109">        user3.setLastname(&quot;Cretu&quot;);</span>
+<span class="nc" id="L110">        user3.setDateOfBirth(new Date(1990, 1, 30));</span>
+<span class="nc" id="L111">        user3.setEmail(&quot;patrick@nichtdieRichtigemail.de&quot;);</span>
+
+<span class="nc" id="L113">        user4 = new User();</span>
+<span class="nc" id="L114">        user4.setUserId(4);</span>
+<span class="nc" id="L115">        user4.setFirstname(&quot;Tobi&quot;);</span>
+<span class="nc" id="L116">        user4.setLastname(&quot;Fuchs&quot;);</span>
+<span class="nc" id="L117">        user4.setDateOfBirth(new Date(1993, 6, 23));</span>
+<span class="nc" id="L118">        user4.setEmail(&quot;tobi@nichtdieRichtigemail.de&quot;);</span>
+
+<span class="nc" id="L120">        user5 = new User();</span>
+<span class="nc" id="L121">        user5.setUserId(5);</span>
+<span class="nc" id="L122">        user5.setFirstname(&quot;Kathi&quot;);</span>
+<span class="nc" id="L123">        user5.setLastname(&quot;Hoetzl&quot;);</span>
+<span class="nc" id="L124">        user5.setDateOfBirth(new Date(1992, 1, 30));</span>
+<span class="nc" id="L125">        user5.setEmail(&quot;kathi@nichtdieRichtigemail.de&quot;);</span>
+
+<span class="nc" id="L127">        searchResult.add(user1);</span>
+<span class="nc" id="L128">        searchResult.add(user2);</span>
+<span class="nc" id="L129">        searchResult.add(user3);</span>
+<span class="nc" id="L130">        searchResult.add(user4);</span>
+<span class="nc" id="L131">        searchResult.add(user5);</span>
+
+<span class="nc" id="L133">        searchResult2.add(user1);</span>
+<span class="nc" id="L134">        searchResult2.add(user2);</span>
+
+<span class="nc" id="L136">        pagination = new PaginationData();</span>
+<span class="nc" id="L137">        pagination.setCurrentPageNumber(0);</span>
+<span class="nc" id="L138">        pagination.setElementsPerPage(10);</span>
+
+        
+<span class="nc" id="L141">        bean.init();</span>
+
+<span class="nc" id="L143">        bean.setPagination(pagination);</span>
+<span class="nc" id="L144">        bean.setOrderParam(&quot;name&quot;);</span>
+<span class="nc" id="L145">        bean.setSearchParam(&quot;name&quot;);</span>
+<span class="nc" id="L146">        bean.setSearchString(&quot;all&quot;);</span>
+
+<span class="nc" id="L148">        Mockito.when(UserDAO.getNumberOfUsersWithThisName(conn, &quot;name&quot;))</span>
+<span class="nc" id="L149">                .thenReturn(searchResult2.size());</span>
+
+<span class="nc" id="L151">        Mockito.when(</span>
+<span class="nc" id="L152">                UserDAO.getUsers(conn, pagination, bean.getSearchParam(),</span>
+<span class="nc" id="L153">                        bean.getSearchString())).thenReturn(searchResult);</span>
+
+<span class="nc" id="L155">        Mockito.when(</span>
+<span class="nc" id="L156">                UserDAO.getUsers(conn, pagination, bean.getSearchParam(),</span>
+<span class="nc" id="L157">                        bean.getSearchString())).thenReturn(searchResult);</span>
+
+//        Mockito.when(
+//        		UserDAO.getAllUsers(conn, pagination, &quot;testSQLBefehl&quot; , bean
+//                        .getPagination().getElementsPerPage(), 0)).thenReturn(
+//                        		searchResult);
+//        
+//        Mockito.when(
+//                UserDAO.getUsers(conn, pagination, &quot;testSQLBefehl&quot; , bean.getSearchString(), bean
+//                        .getPagination().getElementsPerPage(), 0)).thenReturn(
+//                searchResult);
+//        
+//        Mockito.when(UserDAO.getResult(resultSet)).thenReturn(searchResult2);
+//        System.out.println(&quot;TEst&quot;);
+//        Mockito.when(UserDAO.getOrderParam(bean.getOrderParam())).thenReturn(&quot;ASC&quot;);
+        
+<span class="nc" id="L173">    }</span>
+
+    @Test
+    public void testGetResultArray() {
+
+<span class="nc" id="L178">        bean.displayAllUsers();</span>
+<span class="nc" id="L179">    }</span>
+    
+    @Test
+    public void testSearchByName(){
+    	
+<span class="nc" id="L184">    	bean.search();</span>
+    	
+<span class="nc" id="L186">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

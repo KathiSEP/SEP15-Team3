@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HelpTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">HelpTest.java</span></div><h1>HelpTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+/**
+ * This test checks if a user can access the help site.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+<span class="nc" id="L18">public class HelpTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L21">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L22">  private StringBuffer verificationErrors = new StringBuffer();</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L26">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L27">    baseUrl = &quot;http://localhost:8003/OfCourse/&quot;;</span>
+<span class="nc" id="L28">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L29">  }</span>
+
+  @Test
+  public void testHelp() throws Exception {
+<span class="nc" id="L33">    driver.get(baseUrl + &quot;OfCourse/&quot;);</span>
+<span class="nc" id="L34">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc" id="L35">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L36">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;Kathi5&quot;);</span>
+<span class="nc" id="L37">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L38">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L39">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L40">    driver.findElement(By.linkText(&quot;Profil&quot;)).click();</span>
+<span class="nc" id="L41">    driver.findElement(By.linkText(&quot;Hilfe&quot;)).click();</span>
+<span class="nc" id="L42">    driver.findElement(By.xpath(&quot;(//a[contains(text(),'Profil')])[2]&quot;)).click();</span>
+<span class="nc" id="L43">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L44">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L48">    driver.quit();</span>
+<span class="nc" id="L49">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L51">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L53">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L57">      driver.findElement(by);</span>
+<span class="nc" id="L58">      return true;</span>
+<span class="nc" id="L59">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L60">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L66">      driver.switchTo().alert();</span>
+<span class="nc" id="L67">      return true;</span>
+<span class="nc" id="L68">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L69">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L75">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L76">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L78">        alert.accept();</span>
+<span class="nc" id="L79">      } else {</span>
+<span class="nc" id="L80">        alert.dismiss();</span>
+      }
+<span class="nc" id="L82">      return alertText;</span>
+<span class="nc" id="L83">    } finally {</span>
+<span class="nc" id="L84">      acceptNextAlert = true;</span>
+<span class="nc" id="L85">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PaginationData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">PaginationData.java</span></div><h1>PaginationData.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+import java.io.Serializable;
+
+/**
+ * Contains all information for the pagination.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+public class PaginationData implements Serializable {
+
+    /**
+     * Serial id
+     */
+    private static final long serialVersionUID = 4527206697875254825L;
+
+    /**
+     * Stores the number of items shown on one page.
+     */
+    private int elementsPerPage;
+
+    /**
+     * Stores the current displayed page.
+     */
+    private int currentPageNumber;
+
+    /**
+     * Stores the displayed column name the page is sorted
+     */
+    private SortColumn sortColumn;
+
+    /**
+     * Stores whether the displayed data in ascending order
+     */
+    private SortDirection sortDirection;
+
+    /**
+     * Number of pages to display
+     */
+    private int numberOfPages;
+
+    /**
+     * Constructor of the class &lt;code&gt;PaginationData&lt;/code&gt;.
+     * 
+     * @param elementsPerPage
+     *            the number of items shown on one page
+     * @param currentPageNumber
+     *            the current displayed page
+     * @param sortCoulmn
+     *            the displayed column name the page is sorted
+     * @param sortAsc
+     *            whether the displayed data in ascending order
+     */
+<span class="fc" id="L58">    public PaginationData(int elementsPerPage, int currentPageNumber,</span>
+	    SortColumn sortCoulmn, SortDirection sortAsc) {
+<span class="fc" id="L60">	this.elementsPerPage = elementsPerPage;</span>
+<span class="fc" id="L61">	this.currentPageNumber = currentPageNumber;</span>
+<span class="fc" id="L62">	this.sortColumn = sortCoulmn;</span>
+<span class="fc" id="L63">	this.sortDirection = sortAsc;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L69">    public PaginationData() {</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Refreshes the number of pages of the pagination.
+     * 
+     * @param numberOfAllItems
+     *            number of elements that are to display(with pagination)
+     */
+    public void refreshNumberOfPages(int numberOfAllItems) {
+<span class="fc" id="L79">	int calculatedNumberOfPages = 0;</span>
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">	if (numberOfAllItems % getElementsPerPage() == 0</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">		&amp;&amp; numberOfAllItems != 0) {</span>
+
+<span class="nc" id="L84">	    calculatedNumberOfPages = </span>
+<span class="nc" id="L85">		    (numberOfAllItems / getElementsPerPage()) - 1;</span>
+
+<span class="nc" id="L87">	} else {</span>
+<span class="fc" id="L88">	    calculatedNumberOfPages = </span>
+<span class="fc" id="L89">		    (numberOfAllItems / getElementsPerPage());</span>
+	}
+<span class="fc" id="L91">	setNumberOfPages(calculatedNumberOfPages);</span>
+
+<span class="fc" id="L93">    }</span>
+
+    /**
+     * Changes the sort direction from ascending order to descending order or
+     * the other way round. That depends on the current sort direction.
+     */
+    public void changeSortDirection() {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">	if (sortDirection.equals(SortDirection.ASC)) {</span>
+<span class="nc" id="L101">	    sortDirection = SortDirection.DESC;</span>
+<span class="nc" id="L102">	} else {</span>
+<span class="nc" id="L103">	    sortDirection = SortDirection.ASC;</span>
+	}
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Returns the number of pages that are displayed.
+     * 
+     * @return the number of pages
+     */
+    public int getNumberOfPages() {
+<span class="fc" id="L113">	return numberOfPages;</span>
+    }
+
+    /**
+     * Sets the number of pages that are displayed.
+     * 
+     * @param numberOfPages
+     *            the number of pages
+     */
+    public void setNumberOfPages(int numberOfPages) {
+<span class="fc" id="L123">	this.numberOfPages = numberOfPages;</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;itemsPerPage&lt;/code&gt;.
+     * 
+     * @return the number of items shown on one page
+     */
+    public int getElementsPerPage() {
+<span class="fc" id="L132">	return elementsPerPage;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;elementsPerPage&lt;/code&gt;.
+     * 
+     * @param itemsPerPage
+     *            new amount of items which are shown on the page
+     */
+    public void setElementsPerPage(int elementsPerPage) {
+<span class="fc" id="L142">	this.elementsPerPage = elementsPerPage;</span>
+<span class="fc" id="L143">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;currentPageNumber&lt;/code&gt;.
+     * 
+     * @return the page number currently displayed
+     */
+    public int getCurrentPageNumber() {
+<span class="fc" id="L151">	return currentPageNumber;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;currentPageNumber&lt;/code&gt;.
+     * 
+     * @param shownPageNum
+     *            new Page Number which is shown
+     */
+    public void setCurrentPageNumber(int currentPageNum) {
+<span class="fc" id="L161">	this.currentPageNumber = currentPageNum;</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;sortColumn&lt;/code&gt;.
+     * 
+     * @return the column by which is sorted
+     */
+    public SortColumn getSortColumn() {
+<span class="fc" id="L170">	return sortColumn;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;sortColumn&lt;/code&gt;.
+     * 
+     * @param sortColumn
+     *            the column by which is sorted
+     */
+    public void setSortColumn(SortColumn sortColumn) {
+<span class="fc" id="L180">	this.sortColumn = sortColumn;</span>
+<span class="fc" id="L181">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;sortDirection&lt;/code&gt;.
+     * 
+     * @return direction by that is sorted
+     */
+    public SortDirection getSortDirection() {
+<span class="fc" id="L189">	return sortDirection;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;sortDirection&lt;/code&gt;.
+     * 
+     * @param sortDirection
+     *            direction by that is sorted
+     */
+    public void setSortDirection(SortDirection sortDirection) {
+<span class="fc" id="L199">	this.sortDirection = sortDirection;</span>
+<span class="fc" id="L200">    }</span>
+
+    /**
+     * HashCode method of the &lt;code&gt;PaginationData&lt;/code&gt; class.
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L209">	final int prime = 31;</span>
+<span class="nc" id="L210">	int result = 1;</span>
+
+<span class="nc" id="L212">	result = prime * result + currentPageNumber;</span>
+<span class="nc" id="L213">	result = prime * result + elementsPerPage;</span>
+<span class="nc" id="L214">	result = prime * result + numberOfPages;</span>
+<span class="nc" id="L215">	result = prime * result</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">		+ ((sortColumn == null) ? 0 : sortColumn.hashCode());</span>
+<span class="nc" id="L217">	result = prime * result</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">		+ ((sortDirection == null) ? 0 : sortDirection.hashCode());</span>
+
+<span class="nc" id="L220">	return result;</span>
+    }
+
+    /**
+     * Equals method of the &lt;code&gt;PaginationData&lt;/code&gt; class.
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L230" title="All 2 branches missed.">	if (this == obj)</span>
+<span class="nc" id="L231">	    return true;</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">	if (obj == null)</span>
+<span class="nc" id="L233">	    return false;</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">	if (getClass() != obj.getClass())</span>
+<span class="nc" id="L235">	    return false;</span>
+
+	// Checks the attributes for equality
+<span class="nc" id="L238">	PaginationData other = (PaginationData) obj;</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">	if (currentPageNumber != other.currentPageNumber)</span>
+<span class="nc" id="L240">	    return false;</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">	if (elementsPerPage != other.elementsPerPage)</span>
+<span class="nc" id="L242">	    return false;</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">	if (numberOfPages != other.numberOfPages)</span>
+<span class="nc" id="L244">	    return false;</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">	if (sortColumn != other.sortColumn)</span>
+<span class="nc" id="L246">	    return false;</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">	if (sortDirection != other.sortDirection)</span>
+<span class="nc" id="L248">	    return false;</span>
+
+<span class="nc" id="L250">	return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

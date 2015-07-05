@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LeaderProfileBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">LeaderProfileBean.java</span></div><h1>LeaderProfileBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Salutation;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.model.UserStatus;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
+
+/**
+ * Displays the profile of a course instructor.
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet &lt;code&gt;leaderProfile&lt;/code&gt;.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="nc" id="L45">public class LeaderProfileBean implements Pagination {</span>
+    
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores the displayed or entered data of the user
+     */
+    private User user;
+    
+    /**
+     * Stores the managed courses of a user in case of the user is a course
+     * leader
+     */
+    private List&lt;Course&gt; managedCourses;
+    
+    private Part image;
+    
+    private int userID;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    private int currentPage;
+
+<span class="fc" id="L84">    private static int pageElements = 10;</span>
+    
+    /**
+     * Init-method for the User or Leader Profile Page.
+     * 
+     * @author Ricky Strohmeier
+     */
+    @PostConstruct
+    private void init() {
+<span class="nc" id="L93">        pagination = new PaginationData(pageElements, 0, SortColumn.TITLE, SortDirection.ASC);</span>
+
+<span class="nc" id="L95">    	transaction = Connection.create();</span>
+
+    	try {
+<span class="nc" id="L98">    	    transaction.start();</span>
+<span class="nc" id="L99">    	    userID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="nc" id="L100">    	                .getExternalContext().getRequestParameterMap().get(&quot;userID&quot;));</span>
+<span class="nc" id="L101">    	    user = UserDAO.getUser(transaction, userID);</span>
+<span class="nc" id="L102">            pagination.refreshNumberOfPages(UserDAO.getNumberOfCoursesLeadedBy(transaction, userID));</span>
+<span class="nc" id="L103">            managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);</span>
+
+<span class="nc" id="L105">    		transaction.commit();</span>
+<span class="nc" id="L106">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L107">    		LogHandler.getInstance().error(&quot;SQL Exception occoured during executing init() in UserProfileBean&quot;);</span>
+<span class="nc" id="L108">    		transaction.rollback();</span>
+    	}
+<span class="nc" id="L110">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;user&lt;/code&gt;.
+     * 
+     * @return the actual displayed user
+     */
+    public User getUser() {
+<span class="nc" id="L118">        return user;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;user&lt;/code&gt;.
+     * 
+     * @param userToSet
+     *            the displayed user
+     */
+    public void setUser(User userToSet) {
+<span class="nc" id="L128">        this.user = userToSet;</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;managedCourses&lt;/code&gt;.
+     * 
+     * @return list of courses that are managed by a course leader
+     */
+    public List&lt;Course&gt; getManagedCourses() {
+<span class="nc" id="L137">        return managedCourses;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;managedCourses&lt;/code&gt; that stores a
+     * list of courses that are managed by a course leader.
+     * 
+     * @param managedCourses
+     *            list of courses that are managed by a course leader
+     */
+    public void setManagedCourses(List&lt;Course&gt; managedCourses) {
+<span class="nc" id="L148">        this.managedCourses = managedCourses;</span>
+<span class="nc" id="L149">    }</span>
+
+	public Part getImage() {
+<span class="nc" id="L152">		return image;</span>
+	}
+
+	public void setImage(Part image) {
+<span class="nc" id="L156">		this.image = image;</span>
+<span class="nc" id="L157">	}</span>
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L164">        pagination.setCurrentPageNumber(currentPage);</span>
+<span class="nc" id="L165">        transaction.start();</span>
+        try {
+<span class="nc" id="L167">            managedCourses = UserDAO.getCoursesLeadedBy(transaction, userID, pagination);</span>
+<span class="nc" id="L168">            transaction.commit();</span>
+<span class="nc" id="L169">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L170">            LogHandler.getInstance().error(&quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L171">            this.transaction.rollback();</span>
+        }
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="nc" id="L180">        return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L188">        this.pagination = pagination;</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L197">    	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean sessionUser) {
+<span class="nc" id="L207">    	this.sessionUser = sessionUser;</span>
+<span class="nc" id="L208">    }</span>
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+	// TODO Auto-generated method stub
+
+<span class="nc" id="L217">    }</span>
+    
+    /**
+     * @return the userID
+     */
+    public int getUserID() {
+<span class="nc" id="L223">        return userID;</span>
+    }
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+<span class="nc" id="L230">        this.userID = userID;</span>
+<span class="nc" id="L231">    }</span>
+    
+    /**
+     * @return the userID
+     */
+    public String getUserIDString() {
+<span class="nc" id="L237">        return &quot;&quot; + userID;</span>
+    }
+
+    public int getCurrentPage() {
+<span class="nc" id="L241">        return currentPage;</span>
+    }
+
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L245">        this.currentPage = currentPage;</span>
+<span class="nc" id="L246">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

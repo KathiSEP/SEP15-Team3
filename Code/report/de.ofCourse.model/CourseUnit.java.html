@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseUnit.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">CourseUnit.java</span></div><h1>CourseUnit.java</h1><pre class="source lang-java linenums">/**
+ *This package represents all the models which are used 
+ */
+package de.ofCourse.model;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * contains all information about a Courseunit
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+<span class="fc" id="L16">public class CourseUnit implements Serializable {</span>
+    
+    /**
+     * stores the ID of the courseUnit
+     */
+    private int courseUnitID;
+
+    /**
+     * stores the title of a courseunit
+     */
+    private String title;
+    /**
+     * stores the description of the courseunit (could include
+     * information, needed equipment etc)
+     */
+    private String description; 
+    
+    /**
+     * stores the Date and time when the CourseUnit starts.
+     */
+    private Date startime;
+    /**
+     * stores the Date and time when the CourseUnit ends.
+     */
+    private Date endtime;
+    /**
+     * stores the address where the courseunit will be hold
+     */
+    private Address address;
+    /**
+     * stores the amount the user has to pay for the courseunit to take part in
+     * it
+     */
+    private float price;
+    /**
+     * stores the maximal number of Users the courseunit can handle.
+     */
+    private int maxUsers;
+    /**
+     * stores the minimal number of Users the courseunit needs to take place
+     */
+    private int minUsers;
+
+    /**
+     * stores the current number of Users in the courseunit
+     */
+    private int numberOfUsers;
+    /**
+     * stores the courseAdmin who will hold the CourseUnit
+     */
+    private User courseAdmin;
+    /**
+     * stores the turnus and the amount of units which still have to take
+     * place(only if the CourseUnit take place with regularity)
+     */
+    private Cycle cycle;
+    
+    
+    /**
+     * Stores the CourseID, this CourseUnit belongs to
+     */
+    private int courseID;
+
+    /**
+     * stores if a user is participant in this unit
+     */
+    private boolean userIsParticipant;
+   
+    
+    /**
+     * @return the startime
+     */
+    public Date getStartime() {
+<span class="fc" id="L89">        return startime;</span>
+    }
+
+    /**
+     * @param startime the startime to set
+     */
+    public void setStartime(Date startime) {
+<span class="fc" id="L96">        this.startime = startime;</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * @return the courseID
+     */
+    public int getCourseID() {
+<span class="fc" id="L103">        return courseID;</span>
+    }
+
+    /**
+     * @param courseID the courseID to set
+     */
+    public void setCourseID(int courseID) {
+<span class="fc" id="L110">        this.courseID = courseID;</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * stores the room description where the CourseUnit will be hold (Is
+     * needed besides the Address for example if the CourseUnit is hold in
+     * specific rooms like the gym)
+     */
+    private String location;
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;title&lt;/code&gt;.
+     * 
+     * @return the title of the courseUnit
+     */
+    public String getTitle() {
+<span class="fc" id="L126">        return this.title;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;description&lt;/code&gt;.
+     * 
+     * @return the description of the courseUnit
+     */
+    public String getDescription() {
+<span class="fc" id="L135">        return this.description;</span>
+    }
+
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;endTime&lt;/code&gt;.
+     * 
+     * @return the Date and the time when the courseUnit ends
+     */
+    public Date getEndtime() {
+<span class="fc" id="L145">        return this.endtime;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;address&lt;/code&gt;.
+     * 
+     * @return the address where the courseUnit will be hold
+     */
+    public Address getAddress() {
+<span class="fc" id="L154">        return this.address;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;price&lt;/code&gt;.
+     * 
+     * @return the price the courseUnit costs
+     */
+    public float getPrice() {
+<span class="fc" id="L163">        return this.price;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;maxUsers&lt;/code&gt;.
+     * 
+     * @return the maximal amount of users for the course
+     */
+    public int getMaxUsers() {
+<span class="fc" id="L172">        return this.maxUsers;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;minUsers&lt;/code&gt;.
+     * 
+     * @return the minimal amount of users needed for to the course to take place
+     */
+    public int getMinUsers() {
+<span class="fc" id="L181">        return this.minUsers;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;courseAdmin&lt;/code&gt;.
+     * 
+     * @return the admin who leads the courseUnits
+     */
+    public User getCourseAdmin() {
+<span class="fc" id="L190">        return this.courseAdmin;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;cycle&lt;/code&gt;.
+     * 
+     * @return the cycle which determs when the courseUnit repeats
+     */
+    public Cycle getCycle() {
+<span class="fc" id="L199">        return this.cycle;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;location&lt;/code&gt;.
+     * 
+     * @return the room in a building where the courseUnit take place(gym. for example)
+     */
+    public String getLocation() {
+<span class="nc" id="L208">        return this.location;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;title&lt;/code&gt;.
+     * 
+     * @param title
+     *          the new title to set
+     */
+    public void setTitle(String title) {
+<span class="fc" id="L218">        this.title = title;</span>
+<span class="fc" id="L219">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;description&lt;/code&gt;.
+     * 
+     * @param discription
+     *          the new description to set
+     */
+    public void setDescription(String discription) {
+<span class="fc" id="L228">        this.description = discription;</span>
+<span class="fc" id="L229">    }</span>
+
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;endTime&lt;/code&gt;.
+     * 
+     * @param endTime
+     *          the new endTime to set
+     */
+    public void setEndtime(Date endTime) {
+<span class="fc" id="L239">        this.endtime = endTime;</span>
+<span class="fc" id="L240">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;address&lt;/code&gt;.
+     * 
+     * @param address
+     *          the new address to set
+     */
+    public void setAddress(Address address) {
+<span class="fc" id="L249">        this.address = address;</span>
+<span class="fc" id="L250">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;price&lt;/code&gt;.
+     * 
+     * @param price
+     *          the new price to set
+     */
+    public void setPrice(float price) {
+<span class="fc" id="L259">        this.price = price;</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;cycle&lt;/code&gt;.
+     * 
+     * @param cycle
+     *          the new cycle to set
+     */
+    public void setCycle(Cycle cycle) {
+<span class="fc" id="L269">        this.cycle = cycle;</span>
+<span class="fc" id="L270">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;maxUsers&lt;/code&gt;.
+     * 
+     * @param maxUsers
+     *          the new maxUsers to set
+     */
+    public void setMaxUsers(int maxUsers) {
+<span class="fc" id="L279">        this.maxUsers = maxUsers;</span>
+<span class="fc" id="L280">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;minUsers&lt;/code&gt;.
+     * 
+     * @param minUsers
+     *          the new minUsers to set
+     */
+    public void setMinUsers(int minUsers) {
+<span class="fc" id="L289">        this.minUsers = minUsers;</span>
+<span class="fc" id="L290">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseAdmin&lt;/code&gt;.
+     * 
+     * @param courseAdmin
+     *          the new courseAdmin to set
+     */
+    public void setCourseAdmin(User courseAdmin) {
+<span class="fc" id="L299">        this.courseAdmin = courseAdmin;</span>
+<span class="fc" id="L300">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;location&lt;/code&gt;.
+     * 
+     * @param location
+     *          new location to set
+     */
+    public void setLocation(String location) {
+<span class="nc" id="L309">        this.location = location;</span>
+<span class="nc" id="L310">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;leaderToAdd&lt;/code&gt;.
+     * 
+     * @return the courseUnitID
+     */
+    public int getCourseUnitID() {
+<span class="fc" id="L318">        return courseUnitID;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseUnitID&lt;/code&gt;.
+     * 
+     * @param courseUnitId 
+     *         new courseUnitId to set
+     */
+    public void setCourseUnitID(int courseUnitId) {
+<span class="fc" id="L328">        this.courseUnitID = courseUnitId;</span>
+<span class="fc" id="L329">    }</span>
+
+    /**
+     * Returns the value of the attribute numberOfUsers.
+     * 
+     * @return the numberOfUsers
+     */
+    public int getNumberOfUsers() {
+<span class="fc" id="L337">        return numberOfUsers;</span>
+    }
+
+    /**
+     * Sets the value of the attribute numberOfUsers.
+     * 
+     * @param numberOfUsers the numberOfUsers to set
+     */
+    public void setNumberOfUsers(int numberOfUsers) {
+<span class="fc" id="L346">        this.numberOfUsers = numberOfUsers;</span>
+<span class="fc" id="L347">    }</span>
+
+    /**
+     * @return the userIsParticipant
+     */
+    public boolean getUserIsParticipant() {
+<span class="fc" id="L353">        return userIsParticipant;</span>
+    }
+
+    /**
+     * @param userIsParticipant the userIsParticipant to set
+     */
+    public void setUserIsParticipant(boolean userIsParticipant) {
+<span class="fc" id="L360">        this.userIsParticipant = userIsParticipant;</span>
+<span class="fc" id="L361">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

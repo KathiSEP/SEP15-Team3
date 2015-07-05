@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserRole.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">UserRole.java</span></div><h1>UserRole.java</h1><pre class="source lang-java linenums"><span class="pc" id="L1">/**</span>
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+/**
+ * represents the different roles a User can have in the System
+ * 
+ * @author Sebastian
+ *
+ */
+<span class="fc" id="L12">public enum UserRole {</span>
+<span class="fc" id="L13">    /**</span>
+     * The standard Role. A user is only registered and has no administrative
+     * privileges
+     */
+<span class="fc" id="L17">    REGISTERED_USER(&quot;REGISTERED_USER&quot;),</span>
+<span class="fc" id="L18">    /**</span>
+     * a course_leader has administrative privileges on his course. He can create
+     * new courseUnits and add or remove users from the course
+     */
+<span class="fc" id="L22">    COURSE_LEADER(&quot;COURSE_LEADER&quot;),</span>
+<span class="fc" id="L23">    /**</span>
+     * this role is the highest in the system and has full administrative
+     * privileges
+     */
+<span class="fc" id="L27">    SYSTEM_ADMINISTRATOR(&quot;SYSTEM_ADMINISTRATOR&quot;);</span>
+    
+    private String userRole;
+    
+<span class="fc" id="L31">    private UserRole(String roleString) {</span>
+<span class="fc" id="L32">        this.userRole = roleString;</span>
+<span class="fc" id="L33">    }</span>
+    
+    public String getSalutation() {
+<span class="nc" id="L36">        return this.userRole;</span>
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Enum#toString()
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L44">        return this.name();</span>
+    }
+    
+    public static UserRole fromString(String roleString) {
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (roleString != null) {</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">          for (UserRole userRole : UserRole.values()) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">              if (roleString.equalsIgnoreCase(userRole.name())) {</span>
+<span class="fc" id="L51">                  return userRole;</span>
+              }
+          }
+<span class="nc" id="L54">          return null;</span>
+        }
+        else {
+<span class="nc" id="L57">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -109,14 +109,11 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
     private void redirectTo404() {
         FacesContext fc = FacesContext.getCurrentInstance();
         NavigationHandler nav = fc.getApplication().getNavigationHandler();
-        try {
+        
            fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
            nav.handleNavigation(fc, null, "/facelets/ErrorPages/404.xthml?faces-redirect=true" );
            fc.renderResponse();
-        } finally {
-           this.exceptionList.remove();
-        }
-  
+        
         
     }
 

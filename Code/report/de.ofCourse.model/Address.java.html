@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Address.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">Address.java</span></div><h1>Address.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+/**
+ * contains all information about the address of Users and Courses
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+public class Address {
+    
+<span class="fc" id="L14">    public Address() {</span>
+	
+<span class="fc" id="L16">    }</span>
+
+    /**
+     * stores the id of the address
+     */
+    private int id;
+    /**
+     * stores the country where the user lives or where the course will be
+     * hold
+     */
+    private String country;
+    /**
+     * stores the city where the user lives or where the course will be hold
+     */
+    private String city;
+    /**
+     * 
+     * stores the street where the user lives or where the course will be hold
+     */
+    private String street;
+    /**
+     * stores the houseNumber where the user lives or where the course
+     * will be hold
+     */
+    private Integer houseNumber;
+    /**
+     * stores the zipdCode where the user lives or where the course will be
+     * hold
+     */
+    private Integer zipCode;
+    
+    /**
+     * 
+     */
+    private String location;
+
+    /**
+     * @return the location
+     */
+    public String getLocation() {
+<span class="fc" id="L56">        return location;</span>
+    }
+
+    /**
+     * @param location the location to set
+     */
+    public void setLocation(String location) {
+<span class="fc" id="L63">        this.location = location;</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L68">	final int prime = 31;</span>
+<span class="nc" id="L69">	int result = 1;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">	result = prime * result + ((city == null) ? 0 : city.hashCode());</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">	result = prime * result + ((country == null) ? 0 : country.hashCode());</span>
+<span class="nc" id="L72">	result = prime * result</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">		+ ((houseNumber == null) ? 0 : houseNumber.hashCode());</span>
+<span class="nc" id="L74">	result = prime * result + id;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">	result = prime * result + ((street == null) ? 0 : street.hashCode());</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">	result = prime * result + ((zipCode == null) ? 0 : zipCode.hashCode());</span>
+<span class="nc" id="L77">	return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">	if (this == obj)</span>
+<span class="nc" id="L83">	    return true;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">	if (obj == null)</span>
+<span class="nc" id="L85">	    return false;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">	if (getClass() != obj.getClass())</span>
+<span class="nc" id="L87">	    return false;</span>
+<span class="nc" id="L88">	Address other = (Address) obj;</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">	if (city == null) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">	    if (other.city != null)</span>
+<span class="nc" id="L91">		return false;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">	} else if (!city.equals(other.city))</span>
+<span class="nc" id="L93">	    return false;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">	if (country == null) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">	    if (other.country != null)</span>
+<span class="nc" id="L96">		return false;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">	} else if (!country.equals(other.country))</span>
+<span class="nc" id="L98">	    return false;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">	if (houseNumber == null) {</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">	    if (other.houseNumber != null)</span>
+<span class="nc" id="L101">		return false;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">	} else if (!houseNumber.equals(other.houseNumber))</span>
+<span class="nc" id="L103">	    return false;</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">	if (id != other.id)</span>
+<span class="nc" id="L105">	    return false;</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">	if (street == null) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">	    if (other.street != null)</span>
+<span class="nc" id="L108">		return false;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">	} else if (!street.equals(other.street))</span>
+<span class="nc" id="L110">	    return false;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">	if (zipCode == null) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">	    if (other.zipCode != null)</span>
+<span class="nc" id="L113">		return false;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">	} else if (!zipCode.equals(other.zipCode))</span>
+<span class="nc" id="L115">	    return false;</span>
+<span class="nc" id="L116">	return true;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;id&lt;/code&gt;.
+     * 
+     * @return the id of the address
+     */
+    public int getId() {
+<span class="nc" id="L125">        return this.id;</span>
+    }
+    
+    /**
+     * Returns the value of the attribute &lt;code&gt;country&lt;/code&gt;.
+     * 
+     * @return the country where the user lives or course will be hold
+     */
+    public String getCountry() {
+<span class="fc" id="L134">        return this.country;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;city&lt;/code&gt;.
+     * 
+     * @return the city where the user lives or the course will be hold
+     */
+    public String getCity() {
+<span class="fc" id="L143">        return this.city;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;street&lt;/code&gt;.
+     * 
+     * @return the street where the user lives or the course will be hold
+     */
+    public String getStreet() {
+<span class="fc" id="L152">        return this.street;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;houseNumber&lt;/code&gt;.
+     * 
+     * @return the houseNumber where the user lives or the course will be hold
+     */
+    public Integer getHouseNumber() {
+<span class="fc" id="L161">        return this.houseNumber;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;zipCode&lt;/code&gt;.
+     * 
+     * @return the zipCode where the user lives or the course will be hold
+     */
+    public Integer getZipCode() {
+<span class="fc" id="L170">        return this.zipCode;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;id&lt;/code&gt;.
+     * 
+     * @param id
+     *          the new id to set
+     */
+    public void setId(int id) {
+<span class="fc" id="L180">        this.id = id;</span>
+<span class="fc" id="L181">    }</span>
+    
+    /**
+     * Sets the value of the attribute &lt;code&gt;country&lt;/code&gt;.
+     * 
+     * @param country
+     *          new country to set
+     */
+    public void setCountry(String country) {
+<span class="fc" id="L190">        this.country = country;</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;city&lt;/code&gt;.
+     * 
+     * @param city
+     *          the new city to set
+     */
+    public void setCity(String city) {
+<span class="fc" id="L200">        this.city = city;</span>
+<span class="fc" id="L201">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;street&lt;/code&gt;.
+     * 
+     * @param street
+     *          the new street to set
+     */
+    public void setStreet(String street) {
+<span class="fc" id="L210">        this.street = street;</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;houseNumber&lt;/code&gt;.
+     * 
+     * @param houseNumber
+     *          the new houseNumber to set
+     */
+    public void setHouseNumber(Integer houseNumber) {
+<span class="fc" id="L220">        this.houseNumber = houseNumber;</span>
+<span class="fc" id="L221">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;zipCode&lt;/code&gt;.
+     * 
+     * @param zipCode
+     *          the new zipCode to set
+     */
+    public void setZipCode(Integer zipCode) {
+<span class="fc" id="L230">        this.zipCode = zipCode;</span>
+<span class="fc" id="L231">    }</span>
+
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

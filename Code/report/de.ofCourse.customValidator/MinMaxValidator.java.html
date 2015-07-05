@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MinMaxValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.customValidator</a> &gt; <span class="el_source">MinMaxValidator.java</span></div><h1>MinMaxValidator.java</h1><pre class="source lang-java linenums">package de.ofCourse.customValidator;
+
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language; 
+import de.ofCourse.utilities.LanguageManager;
+ 
+/**
+ * Checks whether the entered value for minimal number of users is really smaller
+ * than the entered value for maximal number of users
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@FacesValidator(&quot;minMaxValidator&quot;)
+<span class="fc" id="L25">public class MinMaxValidator implements Validator {</span>
+
+    /** 
+     * Validates the entered values of minUsers and maxUsers
+     */
+    @Override
+    public void validate(FacesContext arg0, UIComponent component, Object value)
+	    throws ValidatorException {
+<span class="fc" id="L33">	Language lang = getLanguage();</span>
+<span class="fc" id="L34">	String minUsersAsString = value.toString();</span>
+<span class="fc" id="L35">	UIInput uiInputMaxUsers= (UIInput) component.getAttributes().get(</span>
+<span class="fc" id="L36">		&quot;maxUsersCourseUnit&quot;);</span>
+<span class="fc" id="L37">	String enteredMaxUsers = uiInputMaxUsers.getSubmittedValue().toString();</span>
+	
+	int minUsers;
+	int maxUsers;
+	try {
+	    
+<span class="fc" id="L43">	minUsers = Integer.parseInt(minUsersAsString);</span>
+<span class="fc" id="L44">	maxUsers = Integer.parseInt(enteredMaxUsers);</span>
+	
+<span class="pc" id="L46">	} catch (NumberFormatException ex) {</span>
+<span class="nc" id="L47">	    throw new ValidatorException(new FacesMessage(</span>
+<span class="nc" id="L48">		    LanguageManager.getInstance().getProperty(</span>
+<span class="nc" id="L49">                            &quot;minMaxValidator.message1&quot;, lang)));</span>
+	}
+	
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">	if(minUsers &gt;= maxUsers){</span>
+<span class="nc" id="L53">	    throw new ValidatorException(new FacesMessage(</span>
+<span class="nc" id="L54">		    LanguageManager.getInstance().getProperty(</span>
+<span class="nc" id="L55">                            &quot;minMaxValidator.message2&quot;, lang)));</span>
+	}
+	
+<span class="fc" id="L58">    }</span>
+    /**
+     * Returns the set language
+     */
+    private Language getLanguage() {
+<span class="fc" id="L63">	Map&lt;String, Object&gt; sessionMap = </span>
+		        FacesContext
+<span class="fc" id="L65">	                .getCurrentInstance()</span>
+<span class="fc" id="L66">	                .getExternalContext()</span>
+<span class="fc" id="L67">	                .getSessionMap();</span>
+	
+<span class="fc" id="L69">	 Language lang = null;</span>
+	        
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">	        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+<span class="fc" id="L72">	            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+<span class="fc" id="L73">	        } else {</span>
+<span class="nc" id="L74">	            lang = Language.DE;</span>
+<span class="nc" id="L75">	            HttpSession session = (HttpSession) FacesContext</span>
+<span class="nc" id="L76">	                    .getCurrentInstance()</span>
+<span class="nc" id="L77">	                    .getExternalContext()</span>
+<span class="nc" id="L78">	                    .getSession(true);</span>
+<span class="nc" id="L79">	            session.setAttribute(&quot;lang&quot;, lang.toString());</span>
+	        }        
+<span class="fc" id="L81">	return lang;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CreateYogaUnitTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">CreateYogaUnitTest.java</span></div><h1>CreateYogaUnitTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+/**
+ * Checks whether a single course unit for course Yoga is created.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+<span class="nc bnc" id="L17" title="All 2 branches missed.">public class CreateYogaUnitTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L20">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L21">  private StringBuffer verificationErrors = new StringBuffer();</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L25">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L26">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L27">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L28">  }</span>
+
+  @Test
+  public void testCreateYogaUnit() throws Exception {
+<span class="nc" id="L32">    driver.get(baseUrl + &quot;OfCourse/&quot;);</span>
+<span class="nc" id="L33">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc" id="L34">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L35">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;Basti3&quot;);</span>
+<span class="nc" id="L36">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L37">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L38">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L39">    driver.findElement(By.linkText(&quot;Suche&quot;)).click();</span>
+<span class="nc" id="L40">    driver.findElement(By.id(&quot;formFilterCourses:courseOffers&quot;)).click();</span>
+<span class="nc" id="L41">    driver.findElement(By.linkText(&quot;Yoga&quot;)).click();</span>
+<span class="nc" id="L42">    driver.findElement(By.name(&quot;courseDetailsID:j_idt87&quot;)).click();</span>
+    
+<span class="nc bnc" id="L44" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;headingCreatedUnit&quot;)).getText().equals(&quot;Kurseinheit anlegen&quot;);</span>
+<span class="nc" id="L45">    driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L46">    driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).sendKeys(&quot;05.08.2015&quot;);</span>
+<span class="nc" id="L47">    driver.findElement(By.id(&quot;formCourseUnit:startTimeCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L48">    driver.findElement(By.id(&quot;formCourseUnit:startTimeCourseUnit&quot;)).sendKeys(&quot;17:00&quot;);</span>
+<span class="nc" id="L49">    driver.findElement(By.id(&quot;formCourseUnit:endTimeCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L50">    driver.findElement(By.id(&quot;formCourseUnit:endTimeCourseUnit&quot;)).sendKeys(&quot;19:00&quot;);</span>
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;formCourseUnit:locationCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L52">    driver.findElement(By.id(&quot;formCourseUnit:locationCourseUnit&quot;)).sendKeys(&quot;Turnhalle&quot;);</span>
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formCourseUnit:descriptionCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L54">    driver.findElement(By.id(&quot;formCourseUnit:descriptionCourseUnit&quot;)).sendKeys(&quot;Bringe K�rper, Geist und Seele in Einklang durch Yoga�bungen. Jeder Teilnehmer sollte seine eigene Turnmatte mitnehmen.&quot;);</span>
+<span class="nc" id="L55">    driver.findElement(By.id(&quot;formCourseUnit:leaderCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L56">    driver.findElement(By.id(&quot;formCourseUnit:leaderCourseUnit&quot;)).sendKeys(&quot;10001&quot;);</span>
+<span class="nc" id="L57">    driver.findElement(By.id(&quot;formCourseUnit:minUsersCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L58">    driver.findElement(By.id(&quot;formCourseUnit:minUsersCourseUnit&quot;)).sendKeys(&quot;5&quot;);</span>
+<span class="nc" id="L59">    driver.findElement(By.id(&quot;formCourseUnit:maxUsersCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L60">    driver.findElement(By.id(&quot;formCourseUnit:maxUsersCourseUnit&quot;)).sendKeys(&quot;30&quot;);</span>
+<span class="nc" id="L61">    driver.findElement(By.id(&quot;formCourseUnit:titleCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L62">    driver.findElement(By.id(&quot;formCourseUnit:titleCourseUnit&quot;)).sendKeys(&quot;Yogakurs&quot;);</span>
+<span class="nc" id="L63">    driver.findElement(By.id(&quot;formCourseUnit:houseNumberCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L64">    driver.findElement(By.id(&quot;formCourseUnit:houseNumberCourseUnit&quot;)).sendKeys(&quot;5&quot;);</span>
+<span class="nc" id="L65">    driver.findElement(By.id(&quot;formCourseUnit:cityCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L66">    driver.findElement(By.id(&quot;formCourseUnit:cityCourseUnit&quot;)).sendKeys(&quot;Musterstadt&quot;);</span>
+<span class="nc" id="L67">    driver.findElement(By.id(&quot;formCourseUnit:streetCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L68">    driver.findElement(By.id(&quot;formCourseUnit:streetCourseUnit&quot;)).sendKeys(&quot;Musterstrasse&quot;);</span>
+<span class="nc" id="L69">    driver.findElement(By.id(&quot;formCourseUnit:zipcodeCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L70">    driver.findElement(By.id(&quot;formCourseUnit:zipcodeCourseUnit&quot;)).sendKeys(&quot;99999&quot;);</span>
+<span class="nc" id="L71">    driver.findElement(By.id(&quot;formCourseUnit:countryCourseUnit&quot;)).clear();</span>
+<span class="nc" id="L72">    driver.findElement(By.id(&quot;formCourseUnit:countryCourseUnit&quot;)).sendKeys(&quot;Deutschland&quot;);</span>
+<span class="nc" id="L73">    driver.findElement(By.id(&quot;formCourseUnit:createCourseUnit&quot;)).click();</span>
+    
+<span class="nc bnc" id="L75" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Kursdetails&quot;);</span>
+<span class="nc" id="L76">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L77">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L81">    driver.quit();</span>
+<span class="nc" id="L82">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L84">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L86">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L90">      driver.findElement(by);</span>
+<span class="nc" id="L91">      return true;</span>
+<span class="nc" id="L92">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L93">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L99">      driver.switchTo().alert();</span>
+<span class="nc" id="L100">      return true;</span>
+<span class="nc" id="L101">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L102">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L108">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L109">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L111">        alert.accept();</span>
+<span class="nc" id="L112">      } else {</span>
+<span class="nc" id="L113">        alert.dismiss();</span>
+      }
+<span class="nc" id="L115">      return alertText;</span>
+<span class="nc" id="L116">    } finally {</span>
+<span class="nc" id="L117">      acceptNextAlert = true;</span>
+<span class="nc" id="L118">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

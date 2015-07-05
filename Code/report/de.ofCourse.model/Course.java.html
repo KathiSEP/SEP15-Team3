@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Course.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">Course.java</span></div><h1>Course.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Contains all information about a course
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+<span class="fc" id="L16">public class Course implements Serializable {</span>
+    
+    /**
+     * Stroes the ID the specific course gets
+     * 
+     */
+
+    private int courseID;
+    
+    /**
+     * Stores the coursetitel 
+     * 
+     */
+    private String title;
+    /**
+     * Stores the description of the course (could include information,
+     * needed equipment etc)
+     * 
+     */
+    private String description;
+    /**
+     * Stores the next CourseUnit of the Course which will be hold.
+     * 
+     */
+    private CourseUnit nextCourseUnit;
+    /**
+     * Stores the Date when the Course will start.
+     * 
+     */
+    private Date startdate;
+    /**
+     * Stores the Date when the Course will end.
+     * 
+     */
+    private Date enddate;
+    /**
+     * Stores the maximal amount of Users the Course can handle.
+     * 
+     */
+    private Integer maxUsers;
+    /**
+     * Stores the Logo of the Course
+     */
+    private byte[] courseImage;
+   
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;title&lt;/code&gt;.
+     * 
+     * @return the title of the Course
+     */
+    public String getTitle() {
+<span class="fc" id="L68">        return title;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;description&lt;/code&gt;.
+     * 
+     * @return the description of the Course
+     */
+    public String getDescription() {
+<span class="fc" id="L77">        return description;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;nextCourseUnit&lt;/code&gt;.
+     * 
+     * @return the nextCourseUnit which will be hold in the Course
+     */
+    public CourseUnit getNextCourseUnit() {
+<span class="nc" id="L86">        return nextCourseUnit;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;startDate&lt;/code&gt;.
+     * 
+     * @return the Date when the Course will start or has started
+     */
+    public Date getStartdate() {
+<span class="fc" id="L95">        return startdate;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;endDate&lt;/code&gt;.
+     * 
+     * @return the Date when the Course will end
+     */
+    public Date getEnddate() {
+<span class="fc" id="L104">        return enddate;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;maxUsers&lt;/code&gt;.
+     * 
+     * @return the maximal amount of Users the Course can handle
+     */
+    public Integer getMaxUsers() {
+<span class="fc" id="L113">        return maxUsers;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;courseImage&lt;/code&gt;.
+     * 
+     * @return the logo of the Course
+     */
+    public byte[] getCourseImage() {
+<span class="nc" id="L122">        return courseImage;</span>
+    }
+
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;title&lt;/code&gt;.
+     *
+     * @param title
+     *          new course title
+     */
+    public void setTitle(String title) {
+<span class="fc" id="L133">        this.title = title;</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;description&lt;/code&gt;.
+     * 
+     * @param description
+     *          new course description to set
+     */
+    public void setDescription(String description) {
+<span class="fc" id="L143">        this.description = description;</span>
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;nextCourseUnit&lt;/code&gt;.
+     * 
+     * @param nextCourseUnit
+     *          new nextCourseUnit to set
+     */
+    public void setNextCourseUnit(CourseUnit nextCourseUnit) {
+<span class="nc" id="L153">        this.nextCourseUnit = nextCourseUnit;</span>
+<span class="nc" id="L154">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;startDate&lt;/code&gt;.
+     * 
+     * @param startDate
+     *          new startDate to set
+     */
+    public void setStartdate(Date startDate) {
+<span class="fc" id="L163">        this.startdate = startDate;</span>
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;endDate&lt;/code&gt;.
+     * 
+     * @param endDate
+     *          new endDate to set
+     */
+    public void setEnddate(Date endDate) {
+<span class="fc" id="L173">        this.enddate = endDate;</span>
+<span class="fc" id="L174">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;maxUsers&lt;/code&gt;.
+     * 
+     * @param maxUsers
+     *          new maximum of users the course can handle to set
+     */
+    public void setMaxUsers(Integer maxUsers) {
+<span class="fc" id="L183">        this.maxUsers = maxUsers;</span>
+<span class="fc" id="L184">    }</span>
+
+    
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;image&lt;/code&gt;.
+     * 
+     * @param image
+     *          new course logo to set
+     */
+    public void setCourseImage(byte[] image) {
+<span class="fc" id="L195">        this.courseImage = image;</span>
+<span class="fc" id="L196">    }</span>
+
+    /**
+     *  Returns the value of the attribute &lt;code&gt;courseID&lt;/code&gt;.
+     * 
+     * @return the courseID
+     */
+    public int getCourseID() {
+<span class="fc" id="L204">        return courseID;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseID&lt;/code&gt;.
+     * 
+     * @param courseID 
+     *          new courseID to set 
+     */
+    public void setCourseID(int courseID) {
+<span class="fc" id="L214">        this.courseID = courseID;</span>
+<span class="fc" id="L215">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

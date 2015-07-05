@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SessionUserBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SessionUserBean.java</span></div><h1>SessionUserBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.model.UserStatus;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Represents the management of the session of a logged in user.&lt;p&gt;
+ * This Bean contains the id, the userRole, the userStatus of the user and the
+ * selected language. It is available during the complete session.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@ManagedBean(name=&quot;sessionUser&quot;)
+@SessionScoped
+<span class="fc" id="L26">public class SessionUserBean implements Serializable {</span>
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+     * Unique id, which represents an user in the system
+     */
+    private int userID;
+
+    /**
+     * Status of the user
+     */
+    private UserStatus userStatus;
+
+    /**
+     * Role of the user
+     */
+    private UserRole userRole;
+
+    /**
+     * The current language
+     */
+    private Language language;
+
+    /**
+     * Returns the ID of the current logged in user.
+     * 
+     * @return userID of the logged in user
+     */
+    public int getUserID() {
+<span class="fc" id="L59">	return userID;</span>
+    }
+
+    /**
+     * Sets the ID of the logged-in user.
+     * 
+     * @param userId
+     *            ID of user
+     */
+    public void setUserID(int userID) {
+<span class="fc" id="L69">	this.userID = userID;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Returns the status of the user
+     * 
+     * @return status of user
+     */
+    public UserStatus getUserStatus() {
+<span class="nc" id="L78">	return userStatus;</span>
+    }
+
+    /**
+     * Sets the status of an user in the system.
+     * 
+     * @param userStatus
+     *            status of user
+     */
+    public void setUserStatus(UserStatus userStatus) {
+<span class="fc" id="L88">	this.userStatus = userStatus;</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Returns the role of an user in system.
+     * 
+     * @return role of user
+     */
+    public UserRole getUserRole() {
+<span class="fc" id="L97">	return userRole;</span>
+    }
+
+    /**
+     * Sets the role of an user in the system.
+     * 
+     * @param userRole
+     *            role of user
+     */
+    public void setUserRole(UserRole userRole) {
+<span class="fc" id="L107">	this.userRole = userRole;</span>
+<span class="fc" id="L108">    }</span>
+
+    /**
+     * Returns the language of the system
+     * 
+     * @return the language
+     */
+    public Language getLanguage() {
+<span class="nc" id="L116">	return language;</span>
+    }
+
+    /**
+     * Sets the language of the system
+     * 
+     * @param language
+     *            the language to set
+     */
+    public void setLanguage(Language language) {
+<span class="fc" id="L126">	this.language = language;</span>
+<span class="fc" id="L127">    }</span>
+
+    /**
+     * Loads the needed label in the choosen language.
+     * @param label the label to be load.
+     * @return the label in the certain language.
+     */
+    public String getLabel(String label) {
+<span class="fc" id="L135">        return LanguageManager.getInstance().getProperty(label, language);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

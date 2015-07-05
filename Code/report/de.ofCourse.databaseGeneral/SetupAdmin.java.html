@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SetupAdmin.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.databaseGeneral</a> &gt; <span class="el_source">SetupAdmin.java</span></div><h1>SetupAdmin.java</h1><pre class="source lang-java linenums">/**
+ * This package contains classes required at the launch of the system
+ */
+package de.ofCourse.databaseGeneral;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
+
+/**
+ * Checks at the launch of the system if an administrator has been initially
+ * added to the database. If not, a new administrator is created and added to
+ * the database.
+ * 
+ * &lt;p&gt;
+<span class="nc" id="L21"> * This class is only required in the class</span>
+ * &lt;code&gt;de.ofCourse.system.LaunchSystem&lt;/code&gt;.
+ * &lt;/p&gt;
+ * 
+ * @author Patrick Cretu
+ *
+ */
+<span class="nc" id="L28">public class SetupAdmin {</span>
+	
+	private static final String CHECK_ADMIN =
+			&quot;SELECT COUNT(*) FROM \&quot;users\&quot; WHERE role = &quot; +
+			&quot;'SYSTEM_ADMINISTRATOR'&quot;;
+	
+	private static final String INIT_ADMIN =
+			&quot;INSERT INTO \&quot;users\&quot;(nickname, email, pw_hash, pw_salt, &quot; +
+			&quot;credit_balance, email_verification, admin_verification, &quot; +
+			&quot;veri_string, role, status) VALUES (&quot; +
+			&quot;'admin1', 'bazinga@gmail.com', %s, %s, 0, TRUE, &quot; +
+			&quot;TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')&quot;;
+	
+	private static final String CHECK_ATTRIBUTES = &quot;SELECT COUNT(*) &quot; +
+			&quot;FROM \&quot;system_attributes\&quot;&quot;;
+	
+	private static final String INIT_ATTRIBUTES = &quot;INSERT INTO &quot; +
+			&quot;\&quot;system_attributes\&quot;(row_lock, activation_type, &quot; +
+			&quot;withdrawal_hours, overdraft_credit) &quot; +
+			&quot;VALUES('X', 'EMAIL', 3, 0)&quot;;
+	
+    /**
+     * Checks whether or not the table of users in the database contains an
+     * administrator. If not, a new administrator is created and added to the
+     * table containing users in the database.
+     * 
+     * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+     */
+    public static void createInitialAdmin() throws InvalidDBTransferException {
+<span class="fc" id="L58">    	String salt = PasswordHash.getSalt();</span>
+<span class="fc" id="L59">    	String pw = PasswordHash.hash(&quot;Password!123&quot;, salt);</span>
+<span class="fc" id="L60">    	salt = &quot;'&quot; + salt + &quot;'&quot;;</span>
+<span class="fc" id="L61">    	pw = &quot;'&quot; + pw + &quot;'&quot;;</span>
+    	
+<span class="fc" id="L63">    	executeInitialization(CHECK_ADMIN, String.format(INIT_ADMIN, pw, salt));</span>
+<span class="fc" id="L64">    }</span>
+    
+    /**
+     * Checks whether or not the table system_attributes in the database
+     * has been initially filled. If not, the default values are initialized.
+     * 
+     * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+     */
+    public static void setSystemAttributes() throws InvalidDBTransferException {
+<span class="fc" id="L74">    	executeInitialization(CHECK_ATTRIBUTES, INIT_ATTRIBUTES);</span>
+<span class="fc" id="L75">    }</span>
+    
+    /**
+     * Executes the verification and, if necessary, the initialization of the
+     * requested table.
+     * 
+     * @param checkQuery
+     *                 the check SQL query
+     * @param initQuery
+     *                the initializing SQL query
+     */
+    private static void executeInitialization(String checkQuery,
+    		String initQuery) {
+    	
+<span class="fc" id="L89">    	Transaction trans = Connection.create();</span>
+<span class="fc" id="L90">    	trans.start();</span>
+<span class="fc" id="L91">    	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L92">    	java.sql.Connection conn = connection.getConn();</span>
+    	
+<span class="fc" id="L94">    	try (Statement check = conn.createStatement()) {</span>
+<span class="fc" id="L95">    		try (ResultSet rst = check.executeQuery(checkQuery)) {</span>
+<span class="fc" id="L96">    			rst.next();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">	    		if ((Long) rst.getObject(1) &lt; 1) {</span>
+<span class="nc" id="L98">	    			try (Statement init = conn.createStatement()) {</span>
+<span class="nc" id="L99">	    				init.execute(initQuery);</span>
+<span class="nc bnc" id="L100" title="All 8 branches missed.">	    			}</span>
+	    		}
+<span class="pc bpc" id="L102" title="7 of 8 branches missed.">    		}</span>
+<span class="fc" id="L103">    		trans.commit();</span>
+<span class="pc bpc" id="L104" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="nc" id="L105">			trans.rollback();</span>
+<span class="nc" id="L106">			throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+					&quot;during executeInitialization(String checkQuery, &quot; +
+<span class="nc" id="L108">					&quot;String initQuery)&quot;, e);</span>
+		}
+<span class="fc" id="L110">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

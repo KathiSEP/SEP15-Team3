@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * contains all Information about a User
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+<span class="fc" id="L15">public class User implements Serializable {</span>
+
+    private boolean courseNewsSubscribed;
+    
+    /**
+     *stores the address where the user lives
+     */
+    private Address address;
+    /**
+     *stores the E-Mailaddress of the user
+     */
+    private String email;
+    
+    /**
+     * stores the password Salt
+     */
+    private String pwSalt;
+    
+    /**
+     *stores the gender of the user
+     */
+    private Salutation salutation;
+    /**
+     * stores the firstname of the user
+     */
+    private String firstname;
+    /**
+     * stores the lastname of the user
+     */
+    private String lastname;
+    /**
+     * stores the username which the user needs for the login
+     */
+    private String username;
+   
+    /**
+     * stores the date of Birth of the the User
+     */
+    private Date dateOfBirth;
+    /**
+     * stores the profil image of the user
+     */
+    private byte[] profilImage;
+    /**
+     * stores the role which the user has in the System
+     */
+    private UserRole userRole;
+    /**
+     * stores the status which the user has at the moment
+     */
+    private UserStatus userStatus;
+    /**
+     * stores the amount of money the user has on his profil
+     */
+    private float accountBalance;
+    /**
+     * stores the id with which the user can be identify
+     */
+    private int userID;
+    
+    private boolean selected;
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+<span class="fc" id="L81">        this.userID = userID;</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;address&lt;/code&gt;.
+     * 
+     * @return the address where the users lives
+     */
+    public Address getAddress() {
+<span class="fc" id="L90">        return this.address;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">	if (this == obj)</span>
+<span class="nc" id="L96">	    return true;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">	if (obj == null)</span>
+<span class="nc" id="L98">	    return false;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">	if (getClass() != obj.getClass())</span>
+<span class="nc" id="L100">	    return false;</span>
+<span class="nc" id="L101">	User other = (User) obj;</span>
+	
+<span class="nc bnc" id="L103" title="All 2 branches missed.">	if (userID != other.userID)</span>
+<span class="nc" id="L104">	    return false;</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">	if (username == null) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">	    if (other.username != null)</span>
+<span class="nc" id="L108">		return false;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">	} else if (!username.equals(other.username))</span>
+<span class="nc" id="L110">	    return false;</span>
+<span class="nc" id="L111">	return true;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;email&lt;/code&gt;.
+     * 
+     * @return the email address of the user
+     */
+    public String getEmail() {
+<span class="fc" id="L120">        return this.email;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;salutation&lt;/code&gt;.
+     * 
+     * @return the gender of the user
+     */
+    public Salutation getSalutation() {
+<span class="fc" id="L129">        return this.salutation;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;firstname&lt;/code&gt;.
+     * 
+     * @return the firstname of the user
+     */
+    public String getFirstname() {
+<span class="fc" id="L138">        return this.firstname;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;lastname&lt;/code&gt;.
+     * 
+     * @return the lastname of the user
+     */
+    public String getLastname() {
+<span class="fc" id="L147">        return this.lastname;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;username&lt;/code&gt;.
+     * 
+     * @return the username of the user
+     */
+    public String getUsername() {
+<span class="fc" id="L156">        return this.username;</span>
+    }
+
+   
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;dateOfBirth&lt;/code&gt;.
+     * 
+     * @return the dateOfBirth of the user
+     */
+    public Date getDateOfBirth() {
+<span class="fc" id="L167">        return this.dateOfBirth;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;profilImage&lt;/code&gt;.
+     * 
+     * @return the profilImage of the user
+     */
+    public byte[] getProfilImage() {
+<span class="fc" id="L176">        return this.profilImage;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;userRole&lt;/code&gt;.
+     * 
+     * @return the role of the User in the system
+     */
+    public UserRole getUserRole() {
+<span class="fc" id="L185">        return this.userRole;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;userStatus&lt;/code&gt;.
+     * 
+     * @return the status of the user
+     */
+    public UserStatus getUserStatus() {
+<span class="nc" id="L194">        return this.userStatus;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;accountBalance&lt;/code&gt;.
+     * 
+     * @return the amount of money the users has on his account
+     */
+    public float getAccountBalance() {
+<span class="fc" id="L203">        return this.accountBalance;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;userID&lt;/code&gt;.
+     * 
+     * @return the ID of the user
+     */
+    public int getUserID() {
+<span class="fc" id="L212">        return this.userID;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L217">	final int prime = 31;</span>
+<span class="nc" id="L218">	int result = 1;</span>
+<span class="nc" id="L219">	result = prime * result + Float.floatToIntBits(accountBalance);</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">	result = prime * result + ((address == null) ? 0 : address.hashCode());</span>
+<span class="nc" id="L221">	result = prime * result</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">		+ ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">	result = prime * result + ((email == null) ? 0 : email.hashCode());</span>
+<span class="nc" id="L224">	result = prime * result</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">		+ ((firstname == null) ? 0 : firstname.hashCode());</span>
+<span class="nc" id="L226">	result = prime * result</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">		+ ((lastname == null) ? 0 : lastname.hashCode());</span>
+<span class="nc" id="L228">	result = prime * result</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">		+ ((profilImage == null) ? 0 : profilImage.hashCode());</span>
+<span class="nc" id="L230">	result = prime * result</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">		+ ((salutation == null) ? 0 : salutation.hashCode());</span>
+<span class="nc" id="L232">	result = prime * result + userID;</span>
+<span class="nc" id="L233">	result = prime * result</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">		+ ((userRole == null) ? 0 : userRole.hashCode());</span>
+<span class="nc" id="L235">	result = prime * result</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">		+ ((userStatus == null) ? 0 : userStatus.hashCode());</span>
+<span class="nc" id="L237">	result = prime * result</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">		+ ((username == null) ? 0 : username.hashCode());</span>
+<span class="nc" id="L239">	return result;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;address&lt;/code&gt;.
+     * 
+     * @param address
+     *          new address to set
+     */
+    public void setAddress(Address address) {
+<span class="fc" id="L249">        this.address = address;</span>
+<span class="fc" id="L250">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;email&lt;/code&gt;.
+     * 
+     * @param email
+     *          new email to set
+     */
+    public void setEmail(String email) {
+<span class="fc" id="L259">        this.email = email;</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;salutation&lt;/code&gt;.
+     * 
+     * @param sal
+     *          new salutation to set
+     */
+    public void setSalutation(Salutation sal) {
+<span class="fc" id="L269">        this.salutation = sal;</span>
+<span class="fc" id="L270">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;firstname&lt;/code&gt;.
+     * 
+     * @param firstname
+     *          new firstname to set
+     */
+    public void setFirstname(String firstname) {
+<span class="fc" id="L279">        this.firstname = firstname;</span>
+<span class="fc" id="L280">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;lastname&lt;/code&gt;.
+     * 
+     * @param lastname
+     *          new lastname to set
+     */
+    public void setLastname(String lastname) {
+<span class="fc" id="L289">        this.lastname = lastname;</span>
+<span class="fc" id="L290">    }</span>
+
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;userRole&lt;/code&gt;.
+     * 
+     * @param role
+     *          new userRole to set
+     */
+    public void setUserRole(UserRole role) {
+<span class="fc" id="L300">        this.userRole = role;</span>
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;userID&lt;/code&gt;.
+     * 
+     * @param id
+     *          new ID to set
+     */
+    public void setUserId(int id) {
+<span class="fc" id="L310">        this.userID = id;</span>
+<span class="fc" id="L311">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;username&lt;/code&gt;.
+     * 
+     * @param username
+     *          new username to set
+     */
+    public void setUsername(String username) {
+<span class="fc" id="L320">        this.username = username;</span>
+<span class="fc" id="L321">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;dateOfBirth&lt;/code&gt;.
+     * 
+     * @param dateOfBirth
+     *          new date of Birth to set
+     */
+    public void setDateOfBirth(Date dateOfBirth) {
+<span class="fc" id="L330">        this.dateOfBirth = dateOfBirth;</span>
+<span class="fc" id="L331">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;profilImage&lt;/code&gt;.
+     * 
+     * @param profilImage
+     *          new profil Image to set
+     */
+    public void setProfilImage(byte[] profilImage) {
+<span class="fc" id="L340">        this.profilImage = profilImage;</span>
+<span class="fc" id="L341">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;userSatus&lt;/code&gt;.
+     * 
+     * @param status
+     *          new status of the User to set
+     */
+    public void setUserStatus(UserStatus status) {
+<span class="fc" id="L350">        this.userStatus = status;</span>
+<span class="fc" id="L351">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;balance&lt;/code&gt;.
+     * 
+     * @param balance
+     *          new account balance to set
+     */
+    public void setAccountBalance(float balance) {
+<span class="fc" id="L360">        this.accountBalance = balance;</span>
+<span class="fc" id="L361">    }</span>
+
+    /**
+     * Get method for the selected value
+     * 
+     * @return the selected
+     */
+    public boolean isSelected() {
+<span class="fc" id="L369">        return selected;</span>
+    }
+
+    /**
+     * Sets the selected value
+     * 
+     * @param selected the selected to set
+     */
+    public void setSelected(boolean selected) {
+<span class="fc" id="L378">        this.selected = selected;</span>
+<span class="fc" id="L379">    }</span>
+
+    /**
+     * Gets the pwSalt value
+     * 
+     * @return the password salt
+     */
+    public String getPwSalt() {
+<span class="nc" id="L387">        return pwSalt;</span>
+    }
+
+    /**
+     * Sets the pwSalt value
+     * 
+     * @param pwSalt password salt
+     */
+    public void setPwSalt(String pwSalt) {
+<span class="nc" id="L396">        this.pwSalt = pwSalt;</span>
+<span class="nc" id="L397">    }</span>
+
+    /**
+     * Gets the value of courseNewsSubscribed
+     * 
+     * @return the courseNewsSubscribed
+     */
+    public boolean isCourseNewsSubscribed() {
+<span class="fc" id="L405">        return courseNewsSubscribed;</span>
+    }
+
+    /**
+     * Sets the value courseNewsSubscribed
+     * 
+     * @param courseNewsSubscribed the courseNewsSubscribed to set
+     */
+    public void setCourseNewsSubscribed(boolean courseNewsSubscribed) {
+<span class="fc" id="L414">        this.courseNewsSubscribed = courseNewsSubscribed;</span>
+<span class="fc" id="L415">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

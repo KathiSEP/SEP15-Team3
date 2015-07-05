@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PaginationDataTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">PaginationDataTest.java</span></div><h1>PaginationDataTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.model;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+/**
+ * JUnit test for the PaginationData class.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+<span class="nc" id="L12">public class PaginationDataTest {</span>
+
+    /**
+     * Test method that checks whether the PaginationData calculates
+     * the correct values.
+     * 
+     * @author Fuchs Tobias
+     */
+    @Test
+    public void test() {
+
+	//Create the pagination data objects
+<span class="nc" id="L24">	PaginationData pagination = new PaginationData();</span>
+<span class="nc" id="L25">	PaginationData paginationConstruct = new PaginationData(</span>
+<span class="nc" id="L26">		5, </span>
+<span class="nc" id="L27">		0, </span>
+<span class="nc" id="L28">		SortColumn.TITLE,</span>
+<span class="nc" id="L29">		SortDirection.ASC);</span>
+<span class="nc" id="L30">	pagination.setNumberOfPages(0);</span>
+	
+	// Check creation
+<span class="nc" id="L33">	assertNotNull(pagination);</span>
+
+	
+	// Check creation
+<span class="nc" id="L37">	assertNotNull(paginationConstruct);</span>
+
+	// Check constructors
+<span class="nc" id="L40">	assertNotSame(pagination, paginationConstruct);</span>
+<span class="nc" id="L41">	pagination.setElementsPerPage(5);</span>
+<span class="nc" id="L42">	pagination.setCurrentPageNumber(0);</span>
+<span class="nc" id="L43">	pagination.setSortColumn(SortColumn.fromString(&quot;title&quot;));</span>
+<span class="nc" id="L44">	pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="nc" id="L45">	pagination.setNumberOfPages(0);</span>
+
+	// Check setter
+<span class="nc" id="L48">	assertTrue(pagination.equals(paginationConstruct));</span>
+
+	// Check calculation of number of pages
+	// 24 ==&gt; 5 pages(beginnt bei 0 zu z�hlen)
+<span class="nc" id="L52">	pagination.refreshNumberOfPages(24);</span>
+<span class="nc" id="L53">	assertSame(4, pagination.getNumberOfPages());</span>
+
+	// 5==&gt; 1 pages
+<span class="nc" id="L56">	pagination.refreshNumberOfPages(5);</span>
+<span class="nc" id="L57">	assertSame(0, pagination.getNumberOfPages());</span>
+
+	// 100==&gt; 20 pages
+<span class="nc" id="L60">	pagination.refreshNumberOfPages(100);</span>
+<span class="nc" id="L61">	assertSame(19, pagination.getNumberOfPages());</span>
+
+	// 50==&gt; 10 pages
+<span class="nc" id="L64">	pagination.refreshNumberOfPages(50);</span>
+<span class="nc" id="L65">	assertSame(9, pagination.getNumberOfPages());</span>
+
+	// 50==&gt; 10 pages
+<span class="nc" id="L68">	pagination.refreshNumberOfPages(3);</span>
+<span class="nc" id="L69">	assertSame(0, pagination.getNumberOfPages());</span>
+<span class="nc" id="L70">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

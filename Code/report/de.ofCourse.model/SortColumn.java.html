@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SortColumn.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">SortColumn.java</span></div><h1>SortColumn.java</h1><pre class="source lang-java linenums"><span class="pc" id="L1">package de.ofCourse.model;</span>
+
+/**
+ * represents the different forms of columms a table has
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+<span class="fc" id="L9">public enum SortColumn {</span>
+    
+<span class="fc" id="L11">    NICKNAME(&quot;nickname&quot;), </span>
+<span class="fc" id="L12">    EMAIL(&quot;email&quot;), </span>
+<span class="fc" id="L13">    COURSENEWS(&quot;courseNews&quot;), </span>
+<span class="fc" id="L14">    ID(&quot;id&quot;),</span>
+<span class="fc" id="L15">    FIRST_NAME(&quot;first_name&quot;), </span>
+<span class="fc" id="L16">    NAME(&quot;name&quot;), </span>
+<span class="fc" id="L17">    DATE_OF_BIRTH(&quot;date_of_birth&quot;),</span>
+<span class="fc" id="L18">    TITLE(&quot;title&quot;),</span>
+<span class="fc" id="L19">    LOCATION(&quot;location&quot;),</span>
+<span class="fc" id="L20">    START_TIME(&quot;start_time&quot;),</span>
+<span class="fc" id="L21">    MAX_USERS(&quot;max_participants&quot;),</span>
+<span class="fc" id="L22">    START_DATE(&quot;start_date&quot;),</span>
+<span class="fc" id="L23">    END_DATE(&quot;end_date&quot;);</span>
+    
+    private String sortColumn;
+    
+    /**
+     * 
+     * @param columnString
+     *                  the string column
+     */
+<span class="fc" id="L32">    private SortColumn(String columnString) {</span>
+<span class="fc" id="L33">        this.sortColumn = columnString;</span>
+<span class="fc" id="L34">    }</span>
+    
+    /**
+     * 
+     * @return the sortColumn
+     */
+    public String getSortColumn() {
+<span class="fc" id="L41">        return this.sortColumn;</span>
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Enum#toString()
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L49">        return sortColumn;</span>
+    }
+    
+    /**
+     * Assign a string which describes the sort column enum and creates the 
+     * sort column
+     * 
+     * @param columnString 
+     *                  the column string
+     * @return ID
+     */
+    public static SortColumn fromString(String columnString) {
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (columnString != null) {</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">          for (SortColumn column : SortColumn.values()) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">              if (columnString.equalsIgnoreCase(column.sortColumn)) {</span>
+<span class="fc" id="L64">                  return column;</span>
+              }
+          }
+<span class="nc" id="L67">          return ID;</span>
+        }
+        else {
+<span class="nc" id="L70">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

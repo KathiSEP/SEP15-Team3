@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MailBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">MailBeanTest.java</span></div><h1>MailBeanTest.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.action;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+
+
+
+
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+
+
+
+
+import de.ofCourse.model.User;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.utilities.PropertyManager;
+
+/**
+ * @author Sebastian Schwarz
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ PropertyManager.class, Integer.class, LogHandler.class })
+<span class="nc" id="L42">public class MailBeanTest {</span>
+
+	/**
+     * Logger
+     */
+    private LogHandler logger;
+    
+    private User userToSendMail;
+    private PropertyManager manager;
+    
+<span class="nc" id="L52">    private MailBean bean = new MailBean();</span>
+<span class="nc" id="L53">    private String message = &quot;Hallo&quot;;</span>
+<span class="nc" id="L54">    private String subject = &quot;MailBeanTest&quot;;</span>
+    
+<span class="nc" id="L56">    List&lt;String&gt; recipients = new ArrayList&lt;String&gt;();</span>
+    
+    @Mock
+    private Integer test;
+    
+    
+    
+    @Before
+    public void setup(){
+    	// mocks the lgger
+<span class="nc" id="L66">    	PowerMockito.mockStatic(LogHandler.class);</span>
+<span class="nc" id="L67">    	logger = mock(LogHandler.class);</span>
+<span class="nc" id="L68">    	Mockito.when(LogHandler.getInstance()).thenReturn(logger);</span>
+    	
+<span class="nc" id="L70">        recipients.add(&quot;sebastian@nrschwarz.de&quot;);</span>
+        
+<span class="nc" id="L72">        PowerMockito.mockStatic(PropertyManager.class);</span>
+<span class="nc" id="L73">        manager = mock(PropertyManager.class);</span>
+<span class="nc" id="L74">        Mockito.when(PropertyManager.getInstance()).thenReturn(manager);</span>
+        
+
+        
+       // Mockito.when(PropertyManager.getInstance().getPropertyMail(&quot;smtphost&quot;)).thenReturn(&quot;smtp.gmail.com&quot;);
+       // Mockito.when(Integer.parseInt(anyString())).thenReturn(465);
+<span class="nc" id="L80">    }</span>
+    
+    
+    
+    /**
+     * Test method for {@link de.ofCourse.action.MailBean#sendConfirmationMessage(int)}.
+     */
+    @Test
+    public void testSendConfirmationMessage() {
+<span class="nc" id="L89">        bean.sendMail(recipients, subject, message);</span>
+<span class="nc" id="L90">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

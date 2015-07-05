@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PropertyManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.utilities</a> &gt; <span class="el_source">PropertyManager.java</span></div><h1>PropertyManager.java</h1><pre class="source lang-java linenums">/**
+ * This package provides utility functionality for the ofCourse system.
+ */
+package de.ofCourse.utilities;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.faces.context.FacesContext;
+
+import de.ofCourse.system.LogHandler;
+
+/**
+ * Provides the functionality to read out a property file, which contains system
+ * configuration data.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+<span class="fc" id="L21">public class PropertyManager {</span>
+
+    /**
+     * Singleton-object of the PropertyManager class
+     */
+    private static PropertyManager propertyManager;
+
+    /**
+     * Name of the general configuration file
+     */
+    private final static String CONFIGURATIONFILE = &quot;ofCourse.properties&quot;;
+
+    /**
+     * Path of the general configuration file
+     */
+    private final static String CONFIGURATIONPATH = &quot;/WEB-INF/config/&quot;;
+
+    /**
+     * Indicates whether the general configuration property was correctly loaded
+     */
+<span class="fc" id="L41">    private static boolean configurationRead = false;</span>
+
+    /**
+     * The general configuration property file to read from
+     */
+<span class="fc" id="L46">    private static Properties ofCourse = null;</span>
+
+    /**
+     * Name of the logging configuration file
+     */
+    private final static String LOGGINGFILE = &quot;logging.properties&quot;;
+
+    /**
+     * Path of the logging configuration file
+     */
+    private final static String LOGGINGPATH = &quot;/WEB-INF/config/&quot;;
+
+    /**
+     * Indicates whether the logging configuration property was correctly loaded
+     */
+<span class="fc" id="L61">    private static boolean loggingRead = false;</span>
+
+    /**
+     * The logging configuration property file to read from
+     */
+<span class="fc" id="L66">    private static Properties logging = null;</span>
+
+    /**
+     * Name of the mail configuration file
+     */
+    private final static String EMAILFILE = &quot;mail.properties&quot;;
+
+    /**
+     * Path of the mail configuration file
+     */
+    private final static String EMAILPATH = &quot;/WEB-INF/config/&quot;;
+
+    /**
+     * Indicates whether the mail configuration property was correctly loaded
+     */
+<span class="fc" id="L81">    private static boolean mailRead = false;</span>
+
+    /**
+     * The mail configuration property file to read from
+     */
+<span class="fc" id="L86">    private static Properties mail = null;</span>
+
+    /**
+     * Returns an instance of the PropertyManager class.
+     * 
+     * @return instance of the PropertyManager
+     */
+    public static PropertyManager getInstance() {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">	if (propertyManager == null) {</span>
+<span class="fc" id="L95">	    propertyManager = new PropertyManager();</span>
+	}
+<span class="fc" id="L97">	return propertyManager;</span>
+    }
+
+    /**
+     * Returns a property value to a given line from the configuration file.
+     * 
+     * @param line
+     *            the line to determine the property value
+     * 
+     * @return the value of the found property
+     */
+    public String getPropertyConfiguration(String line) {
+<span class="fc" id="L109">	String readValue = null;</span>
+<span class="fc" id="L110">	ofCourse = loadConfigurationProperty();</span>
+
+<span class="pc bpc" id="L112" title="2 of 4 branches missed.">	if (configurationRead &amp;&amp; !ofCourse.equals(null)) {</span>
+<span class="fc" id="L113">	    readValue = ofCourse.getProperty(line).toString();</span>
+	}
+<span class="fc" id="L115">	return readValue;</span>
+    }
+
+    /**
+     * Returns a property value to a given line from the logging configuration
+     * file.
+     * 
+     * @param line
+     *            the line to determine the property value
+     * 
+     * @return the value of the found property 
+     */
+    public String getPropertyLogger(String line) {
+<span class="fc" id="L128">	String readValue = null;</span>
+<span class="fc" id="L129">	logging = loadLoggingConfigProperty();</span>
+
+<span class="pc bpc" id="L131" title="2 of 4 branches missed.">	if (loggingRead &amp;&amp; !logging.equals(null)) {</span>
+<span class="fc" id="L132">	    readValue = logging.getProperty(line).toString();</span>
+	}
+<span class="fc" id="L134">	return readValue;</span>
+    }
+
+    /**
+     * Returns a property value to a given line from the mail configuration
+     * file.
+     * 
+     * @param line
+     *            the line to determine the property value
+     * 
+     * @return the value of the found property
+     */
+    public String getPropertyMail(String line) {
+<span class="fc" id="L147">	String readValue = null;</span>
+<span class="fc" id="L148">	mail = loadMailConfigProperty();</span>
+
+<span class="pc bpc" id="L150" title="2 of 4 branches missed.">	if (mailRead &amp;&amp; !mail.equals(null)) {</span>
+<span class="fc" id="L151">	    readValue = mail.getProperty(line).toString();</span>
+	}
+<span class="fc" id="L153">	return readValue;</span>
+    }
+
+    /**
+     * Returns the loaded general configuration property. &lt;br&gt;
+     * Tries to load the property file with name &lt;code&gt;CONFIGFILENAME&lt;/code&gt;
+     * which contains the general configuration information from the
+     * &lt;code&gt;CONFIGFILEPATH&lt;/code&gt;.
+     * 
+     * @return the loaded property, if the loading was successful&lt;br&gt;
+     *         null, otherwise
+     */
+    private static Properties loadConfigurationProperty() {
+<span class="fc" id="L166">	Properties property = new Properties();</span>
+<span class="fc" id="L167">	InputStream readInput = null;</span>
+
+	try {
+<span class="fc" id="L170">	    readInput = FacesContext</span>
+<span class="fc" id="L171">		    .getCurrentInstance()</span>
+<span class="fc" id="L172">		    .getExternalContext()</span>
+<span class="fc" id="L173">		    .getResourceAsStream(</span>
+<span class="fc" id="L174">			    CONFIGURATIONPATH + CONFIGURATIONFILE);</span>
+	    
+<span class="fc" id="L176">	    property.load(readInput);</span>
+<span class="fc" id="L177">	    configurationRead = true;</span>
+	    
+<span class="pc" id="L179">	} catch (IOException e) {</span>
+<span class="nc" id="L180">	    configurationRead = false;</span>
+<span class="nc" id="L181">	    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L182">		    &quot;Error during loading the config property.&quot;);</span>
+	    
+<span class="nc" id="L184">	} finally {</span>
+<span class="pc bpc" id="L185" title="5 of 6 branches missed.">	    if (readInput != null) {</span>
+		try {
+<span class="pc" id="L187">		    readInput.close();</span>
+<span class="pc" id="L188">		} catch (IOException e) {</span>
+<span class="nc" id="L189">		    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L190">			    &quot;Error occured during&quot;</span>
+		            + &quot; loading configuration property.&quot;);
+		}
+	    }
+<span class="nc" id="L194">	}</span>
+<span class="fc" id="L195">	return property;</span>
+    }
+
+    /**
+     * Returns the loaded logging configuration property. &lt;br&gt;
+     * Tries to load the property file with name &lt;code&gt;LOGGINGFILENAME&lt;/code&gt;
+     * that contains the logging configuration information from the
+     * &lt;code&gt;LOGGINGFILEPATH&lt;/code&gt;.
+     * 
+     * @return the loaded property, if the loading was successful&lt;br&gt;
+     *         null, otherwise
+     */
+    private static Properties loadLoggingConfigProperty() {
+<span class="fc" id="L208">	Properties property = new Properties();</span>
+<span class="fc" id="L209">	InputStream readInput = null;</span>
+
+	try {
+<span class="fc" id="L212">	    readInput = FacesContext.getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L213">		    .getResourceAsStream(LOGGINGPATH + LOGGINGFILE);</span>
+<span class="fc" id="L214">	    property.load(readInput);</span>
+
+<span class="fc" id="L216">	    loggingRead = true;</span>
+	    
+<span class="pc" id="L218">	} catch (IOException e) {</span>
+<span class="nc" id="L219">	    loggingRead = false;</span>
+<span class="nc" id="L220">	    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L221">		    &quot;Error during loading the logging property.&quot;);</span>
+	    
+<span class="nc" id="L223">	} finally {</span>
+<span class="pc bpc" id="L224" title="5 of 6 branches missed.">	    if (readInput != null) {</span>
+		try {
+<span class="pc" id="L226">		    readInput.close();</span>
+<span class="pc" id="L227">		} catch (IOException e) {</span>
+<span class="nc" id="L228">		    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L229">			    &quot;Error occured during&quot;</span>
+			    + &quot; loading logging property.&quot;);
+		}
+	    }
+<span class="nc" id="L233">	}</span>
+<span class="fc" id="L234">	return property;</span>
+    }
+
+    /**
+     * Returns the loaded mail configuration property. &lt;br&gt;
+     * Tries to load the property file with name &lt;code&gt;EMAILFILENAME&lt;/code&gt; that
+     * contains the mail configuration information from the
+     * &lt;code&gt;EMAILFILEPATH&lt;/code&gt;.
+     * 
+     * @return the loaded property, if the loading was successful&lt;br&gt;
+     *         null, otherwise
+     */
+    private static Properties loadMailConfigProperty() {
+<span class="fc" id="L247">	Properties property = new Properties();</span>
+<span class="fc" id="L248">	InputStream readInput = null;</span>
+	
+	try {
+<span class="fc" id="L251">	    readInput = FacesContext.getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L252">		    .getResourceAsStream(EMAILPATH + EMAILFILE);</span>
+<span class="fc" id="L253">	    property.load(readInput);</span>
+<span class="fc" id="L254">	    mailRead = true;</span>
+	    
+<span class="pc" id="L256">	} catch (IOException e) {</span>
+<span class="nc" id="L257">	    mailRead = false;</span>
+<span class="nc" id="L258">	    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L259">		    &quot;Error during loading the mail property.&quot;);</span>
+	    
+<span class="nc" id="L261">	} finally {</span>
+<span class="pc bpc" id="L262" title="5 of 6 branches missed.">	    if (readInput != null) {</span>
+		try {
+<span class="pc" id="L264">		    readInput.close();</span>
+<span class="pc" id="L265">		} catch (IOException e) {</span>
+<span class="nc" id="L266">		    LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L267">			    &quot;Error occured during&quot; + &quot; loading mail property.&quot;);</span>
+		}
+	    }
+<span class="nc" id="L270">	}</span>
+<span class="fc" id="L271">	return property;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

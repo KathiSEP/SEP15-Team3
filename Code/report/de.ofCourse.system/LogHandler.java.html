@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LogHandler.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.system</a> &gt; <span class="el_source">LogHandler.java</span></div><h1>LogHandler.java</h1><pre class="source lang-java linenums">package de.ofCourse.system;
+
+import java.io.IOException;
+
+import org.apache.log4j.DailyRollingFileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
+import de.ofCourse.utilities.PropertyManager;
+
+/**
+ * This class handels Log4j-Logger and initialize it. This class provides a getInstance Method
+ * and is for all classes reachable.
+ * 
+ * @author Sebastian Schwarz
+ *
+ */
+public class LogHandler {
+    /**
+     * Sets the name
+     */
+<span class="fc" id="L24">    private static final Logger logger = LogManager.getLogger(&quot;OfCourse&quot;);</span>
+
+    
+    /**
+     * 
+     */
+<span class="fc" id="L30">    private static LogHandler LogHandler;</span>
+
+    /**
+     * Constructor, can throw IO Exceptions if something wrong with the input values which will
+     * be readed by the Property Manager 
+     * 
+     * @throws IOException
+     */
+<span class="fc" id="L38">    LogHandler() {</span>
+        
+        try{
+<span class="fc" id="L41">            logSetup(); </span>
+<span class="pc" id="L42">        } catch (IOException e){</span>
+            //TODO how do we handle The exception here Syso/Printstack?
+        }
+        
+        
+<span class="fc" id="L47">    }</span>
+    
+
+    /**
+     * Checks whether a Instance of LogHandler already exists and returns the instance
+     * 
+     * @return
+     */
+    public static LogHandler getInstance() {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (LogHandler == null) {</span>
+<span class="fc" id="L57">            LogHandler = new LogHandler();</span>
+        }
+<span class="fc" id="L59">        return LogHandler;</span>
+    }
+
+    /**
+     * Sets up the path and the logging level. The Values will be readed out of the logging.properties file
+     * 
+     * @throws IOException
+     */
+    private void logSetup() throws IOException {
+        
+        //Provieds the Pattern with which the Loging will write his messages
+<span class="fc" id="L70">       PatternLayout layout = new PatternLayout(&quot;%-5p [%t]: %m%n&quot;);</span>
+<span class="fc" id="L71">       DailyRollingFileAppender fileAppender = new DailyRollingFileAppender(</span>
+<span class="fc" id="L72">                layout, PropertyManager.getInstance()</span>
+<span class="fc" id="L73">                .getPropertyLogger(&quot;logfilepath&quot;)+ &quot;/MyLog&quot; , &quot;'.'yyyy-MM-dd_HH-mm&quot;);</span>
+
+<span class="fc" id="L75">        logger.addAppender(fileAppender);</span>
+        
+        // Sets the level input from properties
+<span class="fc" id="L78">        logger.setLevel(Level.toLevel(PropertyManager.getInstance()</span>
+<span class="fc" id="L79">                .getPropertyLogger(&quot;loglvl&quot;)));</span>
+
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * This methode will be used for loging fatal errors, System has crashed
+     * @param log
+     */
+    public void fatal(String log) {
+<span class="nc" id="L88">        logger.fatal(log);</span>
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * This methode will be used for loging Erros, System will still run
+     * @param log
+     */
+    public void error(String log) {
+<span class="fc" id="L96">        logger.error(log);</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * This Methode will be used for Loging if a methode runs with out a failure
+     * @param log
+     */
+    public void debug(String log) {
+<span class="fc" id="L104">        logger.debug(log);</span>
+<span class="fc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DatabaseConnectionManager.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.system</a> &gt; <span class="el_source">DatabaseConnectionManager.java</span></div><h1>DatabaseConnectionManager.java</h1><pre class="source lang-java linenums">/**
+ *This package represents system functionality. 
+ */
+package de.ofCourse.system;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.ListIterator;
+
+import de.ofCourse.utilities.PropertyManager;
+
+/**
+ * Sets up a fixed number of connections to the database, stores them and
+ * handles the assignment of the connections to the requesting threads and in
+ * case of occurring errors it executes last statements and closes the
+ * connections to leave the database in a valid state.
+ * 
+ * &lt;p&gt;
+ * The DatabaseConnectionManager represents the pool, in which the connections
+ * are hold. If a thread requests for a connection and there is a free
+ * connections, the DatabaseConnectionManager gives it to him. If there's no
+ * free connection at the time, the thread has to wait and the
+ * DatabaseConnectionManager notifies the waiting thread as soon as there is a
+ * free one.
+ * 
+ * &lt;p&gt;
+ * In case of a JVM crash, the DatabaseConnectionManager executes last
+ * statements and closes all connections to the database with the regard to
+ * leave the database in a valid state and not to occupy resources.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+public class DatabaseConnectionManager implements Runnable {
+
+    /**
+     * List of free connections
+     */
+    private final Deque&lt;Connection&gt; freeConnections;
+
+    /**
+     * List of used connections
+     */
+    private final List&lt;Connection&gt; usedConnections;
+
+    /**
+     * Singleton-object of the DatabaseConnectionManager class
+     */
+    private static DatabaseConnectionManager databaseConnectionManager;
+
+    /**
+     * JDBC-Driver
+     */
+    public static final String dbDriver = &quot;org.postgresql.Driver&quot;;
+
+    /**
+     * number of connections to the database
+     */
+    private static int numberOfConnection;
+
+    /**
+     * Flag that is used for debugging with JUnit.&lt;br&gt;
+     * If this flag is true, the DatabaseConnectionManager is sealed off from
+     * all other classes like for e.g. the PropertyManager.
+     */
+<span class="fc" id="L72">    private static boolean debug = false;</span>
+
+    /**
+     * Constructor of the class DatabaseConnectionManager
+     */
+<span class="fc" id="L77">    private DatabaseConnectionManager() {</span>
+<span class="fc" id="L78">	freeConnections = new ArrayDeque&lt;Connection&gt;();</span>
+<span class="fc" id="L79">	usedConnections = new ArrayList&lt;Connection&gt;();</span>
+	try {
+<span class="fc" id="L81">	    Class.forName(dbDriver);</span>
+<span class="pc" id="L82">	} catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L83">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L84">		    &quot;Error occoured during&quot; </span>
+	            + &quot; loading the database driver!&quot;);
+	}
+
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Returns the connection you need for database access.
+     * 
+     * @return connection for database access
+     */
+    public synchronized Connection getConnection() {
+<span class="fc" id="L96">	Connection connection = null;</span>
+
+	/*
+	 * Calculates if there are as much as connections in use as granted by
+	 * the configuration
+	 */
+<span class="fc" id="L102">	int difference = numberOfConnection</span>
+<span class="fc" id="L103">		- (freeConnections.size() + usedConnections.size());</span>
+
+	// There's a free connection
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">	if (!freeConnections.isEmpty()) {</span>
+	    
+	    //Get the connection from freeConnections
+<span class="fc" id="L109">	    connection  = freeConnections.pop();</span>
+	        
+	        //If the connection is not active, it is already removed from 
+	        // freeConnections, so there are not the number of connections
+	        // established as determined
+	        // All waiting threads a notified and in the next run of 
+	        // getConnection() a new connection is established to replace the
+	        // inactive one
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">		if (!isConnectionActive(connection)) {</span>
+		    
+		    try{
+<span class="nc" id="L120">			connection.close();</span>
+<span class="nc" id="L121">		    }</span>
+<span class="nc" id="L122">		    catch(SQLException e){</span>
+<span class="nc" id="L123">			LogHandler.getInstance().error(&quot;Error during closing connection!&quot;);</span>
+		    }
+<span class="nc" id="L125">		    notifyAll();</span>
+<span class="nc" id="L126">		    return(getConnection());</span>
+		  } else {
+		    // If the connection is active, it is returned
+<span class="fc" id="L129">		    usedConnections.add(connection);</span>
+<span class="fc" id="L130">		    LogHandler.getInstance().debug(&quot;Connection returned&quot;);</span>
+<span class="fc" id="L131">		    return connection;</span>
+		  }
+	   
+	} else {
+	    //If there are not as much connections established as determined
+<span class="nc bnc" id="L136" title="All 2 branches missed.">	    for (int i = 0; i &lt; difference; ++i) {</span>
+<span class="nc" id="L137">		createConnectionThread();</span>
+	    }
+
+	    //Wait there's a free connection
+	    try {
+<span class="nc" id="L142">	        wait();</span>
+<span class="nc" id="L143">	      } catch(InterruptedException ie) {</span>
+<span class="nc" id="L144">		  throw new RuntimeException();</span>
+	      }
+	     
+	      // A connection was released or a new one created
+<span class="nc" id="L148">	      return getConnection();  </span>
+	}
+    }
+	
+
+    
+    
+    
+    /**
+     * Starts a new thread, which has the job to create a new connection
+     */
+    private void createConnectionThread() {
+	try {
+<span class="nc" id="L161">	    Thread thread = new Thread(this);</span>
+<span class="nc" id="L162">	    thread.start();</span>
+<span class="nc" id="L163">	} catch (OutOfMemoryError e) {</span>
+<span class="nc" id="L164">	    LogHandler.getInstance().error(&quot;The connection create thread&quot; </span>
+	                                    + &quot; is out of memory.&quot;);
+	}
+<span class="nc" id="L167">    }</span>
+
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    public void run() {
+	try {
+<span class="nc" id="L174">	    Connection connection = establishConnection();</span>
+<span class="nc" id="L175">	    synchronized (this) {</span>
+<span class="nc" id="L176">		freeConnections.push(connection);</span>
+<span class="nc" id="L177">		notifyAll();</span>
+<span class="nc" id="L178">		LogHandler.getInstance().debug(&quot;Created&quot;);</span>
+	    }
+<span class="nc" id="L180">	} catch (Exception e) { </span>
+<span class="nc" id="L181">	    LogHandler.getInstance().error(&quot;Error occured during running &quot; </span>
+	                                   + &quot;connection thread&quot;);
+	}
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Releases the connection after it has been used.
+     */
+    public synchronized void releaseConnection(Connection connection) {
+	try {
+<span class="pc bpc" id="L191" title="2 of 4 branches missed.">	    if (!connection.isClosed() &amp;&amp; connection != null) {</span>
+
+<span class="fc" id="L193">		usedConnections.remove(connection);</span>
+<span class="fc" id="L194">		freeConnections.push(connection);</span>
+<span class="fc" id="L195">		LogHandler.getInstance().debug(&quot;Connection released.&quot;);</span>
+	    }
+<span class="pc" id="L197">	} catch (SQLException e) {</span>
+<span class="nc" id="L198">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L199">		    &quot;Error occured during releasing the connection.&quot;);</span>
+
+	}
+	// Notifies all waiting threads that there's a free connection
+<span class="fc" id="L203">	notifyAll();</span>
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * Returns an instance of the DatabaseConnectionManager class.
+     * 
+     * @return instance of the DatabaseConnectionManager
+     */
+    public synchronized static DatabaseConnectionManager getInstance() {
+<span class="fc bfc" id="L212" title="All 2 branches covered.">	if (databaseConnectionManager == null) {</span>
+<span class="fc" id="L213">	    databaseConnectionManager = new DatabaseConnectionManager();</span>
+
+	    // In case of debug only three connections are established
+	    // to preserve database ressources
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">	    if (debug) {</span>
+<span class="nc" id="L218">		numberOfConnection = 3;</span>
+<span class="nc" id="L219">	    } else {</span>
+<span class="fc" id="L220">		numberOfConnection = Integer.parseInt(PropertyManager</span>
+<span class="fc" id="L221">			.getInstance()</span>
+<span class="fc" id="L222">			.getPropertyConfiguration(&quot;dbconnections&quot;));</span>
+	    }
+
+<span class="fc bfc" id="L225" title="All 2 branches covered.">	    for (int i = 0; i &lt; numberOfConnection; ++i) {</span>
+<span class="fc" id="L226">		Connection conn = establishConnection();</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">		if (conn != null) {</span>
+<span class="fc" id="L228">		    databaseConnectionManager.freeConnections.push(conn);</span>
+		}
+	    }
+	}
+
+<span class="fc" id="L233">	return databaseConnectionManager;</span>
+    }
+
+    /**
+     * Returns a established connection to the database.
+     * 
+     * @return if the connection was established correctly, the connection to
+     *         the database
+     * @throws SQLException
+     *             if an exception occurs during establishing the database
+     *             connection
+     */
+    private static Connection establishConnection() {
+<span class="fc" id="L246">	Connection connection = null;</span>
+
+	// In case of tests it is attempted to establish a database connection
+	// to
+	// test database to preserve the working database from unnecessary
+	// demands
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">	if (debug) {</span>
+	    try {
+
+<span class="nc" id="L255">		connection = DriverManager.getConnection(</span>
+<span class="nc" id="L256">			&quot;jdbc:postgresql://localhost:12345/fuchstob&quot;,</span>
+<span class="nc" id="L257">			&quot;fuchstob&quot;, &quot;eX4Cooth&quot;);</span>
+<span class="nc" id="L258">		connection.setAutoCommit(false);</span>
+
+<span class="nc" id="L260">	    } catch (SQLException e) {</span>
+<span class="nc" id="L261">		LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L262">			&quot;Error occured during establishing a database&quot;</span>
+				+ &quot;connection. Please check whether the login&quot;
+				+ &quot; credentials are set correctly  and the&quot;
+				+ &quot; connection to the database is alive.&quot;);
+
+	    }
+<span class="nc" id="L268">	} else {</span>
+	    try {
+
+<span class="fc" id="L271">		connection = DriverManager.getConnection(</span>
+<span class="fc" id="L272">			&quot;jdbc:postgresql://&quot;</span>
+<span class="fc" id="L273">				+ PropertyManager.getInstance()</span>
+<span class="fc" id="L274">					.getPropertyConfiguration(&quot;dbhost&quot;)</span>
+<span class="fc" id="L275">				+ &quot;:&quot;</span>
+<span class="fc" id="L276">				+ PropertyManager.getInstance()</span>
+<span class="fc" id="L277">					.getPropertyConfiguration(&quot;dbport&quot;)</span>
+<span class="fc" id="L278">				+ &quot;/&quot;</span>
+<span class="fc" id="L279">				+ PropertyManager.getInstance()</span>
+<span class="fc" id="L280">					.getPropertyConfiguration(&quot;dbname&quot;),</span>
+<span class="fc" id="L281">			PropertyManager.getInstance().getPropertyConfiguration(</span>
+<span class="fc" id="L282">				&quot;dbuser&quot;), PropertyManager.getInstance()</span>
+<span class="fc" id="L283">				.getPropertyConfiguration(&quot;dbpassword&quot;));</span>
+<span class="fc" id="L284">		connection.setAutoCommit(false);</span>
+
+<span class="pc" id="L286">	    } catch (SQLException e) {</span>
+<span class="nc" id="L287">		LogHandler.getInstance().fatal(</span>
+<span class="nc" id="L288">			&quot;Error occured during establishing a database&quot;</span>
+				+ &quot;connection. Please check whether the login&quot;
+				+ &quot; credentials are set correctly  and the&quot;
+				+ &quot; connection to the database is alive.&quot;);
+<span class="nc" id="L292">		throw new RuntimeException();</span>
+
+	    }
+	}
+<span class="fc" id="L296">	return connection;</span>
+    }
+
+    /**
+     * If the JVM will crash, this method executes last statements and closes
+     * all connections.
+     */
+    public void shutDown() {
+<span class="fc bfc" id="L304" title="All 2 branches covered.">	while (!freeConnections.isEmpty()) {</span>
+<span class="fc" id="L305">	    Connection connection = freeConnections.pop();</span>
+
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">	    if (connection != null) {</span>
+		try {
+<span class="fc" id="L309">		    connection.close();</span>
+<span class="fc" id="L310">		    LogHandler.getInstance().debug(&quot;Connection closed.&quot;);</span>
+<span class="pc" id="L311">		} catch (SQLException e) {</span>
+<span class="nc" id="L312">		    LogHandler.getInstance().error(</span>
+<span class="nc" id="L313">			    &quot;Error occured during closing&quot;</span>
+				    + &quot; the connections to the database.&quot;);
+		}
+
+	    }
+	}
+<span class="fc" id="L319">	freeConnections.clear();</span>
+<span class="fc" id="L320">	ListIterator&lt;Connection&gt; it = usedConnections.listIterator(0);</span>
+
+<span class="fc bfc" id="L322" title="All 2 branches covered.">	while (it.hasNext()) {</span>
+	    
+<span class="fc" id="L324">	    Connection connection = it.next();</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">	    if (connection != null) {</span>
+		
+		try {
+<span class="fc" id="L328">		    connection.close();</span>
+<span class="fc" id="L329">		    LogHandler.getInstance().debug(&quot;Connection closed.&quot;);</span>
+<span class="pc" id="L330">		} catch (SQLException e) {  </span>
+<span class="nc" id="L331">			LogHandler.getInstance().error(</span>
+<span class="nc" id="L332">				&quot;Error occured during closing&quot;</span>
+				+ &quot; the connections to the database.&quot;);
+		}
+		
+	    }
+	}
+<span class="fc" id="L338">	usedConnections.clear();</span>
+<span class="fc" id="L339">    }</span>
+
+    /**
+     * Checks whether the connection to the database is active.
+     * 
+     * @param connection
+     *            connection to the database
+     * @return true, if the connection is active&lt;br&gt;
+     *         false, otherwise
+     */
+    private boolean isConnectionActive(Connection connection) {
+<span class="fc" id="L350">	boolean active = false;</span>
+<span class="fc" id="L351">	String query = &quot;SELECT 0;&quot;;</span>
+
+	try {
+<span class="pc bpc" id="L354" title="2 of 4 branches missed.">	    if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+
+<span class="fc" id="L356">	        try (PreparedStatement stmt = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L357">	    	stmt.execute();</span>
+<span class="fc" id="L358">	    	active = true;</span>
+<span class="pc bpc" id="L359" title="7 of 8 branches missed.">	        } catch (SQLException e) {</span>
+<span class="nc" id="L360">	    	active = false;</span>
+	        }
+	    }
+<span class="nc" id="L363">	} catch (SQLException e) {</span>
+<span class="nc" id="L364">	    LogHandler.getInstance().error(&quot;Connection is not active.&quot;);</span>
+	}
+<span class="fc" id="L366">	return active;</span>
+    }
+
+    /**
+     * Enables or disables the debugging mode.
+     * 
+     * @param debugging
+     *            whether the debug mode is set
+     */
+    protected static void debugMode(boolean debugging) {
+<span class="nc" id="L376">	debug = debugging;</span>
+<span class="nc" id="L377">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

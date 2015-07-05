@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ListParticipantsBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">ListParticipantsBean.java</span></div><h1>ListParticipantsBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Displays the participants that attend a certain course and offers the course
+ * leader the possibility to delete users from on of his managed courses.
+ * &lt;p&gt;
+ * 
+ * Supports pagination to display the users.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;listParticipients&lt;/code&gt;.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L48">public class ListParticipantsBean implements Pagination {</span>
+    
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+    
+    /**
+     * Stores the elements per page
+     */
+    private static final int elementsPerPage = 10;
+    
+    /**
+     * Stores the columns to sort
+     */
+    private String sortColumn;
+    
+    /**
+     * Stores the course ID
+     */
+    private int courseID;
+
+    /**
+     * Stores the current page
+     */
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L79">        return currentPage;</span>
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L86">        this.currentPage = currentPage;</span>
+<span class="nc" id="L87">    }</span>
+    
+    
+    /**
+     * Stores the the list of participants that is displayed on the page.
+     */
+    private DataModel&lt;User&gt; participants;
+
+    /**
+     * Stores the the list of users that are to removed from the course.
+     */
+    private List&lt;User&gt; usersToDelete;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L117">        this.participants = new ListDataModel&lt;User&gt;();</span>
+<span class="fc" id="L118">        this.setCourseID(-1);</span>
+        
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
+<span class="fc" id="L122">        Map&lt;String, Object&gt; sessionMap = FacesContext</span>
+<span class="fc" id="L123">                .getCurrentInstance().getExternalContext().getSessionMap();</span>
+        
+        //New language object
+<span class="fc" id="L126">        Language lang = null;</span>
+        
+        //Check if the parameter language exists in the session. 
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+            //Convert the string (DE, EN, BAY) into a language object
+<span class="fc" id="L131">            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+            
+<span class="fc" id="L133">        } else {</span>
+            //Set the language to German (DE) an write the parameter into the 
+            //session
+<span class="nc" id="L136">            lang = Language.DE;</span>
+<span class="nc" id="L137">            HttpSession httpSession = (HttpSession) FacesContext</span>
+<span class="nc" id="L138">                    .getCurrentInstance().getExternalContext()</span>
+<span class="nc" id="L139">                    .getSession(true);</span>
+<span class="nc" id="L140">            httpSession.setAttribute(&quot;lang&quot;, lang.toString());</span>
+        }
+        
+        try {
+<span class="fc" id="L144">            this.setCourseID(Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L145">                    .getExternalContext()</span>
+<span class="fc" id="L146">                    .getRequestParameterMap()</span>
+<span class="fc" id="L147">                    .get(&quot;courseID&quot;)));</span>
+            
+<span class="fc" id="L149">            pagination = new PaginationData(elementsPerPage, 0, </span>
+<span class="fc" id="L150">                                        SortColumn.NICKNAME, SortDirection.ASC);</span>
+<span class="fc" id="L151">        }</span>
+<span class="nc" id="L152">        catch (Exception e) {</span>
+            // FacesMessage: ' The page was called without a parameter'
+<span class="nc" id="L154">            FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L155">                    &quot;parameter&quot;,  </span>
+<span class="nc" id="L156">                    LanguageManager.getInstance().</span>
+<span class="nc" id="L157">                                    getProperty(</span>
+<span class="nc" id="L158">                                            &quot;listParticipantsBean.facesMessage.&quot;</span>
+                                            + &quot;NoParameter&quot;, 
+<span class="nc" id="L160">                                            lang));</span>
+        }
+        
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        if(this.getCourseID() &lt; 0) {</span>
+            //FacesMessage: 'The page does not exist'
+<span class="nc" id="L165">            FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L166">                    &quot;parameter&quot;,  </span>
+<span class="nc" id="L167">                    LanguageManager.getInstance().</span>
+<span class="nc" id="L168">                                    getProperty(</span>
+<span class="nc" id="L169">                                            &quot;listParticipantsBean.facesMessage.&quot;</span>
+<span class="nc" id="L170">                                            + &quot;PageNotExist&quot;, lang));</span>
+<span class="nc" id="L171">        } else {       </span>
+<span class="fc" id="L172">            transaction = Connection.create();</span>
+<span class="fc" id="L173">            transaction.start();</span>
+            
+            try {
+<span class="fc" id="L176">                this.pagination.refreshNumberOfPages(CourseDAO</span>
+<span class="fc" id="L177">                      .getNumberOfParticipants(transaction, this.getCourseID()));</span>
+<span class="fc" id="L178">                this.participants.setWrappedData</span>
+<span class="fc" id="L179">                        (UserDAO.getParticipantsOfCourse</span>
+<span class="fc" id="L180">                                                        (this.transaction,  </span>
+<span class="fc" id="L181">                                                         this.getPagination(), </span>
+<span class="fc" id="L182">                                                         this.getCourseID()));</span>
+                
+<span class="fc" id="L184">                this.transaction.commit();</span>
+                
+<span class="pc" id="L186">            } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L187">                LogHandler.getInstance().error(</span>
+<span class="nc" id="L188">                        &quot;Error occured during updating the&quot;</span>
+                                + &quot; page with elements from database.&quot;);
+<span class="nc" id="L190">                this.transaction.rollback();</span>
+            }
+        }
+<span class="fc" id="L193">    }</span>
+
+    /**
+     * Deletes the selected users from the course and with it automatically from
+     * all course units of this course and transfers the paid price for the
+     * course units automatically back to the accounts of the participants.&lt;br&gt;
+     * Deleting means the users are removed from the participants list and the
+     * database entry of the course and the respective course units are updated.
+     */
+    public void deleteUsersFromCourse() {
+        
+        @SuppressWarnings(&quot;unchecked&quot;)
+        
+<span class="fc" id="L206">        List&lt;User&gt; allUsers = (List&lt;User&gt;) this.participants.getWrappedData();</span>
+<span class="fc" id="L207">        this.usersToDelete = new ArrayList&lt;User&gt;();</span>
+        
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        for(User user : allUsers) {</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if(user.isSelected()) {</span>
+<span class="fc" id="L211">                this.usersToDelete.add(user);</span>
+            }
+        }
+<span class="fc" id="L214">        transaction.start();</span>
+        
+        try {
+            //Check if remove participants from course was successful
+<span class="fc" id="L218">            if(UserDAO.removeParticipantsFromCourse</span>
+<span class="fc" id="L219">                    (this.transaction, this.getCourseID(), </span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">                                           this.getUsersToDelete()) == false) {</span>
+<span class="nc" id="L221">                LogHandler.getInstance().error(</span>
+<span class="nc" id="L222">                        &quot;Error occured during deleteUsersFromCourse().&quot;);</span>
+<span class="nc" id="L223">            } else {</span>
+                //Refresh page content
+<span class="fc" id="L225">                this.pagination.refreshNumberOfPages(CourseDAO</span>
+<span class="fc" id="L226">                        .getNumberOfParticipants(transaction, </span>
+<span class="fc" id="L227">                                                           this.getCourseID()));</span>
+<span class="fc" id="L228">                this.participants.setWrappedData(UserDAO.</span>
+<span class="fc" id="L229">                        getParticipantsOfCourse(</span>
+<span class="fc" id="L230">                                this.transaction, </span>
+<span class="fc" id="L231">                                this.getPagination(),</span>
+<span class="fc" id="L232">                                this.getCourseID()));</span>
+                
+                //FacesMessage: 'Deleting successful'
+<span class="fc" id="L235">                FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L236">                        null, </span>
+<span class="fc" id="L237">                        sessionUser.getLabel(</span>
+<span class="fc" id="L238">                                &quot;listParticipantsBean.facesMessage.&quot;</span>
+                                + &quot;DeletingSuccessful&quot;));
+            }
+<span class="fc" id="L241">            this.transaction.commit();</span>
+<span class="pc" id="L242">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L243">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L244">                    &quot;Error occured during deleteUsersFromCourse().&quot;);</span>
+<span class="nc" id="L245">            this.transaction.rollback();</span>
+        }
+
+<span class="fc" id="L248">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;usersToActivate&lt;/code&gt; that
+     * stores the participants which are to deleted from the course.
+     * 
+     * @return list of users who shall be deleted from a course
+     */
+    public List&lt;User&gt; getUsersToDelete() {
+<span class="fc" id="L257">	return usersToDelete;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;usersToDelete&lt;/code&gt; that stores
+     * the participants which are to deleted from the course.
+     * 
+     * @param usersToDelete
+     *            the new list of users who shall be deleted from a course
+     */
+    public void setUsersToDelete(List&lt;User&gt; usersToDelete) {
+<span class="nc" id="L268">    }</span>
+
+    /**
+     * Redirects the user back to the courseDetail - page of the course.
+     * 
+     * @return the link to the courseDetail - page
+     */
+    public String backToDetails() {
+<span class="fc" id="L276">        System.out.println(&quot;hier&quot;);</span>
+<span class="fc" id="L277">        return &quot;/facelets/open/courses/courseDetail.xhtml?courseID=&quot; + </span>
+<span class="fc" id="L278">                this.getCourseID() + &quot;faces-redirect=true&quot;;</span>
+    }
+
+    /**
+     * {@inheritDoc}}
+     */
+    @Override
+    public void goToSpecificPage() {
+        
+<span class="nc" id="L287">	this.pagination.setCurrentPageNumber(this.currentPage);</span>
+<span class="nc" id="L288">        transaction.start();</span>
+        
+        try {
+<span class="nc" id="L291">            this.participants.setWrappedData(</span>
+<span class="nc" id="L292">                  UserDAO.getParticipantsOfCourse(</span>
+<span class="nc" id="L293">                                                 this.transaction, </span>
+<span class="nc" id="L294">                                                 this.getPagination(),</span>
+<span class="nc" id="L295">                                                 this.getCourseID()));</span>
+<span class="nc" id="L296">            this.transaction.commit();</span>
+            
+<span class="nc" id="L298">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L299">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L300">                    &quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L301">            this.transaction.rollback();</span>
+        }
+<span class="nc" id="L303">    }</span>
+
+    /**
+     * {@inheritDoc}}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+        
+<span class="nc" id="L311">        if(this.getPagination().getSortColumn().equals(</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">                                     SortColumn.fromString(this.sortColumn))) {</span>
+<span class="nc" id="L313">            this.getPagination().changeSortDirection();</span>
+            
+<span class="nc" id="L315">        } else {</span>
+<span class="nc" id="L316">            this.getPagination().setSortColumn(</span>
+<span class="nc" id="L317">                                        SortColumn.fromString(this.sortColumn));</span>
+        }
+<span class="nc" id="L319">        transaction.start();</span>
+        
+        try {
+<span class="nc" id="L322">            this.participants.setWrappedData(</span>
+<span class="nc" id="L323">                    UserDAO.getParticipantsOfCourse(</span>
+<span class="nc" id="L324">                                                    this.transaction, </span>
+<span class="nc" id="L325">                                                    this.getPagination(),</span>
+<span class="nc" id="L326">                                                    this.getCourseID()));</span>
+            
+<span class="nc" id="L328">            this.transaction.commit();</span>
+            
+<span class="nc" id="L330">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L331">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L332">                    &quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L333">            this.transaction.rollback();</span>
+        }
+<span class="nc" id="L335">    }</span>
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L342">	return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L350">        this.pagination = pagination;</span>
+<span class="nc" id="L351">    }</span>
+    
+   
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="fc" id="L361">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L371">        this.sessionUser = userSession;</span>
+<span class="fc" id="L372">    }</span>
+
+  
+    /**
+     * @return the courseID
+     */
+    public int getCourseID() {
+<span class="fc" id="L379">        return courseID;</span>
+    }
+
+    /**
+     * @param courseID the courseID to set
+     */
+    public void setCourseID(int courseID) {
+<span class="fc" id="L386">        this.courseID = courseID;</span>
+<span class="fc" id="L387">    }</span>
+
+    /**
+     * @return the sortColumn
+     */
+    public String getSortColumn() {
+<span class="nc" id="L393">        return sortColumn;</span>
+    }
+
+    /**
+     * @param sortColumn 
+     *                 the sortColumn to set
+     */
+    public void setSortColumn(String sortColumn) {
+<span class="nc" id="L401">        this.sortColumn = sortColumn;</span>
+<span class="nc" id="L402">    }</span>
+
+    /**
+     * 
+     * @return the participants
+     */
+    public DataModel&lt;User&gt; getParticipants() {
+<span class="fc" id="L409">        return participants;</span>
+    }
+
+    /**
+     * 
+     * @param participants 
+     *                  the participants of the course to set
+     */
+    public void setParticipants(DataModel&lt;User&gt; participants) {
+<span class="nc" id="L418">        this.participants = participants;</span>
+<span class="nc" id="L419">    }</span>
+
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

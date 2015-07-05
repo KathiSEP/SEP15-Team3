@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MailThread.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.system</a> &gt; <span class="el_source">MailThread.java</span></div><h1>MailThread.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.system;
+
+import java.util.List;
+import java.util.Properties;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import de.ofCourse.model.SmtpServer;
+
+/**
+ * Executes the email dispached 
+ * 
+ * @author Sebastian Schwarz
+ *
+ */
+@ManagedBean
+@RequestScoped
+public class MailThread implements Runnable {
+
+    /**
+     * Stores the smtp properties
+     */
+    private Properties prop;
+    /**
+     * Stores the smtpServer
+     */
+    private SmtpServer smtpServer;
+    /**
+     * Stores the Recipients
+     */
+    private List&lt;String&gt; recipients;
+    /**
+     * Stores the Mail subject
+     */
+    private String subject;
+    /**
+     * Stores the Mail Message
+     */
+    private String message;
+    /**
+     * Stores the Authenticator
+     */
+    private Authenticator loginAuth;
+
+    /**
+     * Initialize all the Attributes
+     * 
+     * @param loginAuth
+     * @param prop
+     * @param session
+     * @param recipients
+     * @param message
+     * @param subject
+     */
+<span class="fc" id="L66">    public MailThread(Properties prop, Authenticator loginAuth,</span>
+            SmtpServer server, List&lt;String&gt; recipients, String subject,
+            String message) {
+<span class="fc" id="L69">        this.prop = prop;</span>
+<span class="fc" id="L70">        this.smtpServer = server;</span>
+<span class="fc" id="L71">        this.recipients = recipients;</span>
+<span class="fc" id="L72">        this.subject = subject;</span>
+<span class="fc" id="L73">        this.message = message;</span>
+<span class="fc" id="L74">        this.loginAuth = loginAuth;</span>
+<span class="fc" id="L75">    }</span>
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void run() {
+
+        try {
+            // https://javamail.java.net/nonav/docs/api/
+<span class="fc" id="L87">            Session session = Session.getDefaultInstance(prop, loginAuth);</span>
+<span class="fc" id="L88">            MimeMessage mail = new MimeMessage(session);</span>
+
+<span class="fc" id="L90">            mail.setFrom(new InternetAddress(smtpServer.getUsername()));</span>
+
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            for (String mailAddresse : recipients) {</span>
+<span class="fc" id="L93">                mail.addRecipients(Message.RecipientType.TO, mailAddresse);</span>
+            }
+
+<span class="fc" id="L96">            mail.setSubject(subject);</span>
+<span class="fc" id="L97">            mail.setText(message);</span>
+            Transport transport;
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if(smtpServer.isSsl()){</span>
+<span class="fc" id="L100">                transport = session.getTransport(&quot;smtp&quot;);</span>
+<span class="fc" id="L101">            }</span>
+            else{
+<span class="nc" id="L103">                transport = session.getTransport(&quot;smtps&quot;);</span>
+            }
+            
+
+<span class="fc" id="L107">            transport.connect(smtpServer.getHostaddr(),</span>
+<span class="fc" id="L108">                    smtpServer.getUsername(), smtpServer.getPassword());</span>
+<span class="fc" id="L109">            transport.sendMessage(mail, mail.getAllRecipients());</span>
+<span class="fc" id="L110">            transport.close();</span>
+
+<span class="pc" id="L112">        } catch (MessagingException e) {</span>
+          
+
+        }
+<span class="fc" id="L116">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Cycle.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">Cycle.java</span></div><h1>Cycle.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+/**
+ * This class contains the information of courseunits which will take place
+ * regulary
+ * 
+ * @author Sebastian
+ *
+ */
+<span class="fc" id="L13">public class Cycle {</span>
+
+    /**
+     * stores the id of the cycle
+     */
+    private int cycleID;
+
+    /**
+     * stores the Date and time when the first courseUnit will take place
+     */
+    private int courseID;
+    /**
+     * stores the days till the next unit should take place
+     */
+    private Period turnus;
+    /**
+     * stores the amount of units which should take place
+     */
+    private int numberOfUnits;
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;courseID&lt;/code&gt;.
+     * 
+     * @return the id of the associated course
+     */
+    public int getCourseID() {
+<span class="nc" id="L39">        return this.courseID;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;turnus&lt;/code&gt;.
+     * 
+     * @return the turnus till the next unit should take place
+     */
+    public Period getTurnus() {
+<span class="fc" id="L48">        return this.turnus;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;numberOfUnits&lt;/code&gt;.
+     * 
+     * @return the amount of units which should take place
+     */
+    public int getNumberOfUnits() {
+<span class="fc" id="L57">        return this.numberOfUnits;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseId&lt;/code&gt;.
+     * 
+     * @param courseID
+     *            the associated courseID
+     */
+    public void setCourseID(int courseID) {
+<span class="fc" id="L67">        this.courseID = courseID;</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;turnus&lt;/code&gt;.
+     * 
+     * @param turnus
+     *            new turnus to set
+     */
+    public void setTurnus(Period turnus) {
+<span class="fc" id="L77">        this.turnus = turnus;</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;numberOfUnits&lt;/code&gt;.
+     * 
+     * @param numberOfUnits
+     *            new amount of Units to set
+     */
+    public void setNumberOfUnits(int numberOfUnits) {
+<span class="fc" id="L87">        this.numberOfUnits = numberOfUnits;</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Returns the id of the cycle.
+     * 
+     * @return the id of the cycle
+     */
+    public int getCycleID() {
+<span class="fc" id="L96">        return cycleID;</span>
+    }
+
+    /**
+     * Sets the id of the cycle to the given value.
+     * 
+     * @param cycleID
+     *            the given cycle id
+     */
+    public void setCycleID(int cycleID) {
+<span class="fc" id="L106">        this.cycleID = cycleID;</span>
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

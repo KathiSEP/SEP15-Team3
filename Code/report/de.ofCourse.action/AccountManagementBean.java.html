@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AccountManagementBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">AccountManagementBean.java</span></div><h1>AccountManagementBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides functionality for course leaders and administrators to activate user
+ * accounts.
+ * 
+ * &lt;p&gt;
+ * Whether the activation by a course leader or an administrator is necessary,
+ * is determined by the administrator in his administrator settings. This class
+ * uses pagination to display the users.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;activateUsers&lt;/code&gt;.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L44">public class AccountManagementBean implements Pagination {</span>
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+    
+    /**
+     * Stores the elements per page
+     */
+    private static final int elementsPerPage = 10;
+
+    /**
+     * Stores the columns to sort
+     */
+    private String sortColumn;
+
+    /**
+     * The users that are selected by the user and shall be activated.
+     */
+    private List&lt;User&gt; usersToActivate;
+
+    /**
+     * The users that are displayed on the page.
+     */
+    private DataModel&lt;User&gt; users;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Stores the current page
+     */
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L95">        return currentPage;</span>
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L102">        this.currentPage = currentPage;</span>
+<span class="nc" id="L103">    }</span>
+
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L107">        this.users = new ListDataModel&lt;User&gt;();</span>
+<span class="fc" id="L108">        pagination = new PaginationData(elementsPerPage, 0, </span>
+<span class="fc" id="L109">                                        SortColumn.NICKNAME, SortDirection.ASC);</span>
+        
+<span class="fc" id="L111">        transaction = Connection.create();</span>
+<span class="fc" id="L112">        transaction.start();</span>
+        try {
+<span class="fc" id="L114">            this.pagination.refreshNumberOfPages(UserDAO</span>
+<span class="fc" id="L115">                          .getNumberOfNotAdminActivatedUsers(this.transaction));</span>
+            //Set a table witch users which are not admin activated yet
+<span class="fc" id="L117">            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(</span>
+<span class="fc" id="L118">                                       this.transaction, this.getPagination()));</span>
+<span class="fc" id="L119">            this.transaction.commit();</span>
+            
+<span class="pc" id="L121">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L122">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L123">                    &quot;Error occured during updating the&quot;</span>
+                            + &quot; page with elements from database.&quot;);
+<span class="nc" id="L125">            this.transaction.rollback();</span>
+        }
+<span class="fc" id="L127">    }</span>
+    
+    /**
+     * Activates the user accounts that are selected in the facelet.
+     * &lt;p&gt;
+     * It gets the users selected by the administrator or the course leader and
+     * changes the userStatus of these users to &lt;code&gt;REGISTERED&lt;/code&gt;.
+     * Furthermore it updates the entries of the users in the database. The
+     * system sends a message to all successfully new activated user to inform
+     * them about the activation and that they are now able to log in the
+     * system.
+     */
+    public void activateAccounts() {
+        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L141">        List&lt;User&gt; allUsers = (List&lt;User&gt;) this.users.getWrappedData();</span>
+<span class="fc" id="L142">        this.usersToActivate = new ArrayList&lt;User&gt;();</span>
+        
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for(User user : allUsers) {</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            if(user.isSelected()) {</span>
+<span class="fc" id="L146">                this.usersToActivate.add(user);</span>
+            }
+        }
+        
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if(this.usersToActivate.size() &gt; 0) {</span>
+        
+<span class="fc" id="L152">            this.transaction = Connection.create();</span>
+<span class="fc" id="L153">            transaction.start();</span>
+            try {
+                //Check if the user activation by the admin was successful
+<span class="fc" id="L156">                if(UserDAO.AdminActivateUsers(this.transaction, </span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                                            this.usersToActivate) == false) {</span>
+<span class="nc" id="L158">                    LogHandler.getInstance().error(</span>
+<span class="nc" id="L159">                            &quot;Error occured during adminActivateUsers().&quot;);</span>
+                    
+<span class="nc" id="L161">                    } else {</span>
+                        //Refresh page content
+<span class="fc" id="L163">                        this.pagination.refreshNumberOfPages(UserDAO</span>
+<span class="fc" id="L164">                          .getNumberOfNotAdminActivatedUsers(this.transaction));</span>
+<span class="fc" id="L165">                        this.users.setWrappedData(</span>
+<span class="fc" id="L166">                                UserDAO.getNotAdminActivatedUsers</span>
+<span class="fc" id="L167">                                                        (this.transaction, </span>
+<span class="fc" id="L168">                                                         this.getPagination()));</span>
+                        //FacesMessage: 'User activation successful'
+<span class="fc" id="L170">                        FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L171">                                 null,</span>
+<span class="fc" id="L172">                                 sessionUser.getLabel(</span>
+<span class="fc" id="L173">                                         &quot;AccountManagementBean.facesMessage.&quot;</span>
+                                         + &quot;ActivationSucceed&quot;));
+                    }
+<span class="fc" id="L176">                    this.transaction.commit();</span>
+                
+<span class="pc" id="L178">            } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L179">                LogHandler.getInstance().error(</span>
+<span class="nc" id="L180">                        &quot;Error occured during adminActivateUsers().&quot;);</span>
+                
+<span class="nc" id="L182">                this.transaction.rollback();</span>
+               }
+<span class="nc" id="L184">         } else {</span>
+             //FacesMessage: 'No users selected'
+<span class="nc" id="L186">            FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L187">                    null, </span>
+<span class="nc" id="L188">                    sessionUser.getLabel(</span>
+<span class="nc" id="L189">                            &quot;AccountManagementBean.facesMessage.NoUsers&quot;));            </span>
+        }
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;usersToActivate&lt;/code&gt;.
+     * 
+     * @return the users to activate
+     */
+    public List&lt;User&gt; getUsersToActivate() {
+<span class="nc" id="L199">	return usersToActivate;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;usersToActivate&lt;/code&gt;.
+     * 
+     * @param usersToActivate
+     *            the users that are to be activated
+     */
+    public void setUsersToActivate(List&lt;User&gt; usersToActivate) {
+<span class="nc" id="L209">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L216">	this.pagination.setCurrentPageNumber(this.currentPage);</span>
+        
+<span class="nc" id="L218">        transaction.start();</span>
+        
+        try {
+<span class="nc" id="L221">            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(</span>
+<span class="nc" id="L222">                    this.transaction, </span>
+<span class="nc" id="L223">                    this.getPagination()));</span>
+            
+<span class="nc" id="L225">            this.transaction.commit();</span>
+            
+<span class="nc" id="L227">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L228">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L229">                    &quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L230">            this.transaction.rollback();</span>
+        }
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+        
+<span class="nc" id="L240">        if(this.getPagination().getSortColumn().equals(SortColumn.fromString</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                                                          (this.sortColumn))) {</span>
+<span class="nc" id="L242">            this.getPagination().changeSortDirection();</span>
+            
+<span class="nc" id="L244">        } else {</span>
+<span class="nc" id="L245">            this.getPagination().setSortColumn(SortColumn.fromString(</span>
+<span class="nc" id="L246">                                                           this.sortColumn));</span>
+        }
+        
+<span class="nc" id="L249">        transaction.start();</span>
+        
+        try {
+<span class="nc" id="L252">            this.users.setWrappedData(UserDAO.getNotAdminActivatedUsers(</span>
+<span class="nc" id="L253">                    this.transaction, </span>
+<span class="nc" id="L254">                    this.getPagination()));</span>
+            
+<span class="nc" id="L256">            this.transaction.commit();</span>
+            
+<span class="nc" id="L258">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L259">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L260">                    &quot;Error occured during fetching data for pagination.&quot;);</span>
+<span class="nc" id="L261">            this.transaction.rollback();</span>
+        }
+<span class="nc" id="L263">    }</span>
+   
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L271">	return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L279">        this.pagination = pagination;</span>
+<span class="nc" id="L280">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L288">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L298">        this.sessionUser = userSession;</span>
+<span class="fc" id="L299">    }</span>
+
+    /**
+     * @return the sortColumn
+     */
+    public String getSortColumn() {
+<span class="nc" id="L305">        return sortColumn;</span>
+    }
+
+    /**
+     * @param sortColumn the sortColumn to set
+     */
+    public void setSortColumn(String sortColumn) {
+<span class="nc" id="L312">        this.sortColumn = sortColumn;</span>
+<span class="nc" id="L313">    }</span>
+
+    /**
+     * @return the users
+     */
+    public DataModel&lt;User&gt; getUsers() {
+<span class="fc" id="L319">        return users;</span>
+    }
+
+    /**
+     * @param users the users to set
+     */
+    public void setUsers(DataModel&lt;User&gt; users) {
+<span class="nc" id="L326">        this.users = users;</span>
+<span class="nc" id="L327">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

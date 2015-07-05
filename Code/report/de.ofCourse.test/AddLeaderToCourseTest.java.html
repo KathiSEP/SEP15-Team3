@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AddLeaderToCourseTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">AddLeaderToCourseTest.java</span></div><h1>AddLeaderToCourseTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of add leader to course. This test is geared to the test T50-50 from 
+ * our product brief. Furthermore there are a view more tests for the faults that 
+ * can appear because of invalid user inserts. 
+ * The user with the id '10004' will be added to the course as leader in this 
+ * test. On top of that it is asserted that the faces messages to the user 
+ * insert are correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina H�lzl
+ */
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+<span class="nc bnc" id="L23" title="All 2 branches missed.">public class AddLeaderToCourseTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L26">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L27">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+<span class="nc" id="L29">  public static final String facesMessages= &quot;facesMessages&quot;;</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L33">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L34">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L35">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L36">  }</span>
+
+  
+  @Test
+  public void testAddLeaderToCourse() throws Exception {
+<span class="nc" id="L41">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L42">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+    
+    //Login as administrator
+<span class="nc" id="L45">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L46">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L47">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L48">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L49">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L50">    driver.findElement(By.linkText(&quot;Suche&quot;)).click();</span>
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;formFilterCourses:courseOffers&quot;)).click();</span>
+<span class="nc" id="L52">    driver.findElement(By.linkText(&quot;Yoga&quot;)).click();</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+    
+    // Testing insert is a negative number
+<span class="nc" id="L56">    driver.findElement(By.name(&quot;courseDetailsID:edit&quot;)).click();</span>
+<span class="nc" id="L57">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).clear();</span>
+<span class="nc" id="L58">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).sendKeys(&quot;-1234&quot;);</span>
+<span class="nc" id="L59">    driver.findElement(By.name(&quot;courseDetailsLeaderID:addCourseLeader&quot;)).click();</span>
+<span class="nc bnc" id="L60" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+    
+<span class="nc bnc" id="L62" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Eingegebene Kursleiter-ID ist keine positive Zahl! &quot;);</span>
+    
+    // Testing insert is no number
+<span class="nc" id="L65">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).clear();</span>
+<span class="nc" id="L66">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).sendKeys(&quot;wertdsg&quot;);</span>
+<span class="nc" id="L67">    driver.findElement(By.name(&quot;courseDetailsLeaderID:addCourseLeader&quot;)).click();</span>
+<span class="nc bnc" id="L68" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+    
+<span class="nc bnc" id="L70" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Bitte geben Sie eine positive Zahl als KursleiterID ein.&quot;);</span>
+    
+    
+    
+    // Testing inserted id does not exist
+<span class="nc" id="L75">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).clear();</span>
+<span class="nc" id="L76">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).sendKeys(&quot;123456&quot;);</span>
+<span class="nc" id="L77">    driver.findElement(By.name(&quot;courseDetailsLeaderID:addCourseLeader&quot;)).click();</span>
+<span class="nc bnc" id="L78" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+    
+<span class="nc bnc" id="L80" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Die eingegebene Kursleiter-ID existiert nicht im System.&quot;);</span>
+    
+    // Testing insert correct course instructor id
+<span class="nc" id="L83">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).clear();</span>
+<span class="nc" id="L84">    driver.findElement(By.id(&quot;courseDetailsLeaderID:leaderIDField&quot;)).sendKeys(&quot;10004&quot;);</span>
+<span class="nc" id="L85">    driver.findElement(By.name(&quot;courseDetailsLeaderID:addCourseLeader&quot;)).click();</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+    
+<span class="nc" id="L88">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L89">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L93">    driver.quit();</span>
+<span class="nc" id="L94">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L96">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L98">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L102">      driver.findElement(by);</span>
+<span class="nc" id="L103">      return true;</span>
+<span class="nc" id="L104">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L105">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L111">      driver.switchTo().alert();</span>
+<span class="nc" id="L112">      return true;</span>
+<span class="nc" id="L113">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L114">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L120">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L121">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L123">        alert.accept();</span>
+<span class="nc" id="L124">      } else {</span>
+<span class="nc" id="L125">        alert.dismiss();</span>
+      }
+<span class="nc" id="L127">      return alertText;</span>
+<span class="nc" id="L128">    } finally {</span>
+<span class="nc" id="L129">      acceptNextAlert = true;</span>
+<span class="nc" id="L130">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

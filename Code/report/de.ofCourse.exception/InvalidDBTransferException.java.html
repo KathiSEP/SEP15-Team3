@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>InvalidDBTransferException.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.exception</a> &gt; <span class="el_source">InvalidDBTransferException.java</span></div><h1>InvalidDBTransferException.java</h1><pre class="source lang-java linenums">/**
+ * Contains all custom exceptions that may occur in the OfCourse system.
+ */
+package de.ofCourse.exception;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.SQLException;
+
+import de.ofCourse.system.LogHandler;
+
+/**
+ * Occurs if a failure happened concerning the database.
+ * E.g. timeouts or illegal sql statements.
+ *
+ * @author Schwarz Sebastian
+ *
+ */
+public class InvalidDBTransferException extends RuntimeException {
+
+    /**
+     * serialID
+     */
+    private static final long serialVersionUID = -5414704117180836087L;
+    /**
+     * Stores the SQL Exception 
+     */
+    private Exception error;
+    
+    /**
+     * Calls the Constructor of the parent class
+     */
+    public InvalidDBTransferException(){
+<span class="nc" id="L34">        super(&quot;A Error occured during process on Database&quot;);</span>
+<span class="nc" id="L35">    }</span>
+    
+    /**
+     * Calls the Constructor of the parent class and gives a Log Entry
+     * @param message
+     */
+    public InvalidDBTransferException(String message){
+<span class="nc" id="L42">        super(message);</span>
+<span class="nc" id="L43">        LogHandler.getInstance().error(message);</span>
+<span class="nc" id="L44">    }</span>
+    
+    
+    /**
+     * Calls the Constructor of the parent class and gives a Log Entry with StackTrace
+     * @param message
+     * @param e
+     */
+    public InvalidDBTransferException(String message, Exception e){
+<span class="nc" id="L53">        super(message);</span>
+<span class="nc" id="L54">        this.error = e;</span>
+<span class="nc" id="L55">        StringWriter errors = new StringWriter();</span>
+<span class="nc" id="L56">        error.printStackTrace(new PrintWriter(errors));</span>
+        
+<span class="nc" id="L58">        LogHandler.getInstance().error(message +&quot;\n\n&quot; + errors.toString());</span>
+<span class="nc" id="L59">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

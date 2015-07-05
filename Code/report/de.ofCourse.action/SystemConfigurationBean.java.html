@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SystemConfigurationBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SystemConfigurationBean.java</span></div><h1>SystemConfigurationBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+
+import de.ofCourse.databaseDAO.SystemDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Activation;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides the functionalities for the administrator relating to the system,
+ * like registration management or payment settings.
+ * 
+ * &lt;p&gt;
+ * Furthermore it is responsible for directing the user to sites where the
+ * administrator can manage the users of the system, like creating new users or
+ * to sites where he can manage the courses of the system, like creating a new
+ * course.
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;adminManagement&lt;/code&gt;.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@ManagedBean
+@RequestScoped
+<span class="fc" id="L38">public class SystemConfigurationBean implements Serializable {</span>
+
+    /**
+     * Serial id
+     */
+    private static final long serialVersionUID = 3365915734550887541L;
+    
+    /**
+     * Represents the url to the page where a administrator can search for users
+     */
+    private final static String URL_SEARCH_USER = 
+	    &quot;/facelets/user/systemAdministrator/searchUser.xhtml&quot;;   
+    
+    /**
+     * Represents the url to the page where a new user can be created
+     */
+    private final static String URL_CREATE_USER = 
+	    &quot;/facelets/user/systemAdministrator/createUser.xhtml&quot;;
+    
+    /**
+     * Represents the url to the page where a new course can be created
+     */
+    private final static String URL_CREATE_COURSE = 
+	    &quot;/facelets/user/systemAdministrator/createCourse.xhtml&quot;;
+    
+    /**
+     * Represents the url to the page where you can search for courses
+     */
+    private final static String URL_SEARCH = &quot;/facelets/open/courses/search.xhtml&quot;;
+
+    /**
+     * Stores the overdraft credit that was granted by the administrator
+     */
+    private double overdraftCredit;
+
+
+    /**
+     * Stores the type of account activation that was selected by the
+     * administrator.
+     */
+    private String accountActivationType;
+
+
+    /**
+     * Stores the sign off limit in hours
+     */
+    private int signOffLimit;
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user an the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Initializes the bean with the necessary values to run
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L104">	transaction = Connection.create();</span>
+<span class="fc" id="L105">	transaction.start();</span>
+	
+	try{
+<span class="fc" id="L108">	    overdraftCredit = (double)SystemDAO.getOverdraftCredit(transaction);</span>
+<span class="fc" id="L109">	    signOffLimit = SystemDAO.getSignOffLimit(transaction);</span>
+<span class="fc" id="L110">	    accountActivationType = SystemDAO.getActivationType(transaction).toString();</span>
+<span class="fc" id="L111">	    transaction.commit();</span>
+<span class="fc" id="L112">	}</span>
+<span class="nc" id="L113">	catch(InvalidDBTransferException e){</span>
+<span class="nc" id="L114">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L115">		    &quot;Error during initializing admin managements page&quot;);</span>
+<span class="nc" id="L116">	    transaction.rollback();</span>
+	}
+	
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * Determines the type of account activation, that means it updates the
+     * setting relating to account activation in the database.
+     */
+    public void determineAccountActivationType() {
+<span class="fc" id="L126">	transaction.start();</span>
+	
+	try {    
+<span class="fc" id="L129">	    SystemDAO.setActivationType(</span>
+<span class="fc" id="L130">		    transaction, </span>
+<span class="fc" id="L131">		    Activation.fromString(getAccountActivationType()));    </span>
+<span class="fc" id="L132">	    transaction.commit();</span>
+	    //TODO
+<span class="fc" id="L134">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L135">		    &quot;formActivationType:saveAccountActivation&quot;,</span>
+<span class="fc" id="L136">		    sessionUser.getLabel(</span>
+<span class="fc" id="L137">			    &quot;systemConfigurationBean.FacesMessage.typeOfActivation&quot;)</span>
+<span class="fc" id="L138">			    + &quot;.&quot;);</span>
+<span class="pc" id="L139">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L140">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L141">		    &quot;Error occured during setting&quot;</span>
+			    + &quot; the granted overdraft credit.&quot;);
+<span class="nc" id="L143">	    transaction.rollback();</span>
+	}
+<span class="fc" id="L145">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;accountActivationType&lt;/code&gt;
+     * that stores the selected type of account activation.
+     * 
+     * @return the selected account activation type
+     */
+    public String getAccountActivationType() {
+<span class="fc" id="L154">	return accountActivationType;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;accountActivationType&lt;/code&gt; that
+     * stores the selected type of account activation.
+     * 
+     * @param accountActivationType
+     *            the new type of account activation
+     */
+    public void setAccountActivationType(String accountActivationType) {
+<span class="fc" id="L165">	this.accountActivationType = accountActivationType;</span>
+<span class="fc" id="L166">    }</span>
+
+    /**
+     * Determines the granted overdraft credit, that means it updates the
+     * setting relating to overdraft credit in the database.
+     */
+    public void determineOverdraftCredit() {
+<span class="fc" id="L173">	transaction.start();</span>
+
+	try {
+<span class="fc" id="L176">	    SystemDAO.setOverdraftCredit(transaction, (float) overdraftCredit);</span>
+<span class="fc" id="L177">	    transaction.commit();</span>
+<span class="fc" id="L178">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L179">		    &quot;formGiveCredit:giveCredit&quot;,</span>
+<span class="fc" id="L180">		    sessionUser.getLabel(</span>
+<span class="fc" id="L181">			    &quot;systemConfigurationBean.FacesMessage.grantCredit&quot;)</span>
+<span class="fc" id="L182">			    + overdraftCredit + &quot; Euro.&quot;);</span>
+	    
+<span class="pc" id="L184">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L185">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L186">		    &quot;Error occured during setting&quot;</span>
+			    + &quot; the granted overdraft credit.&quot;);
+<span class="nc" id="L188">	    transaction.rollback();</span>
+	}
+<span class="fc" id="L190">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;overdraftCredit&lt;/code&gt; that
+     * stores the granted overdraft credit.
+     * 
+     * @return the granted credit
+     */
+    public double getOverdraftCredit() {
+<span class="fc" id="L199">	return overdraftCredit;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;overdraftCredit&lt;/code&gt; that stores
+     * the the granted credit.
+     * 
+     * @param overdraftCredit
+     *            the new overdraft credit
+     */
+    public void setOverdraftCredit(double overdraftCredit) {
+<span class="fc" id="L210">	this.overdraftCredit = overdraftCredit;</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Determines the granted overdraft credit, that means it updates the
+     * setting relating to overdraft credit in the database.
+     */
+    public void determineSignOffLimit() {
+<span class="nc" id="L218">	transaction.start();</span>
+
+	try {
+<span class="nc" id="L221">	    SystemDAO.setSignOffLimit(transaction, signOffLimit);</span>
+<span class="nc" id="L222">	    transaction.commit();</span>
+<span class="nc" id="L223">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L224">		    &quot;formSignOff:saveSignOffLimit&quot;,</span>
+<span class="nc" id="L225">		    sessionUser.getLabel(</span>
+<span class="nc" id="L226">			    &quot;systemConfigurationBean.FacesMessage.signOff&quot;)</span>
+<span class="nc" id="L227">			    + signOffLimit + &quot;h.&quot;);</span>
+<span class="nc" id="L228">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L229">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L230">		    &quot;Error occured during setting&quot;</span>
+			    + &quot; the sign off limit for course units.&quot;);
+<span class="nc" id="L232">	    transaction.rollback();</span>
+	}
+<span class="nc" id="L234">    }</span>
+
+    /**
+     * Returns the sign off limit for course units
+     * 
+     * @return the sign off limit.
+     */
+    public int getSignOffLimit() {
+<span class="fc" id="L242">	return signOffLimit;</span>
+    }
+
+    /**
+     * Sets the sign off limit for course units.
+     * 
+     * @param signOffLimit
+     *            the sign off limit
+     */
+    public void setSignOffLimit(int signOffLimit) {
+<span class="nc" id="L252">	this.signOffLimit = signOffLimit;</span>
+<span class="nc" id="L253">    }</span>
+
+    /**
+     * Redirects the user to a page where a new user can be created.
+     * 
+     * @return link to &lt;code&gt;createUser&lt;/code&gt; page
+     */
+    public String loadCreateNewUserPage() {
+<span class="fc" id="L261">	return URL_CREATE_USER;</span>
+    }
+
+    /**
+     * Redirects the user to a page where he can managed the users of the
+     * system.
+     * 
+     * @return link to next page
+     */
+    public String loadManageUserPage() {
+<span class="fc" id="L271">	return URL_SEARCH_USER;</span>
+    }
+
+    /**
+     * Redirects the user to a page where a new course can be created.
+     * 
+     * @return link to &lt;code&gt;createCourse&lt;/code&gt; page
+     */
+    public String loadCreateNewCoursePage() {
+<span class="fc" id="L280">	return URL_CREATE_COURSE;</span>
+    }
+
+    /**
+     * Redirects the user to a page where he can managed the courses of the
+     * system.
+     * 
+     * @return link to next page
+     */
+    public String loadManageCoursesPage() {
+<span class="fc" id="L290">	return  URL_SEARCH;</span>
+    }
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L299">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L309">	this.sessionUser = userSession;</span>
+<span class="fc" id="L310">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CreateUserBasti3.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">CreateUserBasti3.java</span></div><h1>CreateUserBasti3.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+<span class="nc" id="L12">public class CreateUserBasti3 {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L15">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L16">  private StringBuffer verificationErrors = new StringBuffer();</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L20">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L21">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L22">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L23">  }</span>
+
+  @Test
+  public void testCreateUser() throws Exception {
+<span class="nc" id="L27">    driver.get(baseUrl + &quot;OfCourse/facelets/open/authenticate.xhtml&quot;);</span>
+<span class="nc" id="L28">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L29">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L30">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L31">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L32">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+        
+<span class="nc" id="L34">    driver.findElement(By.linkText(&quot;Administration&quot;)).click();</span>
+<span class="nc" id="L35">    driver.findElement(By.linkText(&quot;Seitenverwaltung&quot;)).click();</span>
+<span class="nc" id="L36">    driver.findElement(By.id(&quot;userManagement:createNewUser&quot;)).click();</span>
+<span class="nc" id="L37">    new Select(driver.findElement(By.id(&quot;formCreateUser:titleRegister&quot;))).selectByVisibleText(&quot;Herr&quot;);</span>
+<span class="nc" id="L38">    driver.findElement(By.id(&quot;formCreateUser:firstnameRegister&quot;)).clear();</span>
+<span class="nc" id="L39">    driver.findElement(By.id(&quot;formCreateUser:firstnameRegister&quot;)).sendKeys(&quot;Sebastian&quot;);</span>
+<span class="nc" id="L40">    driver.findElement(By.id(&quot;formCreateUser:lastnameRegister&quot;)).clear();</span>
+<span class="nc" id="L41">    driver.findElement(By.id(&quot;formCreateUser:lastnameRegister&quot;)).sendKeys(&quot;Schwarz&quot;);</span>
+<span class="nc" id="L42">    driver.findElement(By.id(&quot;formCreateUser:birthdateRegister&quot;)).clear();</span>
+<span class="nc" id="L43">    driver.findElement(By.id(&quot;formCreateUser:birthdateRegister&quot;)).sendKeys(&quot;04.12.1990&quot;);</span>
+<span class="nc" id="L44">    driver.findElement(By.id(&quot;formCreateUser:streetRegister&quot;)).clear();</span>
+<span class="nc" id="L45">    driver.findElement(By.id(&quot;formCreateUser:streetRegister&quot;)).sendKeys(&quot;Musterstrasse&quot;);</span>
+<span class="nc" id="L46">    driver.findElement(By.id(&quot;formCreateUser:houseNumberRegister&quot;)).clear();</span>
+<span class="nc" id="L47">    driver.findElement(By.id(&quot;formCreateUser:houseNumberRegister&quot;)).sendKeys(&quot;1&quot;);</span>
+<span class="nc" id="L48">    driver.findElement(By.id(&quot;formCreateUser:locationRegister&quot;)).clear();</span>
+<span class="nc" id="L49">    driver.findElement(By.id(&quot;formCreateUser:locationRegister&quot;)).sendKeys(&quot;Musterstadt&quot;);</span>
+<span class="nc" id="L50">    driver.findElement(By.id(&quot;formCreateUser:zipcodeRegister&quot;)).clear();</span>
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;formCreateUser:zipcodeRegister&quot;)).sendKeys(&quot;99999&quot;);</span>
+<span class="nc" id="L52">    driver.findElement(By.id(&quot;formCreateUser:countryRegister&quot;)).clear();</span>
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formCreateUser:countryRegister&quot;)).sendKeys(&quot;Deutschland&quot;);</span>
+<span class="nc" id="L54">    driver.findElement(By.id(&quot;formCreateUser:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L55">    driver.findElement(By.id(&quot;formCreateUser:emailRegister&quot;)).sendKeys(&quot;g6282972@trbvm.com&quot;);</span>
+<span class="nc" id="L56">    driver.findElement(By.id(&quot;formCreateUser:usernameRegister&quot;)).clear();</span>
+<span class="nc" id="L57">    driver.findElement(By.id(&quot;formCreateUser:usernameRegister&quot;)).sendKeys(&quot;Basti3&quot;);</span>
+<span class="nc" id="L58">    driver.findElement(By.id(&quot;formCreateUser:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L59">    driver.findElement(By.id(&quot;formCreateUser:passwordRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L60">    driver.findElement(By.id(&quot;formCreateUser:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L61">    driver.findElement(By.id(&quot;formCreateUser:passwordConfirmRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L62">    new Select(driver.findElement(By.id(&quot;formCreateUser:userRoleSelection&quot;))).selectByVisibleText(&quot;Kursleiter&quot;);</span>
+<span class="nc" id="L63">    driver.findElement(By.id(&quot;formCreateUser:createNewUser&quot;)).click(); </span>
+    
+    
+<span class="nc" id="L66">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L67">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L71">    driver.quit();</span>
+<span class="nc" id="L72">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L74">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L76">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L80">      driver.findElement(by);</span>
+<span class="nc" id="L81">      return true;</span>
+<span class="nc" id="L82">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L83">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L89">      driver.switchTo().alert();</span>
+<span class="nc" id="L90">      return true;</span>
+<span class="nc" id="L91">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L92">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L98">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L99">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L101">        alert.accept();</span>
+<span class="nc" id="L102">      } else {</span>
+<span class="nc" id="L103">        alert.dismiss();</span>
+      }
+<span class="nc" id="L105">      return alertText;</span>
+<span class="nc" id="L106">    } finally {</span>
+<span class="nc" id="L107">      acceptNextAlert = true;</span>
+<span class="nc" id="L108">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

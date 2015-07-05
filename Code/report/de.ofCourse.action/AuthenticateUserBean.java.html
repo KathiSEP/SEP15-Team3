@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AuthenticateUserBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">AuthenticateUserBean.java</span></div><h1>AuthenticateUserBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PasswordHash;
+
+/**
+ * Provides the function that a user can log in the system by entering his
+ * user name and his password.&lt;br&gt;
+ * &lt;p&gt;
+ * It is checked whether the user is registered in the system.&lt;br&gt;
+ * In case of this is true, the user is logged in the system. Otherwise the
+ * access to the system isn't granted.&lt;br&gt;
+ * 
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;authenticate&lt;/code&gt;.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+@ManagedBean
+@RequestScoped
+<span class="fc" id="L38">public class AuthenticateUserBean {</span>
+
+    /**
+     * Represents a user object. It stores the entered user name and the entered
+     * password, which are needed to log in.
+     */
+    private User loginUser;
+
+    /**
+     * Represents the url to the authenticate page
+     */
+    private final static String URL_AUTHENTICATE = 
+                       &quot;/facelets/open/authenticate.xhtml?faces-redirect=false&quot;;
+    
+    /**
+     * Represents the url to the myCourses page
+     */
+    private final static String URL_MY_COURSES =
+            &quot;/facelets/user/registeredUser/myCourses.xhtml?faces-redirect=true&quot;;
+    
+    /**
+     * This managed Property represents the mail bean.
+     */
+    @ManagedProperty(&quot;#{mailBean}&quot;)
+    private MailBean mailBean;
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;MailBean&lt;/code&gt;.
+     * 
+     * @return the mailBean
+     */
+    public MailBean getMailBean() {
+<span class="nc" id="L70">        return mailBean;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;MailBean&lt;/code&gt;.
+     * 
+     * @param mailBean
+     *            the mailBean to set
+     */
+    public void setMailBean(MailBean mailBean) {
+<span class="fc" id="L80">        this.mailBean = mailBean;</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * The password which was inserted by the user.
+     */
+    private String loginPassword;
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Initialize new session, because nothing could be logged in at the login 
+     * page yet.
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L107">        loginUser = new User();</span>
+        // Filling the HTTP-Session with the user data for the 
+        // PhaseListener.
+<span class="fc" id="L110">        HttpSession session = (HttpSession) FacesContext</span>
+<span class="fc" id="L111">                .getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L112">                .getSession(true);</span>
+<span class="fc" id="L113">        session.setAttribute(&quot;lang&quot;, Language.DE.toString());</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Returns the link to the &lt;code&gt;myCourses&lt;/code&gt; page if the entered
+     * user name and the respective password are valid.
+     * &lt;p&gt;
+     * It is checked whether the entered user name and the respective password
+     * belong to a user that is registered in the system. If this is true, the
+     * log in action is successful and the user is directed to his
+     * &lt;code&gt;myCourses&lt;/code&gt; page.&lt;br&gt;
+     * Otherwise there's displayed an error message an the user stays on this
+     * page.
+     * 
+     * @return link to the next page
+     */
+    public String login() {
+
+<span class="fc" id="L131">        final int usernameOrPasswordWrong = -1;</span>
+<span class="fc" id="L132">        final int accountNotActivated = -2;</span>
+<span class="fc" id="L133">        final int dbErrorOccured = -3;</span>
+
+<span class="fc" id="L135">        int id = dbErrorOccured;</span>
+
+        // Create a new transaction object for the database connection. 
+<span class="fc" id="L138">        this.transaction = Connection.create();</span>
+<span class="fc" id="L139">        this.transaction.start();</span>
+        try {
+            // hash inserted password
+<span class="fc" id="L142">            String salt = UserDAO.getPWSalt(</span>
+<span class="fc" id="L143">                                    this.transaction, </span>
+<span class="fc" id="L144">                                    this.getLoginUser().getUsername());</span>
+            
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if(salt == null) {</span>
+                //FacesMessage: User name or password wrong
+<span class="fc" id="L148">                FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L149">                        null,</span>
+<span class="fc" id="L150">                        sessionUser.getLabel(</span>
+<span class="fc" id="L151">                             &quot;authenticateUserBean.facesMessage.UserNameOrPW&quot;));</span>
+<span class="fc" id="L152">            } else {</span>
+<span class="fc" id="L153">                String passwordHash = PasswordHash.hash(</span>
+<span class="fc" id="L154">                                                        this.loginPassword, </span>
+<span class="fc" id="L155">                                                        salt);</span>
+                // Checks if the username and the password are valid.
+<span class="fc" id="L157">                id = UserDAO.proveLogin(this.transaction, this.getLoginUser()</span>
+<span class="fc" id="L158">                        .getUsername(), passwordHash);</span>
+    
+                // Method proveLogin returns -1, if user name ore password are 
+                // wrong.
+                // Returns -2 if the user account is not activated yet.
+                // Else it returns the id of the user.
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                if (id == usernameOrPasswordWrong) {</span>
+                    // Throwing error message into the faces context:
+                    // 'User name or password wrong'
+<span class="fc" id="L167">                    FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L168">                            null,</span>
+<span class="fc" id="L169">                            sessionUser.getLabel(</span>
+<span class="fc" id="L170">                             &quot;authenticateUserBean.facesMessage.UserNameOrPW&quot;));</span>
+    
+                    // Return to the login page again, because the login went 
+                    // wrong.
+<span class="fc" id="L174">                    this.transaction.rollback();</span>
+<span class="fc" id="L175">                    return URL_AUTHENTICATE;</span>
+                    
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                } else if (id == accountNotActivated) {</span>
+                    // Throwing error message into the faces context:
+                    // 'Account not active'
+<span class="nc" id="L180">                    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L181">                            null,</span>
+<span class="nc" id="L182">                            sessionUser.getLabel(</span>
+<span class="nc" id="L183">                              &quot;authenticateUserBean.facesMessage.UserAccount&quot;));</span>
+    
+                    // Return to the login page again, because the login went 
+                    // wrong.
+<span class="nc" id="L187">                    this.transaction.rollback();</span>
+<span class="nc" id="L188">                    return URL_AUTHENTICATE;</span>
+                    
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">                } else if (id == dbErrorOccured) {</span>
+                    // Throwing error message into the faces context:
+                    // 'Account not active'
+<span class="nc" id="L193">                    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L194">                            null,</span>
+<span class="nc" id="L195">                            sessionUser.getLabel(</span>
+<span class="nc" id="L196">                              &quot;authenticateUserBean.facesMessage.UserAccount&quot;));</span>
+    
+                    // Return to the login page again, because the login went 
+                    // wrong.
+<span class="nc" id="L200">                    this.transaction.rollback();</span>
+<span class="nc" id="L201">                    return URL_AUTHENTICATE;</span>
+                    
+                } else {
+                    // Filling the session object with the user data, 
+                    // interrogate not yet available data from the database 
+                    // by using the user id.
+<span class="fc" id="L207">                    sessionUser.setLanguage(Language.DE);</span>
+<span class="fc" id="L208">                    sessionUser.setUserID(id);</span>
+<span class="fc" id="L209">                    sessionUser.setUserRole(UserDAO.getUserRole(</span>
+<span class="fc" id="L210">                                                            this.transaction,</span>
+<span class="fc" id="L211">                                                            id));</span>
+<span class="fc" id="L212">                    sessionUser.setUserStatus(UserDAO.getUserStatus(</span>
+<span class="fc" id="L213">                            this.transaction, id));</span>
+    
+                    // Filling the HTTP-Session with the user data for the 
+                    // PhaseListener.
+<span class="fc" id="L217">                    HttpSession session = (HttpSession) FacesContext</span>
+<span class="fc" id="L218">                            .getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L219">                            .getSession(true);</span>
+<span class="fc" id="L220">                    session.setAttribute(&quot;loggedin&quot;, true);</span>
+<span class="fc" id="L221">                    session.setAttribute(&quot;userID&quot;, id);</span>
+<span class="fc" id="L222">                    session.setAttribute(&quot;userRole&quot;, sessionUser.getUserRole());</span>
+    
+                    // Forwarding to the page myCourses, because the login was 
+                    // successful.
+<span class="fc" id="L226">                    this.transaction.commit();</span>
+<span class="fc" id="L227">                    return URL_MY_COURSES;</span>
+                }
+            }
+
+<span class="nc" id="L231">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L232">            LogHandler.getInstance().error(e.getMessage());</span>
+<span class="nc" id="L233">            this.transaction.rollback();</span>
+        }
+
+<span class="fc" id="L236">        return URL_AUTHENTICATE;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;loginUser&lt;/code&gt;.
+     * 
+     * @return the user who wants to log in
+     */
+    public User getLoginUser() {
+<span class="fc" id="L245">        return loginUser;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;loginUser&lt;/code&gt;.
+     * 
+     * @param userToLogIn
+     *            the users who wants to log in
+     */
+    public void setLoginUser(User loginUser) {
+<span class="nc" id="L255">        this.loginUser = loginUser;</span>
+<span class="nc" id="L256">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L264">        return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean sessionUser) {
+<span class="fc" id="L274">        this.sessionUser = sessionUser;</span>
+<span class="fc" id="L275">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;loginPassword&lt;/code&gt;.
+     * 
+     * @return the inserted password
+     */
+    public String getLoginPassword() {
+<span class="fc" id="L283">        return loginPassword;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;loginPassword&lt;/code&gt;.
+     * 
+     * @param loginPassword
+     *            inserted Password
+     */
+    public void setLoginPassword(String loginPassword) {
+<span class="fc" id="L293">        this.loginPassword = loginPassword;</span>
+<span class="fc" id="L294">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

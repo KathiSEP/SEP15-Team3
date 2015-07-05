@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CreateCourseTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">CreateCourseTest.java</span></div><h1>CreateCourseTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of create course. This test is geared to the tests T10-80 and T10-90
+ * from our product brief. Furthermore there are a view more tests for the 
+ * faults that can appear because of invalid user inserts. 
+ * The two courses 'Yoga' and 'Standardtanz' will be created in this test. On
+ * top of that it is asserted that the faces messages to the user insert are 
+ * correct and that the user will be sent up to the right page.
+ * 
+ * @author Katharina H�lzl
+ */
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+<span class="nc bnc" id="L22" title="All 2 branches missed.">public class CreateCourseTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L25">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L26">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+  
+  public static final String messageCourseTitle= &quot;messageCourseTitle&quot;;
+  public static final String messageCourseLeaderID= &quot;messageCourseLeaderID&quot;;
+  public static final String messageCourseParticipants= &quot;messageCourseParticipants&quot;;
+  public static final String messageStartDate= &quot;messageStartDate&quot;;
+  public static final String messageEndDate= &quot;messageEndDate&quot;;
+<span class="nc" id="L34">  public static final String messageImage= &quot;messageImage&quot;;</span>
+  
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L39">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L40">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L41">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L42">  }</span>
+
+  @Test
+  public void testCreateCourse() throws Exception {
+
+<span class="nc" id="L47">      driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+      // Login as administrator and navigate to the page createCourse
+<span class="nc" id="L49">      driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+      
+<span class="nc" id="L52">      driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L53">      driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L54">      driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L55">      driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L56">      driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L57">      driver.findElement(By.linkText(&quot;Administration&quot;)).click();</span>
+<span class="nc" id="L58">      driver.findElement(By.linkText(&quot;Seitenverwaltung&quot;)).click();</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;heading1&quot;)).getText().equals(&quot;Seitenverwaltung&quot;);</span>
+      
+<span class="nc" id="L61">      driver.findElement(By.id(&quot;courseManagement:createNewCourse&quot;)).click();</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;createCourse&quot;)).getText().equals(&quot;Neuen Kurs anlegen&quot;);</span>
+      
+      // Testing required messages 
+<span class="nc" id="L65">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L67" title="All 4 branches missed.">      assert driver.findElement(By.id(messageCourseTitle)).getText().contains(&quot;Bitte geben Sie einen Titel ein. &quot;);</span>
+<span class="nc bnc" id="L68" title="All 4 branches missed.">      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains(&quot;Bitte KursleiterID eingeben. &quot;);</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">      assert driver.findElement(By.id(messageStartDate)).getText().contains(&quot;Bitte Startdatum eingeben. &quot;);</span>
+<span class="nc bnc" id="L70" title="All 4 branches missed.">      assert driver.findElement(By.id(messageEndDate)).getText().contains(&quot;Bitte Enddatum eingeben. &quot;);</span>
+      
+      // Testing insert negative numbers at course leader ID and max. participants
+<span class="nc" id="L73">      driver.findElement(By.id(&quot;formCreateCourse:courseTitle&quot;)).clear();</span>
+<span class="nc" id="L74">      driver.findElement(By.id(&quot;formCreateCourse:courseTitle&quot;)).sendKeys(&quot;Yoga&quot;);</span>
+<span class="nc" id="L75">      driver.findElement(By.id(&quot;formCreateCourse:courseDescription&quot;)).clear();</span>
+<span class="nc" id="L76">      driver.findElement(By.id(&quot;formCreateCourse:courseDescription&quot;)).sendKeys(&quot;Bringe Koerper, Geist und Seele in Einklang durch Yoga Uebungen. Jeder Teilnehmer sollte seine eigene Turnmatte mitnehmen&quot;);</span>
+<span class="nc" id="L77">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).clear();</span>
+<span class="nc" id="L78">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).sendKeys(&quot;-12&quot;);</span>
+<span class="nc" id="L79">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).clear();</span>
+<span class="nc" id="L80">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).sendKeys(&quot;-12&quot;);</span>
+<span class="nc" id="L81">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).clear();</span>
+<span class="nc" id="L82">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).sendKeys(&quot;12.03.2015&quot;);</span>
+<span class="nc" id="L83">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).clear();</span>
+<span class="nc" id="L84">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).sendKeys(&quot;12.03.2016&quot;);</span>
+<span class="nc" id="L85">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L87" title="All 4 branches missed.">      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains(&quot;Bitte geben Sie eine positive Zahl als KursleiterID ein.&quot;);</span>
+<span class="nc bnc" id="L88" title="All 4 branches missed.">      assert driver.findElement(By.id(messageCourseParticipants)).getText().contains(&quot;Bitte positive Zahl eingeben. &quot;);</span>
+      
+      // Testing course leader id does not exist
+<span class="nc" id="L91">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).clear();</span>
+<span class="nc" id="L92">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).sendKeys(&quot;123456&quot;);</span>
+<span class="nc" id="L93">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).clear();</span>
+<span class="nc" id="L94">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).sendKeys(&quot;20&quot;);</span>
+<span class="nc" id="L95">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L97" title="All 4 branches missed.">      assert driver.findElement(By.id(messageCourseLeaderID)).getText().contains(&quot;Die eingegebene Kursleiter-ID existiert nicht im System. &quot;);</span>
+      
+      // Testing end date does not exist and start date has a invalid format
+<span class="nc" id="L100">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).clear();</span>
+<span class="nc" id="L101">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).sendKeys(&quot;10001&quot;);</span>
+<span class="nc" id="L102">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).clear();</span>
+<span class="nc" id="L103">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).sendKeys(&quot;123&quot;);</span>
+<span class="nc" id="L104">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).clear();</span>
+<span class="nc" id="L105">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).sendKeys(&quot;33.03.2016&quot;);</span>
+<span class="nc" id="L106">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L108" title="All 4 branches missed.">      assert driver.findElement(By.id(messageStartDate)).getText().contains(&quot;Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. &quot;);</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">      assert driver.findElement(By.id(messageEndDate)).getText().contains(&quot;Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. &quot;);</span>
+      
+      // Testing end date is before the start date
+<span class="nc" id="L112">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).clear();</span>
+<span class="nc" id="L113">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).sendKeys(&quot;12.03.2015&quot;);</span>
+<span class="nc" id="L114">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).clear();</span>
+<span class="nc" id="L115">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).sendKeys(&quot;03.02.2015&quot;);</span>
+<span class="nc" id="L116">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L118" title="All 4 branches missed.">      assert driver.findElement(By.id(messageStartDate)).getText().contains(&quot;Startdatum muss vor dem Enddatum liegen. &quot;);</span>
+      
+      // Testing wrong image format
+<span class="nc" id="L121">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).clear();</span>
+<span class="nc" id="L122">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).sendKeys(&quot;03.02.2016&quot;);</span>
+<span class="nc" id="L123">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).clear();</span>
+<span class="nc" id="L124">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).sendKeys(&quot;C:\\Users\\Kathi\\Desktop\\url.png&quot;);</span>
+<span class="nc" id="L125">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L127" title="All 4 branches missed.">      assert driver.findElement(By.id(messageImage)).getText().contains(&quot;Kein g�ltiges Bildformat. &quot;);</span>
+      
+      //Testing wrong image size
+<span class="nc" id="L130">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).clear();</span>
+<span class="nc" id="L131">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).sendKeys(&quot;C:\\Users\\Public\\Pictures\\Sample Pictures\\Chrysanthemum.jpg&quot;);</span>
+<span class="nc" id="L132">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+      
+<span class="nc bnc" id="L134" title="All 4 branches missed.">      assert driver.findElement(By.id(messageImage)).getText().contains(&quot;Das Bild muss kleiner als 100 KB sein. &quot;);</span>
+      
+      // Testing correct data for the course 'Yoga'
+<span class="nc" id="L137">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).clear();</span>
+<span class="nc" id="L138">      driver.findElement(By.id(&quot;formCreateCourse:courseImage&quot;)).sendKeys(&quot;C:\\Users\\Blacky\\Desktop\\domo.jpg&quot;);</span>
+<span class="nc" id="L139">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+<span class="nc bnc" id="L140" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Yoga&quot;);</span>
+      
+      // Testing create a new course 'Standardtanz'
+<span class="nc" id="L143">      driver.findElement(By.linkText(&quot;Administration&quot;)).click();</span>
+<span class="nc" id="L144">      driver.findElement(By.linkText(&quot;Seitenverwaltung&quot;)).click();</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;heading1&quot;)).getText().equals(&quot;Seitenverwaltung&quot;);</span>
+      
+<span class="nc" id="L147">      driver.findElement(By.id(&quot;courseManagement:createNewCourse&quot;)).click();   </span>
+<span class="nc bnc" id="L148" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;createCourse&quot;)).getText().equals(&quot;Neuen Kurs anlegen&quot;);</span>
+      
+<span class="nc" id="L150">      driver.findElement(By.id(&quot;formCreateCourse:courseTitle&quot;)).clear();</span>
+<span class="nc" id="L151">      driver.findElement(By.id(&quot;formCreateCourse:courseTitle&quot;)).sendKeys(&quot;Standardtanz&quot;);</span>
+<span class="nc" id="L152">      driver.findElement(By.id(&quot;formCreateCourse:courseDescription&quot;)).clear();</span>
+<span class="nc" id="L153">      driver.findElement(By.id(&quot;formCreateCourse:courseDescription&quot;)).sendKeys(&quot;Grundkurs Standardtanz. Erlernt werden Taenze wie Walzer, DiscoFox, Cha-Cha-Cha, SlowFox und Tango. Die Teilnahme als Paar ist wuenschenswert.&quot;);</span>
+<span class="nc" id="L154">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).clear();</span>
+<span class="nc" id="L155">      driver.findElement(By.id(&quot;formCreateCourse:IdOfCourseLeader&quot;)).sendKeys(&quot;10001&quot;);</span>
+<span class="nc" id="L156">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).clear();</span>
+<span class="nc" id="L157">      driver.findElement(By.id(&quot;formCreateCourse:courseParticipants&quot;)).sendKeys(&quot;30&quot;);</span>
+<span class="nc" id="L158">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).clear();</span>
+<span class="nc" id="L159">      driver.findElement(By.id(&quot;formCreateCourse:courseStartDate&quot;)).sendKeys(&quot;04.08.2015&quot;);</span>
+<span class="nc" id="L160">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).clear();</span>
+<span class="nc" id="L161">      driver.findElement(By.id(&quot;formCreateCourse:courseEndDate&quot;)).sendKeys(&quot;30.09.2015&quot;);</span>
+<span class="nc" id="L162">      driver.findElement(By.id(&quot;formCreateCourse:createNewCourse&quot;)).click();</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">      assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Standardtanz&quot;);</span>
+      
+<span class="nc" id="L165">      driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L166">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L170">    driver.quit();</span>
+<span class="nc" id="L171">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L173">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L175">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L179">      driver.findElement(by);</span>
+<span class="nc" id="L180">      return true;</span>
+<span class="nc" id="L181">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L182">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L188">      driver.switchTo().alert();</span>
+<span class="nc" id="L189">      return true;</span>
+<span class="nc" id="L190">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L191">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L197">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L198">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L200">        alert.accept();</span>
+<span class="nc" id="L201">      } else {</span>
+<span class="nc" id="L202">        alert.dismiss();</span>
+      }
+<span class="nc" id="L204">      return alertText;</span>
+<span class="nc" id="L205">    } finally {</span>
+<span class="nc" id="L206">      acceptNextAlert = true;</span>
+<span class="nc" id="L207">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SearchCourseBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SearchCourseBeanTest.java</span></div><h1>SearchCourseBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.action;
+
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+
+/**
+ * 
+ * JUnit test for the class SearchCourseBean.
+ * 
+ * @author Patrick Cretu
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, CourseDAO.class,
+	FacesContext.class, PaginationData.class })
+<span class="nc" id="L37">public class SearchCourseBeanTest {</span>
+	
+	/**
+	 * The backing bean attribute
+	 */
+	private SearchCourseBean bean;
+	
+	/**
+	 * The bean's pagination data
+	 */
+	private PaginationData pagination;
+	
+	/**
+	 * The attribute presenting the user's selected search parameter
+	 */
+	private String searchParam;
+	
+	/**
+	 * The attribute presenting the user's selected search input
+	 */
+	private String searchString;
+	
+	/**
+	 * Connection to access the database
+	 */
+	private Connection conn;
+	
+	@Before
+    public void setup() {
+		// Mock the connection
+<span class="nc" id="L67">		PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L68">		conn = mock(Connection.class);</span>
+<span class="nc" id="L69">		Mockito.when(Connection.create()).thenReturn(conn);</span>
+		
+		// Mock CourseDAO
+<span class="nc" id="L72">		PowerMockito.mockStatic(CourseDAO.class);</span>
+		
+<span class="nc" id="L74">		pagination = new PaginationData();</span>
+<span class="nc" id="L75">    	pagination.setElementsPerPage(10);</span>
+<span class="nc" id="L76">    	searchParam = &quot;title&quot;;</span>
+    	
+<span class="nc" id="L78">    	bean = new SearchCourseBean();</span>
+<span class="nc" id="L79">		bean.init();</span>
+<span class="nc" id="L80">	}</span>
+
+	/**
+	 * Tests the backing bean method searchByTitle()
+	 */
+	@SuppressWarnings(&quot;deprecation&quot;)
+	@Test
+	public void testSearchByTitle() {		
+<span class="nc" id="L88">		bean.setSearchParam(&quot;titel&quot;);</span>
+<span class="nc" id="L89">		bean.setSearchString(&quot;yoga&quot;);</span>
+				
+<span class="nc" id="L91">		pagination.setSortColumn(SortColumn.TITLE);</span>
+<span class="nc" id="L92">		pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="nc" id="L93">		pagination.setCurrentPageNumber(0);</span>
+		
+		// Determine the return value of getNumberOfCourses
+<span class="nc" id="L96">		Mockito.when(CourseDAO.getNumberOfCourses(conn, searchParam,</span>
+<span class="nc" id="L97">				searchString)).thenReturn(1);</span>
+		
+<span class="nc" id="L99">		pagination.refreshNumberOfPages(1);</span>
+		
+<span class="nc" id="L101">		bean.setPagination(pagination);</span>
+		
+		//Create course dates
+<span class="nc" id="L104">		Date startDate = new Date();</span>
+<span class="nc" id="L105">		startDate.setDate(2015-6-15);</span>
+<span class="nc" id="L106">		Date endDate = new Date();</span>
+<span class="nc" id="L107">		endDate.setDate(2016-6-15);</span>
+		
+		// Create course
+<span class="nc" id="L110">		Course course = new Course();</span>
+<span class="nc" id="L111">		course.setCourseID(10004);</span>
+<span class="nc" id="L112">		course.setTitle(&quot;Yoga234&quot;);</span>
+<span class="nc" id="L113">		course.setMaxUsers(35);</span>
+<span class="nc" id="L114">		course.setStartdate(startDate);</span>
+<span class="nc" id="L115">		course.setEnddate(endDate);</span>
+		
+		//Add course to result list
+<span class="nc" id="L118">		List&lt;Course&gt; searchResult = new ArrayList&lt;Course&gt;();</span>
+<span class="nc" id="L119">		searchResult.add(course);</span>
+		
+		// Determine the return value of getCourses
+<span class="nc" id="L122">		Mockito.when(CourseDAO.getCourses(conn, pagination, searchParam,</span>
+<span class="nc" id="L123">				searchString)).thenReturn(searchResult);</span>
+		
+<span class="nc" id="L125">		bean.search();</span>
+<span class="nc" id="L126">	}</span>
+	
+	/**
+	 * Tests the backing bean method searchByDate()
+	 */
+	@SuppressWarnings(&quot;deprecation&quot;)
+	@Test
+	public void testSearchByDate() {
+<span class="nc" id="L134">		bean.setSearchParam(&quot;start_date&quot;);</span>
+<span class="nc" id="L135">		bean.setSearchString(&quot;6.7.2015&quot;);</span>
+				
+<span class="nc" id="L137">		pagination.setSortColumn(SortColumn.START_DATE);</span>
+<span class="nc" id="L138">		pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="nc" id="L139">		pagination.setCurrentPageNumber(0);</span>
+		
+		// Determine the return value of getNumberOfCourses
+<span class="nc" id="L142">		Mockito.when(CourseDAO.getNumberOfCourses(conn, searchParam,</span>
+<span class="nc" id="L143">				searchString)).thenReturn(1);</span>
+		
+<span class="nc" id="L145">		pagination.refreshNumberOfPages(1);</span>
+		
+<span class="nc" id="L147">		bean.setPagination(pagination);</span>
+		
+		//Create course dates
+<span class="nc" id="L150">		Date startDate = new Date();</span>
+<span class="nc" id="L151">		startDate.setDate(2015-4-15);</span>
+<span class="nc" id="L152">		Date endDate = new Date();</span>
+<span class="nc" id="L153">		endDate.setDate(2016-12-8);</span>
+		
+		// Create course
+<span class="nc" id="L156">		Course course = new Course();</span>
+<span class="nc" id="L157">		course.setCourseID(10005);</span>
+<span class="nc" id="L158">		course.setTitle(&quot;BildTest&quot;);</span>
+<span class="nc" id="L159">		course.setMaxUsers(101);</span>
+<span class="nc" id="L160">		course.setStartdate(startDate);</span>
+<span class="nc" id="L161">		course.setEnddate(endDate);</span>
+		
+		//Add course to result list
+<span class="nc" id="L164">		List&lt;Course&gt; searchResult = new ArrayList&lt;Course&gt;();</span>
+<span class="nc" id="L165">		searchResult.add(course);</span>
+		
+		// Determine the return value of getCourses
+<span class="nc" id="L168">		Mockito.when(CourseDAO.getCourses(conn, pagination, searchParam,</span>
+<span class="nc" id="L169">				searchString)).thenReturn(searchResult);</span>
+		
+<span class="nc" id="L171">		bean.search();</span>
+<span class="nc" id="L172">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

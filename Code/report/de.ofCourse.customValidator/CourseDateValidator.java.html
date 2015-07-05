@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseDateValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.customValidator</a> &gt; <span class="el_source">CourseDateValidator.java</span></div><h1>CourseDateValidator.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.customValidator;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Checks if the inserted start date is before the inserted end date.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+
+@FacesValidator(&quot;courseDateValidator&quot;)
+<span class="fc" id="L31">public class CourseDateValidator implements Validator {</span>
+
+    /**
+     * Gets called for example when a new course is created and checks if the 
+     * inserted start date is before the inserted end date.
+     */
+    @Override
+    public void validate(FacesContext fc, UIComponent component, Object value)
+            throws ValidatorException {
+        
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
+<span class="fc" id="L43">        Map&lt;String, Object&gt; sessionMap = FacesContext</span>
+<span class="fc" id="L44">                .getCurrentInstance().getExternalContext().getSessionMap();</span>
+        
+<span class="fc" id="L46">        Language lang = null;</span>
+        
+        //Check if the parameter language exists in the session.
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+            //Convert the string (DE, EN, BAY) into a language object
+<span class="fc" id="L51">            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+            
+<span class="fc" id="L53">        } else {</span>
+            //Set the language to German (DE) an write the parameter into the 
+            //session
+<span class="nc" id="L56">            lang = Language.DE;</span>
+<span class="nc" id="L57">            HttpSession session = (HttpSession) FacesContext</span>
+<span class="nc" id="L58">                    .getCurrentInstance()</span>
+<span class="nc" id="L59">                    .getExternalContext()</span>
+<span class="nc" id="L60">                    .getSession(true);</span>
+<span class="nc" id="L61">            session.setAttribute(&quot;lang&quot;, lang.toString());</span>
+        }
+        
+<span class="fc" id="L64">        Date startDate = null;</span>
+<span class="fc" id="L65">        Date endDate = null;</span>
+        
+<span class="fc" id="L67">        UIInput uiCourseEndDate = (UIInput) component.getAttributes()</span>
+<span class="fc" id="L68">                .get(&quot;courseEndDate&quot;);</span>
+<span class="fc" id="L69">        String courseEndDateString = uiCourseEndDate.getSubmittedValue()</span>
+<span class="fc" id="L70">                .toString();</span>
+        
+        try {
+            //Check if the insert has the right format
+<span class="fc" id="L74">            startDate = (Date) value;</span>
+<span class="fc" id="L75">            DateFormat format = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="fc" id="L76">            endDate = format.parse(courseEndDateString);</span>
+<span class="pc" id="L77">        } catch(Exception e) {</span>
+<span class="nc" id="L78">            throw new ValidatorException(</span>
+<span class="nc" id="L79">                    new FacesMessage(</span>
+<span class="nc" id="L80">                          LanguageManager.getInstance().</span>
+<span class="nc" id="L81">                          getProperty(</span>
+<span class="nc" id="L82">                             &quot;createCourse.Validator.CourseDateFormat&quot;, lang)));</span>
+        }
+        
+
+        //Check if the starttime is befor the endtime
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (startDate.getTime() &gt; endDate.getTime()) {</span>
+<span class="fc" id="L88">            throw new ValidatorException(</span>
+<span class="fc" id="L89">                    new FacesMessage(</span>
+<span class="fc" id="L90">                          LanguageManager.getInstance().</span>
+<span class="fc" id="L91">                          getProperty(</span>
+<span class="fc" id="L92">                                &quot;createCourse.Validator.CourseDateEnd&quot;, lang)));</span>
+        }
+<span class="fc" id="L94">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

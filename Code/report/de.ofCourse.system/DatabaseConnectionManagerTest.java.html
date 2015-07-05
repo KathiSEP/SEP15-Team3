@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DatabaseConnectionManagerTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.system</a> &gt; <span class="el_source">DatabaseConnectionManagerTest.java</span></div><h1>DatabaseConnectionManagerTest.java</h1><pre class="source lang-java linenums">/**
+ *This package represents system functionality. 
+ */
+package de.ofCourse.system;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import java.sql.Connection;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+/**
+ * Tests the DatabaseConnectionManager. &lt;br&gt;
+ * Checks whether connections are fetched and released correctly and if the
+ * connections are closed correctly in case of a shutdown.
+ * &lt;p&gt;
+ * For the test the DatabaseConnectionManager runs in a debug mode to seal it
+ * off from other classes like e.g. the PropertyManager.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ LogHandler.class})
+<span class="nc" id="L29">public class DatabaseConnectionManagerTest{</span>
+    
+    
+    /**
+     * Attribute that represents the mocked logger
+     */
+    private LogHandler myLogger;
+    
+    /**
+     * Tests the connection manager.
+     */
+    @Test
+    public void test() {		
+	
+	// Mock LogHandler
+<span class="nc" id="L44">	PowerMockito.mockStatic(LogHandler.class);</span>
+<span class="nc" id="L45">	myLogger = mock(LogHandler.class);</span>
+<span class="nc" id="L46">	Mockito.when(LogHandler.getInstance()).thenReturn(myLogger);</span>
+	
+
+	// Enables the debug mode of the database connection manager to ensure
+	// that it is sealed of from other classes that can produce errors(like
+	// e.g. PropertyManager) and preserve database resources.
+<span class="nc" id="L52">	DatabaseConnectionManager.debugMode(true);</span>
+
+	// Checks whether the DatabaseConnectionsManager is no null
+<span class="nc" id="L55">	assertNotNull(DatabaseConnectionManager.getInstance());</span>
+	
+	
+	// Checks whether the DatabaseConnectionManager is unique and fulfills
+	// the Singleton characteristic
+<span class="nc" id="L60">	assertSame(DatabaseConnectionManager.getInstance(),</span>
+<span class="nc" id="L61">		DatabaseConnectionManager.getInstance());</span>
+
+	// Checks whether the DatabaseConnectionsManager is no null
+<span class="nc" id="L64">	Connection connectionTestNull = DatabaseConnectionManager.getInstance()</span>
+<span class="nc" id="L65">		.getConnection();</span>
+<span class="nc" id="L66">	assertNotNull(connectionTestNull);</span>
+	
+<span class="nc" id="L68">	DatabaseConnectionManager.getInstance().releaseConnection(</span>
+<span class="nc" id="L69">		connectionTestNull);</span>
+
+	// Checks whether the returned connection is a sql connection
+<span class="nc" id="L72">	Connection connection = DatabaseConnectionManager.getInstance()</span>
+<span class="nc" id="L73">		.getConnection();</span>
+<span class="nc" id="L74">	assertTrue(connection instanceof java.sql.Connection);</span>
+<span class="nc" id="L75">	DatabaseConnectionManager.getInstance().releaseConnection(connection);</span>
+
+	// Checks whether the connections are fetched and released correctly
+<span class="nc" id="L78">	Connection connection1 = DatabaseConnectionManager.getInstance()</span>
+<span class="nc" id="L79">		.getConnection();</span>
+<span class="nc" id="L80">	assertTrue(connection1 instanceof java.sql.Connection);</span>
+
+<span class="nc" id="L82">	Connection connection2 = DatabaseConnectionManager.getInstance()</span>
+<span class="nc" id="L83">		.getConnection();</span>
+<span class="nc" id="L84">	assertTrue(connection2 instanceof java.sql.Connection);</span>
+
+<span class="nc" id="L86">	Connection connection3 = DatabaseConnectionManager.getInstance()</span>
+<span class="nc" id="L87">		.getConnection();</span>
+<span class="nc" id="L88">	assertTrue(connection3 instanceof java.sql.Connection);</span>
+
+<span class="nc" id="L90">	DatabaseConnectionManager.getInstance().releaseConnection(connection);</span>
+<span class="nc" id="L91">	DatabaseConnectionManager.getInstance().releaseConnection(connection1);</span>
+<span class="nc" id="L92">	DatabaseConnectionManager.getInstance().releaseConnection(connection2);</span>
+
+	// Checks whether the connections are closed correctly in case of a
+	// calling shutdown
+<span class="nc" id="L96">	DatabaseConnectionManager.getInstance().shutDown();</span>
+
+	// Disables the debugging mode
+<span class="nc" id="L99">	DatabaseConnectionManager.debugMode(false);</span>
+<span class="nc" id="L100">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

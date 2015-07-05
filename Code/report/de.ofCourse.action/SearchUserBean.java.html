@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SearchUserBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SearchUserBean.java</span></div><h1>SearchUserBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.mail.search.SentDateTerm;
+
+import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides the service of searching for users in the system.&lt;br&gt;
+ * The user can search for users by selecting certain parameters and entering a
+ * search term for the parameter. Only the administrator has the possibility to
+ * search for users in the system.&lt;br&gt;
+ * This class supports pagination to display the found users.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;listUsers&lt;/code&gt;.
+ * 
+ * @author Schwarz Sebastian
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L46">public class SearchUserBean implements Pagination {</span>
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores the the search result that is displayed on the page. In this case
+     * it's a list of users.
+     */
+    private ArrayList&lt;User&gt; searchResult;
+
+    /**
+     * stores the Order Param
+     */
+    
+    private String orderParam;
+
+    /**
+     *Stores the currentPage 
+     */
+    private int currentPage;
+    
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L74">        return currentPage;</span>
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L81">        this.currentPage = currentPage;</span>
+<span class="nc" id="L82">    }</span>
+    
+    /**
+     * Stores the search parameter that was selected by the user
+     */
+    private String searchParam;
+    
+
+    /**
+     * Stores the search term that was entered by the user
+     */
+    private String searchString;
+
+    /**
+     * Stores whether the Table should be rendered or not
+     */
+    private boolean renderTable;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * @return the orderParam
+     */
+    public String getOrderParam() {
+<span class="nc" id="L119">        return orderParam;</span>
+    }
+
+    /**
+     * @param orderParam
+     *            the orderParam to set
+     */
+    public void setOrderParam(String orderParam) {
+<span class="nc" id="L127">        this.orderParam = orderParam;</span>
+<span class="nc" id="L128">    }</span>
+   
+    /**
+     * Initializes the Page
+     */
+    @PostConstruct
+    public void init() {
+<span class="fc" id="L135">    	transaction = Connection.create();</span>
+<span class="fc" id="L136">        searchParam = &quot;name&quot;;</span>
+<span class="fc" id="L137">        pagination = new PaginationData(10, 0, SortColumn.NAME, SortDirection.ASC);</span>
+<span class="fc" id="L138">    }</span>
+
+    /**
+     * Searches for users in the system according to the selected search
+     * parameter and the respective search term. &lt;br&gt;
+     * It performs a database request with the entered search parameter and
+     * search term. The search result is stored locally so it can be displayed
+     * in the facelet.
+     */
+    public void search() {
+        
+<span class="fc" id="L149">        transaction.start();        </span>
+        ArrayList&lt;User&gt; result;
+        
+        try {
+<span class="fc" id="L153">            result = getResultArray();</span>
+            
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if (result != null) {</span>
+<span class="fc" id="L156">                searchResult = result;</span>
+<span class="fc" id="L157">                setRenderTable(true);</span>
+<span class="fc" id="L158">                transaction.commit();</span>
+<span class="fc" id="L159">            } else {</span>
+<span class="nc" id="L160">                setRenderTable(false);</span>
+<span class="nc" id="L161">                transaction.rollback();</span>
+            }
+<span class="nc" id="L163">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L164">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L165">                    &quot;Error occured during search&quot;);</span>
+<span class="nc" id="L166">            transaction.rollback();</span>
+        }
+<span class="fc" id="L168">    }</span>
+
+    /**
+     * Returns a List with Users which equals the search command
+     * 
+     * @return a List of Users
+     * @throws InvalidDBTransferException
+     */
+    private ArrayList&lt;User&gt; getResultArray() throws InvalidDBTransferException {
+        
+    	ArrayList&lt;User&gt; result;
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (searchParam.equals(&quot;name&quot;)) {</span>
+<span class="nc" id="L180">            pagination</span>
+<span class="nc" id="L181">                    .refreshNumberOfPages(UserDAO</span>
+<span class="nc" id="L182">                            .getNumberOfUsersWithThisName(transaction,</span>
+<span class="nc" id="L183">                                    searchParam));</span>
+<span class="nc" id="L184">            result = UserDAO.getUsers(transaction,</span>
+<span class="nc" id="L185">                    pagination, searchParam, searchString);   </span>
+<span class="nc" id="L186">            LogHandler.getInstance().debug(&quot;Die Methode getUsers:&quot;</span>
+<span class="nc" id="L187">                    + searchString + &quot; was succesfull&quot;);</span>
+        
+<span class="nc" id="L189">        }else{</span>
+<span class="fc" id="L190">            result = UserDAO.getUsers(transaction,</span>
+<span class="fc" id="L191">                    pagination, searchParam, searchString);</span>
+<span class="fc" id="L192">            LogHandler.getInstance().debug(&quot;Die Methode getUsers:&quot;</span>
+<span class="fc" id="L193">                    + searchString + &quot; was succesfull&quot;);</span>
+        }
+<span class="fc" id="L195">        return result;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;searchResult&lt;/code&gt; that stores
+     * the found database entries which are to be displayed.
+     * 
+     * @return list of found users
+     */
+    public ArrayList&lt;User&gt; getSearchResult() {
+<span class="fc" id="L205">        return searchResult;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchResult&lt;/code&gt; that stores the
+     * found database entries which are to be displayed.
+     * 
+     * @param searchResult
+     *            list of users found in the database for the actual search
+     */
+    public void setSearchResult(ArrayList&lt;User&gt; searchResult) {
+<span class="nc" id="L216">        this.searchResult = searchResult;</span>
+<span class="nc" id="L217">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;searchParam&lt;/code&gt; that stores
+     * the selected search parameter.
+     * 
+     * @return the selected search parameter
+     */
+    public String getSearchParam() {
+<span class="fc" id="L226">        return searchParam;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchParam&lt;/code&gt; that stores the
+     * selected search parameter.
+     * 
+     * @param searchParam
+     *            the selected search parameter
+     */
+    public void setSearchParam(String searchParam) {
+<span class="fc" id="L237">        this.searchParam = searchParam;</span>
+<span class="fc" id="L238">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;searchTerm&lt;/code&gt; that stores
+     * the entered search term.
+     * 
+     * @return the entered search term
+     */
+    public String getSearchString() {
+<span class="fc" id="L247">        return searchString;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchTerm&lt;/code&gt; that stores the
+     * entered search term.
+     * 
+     * @param searchTerm
+     *            the entered search term
+     */
+    public void setSearchString(String searchTerm) {
+<span class="fc" id="L258">        this.searchString = searchTerm;</span>
+<span class="fc" id="L259">    }</span>
+
+    /**
+     * @return the renderTable
+     */
+    public boolean isRenderTable() {
+<span class="fc" id="L265">        return renderTable;</span>
+    }
+
+    /**
+     * @param renderTable
+     *            the renderTable to set
+     */
+    public void setRenderTable(boolean renderTable) {
+<span class="fc" id="L273">        this.renderTable = renderTable;</span>
+<span class="fc" id="L274">    }</span>
+
+    /**
+     * Redirects the user to the &lt;code&gt;userProfil&lt;/code&gt; page of a certain user.
+     * 
+     * @return link to the profile page of the user
+     */
+    public String loadUserProfilPageOfSelectedUser() {
+<span class="nc" id="L282">        return null;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+<span class="nc" id="L290">        transaction = Connection.create();</span>
+<span class="nc" id="L291">        transaction.start();</span>
+        ArrayList&lt;User&gt; result;
+        
+<span class="nc" id="L294">        if(getPagination().getSortColumn().</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">                equals(SortColumn.fromString(orderParam))) {</span>
+                 
+<span class="nc" id="L297">                getPagination().changeSortDirection();</span>
+            
+<span class="nc" id="L299">            } else {</span>
+<span class="nc" id="L300">                getPagination().setSortColumn(SortColumn.fromString(orderParam));</span>
+            }
+        
+        try {
+<span class="nc" id="L304">            result = getResultArray();</span>
+
+<span class="nc bnc" id="L306" title="All 2 branches missed.">            if (result != null) {</span>
+<span class="nc" id="L307">                searchResult = result;</span>
+<span class="nc" id="L308">                transaction.commit();</span>
+<span class="nc" id="L309">            } else {</span>
+<span class="nc" id="L310">                setRenderTable(false);</span>
+<span class="nc" id="L311">                transaction.rollback();</span>
+            }
+<span class="nc" id="L313">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L314">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L315">                    &quot;Error occoured during executing sortBySpecificColumn&quot;);</span>
+        }
+
+<span class="nc" id="L318">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L325">	this.pagination.setCurrentPageNumber(this.currentPage);</span>
+<span class="nc" id="L326">            transaction.start();</span>
+            try {
+<span class="nc" id="L328">                searchResult = getResultArray();</span>
+<span class="nc" id="L329">                this.transaction.commit();</span>
+                
+<span class="nc" id="L331">            } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L332">                LogHandler.getInstance().error(</span>
+<span class="nc" id="L333">                    &quot;Error occured during fething data for pagination.&quot;);</span>
+<span class="nc" id="L334">                this.transaction.rollback();</span>
+            }
+<span class="nc" id="L336">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L343">        return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L351">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L359">        return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L369">    }</span>
+
+    /**
+     * This Methode gives all Users of the System
+     */
+    public void displayAllUsers() {
+<span class="nc" id="L375">        searchParam = &quot;all&quot;;</span>
+<span class="nc" id="L376">        transaction.start();</span>
+        try {
+<span class="nc" id="L378">            pagination.refreshNumberOfPages(UserDAO</span>
+<span class="nc" id="L379">                    .getNumberOfUsers(transaction));</span>
+<span class="nc" id="L380">            ArrayList&lt;User&gt; result = getResultArray();</span>
+
+<span class="nc bnc" id="L382" title="All 2 branches missed.">            if (result != null) {</span>
+<span class="nc" id="L383">                searchResult = result;</span>
+<span class="nc" id="L384">                setRenderTable(true);</span>
+
+<span class="nc" id="L386">                transaction.commit();</span>
+<span class="nc" id="L387">            } else {</span>
+<span class="nc" id="L388">                setRenderTable(false);</span>
+<span class="nc" id="L389">                transaction.rollback();</span>
+            }
+<span class="nc" id="L391">        } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L392">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L393">                    &quot;Error occured during displaYAllUsers&quot;);</span>
+<span class="nc" id="L394">            transaction.rollback();</span>
+        }
+
+<span class="nc" id="L397">    }</span>
+
+    /**
+     * Returns the Link to the selected User Profil
+     * 
+     * @return
+     */
+    public String loadProfil() {
+<span class="fc" id="L405">        return &quot;/facelets/user/registeredUser/profile.xhtml&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

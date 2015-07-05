@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DatabaseTableDestroyer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.databaseGeneral</a> &gt; <span class="el_source">DatabaseTableDestroyer.java</span></div><h1>DatabaseTableDestroyer.java</h1><pre class="source lang-java linenums">package de.ofCourse.databaseGeneral;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Drops all tables and enum types stored in the database, if requested.
+ * 
+ * &lt;p&gt;
+ * This class is only required in the class
+ * &lt;code&gt;de.ofCourse.system.LaunchSystem&lt;/code&gt;.
+ * &lt;/p&gt;
+ * 
+ * @author Patrick Cretu
+ *
+ */
+<span class="nc" id="L23">public class DatabaseTableDestroyer {</span>
+	
+	private static final String DROP_FORM_OF_ADDRESS =
+			&quot;DROP TYPE form_of_address&quot;;
+	
+	private static final String DROP_ROLE = &quot;DROP TYPE role&quot;;
+	
+	private static final String DROP_STATUS = &quot;DROP TYPE status&quot;;
+	
+	private static final String DROP_PERIOD = &quot;DROP TYPE period&quot;;
+	
+	private static final String DROP_ACTIVATION = &quot;DROP TYPE activation&quot;;
+	
+	private static final String DROP_USERS = &quot;DROP TABLE users&quot;;
+	
+	private static final String DROP_COURSES = &quot;DROP TABLE courses&quot;;
+	
+	private static final String DROP_COURSE_UNITS = &quot;DROP TABLE course_units&quot;;
+	
+	private static final String DROP_USER_ADDRESSES =
+			&quot;DROP TABLE user_addresses&quot;;
+	
+	private static final String DROP_COURSE_UNIT_ADDRESSES =
+			&quot;DROP TABLE course_unit_addresses&quot;;
+	
+	private static final String DROP_CYCLES = &quot;DROP TABLE cycles&quot;;
+	
+	private static final String DROP_INFORM_USERS = &quot;DROP TABLE inform_users&quot;;
+	
+	private static final String DROP_COURSE_INSTRUCTORS =
+			&quot;DROP TABLE course_instructors&quot;;
+	
+	private static final String DROP_COURSE_PARTICIPANTS =
+			&quot;DROP TABLE course_participants&quot;;
+	
+	private static final String DROP_COURSE_UNIT_PARTICIPANTS =
+			&quot;DROP TABLE course_unit_participants&quot;;
+	
+	private static final String DROP_SYSTEM_ATTRIBUTES =
+			&quot;DROP TABLE system_attributes&quot;;
+	
+	/**
+	 * Drops all tables and enum types stored in the database.
+	 * 
+	 * @throws InvalidDBTransferException if any error occurred during the
+     * execution of the method
+	 */
+	public static void dropTables() throws InvalidDBTransferException {
+<span class="nc" id="L71">		List&lt;String&gt; dropStatements = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L72">    	dropStatements.add(DROP_SYSTEM_ATTRIBUTES);</span>
+<span class="nc" id="L73">    	dropStatements.add(DROP_INFORM_USERS);</span>
+<span class="nc" id="L74">    	dropStatements.add(DROP_COURSE_UNIT_ADDRESSES);</span>
+<span class="nc" id="L75">    	dropStatements.add(DROP_USER_ADDRESSES);</span>
+<span class="nc" id="L76">    	dropStatements.add(DROP_COURSE_PARTICIPANTS);</span>
+<span class="nc" id="L77">    	dropStatements.add(DROP_COURSE_UNIT_PARTICIPANTS);</span>
+<span class="nc" id="L78">    	dropStatements.add(DROP_COURSE_UNITS);</span>
+<span class="nc" id="L79">    	dropStatements.add(DROP_COURSE_INSTRUCTORS);</span>
+<span class="nc" id="L80">    	dropStatements.add(DROP_CYCLES);</span>
+<span class="nc" id="L81">    	dropStatements.add(DROP_COURSES);</span>
+<span class="nc" id="L82">    	dropStatements.add(DROP_USERS);</span>
+<span class="nc" id="L83">    	dropStatements.add(DROP_ACTIVATION);</span>
+<span class="nc" id="L84">    	dropStatements.add(DROP_PERIOD);</span>
+<span class="nc" id="L85">    	dropStatements.add(DROP_STATUS);</span>
+<span class="nc" id="L86">    	dropStatements.add(DROP_ROLE);</span>
+<span class="nc" id="L87">    	dropStatements.add(DROP_FORM_OF_ADDRESS);</span>
+		
+<span class="nc" id="L89">		Transaction trans = Connection.create();</span>
+<span class="nc" id="L90">    	trans.start();</span>
+<span class="nc" id="L91">    	Connection connection = (Connection) trans;</span>
+<span class="nc" id="L92">    	java.sql.Connection conn = connection.getConn();</span>
+    	
+    	try {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">			for (int i = 0; i &lt; dropStatements.size(); i++) {</span>
+<span class="nc" id="L96">				Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L97">				stmt.execute(dropStatements.get(i));</span>
+				
+<span class="nc bnc" id="L99" title="All 2 branches missed.">				if (i &lt; dropStatements.size() - 1) {</span>
+<span class="nc" id="L100">					conn.commit();</span>
+<span class="nc" id="L101">				} else {</span>
+<span class="nc" id="L102">					trans.commit();</span>
+				}
+			}
+<span class="nc" id="L105">		} catch (SQLException e) {</span>
+<span class="nc" id="L106">			trans.rollback();</span>
+<span class="nc" id="L107">			throw new InvalidDBTransferException(</span>
+<span class="nc" id="L108">					&quot;SQL Exception occoured during dropTables()&quot;, e);</span>
+		}
+<span class="nc" id="L110">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

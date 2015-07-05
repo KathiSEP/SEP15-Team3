@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SmtpServer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.model</a> &gt; <span class="el_source">SmtpServer.java</span></div><h1>SmtpServer.java</h1><pre class="source lang-java linenums">/**
+ * This package represents all the models which are used
+ */
+package de.ofCourse.model;
+
+/**
+ * Contains all Information for the SMTP Server which is needed for
+ * the E-Mail dispatch
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+<span class="fc" id="L13">public class SmtpServer {</span>
+
+    /**
+     * Stores the Hostaddress to the E-Mail Server
+     * 
+     */
+    private String hostaddr;
+    /**
+     * Stores the password for the Login on the E-Mail Server
+     * 
+     */
+    private String password;
+    /**
+     * Stores the portnumber which is needed for the connection with the E-Mail
+     * Server
+     * 
+     */
+    private int port;
+    /**
+     *  Stores the username for the Login on the E-Mail Server
+     * 
+     */
+    private String username;
+    
+    /**
+     *  Stores whether the connection to the server runs with ssl protection or not
+     */
+    private boolean ssl;
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;ssl&lt;/code&gt;.
+     * 
+     * @return if the connection runs with ssl protection
+     */
+    public boolean isSsl() {
+<span class="fc" id="L48">        return ssl;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;ssl&lt;/code&gt;.
+     * 
+     * @param ssl 
+     *          new boolean to set
+     */
+    public void setSsl(boolean ssl) {
+<span class="fc" id="L58">        this.ssl = ssl;</span>
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;hostaddr&lt;/code&gt;.
+     * 
+     * @return the address of the E-mailhost
+     */
+    public String getHostaddr() {
+<span class="fc" id="L67">        return hostaddr;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;hostaddr&lt;/code&gt;.
+     * 
+     * @param hostaddr
+     *            the hostaddr to set
+     */
+    public void setHostaddr(String hostaddr) {
+<span class="fc" id="L77">        this.hostaddr = hostaddr;</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;password&lt;/code&gt;.
+     * 
+     * @return the password of the user
+     */
+    public String getPassword() {
+<span class="fc" id="L86">        return password;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;password&lt;/code&gt;.
+     * 
+     * @param password
+     *            the password to set
+     */
+    public void setPassword(String password) {
+<span class="fc" id="L96">        this.password = password;</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;address&lt;/code&gt;.
+     * 
+     * @return the port from the E-mailhost.
+     */
+    public int getPort() {
+<span class="fc" id="L105">        return port;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;port&lt;/code&gt;.
+     * 
+     * @param port
+     *            the port to set
+     */
+    public void setPort(int port) {
+<span class="fc" id="L115">        this.port = port;</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;username&lt;/code&gt;.
+     * 
+     * @return the username
+     */
+    public String getUsername() {
+<span class="fc" id="L124">        return username;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;username&lt;/code&gt;.
+     * 
+     * @param username
+     *            the username to set
+     */
+    public void setUsername(String username) {
+<span class="fc" id="L134">        this.username = username;</span>
+<span class="fc" id="L135">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

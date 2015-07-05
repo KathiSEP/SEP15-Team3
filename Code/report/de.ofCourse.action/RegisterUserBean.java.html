@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RegisterUserBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">RegisterUserBean.java</span></div><h1>RegisterUserBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Address;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.Salutation;
+import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
+import de.ofCourse.utilities.PasswordHash;
+
+/**
+ * Provides the functionality to register in the the system by entering the
+ * required user data.&lt;br&gt;
+ * After the registration a verification link is sent to the entered email
+ * address to ensure that it is a valid address.
+ * &lt;p&gt;
+ * Whether the user can log on the system after verifying the entered email
+ * address depends on the type of account activation determined by the
+ * administrator.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;authenticate&lt;/code&gt;.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+@ManagedBean
+@RequestScoped
+<span class="fc" id="L48">public class RegisterUserBean {</span>
+
+    /**
+     * Stores the transaction that is used for database interaction. 
+     */
+    private Transaction transaction;
+
+    /**
+     * Represents a user object. It stores the data which is entered by the user
+     * who wants to register.
+     */
+    private User userToRegistrate;
+
+    /**
+     * The Salutation which was selected by the user.
+     */
+    private String saluString;
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;userToRegistrate&lt;/code&gt;.
+     * 
+     * @param userToRegistrate
+     *            the userToRegistrate to set
+     */
+    public void setUserToRegistrate(User userToRegistrate) {
+<span class="nc" id="L73">        this.userToRegistrate = userToRegistrate;</span>
+<span class="nc" id="L74">    }</span>
+    
+    /**
+     * Boolean to check if the agb's are accepted
+     */
+    private boolean agbAccepted;
+
+    /**
+     * The password which was inserted by the user.
+     */
+    private String registerPassword;
+
+    /**
+     * The password which was inserted by the user to confirm the first 
+     * inserted password.
+     */
+    private String registerConfirmPassword;
+    
+    /**
+     * Represents the url to the authenticate page
+     */
+    private final static String URL_AUTHENTICATE = 
+                       &quot;/facelets/open/authenticate.xhtml?faces-redirect=false&quot;;
+    
+    /**
+     * Represents the url to the index page
+     */
+    private final static String URL_INDEX = 
+                               &quot;/facelets/open/index.xhtml?faces-redirect=true&quot;;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * This ManagedProperty represents the mail bean.
+     */
+    @ManagedProperty(&quot;#{mailBean}&quot;)
+    private MailBean mailBean;
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;MailBean&lt;/code&gt;.
+     * 
+     * @return the mail
+     */
+    public MailBean getMailBean() {
+<span class="nc" id="L124">        return mailBean;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;MailBean&lt;/code&gt;.
+     * 
+     * @param mail
+     *            the mail to set
+     */
+    public void setMailBean(MailBean mailBean) {
+<span class="fc" id="L134">        this.mailBean = mailBean;</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Checks if the URL of the index page contains the parameter 'veri'.
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L142">        HttpServletRequest request = (HttpServletRequest) FacesContext</span>
+<span class="fc" id="L143">                .getCurrentInstance().getExternalContext().getRequest();</span>
+<span class="fc" id="L144">        String veriString = request.getParameter(&quot;veri&quot;);</span>
+
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
+<span class="fc" id="L148">        Map&lt;String, Object&gt; sessionMap = FacesContext</span>
+<span class="fc" id="L149">                .getCurrentInstance().getExternalContext().getSessionMap();</span>
+        
+        //New language object
+<span class="fc" id="L152">        Language lang = null;</span>
+        
+        //Check if the parameter language exists in the session. 
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+            //Convert the string (DE, EN, BAY) into a language object
+<span class="fc" id="L157">            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+            
+<span class="fc" id="L159">        } else {</span>
+            //Set the language to German (DE) an write the parameter into the 
+            //session
+<span class="fc" id="L162">            lang = Language.DE;</span>
+<span class="fc" id="L163">            HttpSession httpSession = (HttpSession) FacesContext</span>
+<span class="fc" id="L164">                    .getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L165">                    .getSession(true);</span>
+<span class="fc" id="L166">            httpSession.setAttribute(&quot;lang&quot;, lang.toString());</span>
+        }
+        
+<span class="pc bpc" id="L169" title="3 of 4 branches missed.">        if (veriString != null &amp;&amp; veriString.length() &gt; 0) {</span>
+<span class="nc" id="L170">            this.transaction = Connection.create();</span>
+<span class="nc" id="L171">            transaction.start();</span>
+            
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            if (UserDAO.verifyUser(this.transaction, veriString)) {</span>
+                //FacesMessage: 'The account activation was successful'
+<span class="nc" id="L175">                FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L176">                        &quot;verifizierungString&quot;, </span>
+<span class="nc" id="L177">                        LanguageManager.getInstance().</span>
+<span class="nc" id="L178">                        getProperty(</span>
+<span class="nc" id="L179">                                &quot;registerUserBean.facesMessage.Account&quot;, </span>
+<span class="nc" id="L180">                                lang));</span>
+<span class="nc" id="L181">            } else {</span>
+                //FacesMessage: 'The verification string does not exist'
+<span class="nc" id="L183">                FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L184">                        &quot;verifizierungString&quot;, </span>
+<span class="nc" id="L185">                                LanguageManager.getInstance().</span>
+<span class="nc" id="L186">                                getProperty(</span>
+<span class="nc" id="L187">                                        &quot;registerUserBean.facesMessage.&quot;</span>
+                                        + &quot;NoVeriString&quot;, 
+<span class="nc" id="L189">                                        lang));</span>
+            }
+<span class="nc" id="L191">            this.transaction.commit();</span>
+        }
+<span class="fc" id="L193">        this.userToRegistrate = new User();</span>
+<span class="fc" id="L194">        this.userToRegistrate.setAddress(new Address());</span>
+<span class="fc" id="L195">    }</span>
+    
+    /**
+     * Registers a new user with the entered user data in the system.&lt;br&gt;
+     * It creates with the entered data a new database entry and sends a mail
+     * with a verification link to the entered email address which is used to
+     * ensure that the entered email address really exists.&lt;br&gt;
+     * If there goes something wrong during registration, e.g. the chosen
+     * user name is already in use, a error message is displayed.
+     */
+    public String registerUser() {
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if(agbAccepted == true) {</span>
+<span class="fc" id="L207">            this.getUserToRegistrate().setSalutation(</span>
+<span class="fc" id="L208">                                        Salutation.fromString(this.saluString));</span>
+        
+<span class="fc" id="L210">            String veriString = &quot;&quot;;</span>
+            
+            // Convert to lower case for checking email
+<span class="fc" id="L213">            this.userToRegistrate.setEmail(this.userToRegistrate.getEmail().toLowerCase());</span>
+            
+        
+            // Initialize database connection
+<span class="fc" id="L217">            this.transaction = Connection.create();</span>
+<span class="fc" id="L218">            transaction.start();</span>
+            try {
+                // Hash the inserted password.
+                // Generate the salt.
+<span class="fc" id="L222">                String salt = PasswordHash.getSalt();</span>
+<span class="fc" id="L223">                String passwordHash = PasswordHash.hash(</span>
+<span class="fc" id="L224">                                                    this.getRegisterPassword(),</span>
+<span class="fc" id="L225">                                                    salt);</span>
+                
+                // Check if the inserted mail already exists in the system.
+<span class="fc" id="L228">                if (UserDAO.emailExists(transaction, this.getUserToRegistrate()</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                        .getEmail())) {</span>
+        
+                    // Throwing error message into the faces context if the 
+                    // mail already exists.
+<span class="fc" id="L233">                    FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L234">                            null,</span>
+<span class="fc" id="L235">                            sessionUser.getLabel(</span>
+<span class="fc" id="L236">                                &quot;registerUserBean.facesMessage.EmailExisting&quot;));</span>
+        
+<span class="fc" id="L238">                    this.transaction.rollback();</span>
+<span class="fc" id="L239">                    return URL_AUTHENTICATE;</span>
+                } else {
+        
+                    // If the inserted mail doesn't already exist, create a 
+                    //new user.
+<span class="fc" id="L244">                    this.userToRegistrate.setUserRole(UserRole.REGISTERED_USER);</span>
+<span class="fc" id="L245">                    veriString = UserDAO.createUser(this.transaction,</span>
+<span class="fc" id="L246">                            this.getUserToRegistrate(), passwordHash, salt);</span>
+        
+<span class="fc" id="L248">                    int userID = UserDAO.getUserID(this.transaction, this</span>
+<span class="fc" id="L249">                            .getUserToRegistrate().getUsername());</span>
+        
+<span class="fc" id="L251">                    this.transaction.commit();</span>
+        
+<span class="fc" id="L253">                    mailBean.sendAuthentificationMessage(userID, veriString);</span>
+        
+                }
+<span class="pc" id="L256">            } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L257">                LogHandler.getInstance().error(e.getMessage());</span>
+<span class="nc" id="L258">                this.transaction.rollback();</span>
+            }
+        
+            // Throwing success message into the faces context.
+<span class="fc" id="L262">            FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L263">                   null,</span>
+<span class="fc" id="L264">                   sessionUser.getLabel(</span>
+<span class="fc" id="L265">                       &quot;registerUserBean.facesMessage.SuccessfulRegistration&quot;));</span>
+<span class="fc" id="L266">            return URL_INDEX;</span>
+        } else {
+<span class="fc" id="L268">            FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L269">                                    null,</span>
+<span class="fc" id="L270">                                    sessionUser.getLabel(</span>
+<span class="fc" id="L271">                                          &quot;registerUserBean.facesMessage.AGB&quot;));</span>
+<span class="fc" id="L272">            return URL_AUTHENTICATE;</span>
+        }
+    }
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L282">        return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L292">        this.sessionUser = userSession;</span>
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;registerPassword&lt;/code&gt;.
+     * 
+     * @return the inserted password
+     */
+    public String getRegisterPassword() {
+<span class="fc" id="L301">        return registerPassword;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;registerPassword&lt;/code&gt;.
+     * 
+     * @param registerPassword
+     *            inserted password
+     */
+    public void setRegisterPassword(String registerPassword) {
+<span class="fc" id="L311">        this.registerPassword = registerPassword;</span>
+<span class="fc" id="L312">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;registerCondirmPassword&lt;/code&gt;.
+     * 
+     * @return the inserted confirm password
+     */
+    public String getRegisterConfirmPassword() {
+<span class="fc" id="L320">        return registerConfirmPassword;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;registerConfirmPassword&lt;/code&gt;.
+     * 
+     * @param registerConfirmPassword
+     *            inserted Password to confirm
+     */
+    public void setRegisterConfirmPassword(String registerConfirmPassword) {
+<span class="fc" id="L330">        this.registerConfirmPassword = registerConfirmPassword;</span>
+<span class="fc" id="L331">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;userToRegistrate&lt;/code&gt;.
+     * 
+     * @return the user to registrate
+     */
+    public User getUserToRegistrate() {
+<span class="fc" id="L339">        return userToRegistrate;</span>
+    }
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;SaluString&lt;/code&gt;.
+     * 
+     * @return the verification string
+     */
+    public String getSaluString() {
+<span class="fc" id="L348">        return saluString;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;SaluString&lt;/code&gt;.
+     * 
+     * @param saluString
+     *            String to verify
+     */
+    public void setSaluString(String saluString) {
+<span class="fc" id="L358">        this.saluString = saluString;</span>
+<span class="fc" id="L359">    }</span>
+
+    /**
+     * @return the agbAccepted
+     */
+    public boolean isAgbAccepted() {
+<span class="fc" id="L365">        return agbAccepted;</span>
+    }
+
+    /**
+     * @param agbAccepted the agbAccepted to set
+     */
+    public void setAgbAccepted(boolean agbAccepted) {
+<span class="fc" id="L372">        this.agbAccepted = agbAccepted;</span>
+<span class="fc" id="L373">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

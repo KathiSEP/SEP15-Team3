@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RegistrationTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">RegistrationTest.java</span></div><h1>RegistrationTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of registration. This test is geared to the test T30-30 from our 
+ * product brief. Furthermore there are a view more tests for the faults that 
+ * can appear because of invalid user inserts. 
+ * The user 'Kathi6' will be created in this test. On top of that it is 
+ * asserted that the faces messages to the user insert are correct and that the 
+ * user will be sent up to the right page.
+ * 
+ * @author Katharina H�lzl
+ */
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+<span class="nc bnc" id="L24" title="All 2 branches missed.">public class RegistrationTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L27">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L28">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+  public static final String messageUsernameRegister= &quot;messageUsernameRegister&quot;;
+  public static final String messagePasswordRegister= &quot;messagePasswordRegister&quot;;
+  public static final String messagePasswordConfirmRegister= &quot;messagePasswordConfirmRegister&quot;;
+  public static final String messageDateOfBirthRegister= &quot;messageDateOfBirthRegister&quot;;
+  public static final String messageHouseNumberRegister= &quot;messageHouseNumberRegister&quot;;
+  public static final String messageCityRegister= &quot;messageZipCodeRegister&quot;;
+  public static final String messageCountryRegister= &quot;messageZipCodeRegister&quot;;
+  public static final String messageZipCodeRegister= &quot;messageZipCodeRegister&quot;;
+  public static final String messageEmailRegister= &quot;messageEmailRegister&quot;;
+<span class="nc" id="L39">  public static final String facesMessages= &quot;facesMessages&quot;;</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L43">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L44">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L45">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L46">  }</span>
+
+  @Test
+  public void testRegistration() throws Exception {
+<span class="nc" id="L50">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L51">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+    
+    // Testing required messages
+<span class="nc" id="L54">    new Select(driver.findElement(By.id(&quot;formRegister:titleRegister&quot;))).selectByVisibleText(&quot;Frau&quot;);</span>
+<span class="nc" id="L55">    driver.findElement(By.id(&quot;formRegister:firstnameRegister&quot;)).clear();</span>
+<span class="nc" id="L56">    driver.findElement(By.id(&quot;formRegister:firstnameRegister&quot;)).sendKeys(&quot;Katharina&quot;);</span>
+<span class="nc" id="L57">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+    
+<span class="nc" id="L59">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+    
+<span class="nc bnc" id="L61" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L63" title="All 4 branches missed.">    assert driver.findElement(By.id(messageUsernameRegister)).getText().contains(&quot;Bitte geben Sie einen Benutzernamen ein. &quot;);</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">    assert driver.findElement(By.id(messagePasswordRegister)).getText().contains(&quot;Bitte geben Sie ein Passwort ein. &quot;);</span>
+<span class="nc bnc" id="L65" title="All 4 branches missed.">    assert driver.findElement(By.id(messagePasswordConfirmRegister)).getText().contains(&quot;Bitte geben Sie ein Passwort zur Best�tigung ein. &quot;);</span>
+<span class="nc bnc" id="L66" title="All 4 branches missed.">    assert driver.findElement(By.id(messageCityRegister)).getText().contains(&quot;Bitte geben Sie eine Stadt ein. &quot;);</span>
+<span class="nc bnc" id="L67" title="All 4 branches missed.">    assert driver.findElement(By.id(messageZipCodeRegister)).getText().contains(&quot;Bitte geben Sie eine Postleitzahl ein. &quot;);</span>
+<span class="nc bnc" id="L68" title="All 4 branches missed.">    assert driver.findElement(By.id(messageCountryRegister)).getText().contains(&quot;Bitte geben Sie ein Land ein. &quot;);</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">    assert driver.findElement(By.id(messageEmailRegister)).getText().contains(&quot;Bitte geben Sie ihre E-Mail Adresse ein. &quot;);</span>
+    
+    // Testing user name is already existing
+<span class="nc" id="L72">    driver.findElement(By.id(&quot;formRegister:lastnameRegister&quot;)).clear();</span>
+<span class="nc" id="L73">    driver.findElement(By.id(&quot;formRegister:lastnameRegister&quot;)).sendKeys(&quot;Hoelzl&quot;);</span>
+<span class="nc" id="L74">    driver.findElement(By.id(&quot;formRegister:usernameRegister&quot;)).clear();</span>
+<span class="nc" id="L75">    driver.findElement(By.id(&quot;formRegister:usernameRegister&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L76">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L77">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;blablabal&quot;);</span>
+<span class="nc" id="L78">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L79">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;blablabal&quot;);</span>
+<span class="nc" id="L80">    driver.findElement(By.id(&quot;formRegister:locationRegister&quot;)).clear();</span>
+<span class="nc" id="L81">    driver.findElement(By.id(&quot;formRegister:locationRegister&quot;)).sendKeys(&quot;Fuerstenzell&quot;);</span>
+<span class="nc" id="L82">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).clear();</span>
+<span class="nc" id="L83">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).sendKeys(&quot;94081&quot;);</span>
+<span class="nc" id="L84">    driver.findElement(By.id(&quot;formRegister:countryRegister&quot;)).clear();</span>
+<span class="nc" id="L85">    driver.findElement(By.id(&quot;formRegister:countryRegister&quot;)).sendKeys(&quot;Deutschland&quot;);</span>
+<span class="nc" id="L86">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L87">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;g6282972@trbvm.com&quot;);</span>
+<span class="nc" id="L88">    driver.findElement(By.id(&quot;formRegister:selectAGB&quot;)).click();</span>
+<span class="nc" id="L89">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L90">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L93" title="All 4 branches missed.">    assert driver.findElement(By.id(messageUsernameRegister)).getText().contains(&quot;Der Benutzername existiert bereits. &quot;);</span>
+    
+    // Testing AGB not accepted
+<span class="nc" id="L96">    driver.findElement(By.id(&quot;formRegister:usernameRegister&quot;)).clear();</span>
+<span class="nc" id="L97">    driver.findElement(By.id(&quot;formRegister:usernameRegister&quot;)).sendKeys(&quot;Kathi4&quot;);</span>
+<span class="nc" id="L98">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L99">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L100">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L101">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L102">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L103">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L104" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L106" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Bitte best�tigen Sie die AGB's! &quot;);</span>
+   
+    // Testing mail is already existing
+<span class="nc" id="L109">    driver.findElement(By.id(&quot;formRegister:selectAGB&quot;)).click();</span>
+<span class="nc" id="L110">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L111">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L112">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L113">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L114">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L115">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;g6282972@trbvm.com&quot;);</span>
+<span class="nc" id="L116">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L117">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L118" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L120" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Die angegebene E-Mail existiert bereits! &quot;);</span>
+    
+    // Testing wrong mail format
+<span class="nc" id="L123">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L124">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L125">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L126">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L127">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L128">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;katharina_hoelzl&quot;);</span>
+<span class="nc" id="L129">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L130">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L133" title="All 4 branches missed.">    assert driver.findElement(By.id(messageEmailRegister)).getText().contains(&quot;Kein g�ltiges E-Mail Format. &quot;);</span>
+    
+    //Testing mail is already existing (upper cases instead of lower cases)
+<span class="nc" id="L136">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L137">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L138">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L139">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L140">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L141">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;G6282972@trbvm.com&quot;);</span>
+<span class="nc" id="L142">    driver.findElement(By.id(&quot;formRegister:selectAGB&quot;)).click();</span>
+<span class="nc" id="L143">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L144">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L147" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Die angegebene E-Mail existiert bereits! &quot;);</span>
+    
+    // Testing wrong insert format (no number)
+<span class="nc" id="L150">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L151">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L152">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L153">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L154">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).clear();</span>
+<span class="nc" id="L155">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).sendKeys(&quot;test&quot;);</span>
+<span class="nc" id="L156">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).clear();</span>
+<span class="nc" id="L157">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).sendKeys(&quot;test&quot;);</span>
+<span class="nc" id="L158">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).clear();</span>
+<span class="nc" id="L159">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).sendKeys(&quot;test&quot;);</span>
+<span class="nc" id="L160">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L161">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;katharina.hoelzl923@gmx.de&quot;);</span>
+<span class="nc" id="L162">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L163">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L166" title="All 4 branches missed.">    assert driver.findElement(By.id(messageDateOfBirthRegister)).getText().contains(&quot;Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch. &quot;);</span>
+<span class="nc bnc" id="L167" title="All 4 branches missed.">    assert driver.findElement(By.id(messageHouseNumberRegister)).getText().contains(&quot;Bitte geben Sie eine positive Zahl als Hausnummer ein. &quot;);</span>
+<span class="nc bnc" id="L168" title="All 4 branches missed.">    assert driver.findElement(By.id(messageZipCodeRegister)).getText().contains(&quot;Bitte geben Sie eine positive Zahl als Postleitzahl ein. &quot;);</span>
+    
+    // Testing date of birth is in the future and zip code is too lang
+<span class="nc" id="L171">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L172">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L173">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L174">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L175">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).clear();</span>
+<span class="nc" id="L176">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).sendKeys(&quot;29.05.2016&quot;);</span>
+<span class="nc" id="L177">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).clear();</span>
+<span class="nc" id="L178">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).sendKeys(&quot;&quot;);</span>
+<span class="nc" id="L179">    driver.findElement(By.id(&quot;formRegister:locationRegister&quot;)).clear();</span>
+<span class="nc" id="L180">    driver.findElement(By.id(&quot;formRegister:locationRegister&quot;)).sendKeys(&quot;Engertsham&quot;);</span>
+<span class="nc" id="L181">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).clear();</span>
+<span class="nc" id="L182">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).sendKeys(&quot;9408112312345&quot;);</span>
+<span class="nc" id="L183">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).clear();</span>
+<span class="nc" id="L184">    driver.findElement(By.id(&quot;formRegister:emailRegister&quot;)).sendKeys(&quot;katharina.hoelzl923@gmx.de&quot;);</span>
+<span class="nc" id="L185">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L186">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L187" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L189" title="All 4 branches missed.">    assert driver.findElement(By.id(messageDateOfBirthRegister)).getText().contains(&quot;Datum liegt in der Zukunft oder mehr als 150 Jahre zur�ck. &quot;);</span>
+<span class="nc bnc" id="L190" title="All 4 branches missed.">    assert driver.findElement(By.id(messageZipCodeRegister)).getText().contains(&quot;Ihre Eingabe muss zwischen 1 und 10 Zeichen lang sein. &quot;);</span>
+    
+    // Testing passwords not equal
+<span class="nc" id="L193">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).clear();</span>
+<span class="nc" id="L194">    driver.findElement(By.id(&quot;formRegister:birthdateRegister&quot;)).sendKeys(&quot;29.05.1993&quot;);</span>
+<span class="nc" id="L195">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).clear();</span>
+<span class="nc" id="L196">    driver.findElement(By.id(&quot;formRegister:zipcodeRegister&quot;)).sendKeys(&quot;94081&quot;);</span>
+<span class="nc" id="L197">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L198">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;bSdFg7HjK8*&quot;);</span>
+<span class="nc" id="L199">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L200">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;bSdFg7HjK8&quot;);</span>
+<span class="nc" id="L201">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L202">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L203" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;authenticate&quot;)).getText().equals(&quot;Anmeldung&quot;);</span>
+    
+<span class="nc bnc" id="L205" title="All 4 branches missed.">    assert driver.findElement(By.id(messagePasswordRegister)).getText().contains(&quot;Die Passw�rter m�ssen �bereinstimmen. &quot;);</span>
+    
+    // Testing correct insert of all data
+<span class="nc" id="L208">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L209">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L210">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L211">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L212">    driver.findElement(By.id(&quot;formRegister:streetRegister&quot;)).clear();</span>
+<span class="nc" id="L213">    driver.findElement(By.id(&quot;formRegister:streetRegister&quot;)).sendKeys(&quot;Am Kastenfeld&quot;);</span>
+<span class="nc" id="L214">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).clear();</span>
+<span class="nc" id="L215">    driver.findElement(By.id(&quot;formRegister:houseNumberRegister&quot;)).sendKeys(&quot;39&quot;);</span>
+<span class="nc" id="L216">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).clear();</span>
+<span class="nc" id="L217">    driver.findElement(By.id(&quot;formRegister:passwordRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+<span class="nc" id="L218">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).clear();</span>
+<span class="nc" id="L219">    driver.findElement(By.id(&quot;formRegister:passwordConfirmRegister&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
+    
+<span class="nc" id="L221">    driver.findElement(By.id(&quot;formRegister:register&quot;)).click();</span>
+<span class="nc" id="L222">    assertTrue(closeAlertAndGetItsText().contains(&quot;Nach erfolgreicher Registrierung wird eine Best�tigungsmail an ihre Mail-Adresse geschickt. Best�tigen Sie bitte den darin enthaltenen Verifizierungslink.&quot;));</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;indexPage&quot;)).getText().equals(&quot;OfCourse&quot;);</span>
+    
+<span class="nc" id="L225">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L229">    driver.quit();</span>
+<span class="nc" id="L230">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L232">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L234">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L238">      driver.findElement(by);</span>
+<span class="nc" id="L239">      return true;</span>
+<span class="nc" id="L240">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L241">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L247">      driver.switchTo().alert();</span>
+<span class="nc" id="L248">      return true;</span>
+<span class="nc" id="L249">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L250">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L256">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L257">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L259">        alert.accept();</span>
+<span class="nc" id="L260">      } else {</span>
+<span class="nc" id="L261">        alert.dismiss();</span>
+      }
+<span class="nc" id="L263">      return alertText;</span>
+<span class="nc" id="L264">    } finally {</span>
+<span class="nc" id="L265">      acceptNextAlert = true;</span>
+<span class="nc" id="L266">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserPictureHandler.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">UserPictureHandler.java</span></div><h1>UserPictureHandler.java</h1><pre class="source lang-java linenums">package de.ofCourse.action;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * This Servlet jumps in if a request for a picture was done. Then it search in the Database
+ * the picture and returns it or loads the Dummy Picture if nothing is found in the Database
+ * 
+ * @author Sebastian Schwarz
+ *
+ */
+
+public class UserPictureHandler extends HttpServlet {
+
+    /**
+     * serial ID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * The constructer uses the Constructor from the parent class
+     */
+    public UserPictureHandler() {
+<span class="fc" id="L35">        super();</span>
+<span class="fc" id="L36">    }</span>
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest
+     * , javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+<span class="fc" id="L49">        Transaction trans = Connection.create();</span>
+<span class="fc" id="L50">        trans.start();</span>
+        try {
+        	
+        	//Checks whether it is a profilImage or CourseImage
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            if (req.getParameter(&quot;profilImage&quot;) != null) {</span>
+<span class="fc" id="L55">                String pictureBelongsToUserID = req.getParameter(&quot;profilImage&quot;);</span>
+<span class="fc" id="L56">                int userID = Integer.parseInt(pictureBelongsToUserID);</span>
+<span class="fc" id="L57">                byte[] userPicture = UserDAO.getImage(trans, userID);</span>
+
+                //Loads the DummyPicture because no Image in the Database
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                if (userPicture == null) {</span>
+                    
+<span class="fc" id="L62">                    dummypicture(resp);</span>
+<span class="fc" id="L63">                    LogHandler.getInstance().debug(&quot;No User Picture found, &quot;</span>
+                            + &quot;load DummyPicture&quot;);
+                    
+<span class="fc" id="L66">                } else {</span>
+<span class="nc" id="L67">                    resp.reset();</span>
+<span class="nc" id="L68">                    resp.setContentType(&quot;image/jpg&quot;);</span>
+<span class="nc" id="L69">                    resp.setContentLength(userPicture.length);</span>
+<span class="nc" id="L70">                    resp.getOutputStream().write(userPicture);                    </span>
+<span class="nc" id="L71">                    LogHandler.getInstance().debug(</span>
+<span class="nc" id="L72">                            &quot;User Picture succesfully loaded&quot;);</span>
+                }
+<span class="fc" id="L74">                trans.commit();</span>
+
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">            } else if (req.getParameter(&quot;courseImage&quot;) != null) {</span>
+
+<span class="fc" id="L78">                String pictureBelongsToCourseID = req</span>
+<span class="fc" id="L79">                        .getParameter(&quot;courseImage&quot;);                </span>
+<span class="fc" id="L80">                int courseID = Integer.parseInt(pictureBelongsToCourseID);</span>
+<span class="fc" id="L81">                byte[] courseImage = CourseDAO.getImage(trans, courseID);</span>
+                
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if (courseImage == null) {</span>
+                    
+<span class="fc" id="L85">                    dummypicture(resp);</span>
+<span class="fc" id="L86">                    LogHandler.getInstance().debug(&quot;No Course Picture found, &quot;</span>
+                            + &quot;load DummyPicture&quot;);
+                    
+<span class="fc" id="L89">                } else {</span>
+                    
+<span class="fc" id="L91">                    resp.reset();</span>
+<span class="fc" id="L92">                    resp.setContentType(&quot;image/jpg&quot;);</span>
+<span class="fc" id="L93">                    resp.setContentLength(courseImage.length);</span>
+<span class="fc" id="L94">                    resp.getOutputStream().write(courseImage);</span>
+                    
+<span class="fc" id="L96">                    LogHandler.getInstance().debug(</span>
+<span class="fc" id="L97">                            &quot;Course Picture succesfully loaded&quot;);</span>
+                }
+<span class="fc" id="L99">                trans.commit();</span>
+            } 
+<span class="pc" id="L101">        } catch (Exception e) {</span>
+<span class="nc" id="L102">            LogHandler.getInstance().error(</span>
+<span class="nc" id="L103">                    &quot;HTTPServlet funktioniert nicht: getUser&quot;);</span>
+<span class="nc" id="L104">            trans.rollback();</span>
+        }
+
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Sets the Path of the Dummy picture which is stored on the Server
+     * 
+     * @param resp
+     * @throws IOException
+     */
+    private void dummypicture(HttpServletResponse resp) throws IOException {      
+<span class="fc" id="L116">        resp.reset();</span>
+<span class="fc" id="L117">        resp.setContentType(&quot;image/jpg&quot;);</span>
+<span class="fc" id="L118">        resp.sendRedirect(&quot;http://localhost:8003/OfCourse/resources/img/userdata/userphoto.jpg&quot;);</span>
+<span class="fc" id="L119">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

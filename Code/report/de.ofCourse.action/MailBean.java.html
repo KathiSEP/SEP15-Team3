@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MailBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">MailBean.java</span></div><h1>MailBean.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/**</span>
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+
+
+import javax.faces.context.FacesContext;
+
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.SmtpServer;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.MailThread;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.PropertyManager;
+
+/**
+ * Sends emails to lists of recipients and provides the service of sending
+ * system-generated mails like the email - verification - mail.
+ * &lt;p&gt;
+ * The class has access to the SMTP - Server -settings which are needed to send
+ * mails.
+ * 
+ * @author Sebastian Schwarz
+ */
+@ManagedBean(eager = true)
+@ApplicationScoped
+<span class="fc" id="L43">public class MailBean {</span>
+
+    /**
+     * SMTP-server-object, that is needed to get the settings of the server.
+     */
+    private SmtpServer smtpServer;
+
+    
+    
+    @PostConstruct
+    private void init(){
+<span class="fc" id="L54">        smtpSetup();        </span>
+<span class="fc" id="L55">    }</span>
+
+
+	/**
+	 * Sets the Data from the Smtp Server 
+	 */
+	private void smtpSetup() {
+<span class="fc" id="L62">		smtpServer = new SmtpServer();</span>
+<span class="fc" id="L63">        smtpServer.setHostaddr(PropertyManager.getInstance().getPropertyMail(&quot;smtphost&quot;));</span>
+<span class="fc" id="L64">        smtpServer.setPort(Integer.parseInt(PropertyManager.getInstance().getPropertyMail(&quot;smtpport&quot;)));</span>
+
+        //Tests whether the admin wants to connect per SSL or TTLS
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if(PropertyManager.getInstance().getPropertyMail(&quot;useSSL&quot;).equals(&quot;true&quot;)){</span>
+<span class="fc" id="L68">            smtpServer.setSsl(true);</span>
+<span class="fc" id="L69">        } else {</span>
+<span class="nc" id="L70">            smtpServer.setSsl(false);</span>
+        }
+        
+<span class="fc" id="L73">        smtpServer.setUsername(PropertyManager.getInstance().getPropertyMail(&quot;mailusername&quot;));</span>
+<span class="fc" id="L74">        smtpServer.setPassword(PropertyManager.getInstance().getPropertyMail(&quot;mailpassword&quot;));</span>
+<span class="fc" id="L75">	}</span>
+    
+    
+    /**
+     * 
+     * Sends an email to a list of recipients. The email contains a subject and
+     * a message.
+     * 
+     * @param recipients
+     *            List of recipients who receive the message
+     * @param sender
+     *            sender of the email
+     * @param subject
+     *            subject of the email
+     * @param message
+     *            message of the email
+     */
+    public void sendMail(List&lt;String&gt; recipients, String subject, String message) {
+
+    	//sets the SMTP Server Data new incase they have changed
+<span class="fc" id="L95">        Properties prop = new Properties();</span>
+<span class="fc" id="L96">        smtpSetup();</span>
+        
+<span class="fc" id="L98">        Authenticator loginAuth = new Authenticator() {</span>
+           
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication(){
+<span class="nc" id="L102">                PasswordAuthentication loginData = </span>
+<span class="nc" id="L103">                        new PasswordAuthentication</span>
+<span class="nc" id="L104">                        (smtpServer.getUsername(), smtpServer.getPassword());</span>
+                
+<span class="nc" id="L106">                return loginData;</span>
+            }          
+        };
+     
+        
+<span class="fc" id="L111">        prop.put(&quot;mail.smtph.port&quot;, smtpServer.getPort());</span>
+<span class="fc" id="L112">        prop.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</span>
+        
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if(smtpServer.isSsl()){</span>
+<span class="fc" id="L115">            prop.put(&quot;mail.smtp.ssl.enable&quot;, &quot;true&quot;);</span>
+<span class="fc" id="L116">            prop.put(&quot;mail.smtp.ssl.trust&quot;, smtpServer.getHostaddr());</span>
+<span class="fc" id="L117">        }else{</span>
+<span class="nc" id="L118">            prop.put(&quot;mail.smtp.starttls.enable&quot;, &quot;true&quot;); </span>
+        }                        
+        
+        //Sends the Mail in a new Thread incase we get a ServerTimeOut because he waits to long till all
+        //mails are sended
+<span class="fc" id="L123">        Thread t = new Thread(new MailThread(prop, loginAuth, smtpServer, recipients, subject, message));</span>
+<span class="fc" id="L124">        t.start();</span>
+       
+<span class="fc" id="L126">    }</span>
+
+    /**
+     * Generates an authentication messages.&lt;br&gt;
+     * This message is sent when a user registers himself in the system. The
+     * message contains an verification link, the verifies the entered email and
+     * activates the account in case of the type of account activation is set to
+     * email verification.
+     * 
+     * 
+     * @param userID
+     *            ID of the user, who receives the message.
+     * @param veriString 
+     */
+    public void sendAuthentificationMessage(int userID, String veriString) {
+        
+        // User who should get the authentificationMessage will be loaded from Database
+<span class="fc" id="L143">        Transaction trans = Connection.create();</span>
+<span class="fc" id="L144">        trans.start();</span>
+        
+        try{
+<span class="fc" id="L147">           User userToInform = UserDAO.getUser(trans, userID);</span>
+<span class="fc" id="L148">           LogHandler.getInstance().debug(&quot;The Methode getUser:&quot; + userID + &quot;was succesfull&quot;);</span>
+<span class="fc" id="L149">           trans.commit();</span>
+         
+<span class="fc" id="L151">           String messenge = createSalutation(userToInform);</span>
+<span class="fc" id="L152">           messenge += &quot;Welcome to the OfCourse Family. Thank you very much for your registration. \n&quot;;</span>
+<span class="fc" id="L153">           messenge += &quot;Please press the following link to confirm your Mailaddress and to finish your authentication: \n \n&quot;;                   </span>
+<span class="fc" id="L154">           messenge += createLink() + &quot;/facelets/open/authenticate.xhtml?veri=&quot; + veriString + &quot;\n\n&quot;;</span>
+<span class="fc" id="L155">           messenge += createSignature();</span>
+           
+<span class="fc" id="L157">           String subject = &quot;Authentication Mail&quot;;</span>
+           
+<span class="fc" id="L159">           sendSingleMail(userToInform.getEmail(), subject, messenge);</span>
+<span class="pc" id="L160">        } catch (InvalidDBTransferException e){</span>
+<span class="nc" id="L161">           trans.rollback(); </span>
+        }
+        
+        
+<span class="fc" id="L165">    }</span>
+
+
+    /**
+     * Returns the smtpServer - object that contains the settings of the smtp
+     * server.
+     * 
+     * @return the smtpSever - object
+     */
+    public SmtpServer getSmtpServer() {
+<span class="nc" id="L175">	return smtpServer;</span>
+    }
+
+    /**
+     * Sets smtpServer - object that contains the settings of the smtp server.
+     * 
+     * @param smtpServer
+     *            smtpSserver - object to set
+     */
+    public void setSmtpServer(SmtpServer smtpServer) {
+<span class="nc" id="L185">        this.smtpServer = smtpServer;</span>
+<span class="nc" id="L186">    }</span>
+    
+    /**
+     * Creates a Link to the welcome page from OfCOurse
+     * 
+     * @return
+     */
+    private String createLink(){
+        
+<span class="fc" id="L195">        String requestScheme = FacesContext.getCurrentInstance().getExternalContext().getRequestScheme();</span>
+<span class="fc" id="L196">        String requestHost = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();</span>
+<span class="fc" id="L197">        String requestContextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();</span>
+<span class="fc" id="L198">        int requestPorts = FacesContext.getCurrentInstance().getExternalContext().getRequestServerPort();</span>
+        
+<span class="fc" id="L200">        String link = requestScheme + &quot;://&quot; + requestHost +&quot;:&quot; + requestPorts + requestContextPath;</span>
+<span class="fc" id="L201">        return link;</span>
+    }
+    
+    
+    /**
+     * This methode only puts the Mail Adress in a List for that we can us the sendMAil methode
+     * 
+     * @param maildaddress
+     * @param subject
+     * @param messenge
+     */
+    private void sendSingleMail(String maildaddress, String subject, String messenge){
+<span class="fc" id="L213">        List&lt;String&gt; recipients = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L214">        recipients.add(maildaddress);</span>
+<span class="fc" id="L215">        sendMail(recipients, subject, messenge);            </span>
+<span class="fc" id="L216">    }</span>
+
+
+    /**
+     * Creates the Mail for the Lost Password case
+     * 
+     * @param newPassword
+     * @param email
+     */
+    public void sendMailForLostPassword(String newPassword, String email) {
+<span class="fc" id="L226">        Transaction trans = Connection.create();</span>
+<span class="fc" id="L227">        trans.start();</span>
+        
+        try{
+<span class="fc" id="L230">           User userToInform = UserDAO.getUserPerMail(trans, email);</span>
+<span class="fc" id="L231">           LogHandler.getInstance().debug(&quot;The Methode getUserPerMail:&quot; + email + &quot;was succesfull&quot;);</span>
+           
+<span class="fc" id="L233">           String subject = &quot;OfCourse new Password Email&quot;;</span>
+           
+<span class="fc" id="L235">           String message = createLostPasswordMail(newPassword, userToInform);</span>
+           
+<span class="fc" id="L237">           sendSingleMail(userToInform.getEmail(), subject, message);</span>
+<span class="fc" id="L238">           LogHandler.getInstance().debug(&quot;Lost Password Mail sended&quot;);</span>
+           
+<span class="fc" id="L240">           trans.commit();</span>
+<span class="pc" id="L241">        } catch (InvalidDBTransferException e){            </span>
+<span class="nc" id="L242">            LogHandler.getInstance().error(&quot;Error occured during getUser in the sendLostPassword Methode&quot;);</span>
+<span class="nc" id="L243">            trans.rollback();</span>
+        }
+        
+<span class="fc" id="L246">    }</span>
+
+
+    /**
+     * Creates the Text for the LostPassword Mail
+     * 
+     * @param newPassword
+     * @param userToInform
+     * @return 
+     */
+    private String createLostPasswordMail(String newPassword, User userToInform) {
+<span class="fc" id="L257">        String message = createSalutation(userToInform) ;</span>
+<span class="fc" id="L258">           message += &quot;Your new Password is: &quot; + newPassword + &quot;\n&quot;;</span>
+<span class="fc" id="L259">           message += &quot;Please change your Password after the next login \n\n&quot;;</span>
+<span class="fc" id="L260">           message += createLink() + &quot; \n&quot;;</span>
+<span class="fc" id="L261">           message += createSignature();</span>
+           
+<span class="fc" id="L263">           return message;</span>
+    }
+    
+    
+    
+    /**
+     * Gives the OfCourse Signature for Mails
+     * 
+     * @return
+     */
+    private String createSignature() {
+
+<span class="fc" id="L275">        String signature = &quot;\n Yours \n&quot;;</span>
+<span class="fc" id="L276">        signature += &quot;faithfully, the OfCourse Team&quot; ;</span>
+<span class="fc" id="L277">        return signature;</span>
+    }
+
+
+    /**
+     * Creates the Salutation for every User who gets a mail
+     * 
+     * @param user
+     * @return
+     */
+    private String createSalutation(User user){
+        String header;
+        
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        if(user.getLastname() == null){</span>
+<span class="nc" id="L291">            header = &quot;Dear User&quot; + &quot;, \n\n&quot; ;</span>
+<span class="nc" id="L292">        }else{</span>
+<span class="fc" id="L293">            header = &quot;Dear &quot; + user.getSalutation() + &quot;. &quot; + user.getLastname() + &quot;, \n\n&quot; ;</span>
+        }
+        
+<span class="fc" id="L296">        return header;</span>
+        
+    }
+    
+    /**
+     * Creates and sends the Mail for the Case a CourseUnit was deleted
+     * 
+     * @param recipients
+     * @param CourseUnit
+     */
+    public void sendCourseUnitDeleteMail(List&lt;String&gt; recipients, int CourseUnit, Transaction transaction){
+          
+        try{
+<span class="nc" id="L309">            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(transaction, CourseUnit);</span>
+            
+<span class="nc" id="L311">            String subject = &quot;CourseUnit: &quot; +  editCourseUnit.getTitle() + &quot; has been deleted&quot;;</span>
+
+<span class="nc" id="L313">            String message = &quot;Dear User, \n \n&quot;;</span>
+            
+<span class="nc" id="L315">            message += &quot;Your CourseUnit:&quot; + editCourseUnit.getTitle() + &quot; at &quot; + editCourseUnit.getStartime() + &quot; has been deleted. \n&quot;;</span>
+<span class="nc" id="L316">            message += &quot;Please visit the OfCourse WebPage for further Information: \n\n&quot;;</span>
+<span class="nc" id="L317">            message += createCourseLink(editCourseUnit.getCourseID()) + &quot;\n&quot;;</span>
+<span class="nc" id="L318">            message += createSignature();</span>
+            
+<span class="nc" id="L320">            sendMail(recipients, subject, message);</span>
+        
+<span class="nc" id="L322">        }catch (InvalidDBTransferException e){</span>
+            
+<span class="nc" id="L324">            LogHandler.getInstance().error(&quot;Error occured during sendCourseUnitEditMail&quot;);</span>
+        }
+            
+    
+<span class="nc" id="L328">    }</span>
+    
+    
+    
+    
+    /**
+     * Creates and Sends the Mail in case a CourseUnit was edited
+     * 
+     * @param recipients
+     * @param CourseUnit
+     */
+    public void sendCourseEditUnitMail(List&lt;String&gt; recipients,Transaction transaction, int CourseUnit){
+        
+        
+        try{
+<span class="nc" id="L343">            CourseUnit editCourseUnit = CourseUnitDAO.getCourseUnit(transaction, CourseUnit);</span>
+<span class="nc" id="L344">            LogHandler.getInstance().debug(&quot;The Methode getCourseUnit:&quot; + CourseUnit + &quot;was succesfull&quot;);</span>
+<span class="nc" id="L345">            String subject = &quot;CourseUnit: &quot; +  editCourseUnit.getTitle() + &quot; has changed&quot;;</span>
+        
+<span class="nc" id="L347">            String message = &quot;Dear User, \n \n&quot;;</span>
+            
+<span class="nc" id="L349">            message += &quot;Your CourseUnit:&quot; + editCourseUnit.getTitle() + &quot; at&quot; + editCourseUnit.getStartime() + &quot;has changed. \n&quot;;</span>
+<span class="nc" id="L350">            message += &quot;Please visit the OfCourse WebPage for further Information: \n\n&quot;;</span>
+<span class="nc" id="L351">            message += createCourseLink(editCourseUnit.getCourseID()) + &quot;\n&quot;;</span>
+<span class="nc" id="L352">            message += createSignature();</span>
+            
+<span class="nc" id="L354">            sendMail(recipients, subject, message);</span>
+        
+<span class="nc" id="L356">        }catch (InvalidDBTransferException e){</span>
+<span class="nc" id="L357">            LogHandler.getInstance().error(&quot;Error occured during sendCourseUnitEditMail&quot;);</span>
+        }
+            
+<span class="nc" id="L360">    }</span>
+
+
+    /**
+     * Creates a Link to the specific CourseUnit
+     * 
+     * @param courseUnit
+     * @return
+     */
+    private String createCourseLink(int courseID) {
+<span class="nc" id="L370">        String link = createLink() + &quot;/facelets/open/courses/courseDetail.xhtml?courseID=&quot; + courseID;</span>
+<span class="nc" id="L371">        return link;</span>
+    }
+    
+    /**
+     * @param userID
+     * @param veriString
+     */
+    public void sendUpdateMessage(int userID, String veriString, String emailNew) {
+     // User who should get the authentificationMessage will be loaded from Database
+<span class="fc" id="L380">        Transaction trans = Connection.create();</span>
+<span class="fc" id="L381">        trans.start();</span>
+        
+        try{
+<span class="fc" id="L384">           User userToInform = UserDAO.getUser(trans, userID);</span>
+<span class="fc" id="L385">           LogHandler.getInstance().debug(&quot;The Methode getUser:&quot; + userID + &quot;was succesfull&quot;);</span>
+<span class="fc" id="L386">           trans.commit();</span>
+         
+<span class="fc" id="L388">           String messenge = createSalutation(userToInform);</span>
+<span class="fc" id="L389">           messenge += &quot;Your Profil was succesfully updated. \n&quot;;</span>
+<span class="fc" id="L390">           messenge += &quot;Please press the following link to confirm your new Mailaddress: \n \n&quot;;                   </span>
+<span class="fc" id="L391">           messenge += createLink() + &quot;/facelets/open/authenticate.xhtml?veri=&quot; + veriString + &quot;\n\n&quot;;</span>
+<span class="fc" id="L392">           messenge += createSignature();</span>
+           
+<span class="fc" id="L394">           String subject = &quot;Profil Update&quot;;</span>
+           
+<span class="fc" id="L396">           sendSingleMail(emailNew, subject, messenge);</span>
+<span class="pc" id="L397">        } catch (InvalidDBTransferException e){</span>
+<span class="nc" id="L398">           trans.rollback(); </span>
+        }
+        
+<span class="fc" id="L401">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

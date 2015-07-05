@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CustomExceptionHandlerFactory.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.exception</a> &gt; <span class="el_source">CustomExceptionHandlerFactory.java</span></div><h1>CustomExceptionHandlerFactory.java</h1><pre class="source lang-java linenums">/**
+ * Contains all custom exceptions that may occur in the OfCourse system.
+ */
+package de.ofCourse.exception;
+
+import javax.faces.context.ExceptionHandler;
+import javax.faces.context.ExceptionHandlerFactory;
+
+/**
+ * Initializes a &lt;code&gt;ExceptionHandler&lt;/code&gt; which handles all occuring exceptions.
+ *
+ * @author Schwarz Sebastian
+ *
+ */
+public class CustomExceptionHandlerFactory extends ExceptionHandlerFactory{
+
+    /**
+     * Stores a instance of ExcpetionHandlerFactory
+     */
+    private ExceptionHandlerFactory parent;
+    
+    /**
+     * Initializes the attribute of CostumExceptionHandlerFactory
+     */
+<span class="fc" id="L25">    public CustomExceptionHandlerFactory(ExceptionHandlerFactory parent) {</span>
+<span class="fc" id="L26">        this.parent = parent;</span>
+<span class="fc" id="L27">    }</span>
+    
+	/**
+	 * Returns an &lt;code&gt;ExceptionHandler&lt;/code&gt; Object which handles the occured exception.
+	 *
+	 * @return the initialized &lt;code&gt;ExceptionHandler&lt;/code&gt;
+	 */
+    @Override
+    public ExceptionHandler getExceptionHandler() {
+<span class="fc" id="L36">        ExceptionHandler result = parent.getExceptionHandler();</span>
+<span class="fc" id="L37">        result = new CustomExceptionHandler(result);</span>
+<span class="fc" id="L38">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

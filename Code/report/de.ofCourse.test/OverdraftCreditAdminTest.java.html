@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OverdraftCreditAdminTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">OverdraftCreditAdminTest.java</span></div><h1>OverdraftCreditAdminTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+/**
+ * Tests whether the overdraft credit is changed correctly.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+<span class="nc bnc" id="L18" title="All 2 branches missed.">public class OverdraftCreditAdminTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L21">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L22">  private StringBuffer verificationErrors = new StringBuffer();</span>
+<span class="nc" id="L23">  public static final String messageOverdraftCredit= &quot;messageOverdraftCredit&quot;;</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L27">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L28">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L29">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L30">  }</span>
+
+  @Test
+  public void testOverdraftCreditAdmin() throws Exception {
+<span class="nc" id="L34">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L35">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+<span class="nc" id="L36">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L37">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L38">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L39">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L40">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+    
+    
+    
+<span class="nc" id="L44">    driver.findElement(By.linkText(&quot;Administration&quot;)).click();</span>
+<span class="nc" id="L45">    driver.findElement(By.linkText(&quot;Seitenverwaltung&quot;)).click();</span>
+<span class="nc bnc" id="L46" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;heading1&quot;)).getText().equals(&quot;Seitenverwaltung&quot;);</span>
+<span class="nc" id="L47">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).clear();</span>
+<span class="nc" id="L48">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).sendKeys(&quot;zehn&quot;);</span>
+<span class="nc" id="L49">    driver.findElement(By.id(&quot;formGiveCredit:giveCredit&quot;)).click();</span>
+<span class="nc" id="L50">    System.out.println(driver.findElement(By.id(messageOverdraftCredit)).getText());</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">    assert driver.findElement(By.id(messageOverdraftCredit)).getText().equals(&quot;Der eingegebene Betrag entspricht nicht den Vorgaben. Beispiel 10.0&quot;);</span>
+<span class="nc" id="L52">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).clear();</span>
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).sendKeys(&quot;-10.00&quot;);</span>
+<span class="nc" id="L54">    driver.findElement(By.id(&quot;formGiveCredit:giveCredit&quot;)).click();</span>
+<span class="nc bnc" id="L55" title="All 4 branches missed.">    assert driver.findElement(By.id(messageOverdraftCredit)).getText().equals(&quot;Der eingegebene Betrag muss positiv sein. Beispiel 10.0&quot;);</span>
+<span class="nc" id="L56">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).clear();</span>
+<span class="nc" id="L57">    driver.findElement(By.id(&quot;formGiveCredit:amountGivenCredit&quot;)).sendKeys(&quot;10.00&quot;);</span>
+<span class="nc" id="L58">    driver.findElement(By.id(&quot;formGiveCredit:giveCredit&quot;)).click();</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;formGiveCredit:creditMessage&quot;)).getText().equals(&quot;Der Ueberziehungskredit wurde festgelegt auf 10.0 Euro.&quot;);</span>
+   
+    
+<span class="nc" id="L62">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L63">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L67">    driver.quit();</span>
+<span class="nc" id="L68">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L70">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L72">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L76">      driver.findElement(by);</span>
+<span class="nc" id="L77">      return true;</span>
+<span class="nc" id="L78">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L79">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L85">      driver.switchTo().alert();</span>
+<span class="nc" id="L86">      return true;</span>
+<span class="nc" id="L87">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L88">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L94">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L95">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L97">        alert.accept();</span>
+<span class="nc" id="L98">      } else {</span>
+<span class="nc" id="L99">        alert.dismiss();</span>
+      }
+<span class="nc" id="L101">      return alertText;</span>
+<span class="nc" id="L102">    } finally {</span>
+<span class="nc" id="L103">      acceptNextAlert = true;</span>
+<span class="nc" id="L104">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

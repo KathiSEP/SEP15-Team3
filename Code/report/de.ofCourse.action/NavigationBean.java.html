@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NavigationBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">NavigationBean.java</span></div><h1>NavigationBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Provides the services of directing to the login page, selecting the displayed
+ * language and to perform the logout action.
+ * &lt;p&gt;
+ * 
+ * Logging out of the system means that the user session is invalidated and the
+ * user has to login again if he wants to access the system. The user can log
+ * out from every page of the system. Only requirement is that the user is
+ * logged in.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;navigation&lt;/code&gt;.
+ * 
+ * @author Ricky Strohmeier
+ *
+ */
+@ManagedBean
+@RequestScoped
+<span class="fc" id="L34">public class NavigationBean {</span>
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Sets the language in which the whole site will appear.
+     * 
+     * @param language the language to be set.
+     */
+    public void setLanguage(String language) {
+<span class="nc" id="L50">        HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()</span>
+<span class="nc" id="L51">                                                                                    .getSession(true);</span>
+<span class="nc" id="L52">        httpSession.setAttribute(&quot;lang&quot;, language.toString());</span>
+<span class="nc" id="L53">        sessionUser.setLanguage(Language.fromString(language));</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Performs the logout action.&lt;br&gt;
+     * By pressing the &lt;code&gt;logout&lt;/code&gt; button, the user is logged out. That
+     * means he is redirected to the welcome page.
+     * 
+     * @return the link to the welcome page
+     */
+    public String logout() {
+<span class="fc" id="L64">        sessionUser = new SessionUserBean();</span>
+<span class="fc" id="L65">    	FacesContext.getCurrentInstance().getExternalContext().invalidateSession();</span>
+<span class="fc" id="L66">    	return &quot;/facelets/open/index.xhtml?faces-redirect=true&quot;;</span>
+    }
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="fc" id="L75">    	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L85">		this.sessionUser = userSession;</span>
+<span class="fc" id="L86">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

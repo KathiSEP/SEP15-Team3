@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseUnitManagementBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">CourseUnitManagementBean.java</span></div><h1>CourseUnitManagementBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.CycleDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.CourseRegistrationException;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Address;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.Cycle;
+import de.ofCourse.model.MailWrapper;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Period;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides functionality for course leaders to create, edit and delete course
+ * units and to manage the users of the course unit, so to say, to add and to
+ * remove users from course unit.
+ * &lt;p&gt;
+ * 
+ * Only course leaders and administrators are able to use this functionalities.&lt;br&gt;
+ * Especially only they have the rights to manage the users of a course unit. In
+ * order to do so they have the possibility to add a new user to a course unit
+ * by entering the data of the user. This user need not to pay for this course
+ * unit&lt;br&gt;
+ * For deleting a users from a course unit the course leader has to selected the
+ * user to delete. He has the possibility to remove more than one user from a
+ * course at once.
+ * &lt;p&gt;
+ * Furthermore this class offers the functionality to create and edit course
+ * units that take place regularly at once.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;editCourseUnit&lt;/code&gt;.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L65">public class CourseUnitManagementBean implements Pagination, Serializable {</span>
+
+    /**
+     * Serial version id
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Stores the number of elements that are displayed by pagination at once
+     */
+    private static final int elementsPerPage = 10;
+
+    /**
+     * Represents the inform status&lt;br&gt;
+     * Nobody of a course unit is informed in case of changes.
+     */
+    private static final int informNobody = 0;
+
+    /**
+     * Represents the inform status&lt;br&gt;
+     * All participants of a course unit are informed in case of changes.
+     */
+    private static final int informParticipantsOfUnit = 1;
+    
+    /**
+     * Represents the url to the course detail page
+     */
+    private final static String URL_COURSE_DETAIL = &quot;/facelets/open/courses/courseDetail.xhtml&quot;;
+
+    /**
+     * Stores the selected inform status
+     */
+    private int selectedToInform;
+
+    /**
+     * Constant that represents the days of a day
+     */
+    private static final int day = 1;
+
+    /**
+     * Constant that represents the number of days of a week
+     */
+    private static final int week = 7;
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores an user that is to be added to the course unit.
+     */
+    private User userToAdd;
+
+    /**
+     * Stores a list of users that participate a course unit.
+     */
+    private DataModel&lt;User&gt; participants;
+
+    /**
+     * Stores the entered start time of the course unit
+     */
+    private Date start;
+
+    /**
+     * Stores the entered endtime of the course unit
+     */
+    private Date end;
+
+    /**
+     * Stores the entered endtime of the course unit
+     */
+    private Date date;
+
+    /**
+     * Stores a list of users that are to be removed from the course unit.
+     */
+    private List&lt;User&gt; usersToDelete;
+
+    /**
+     * Stores whether a course unit takes place regularly.
+     */
+    private boolean regularCourseUnit;
+
+    /**
+     * Stores the entered or displayed data of the course unit.
+     */
+    private CourseUnit courseUnit;
+
+    /**
+     * Stores whether the page is rendered in edit mode
+     */
+    private boolean editMode;
+
+    /**
+     * Stores whether all course units of the corresponding cycle are affected.
+     */
+    private boolean completeCycle;
+
+    /**
+     * Stores the unit id passed from the course details page
+     */
+<span class="fc" id="L167">    private int courseUnitID = 0;</span>
+
+    /**
+     * Stores the course id passed from the course details page
+     */
+    private int courseID;
+
+    /**
+     * Parameter by which is sorted
+     */
+    private String orderParam;
+
+    /**
+     * Represents the current displayed page number.
+     */
+    private int currentPage;
+    
+    /**
+     * Represents the entered turnus.
+     */
+    private String enteredTurnus;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * the managed mail property
+     */
+    @ManagedProperty(&quot;#{mailBean}&quot;)
+    private MailBean mailBean;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Initializes the page in edit mode or not.&lt;br&gt;
+     * That depends on the pressed button in the course details bean.
+     * 
+     * @author Tobias Fuchs
+     */
+    @PostConstruct
+    public void init() {
+<span class="fc" id="L218">	transaction = Connection.create();</span>
+
+	// Fetch the mode
+<span class="fc" id="L221">	String fetchedMode = FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L222">		.getExternalContext().getRequestParameterMap().get(&quot;editMode&quot;);</span>
+
+<span class="pc bpc" id="L224" title="1 of 4 branches missed.">	if (fetchedMode != null &amp;&amp; fetchedMode.toLowerCase().equals(&quot;true&quot;)) {</span>
+<span class="fc" id="L225">	    editMode = true;</span>
+<span class="fc" id="L226">	} else {</span>
+<span class="fc" id="L227">	    editMode = false;</span>
+	}
+
+	// Fetch the ids according to the selected mode
+<span class="fc" id="L231">	courseID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L232">		.getExternalContext().getRequestParameterMap().get(&quot;courseID&quot;));</span>
+
+<span class="fc bfc" id="L234" title="All 2 branches covered.">	if (editMode) {</span>
+<span class="fc" id="L235">	    courseUnitID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L236">		    .getExternalContext().getRequestParameterMap()</span>
+<span class="fc" id="L237">		    .get(&quot;courseUnitID&quot;));</span>
+<span class="fc" id="L238">	} else {</span>
+<span class="fc" id="L239">	    courseUnitID = 0;</span>
+	}
+
+	//Initializes the bean to edit or delete a unit
+<span class="fc bfc" id="L243" title="All 2 branches covered.">	if (editMode) {</span>
+<span class="fc" id="L244">	    pagination = new PaginationData(</span>
+<span class="fc" id="L245">		    elementsPerPage, </span>
+<span class="fc" id="L246">		    0,</span>
+<span class="fc" id="L247">		    SortColumn.NAME, </span>
+<span class="fc" id="L248">		    SortDirection.ASC);</span>
+<span class="fc" id="L249">	    participants = new ListDataModel&lt;User&gt;();</span>
+<span class="fc" id="L250">	    userToAdd = new User();</span>
+<span class="fc" id="L251">	    usersToDelete = new ArrayList&lt;User&gt;();</span>
+
+	    // Initializes the pagination and if in edit mode the displayed
+	    // course unit
+<span class="fc" id="L255">	    transaction.start();</span>
+	    try {
+		
+<span class="fc" id="L258">		courseUnit = CourseUnitDAO.getCourseUnit(transaction,</span>
+<span class="fc" id="L259">			courseUnitID);</span>
+		
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">		if(courseUnit.getCourseAdmin() == null){</span>
+<span class="nc" id="L262">		    courseUnit.setCourseAdmin(new User());</span>
+		}
+
+<span class="fc" id="L265">		start = new Date(courseUnit.getStartime().getTime());</span>
+<span class="fc" id="L266">		end = new Date(courseUnit.getEndtime().getTime());</span>
+<span class="fc" id="L267">		date = courseUnit.getStartime();</span>
+
+<span class="fc bfc" id="L269" title="All 2 branches covered.">		if (courseUnit.getCycle() == null) {</span>
+<span class="fc" id="L270">		    courseUnit.setCycle(new Cycle());</span>
+		}
+
+<span class="fc" id="L273">		pagination.refreshNumberOfPages(CourseUnitDAO</span>
+<span class="fc" id="L274">			.getNumberOfParticipants(transaction, courseUnitID));</span>
+
+<span class="fc" id="L276">		participants.setWrappedData(CourseUnitDAO</span>
+<span class="fc" id="L277">			.getParticipiantsOfCourseUnit(</span>
+<span class="fc" id="L278">				transaction, </span>
+<span class="fc" id="L279">				pagination,</span>
+<span class="fc" id="L280">				courseUnitID,</span>
+<span class="fc" id="L281">				false));</span>
+<span class="fc" id="L282">		transaction.commit();</span>
+
+<span class="pc" id="L284">	    } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L285">		LogHandler.getInstance().error(</span>
+<span class="nc" id="L286">			&quot;Error occured during updating the&quot;</span>
+				+ &quot; page with elements from database.&quot;);
+<span class="nc" id="L288">		transaction.rollback();</span>
+	    }
+<span class="nc" id="L290">	} else {</span>
+            // Initializes the bean for creating an new unit
+<span class="fc" id="L292">	    courseUnit = new CourseUnit();</span>
+<span class="fc" id="L293">	    courseUnit.setAddress(new Address());</span>
+<span class="fc" id="L294">	    courseUnit.setCourseAdmin(new User());</span>
+<span class="fc" id="L295">	    courseUnit.setCycle(new Cycle());</span>
+<span class="fc" id="L296">	    courseUnit.setCourseID(courseID);</span>
+	}
+<span class="fc" id="L298">    }</span>
+
+    /**
+     * Creates a new course unit with the entered data and returns the link to
+     * the updated course details page. That means that the method creates a new
+     * database entry for the course unit and stores it in the database.&lt;br&gt;
+     * By selecting that the course unit takes place regularly and entering
+     * information relating to the cycle of the course units, it is possible to
+     * create more regular course units at once.
+     * 
+     * @return link to the courseDetails page
+     * 
+     * @author Tobias Fuchs
+     */
+    public String createCourseUnit() {
+	
+
+	//Checks whether the unit to create is in the range of the course
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">	if (checkDate() </span>
+<span class="fc" id="L317">		&amp;&amp; checkCourseUnitLeader(</span>
+<span class="fc" id="L318">			courseID, </span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">			courseUnit.getCourseAdmin().getUserID())) {</span>
+	    
+<span class="fc" id="L321">	    transaction.start();</span>
+	    try {
+<span class="fc" id="L323">		calculateStartAndEndTime(courseUnit);</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">		if (regularCourseUnit) {</span>
+
+<span class="fc" id="L326">		    courseUnit.getCycle().setTurnus(</span>
+<span class="fc" id="L327">			    Period.fromString(enteredTurnus));</span>
+<span class="fc" id="L328">		    courseUnit.getCycle().setCycleID(</span>
+<span class="fc" id="L329">			    CycleDAO.createCycle(</span>
+<span class="fc" id="L330">				    transaction, </span>
+<span class="fc" id="L331">				    courseID,</span>
+<span class="fc" id="L332">				    courseUnit.getCycle()));</span>
+
+<span class="fc" id="L334">		    Date actualStartDate = courseUnit.getStartime();</span>
+<span class="fc" id="L335">		    Date actualEndDate = courseUnit.getEndtime();</span>
+
+		    //Computes the next start and enddate
+<span class="fc" id="L338">		    Date nextStartDate = null;</span>
+<span class="fc" id="L339">		    Date nextEndDate = null;</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">		    for (int i = 0; i &lt; courseUnit.getCycle()</span>
+<span class="fc" id="L341">			    .getNumberOfUnits(); ++i) {</span>
+
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">			if (courseUnit.getCycle().getTurnus().equals(Period.DAYS)) {</span>
+<span class="nc" id="L344">			    nextStartDate = calculateDate(actualStartDate, i</span>
+<span class="nc" id="L345">				    * day);</span>
+<span class="nc" id="L346">			    nextEndDate = calculateDate(actualEndDate, i * day);</span>
+
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">			} else if (courseUnit.getCycle().getTurnus().equals(Period.WEEKS)) {</span>
+<span class="fc" id="L349">			    nextStartDate = calculateDate(actualStartDate, i</span>
+<span class="fc" id="L350">				    * week);</span>
+<span class="fc" id="L351">			    nextEndDate = calculateDate(actualEndDate, i * week);</span>
+			}
+
+			// Set the calculated times
+<span class="fc" id="L355">			courseUnit.setStartime(</span>
+<span class="fc" id="L356">				new Date(nextStartDate.getTime()));</span>
+<span class="fc" id="L357">			courseUnit.setEndtime(new Date(nextEndDate.getTime()));</span>
+
+			//Creates the course unit if it's in range of the course
+<span class="fc" id="L360">			if (isUnitInRangeOfCourse(transaction,</span>
+<span class="fc" id="L361">				courseUnit.getStartime(),</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">				courseUnit.getEndtime())) {</span>
+
+<span class="fc" id="L364">			    CourseUnitDAO.createCourseUnit(transaction,</span>
+<span class="fc" id="L365">				    courseUnit, courseID, true);</span>
+<span class="fc" id="L366">			} else {</span>
+<span class="nc" id="L367">			    LogHandler.getInstance().debug(&quot;Unit &quot;</span>
+					    + &quot;with starttime &quot;
+<span class="nc" id="L369">					    + courseUnit.getStartime()</span>
+<span class="nc" id="L370">						    .toString()</span>
+<span class="nc" id="L371">					    + &quot; was not edited because it's no &quot;</span>
+<span class="nc" id="L372">					    + &quot;more in range of the corresponding course.&quot;);</span>
+			}
+		    }
+<span class="fc" id="L375">		} else {</span>
+<span class="fc" id="L376">		    CourseUnitDAO.createCourseUnit(</span>
+<span class="fc" id="L377">			    transaction, </span>
+<span class="fc" id="L378">			    courseUnit,</span>
+<span class="fc" id="L379">			    courseID, </span>
+<span class="fc" id="L380">			    false);</span>
+		}
+<span class="fc" id="L382">		transaction.commit();</span>
+<span class="fc" id="L383">		return URL_COURSE_DETAIL;</span>
+
+<span class="nc" id="L385">	    } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L386">		LogHandler.getInstance().error(</span>
+<span class="nc" id="L387">			&quot;Error occured during creating the&quot;</span>
+				+ &quot; a new course unit.&quot;);
+<span class="nc" id="L389">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L390">				null,</span>
+<span class="nc" id="L391">				sessionUser.getLabel(&quot;courseUnitManagementBean&quot; </span>
+				+ &quot;.FacesMessage.problem&quot;));
+<span class="nc" id="L393">		transaction.rollback();</span>
+	    }
+	}
+<span class="nc" id="L396">	return &quot;x&quot;;</span>
+
+    }
+
+    /**
+     * Realizes the editing of a course unit that takes place regularly.&lt;br&gt;
+     * Editing the course unit means that the database entry(ies) of the course
+     * unit(s) is updated.&lt;br&gt;
+     * After the edit, the participants receive a message to inform about the
+     * changes.
+     * 
+     * @return the link to the next page
+     * 
+     * @author Tobias Fuchs
+     */
+    public String saveCourseUnit() {
+<span class="fc" id="L412">	CourseUnit tempUnit = null;</span>
+<span class="fc" id="L413">	List&lt;String&gt; recipients = new ArrayList&lt;String&gt;();</span>
+
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">	if (checkDate()) {</span>
+
+<span class="nc" id="L417">	    long startdate_initial = courseUnit.getStartime().getTime();</span>
+<span class="nc" id="L418">	    long enddate_initial = courseUnit.getEndtime().getTime();</span>
+
+	    // Update local course unit attribute with entered data
+<span class="nc" id="L421">	    this.calculateStartAndEndTime(courseUnit);</span>
+<span class="nc" id="L422">	    long startdate_new = courseUnit.getStartime().getTime();</span>
+<span class="nc" id="L423">	    long enddate_new = courseUnit.getEndtime().getTime();</span>
+
+<span class="nc" id="L425">	    long difference_start_time = startdate_new - startdate_initial;</span>
+<span class="nc" id="L426">	    long difference_end_time = enddate_new - enddate_initial;</span>
+
+<span class="nc" id="L428">	    transaction.start();</span>
+	    try {
+<span class="nc bnc" id="L430" title="All 4 branches missed.">		if (completeCycle &amp;&amp; courseUnit.getCycle() != null) {</span>
+<span class="nc" id="L431">		    List&lt;Integer&gt; idsToEdit = CourseUnitDAO</span>
+<span class="nc" id="L432">			    .getIdsCourseUnitsOfCycle(</span>
+<span class="nc" id="L433">				    transaction,</span>
+<span class="nc" id="L434">				    courseUnit.getCourseUnitID());</span>
+
+<span class="nc bnc" id="L436" title="All 2 branches missed.">		    for (int id : idsToEdit) {</span>
+			// Fetch course unit in cycle
+<span class="nc" id="L438">			recipients = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L439">			tempUnit = CourseUnitDAO.getCourseUnit(transaction, id);</span>
+
+			// Add calculated time differences
+<span class="nc" id="L442">			tempUnit.setStartime(new Date(tempUnit.getStartime()</span>
+<span class="nc" id="L443">				.getTime() + difference_start_time));</span>
+<span class="nc" id="L444">			tempUnit.setEndtime(new Date(tempUnit.getEndtime()</span>
+<span class="nc" id="L445">				.getTime() + difference_end_time));</span>
+
+			// Update tempUnit with other entered values
+<span class="nc" id="L448">			tempUnit.setTitle(courseUnit.getTitle());</span>
+<span class="nc" id="L449">			tempUnit.setMinUsers(courseUnit.getMinUsers());</span>
+<span class="nc" id="L450">			tempUnit.setMaxUsers(courseUnit.getMaxUsers());</span>
+<span class="nc" id="L451">			tempUnit.setPrice(courseUnit.getPrice());</span>
+<span class="nc" id="L452">			tempUnit.setDescription(courseUnit.getDescription());</span>
+<span class="nc" id="L453">			tempUnit.setCourseAdmin(courseUnit.getCourseAdmin());</span>
+<span class="nc" id="L454">			tempUnit.setAddress(courseUnit.getAddress());</span>
+
+<span class="nc" id="L456">			if (isUnitInRangeOfCourse(</span>
+<span class="nc" id="L457">					transaction,</span>
+<span class="nc" id="L458">					tempUnit.getStartime(), </span>
+<span class="nc bnc" id="L459" title="All 2 branches missed.">					tempUnit.getEndtime())) {</span>
+
+			    // update tempUnit
+<span class="nc" id="L462">			    CourseUnitDAO.updateCourseUnit(transaction,</span>
+<span class="nc" id="L463">				    tempUnit);</span>
+
+			    // Send info mail
+<span class="nc" id="L466">			    List&lt;User&gt; participants = CourseUnitDAO</span>
+<span class="nc" id="L467">				    .getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L468">					    transaction,</span>
+<span class="nc" id="L469">					    pagination,</span>
+<span class="nc" id="L470">					    id, </span>
+<span class="nc" id="L471">					    true);</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">			    if(selectedToInform == informParticipantsOfUnit){</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">				for(User user : participants){</span>
+<span class="nc" id="L474">				    if(UserDAO.userWantsToBeInformed(</span>
+<span class="nc" id="L475">					    transaction,</span>
+<span class="nc" id="L476">					    user.getUserID(),</span>
+<span class="nc bnc" id="L477" title="All 2 branches missed.">					    courseID)){</span>
+<span class="nc" id="L478">					recipients.add(user.getEmail());</span>
+				    }
+	                                  
+				}
+<span class="nc bnc" id="L482" title="All 2 branches missed.">				if(!recipients.isEmpty()){</span>
+<span class="nc" id="L483">				    mailBean.sendCourseEditUnitMail(</span>
+<span class="nc" id="L484">					    	recipients,</span>
+<span class="nc" id="L485">					    	transaction, </span>
+<span class="nc" id="L486">					    	id);  </span>
+	                	}
+			    }       
+<span class="nc" id="L489">			} else {</span>
+<span class="nc" id="L490">			    LogHandler.getInstance().debug(&quot;Unit &quot;</span>
+<span class="nc" id="L491">					    + tempUnit.getCourseUnitID()</span>
+<span class="nc" id="L492">					    + &quot; was not edited because it's no &quot;</span>
+<span class="nc" id="L493">					    + &quot;more in range of the corresponding course.&quot;);</span>
+			}
+		    }
+
+<span class="nc" id="L497">		} else {</span>
+		    CourseUnitDAO
+<span class="nc" id="L499">			    .updateCourseUnit(transaction, getCourseUnit());</span>
+		    // Send info mail
+<span class="nc" id="L501">		    List&lt;User&gt; participants = CourseUnitDAO</span>
+<span class="nc" id="L502">			    .getParticipiantsOfCourseUnit(transaction,</span>
+<span class="nc" id="L503">				    pagination, courseUnit.getCourseUnitID(),</span>
+<span class="nc" id="L504">				    true);</span>
+		    
+<span class="nc bnc" id="L506" title="All 2 branches missed.">		    if(selectedToInform == informParticipantsOfUnit){</span>
+<span class="nc bnc" id="L507" title="All 2 branches missed.">		        for(User user : participants){</span>
+<span class="nc" id="L508">		            if(UserDAO.userWantsToBeInformed(</span>
+<span class="nc" id="L509">		        	    transaction, </span>
+<span class="nc" id="L510">		        	    user.getUserID(),</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">		        	    courseID)){</span>
+<span class="nc" id="L512">	                    recipients.add(user.getEmail());</span>
+		            }      
+	                }
+		        
+<span class="nc bnc" id="L516" title="All 2 branches missed.">	            if(!recipients.isEmpty()){</span>
+<span class="nc" id="L517">	                mailBean.sendCourseEditUnitMail(</span>
+<span class="nc" id="L518">	                	recipients, </span>
+<span class="nc" id="L519">	                	transaction,</span>
+<span class="nc" id="L520">	                	courseUnit.getCourseUnitID());  </span>
+	            }
+		    }		    
+		}
+<span class="nc" id="L524">		transaction.commit();</span>
+<span class="nc" id="L525">		return URL_COURSE_DETAIL;</span>
+		
+<span class="nc" id="L527">	    } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L528">		transaction.rollback();</span>
+<span class="nc" id="L529">		FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L530">				null,</span>
+<span class="nc" id="L531">				sessionUser.getLabel(&quot;courseUnitManagementBean.&quot; </span>
+				+ &quot;FacesMessage.problem.edit&quot;));
+<span class="nc" id="L533">		LogHandler.getInstance().error(</span>
+<span class="nc" id="L534">			&quot;Error occured during deleting&quot; + &quot; a course unit.&quot;);</span>
+	    }
+	}
+<span class="fc" id="L537">	return &quot;x&quot;;</span>
+    }
+
+    /**
+     * Deletes the course unit from the course and returns the link to the
+     * course details page.&lt;br&gt;
+     * That means that the method deletes the course unit from the database. The
+     * money that the participants have paid for the course units is
+     * automatically transfered back to their accounts.
+     * 
+     * @return link to the course details page
+     * 
+     * @author Tobias Fuchs
+     */
+    public String deleteCourseUnit() {
+<span class="fc" id="L552">	transaction.start();</span>
+<span class="fc" id="L553">	int cycleId = 0;</span>
+<span class="fc" id="L554">	List&lt;String&gt; mailToSend = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L555">	List&lt;MailWrapper&gt; mailSend = new ArrayList&lt;MailWrapper&gt;();</span>
+	
+	
+	try {
+	    // If all units of a cycle are to delete
+<span class="pc bpc" id="L560" title="2 of 4 branches missed.">	    if (courseUnit.getCycle() != null &amp;&amp; completeCycle) {</span>
+	 
+<span class="fc" id="L562">		cycleId = CycleDAO.getCycleId(</span>
+<span class="fc" id="L563">			transaction,</span>
+<span class="fc" id="L564">			courseUnit.getCourseUnitID());</span>
+		
+		// Fetch the ids of all units of the cycle
+<span class="fc" id="L567">		List&lt;Integer&gt; idsToDelete = CourseUnitDAO</span>
+<span class="fc" id="L568">			.getIdsCourseUnitsOfCycle(</span>
+<span class="fc" id="L569">				transaction,</span>
+<span class="fc" id="L570">				courseUnit.getCourseUnitID());</span>
+
+<span class="fc bfc" id="L572" title="All 2 branches covered.">		for (int id : idsToDelete) {</span>
+	
+		    // Fetch the participants of the unit
+<span class="fc" id="L575">		    List&lt;User&gt; participants = CourseUnitDAO</span>
+<span class="fc" id="L576">			    .getParticipiantsOfCourseUnit(</span>
+<span class="fc" id="L577">				    transaction,</span>
+<span class="fc" id="L578">				    pagination,</span>
+<span class="fc" id="L579">				    id,</span>
+<span class="fc" id="L580">				    true);</span>
+		    
+		    // Calculate for each participant the sum of prices
+		    // of course units he is signed in in the complete cycle
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">		    for (User user : participants) {</span>
+<span class="nc" id="L585">			float amount = 0;</span>
+
+<span class="nc bnc" id="L587" title="All 2 branches missed.">			for (int unitId : idsToDelete) {</span>
+<span class="nc" id="L588">			    if (UserDAO.userIsParticipantInCourseUnit(</span>
+<span class="nc bnc" id="L589" title="All 2 branches missed.">				    transaction, user.getUserID(), unitId)) {</span>
+
+<span class="nc" id="L591">				amount += CourseUnitDAO.getPriceOfUnit(</span>
+<span class="nc" id="L592">					transaction,</span>
+<span class="nc" id="L593">					unitId);</span>
+<span class="nc" id="L594">				CourseUnitDAO.removeUserFromCourseUnit(</span>
+<span class="nc" id="L595">					transaction,</span>
+<span class="nc" id="L596">					user.getUserID(),</span>
+<span class="nc" id="L597">					unitId);</span>
+<span class="nc" id="L598">				if(UserDAO.userWantsToBeInformed(</span>
+<span class="nc" id="L599">					transaction, </span>
+<span class="nc" id="L600">					user.getUserID(),</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">					courseID)){</span>
+				    
+<span class="nc" id="L603">				mailSend.add(new MailWrapper(</span>
+<span class="nc" id="L604">					unitId,</span>
+<span class="nc" id="L605">					user.getEmail()));</span>
+				}
+			    }
+			}
+			// Update account balance of the user
+<span class="nc" id="L610">			float newBalance = amount + user.getAccountBalance();</span>
+<span class="nc" id="L611">			UserDAO.updateAccountBalance(transaction,</span>
+<span class="nc" id="L612">				user.getUserID(), newBalance);</span>
+		    }
+		    
+		}
+		
+<span class="pc bpc" id="L617" title="1 of 2 branches missed.">		if(selectedToInform == informParticipantsOfUnit </span>
+<span class="nc bnc" id="L618" title="All 2 branches missed.">			&amp;&amp; !mailSend.isEmpty()){</span>
+<span class="nc" id="L619">		    sortMailAddresses(mailSend);</span>
+		}
+		
+<span class="fc bfc" id="L622" title="All 2 branches covered.">		for(int id : idsToDelete ){</span>
+		    // Delete the unit
+<span class="fc" id="L624">		    CourseUnitDAO.deleteCourseUnit(transaction, id);</span>
+		}
+		
+		// Delete the cycle
+<span class="fc" id="L628">		CycleDAO.deleteCycle(transaction, cycleId);</span>
+<span class="fc" id="L629">	    } else {</span>
+
+<span class="nc" id="L631">		List&lt;User&gt; participants = CourseUnitDAO</span>
+<span class="nc" id="L632">			.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L633">				transaction, </span>
+<span class="nc" id="L634">				pagination,</span>
+<span class="nc" id="L635">				courseUnit.getCourseUnitID(),</span>
+<span class="nc" id="L636">				true);</span>
+<span class="nc" id="L637">		deleteSingleUnit(transaction, courseUnit.getCourseUnitID());</span>
+		
+<span class="nc bnc" id="L639" title="All 2 branches missed.">		 if(selectedToInform == informParticipantsOfUnit){</span>
+<span class="nc bnc" id="L640" title="All 2 branches missed.">		        for(User user : participants){</span>
+<span class="nc" id="L641">		            if(UserDAO.userWantsToBeInformed(</span>
+<span class="nc" id="L642">		        	    transaction,</span>
+<span class="nc" id="L643">		        	    user.getUserID(),</span>
+<span class="nc bnc" id="L644" title="All 2 branches missed.">		        	    courseID)){</span>
+<span class="nc" id="L645">		    mailToSend.add(user.getEmail());</span>
+		            }
+		       }
+		}
+		 
+		//Send mails
+<span class="nc bnc" id="L651" title="All 2 branches missed.">		if(!mailToSend.isEmpty()){</span>
+<span class="nc" id="L652">		mailBean.sendCourseUnitDeleteMail(</span>
+<span class="nc" id="L653">			mailToSend, </span>
+<span class="nc" id="L654">			courseUnit.getCourseUnitID(),</span>
+<span class="nc" id="L655">			transaction);</span>
+		}
+	    }
+<span class="fc" id="L658">	    transaction.commit();</span>
+
+<span class="pc" id="L660">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L661">	    transaction.rollback();</span>
+<span class="nc" id="L662">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L663">		    &quot;Error occured during deleting&quot; + &quot; a course unit.&quot;);</span>
+	}
+<span class="fc" id="L665">	return URL_COURSE_DETAIL;</span>
+    }
+
+    /**
+     * Fetches for each course unit that is to delete the email addresses from 
+     * the given List and sends the notification mails for each course unit 
+     * at once.
+     * 
+     * @param mailSend 
+     * 		List that contains the tuples with the id of the unit to 
+     * 		delete as key and the mail address of a participant of the unit 
+     * 		as value
+     * 
+     * @author Fuchs Tobias
+     */
+    private void sortMailAddresses(List&lt;MailWrapper&gt; mailSend) {
+	List&lt;String&gt; recipients;
+	MailWrapper test;
+	List&lt;MailWrapper&gt; toDelete;
+        
+<span class="nc bnc" id="L685" title="All 2 branches missed.">        while(!mailSend.isEmpty()){</span>
+<span class="nc" id="L686">        	toDelete = new ArrayList&lt;MailWrapper&gt;();</span>
+<span class="nc" id="L687">            recipients = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L688">            test = mailSend.iterator().next();</span>
+<span class="nc" id="L689">            recipients.add(test.getMail());</span>
+<span class="nc" id="L690">            int courseUnitid = test.getUnitId();</span>
+            
+<span class="nc bnc" id="L692" title="All 2 branches missed.">            for(MailWrapper iterator : mailSend){</span>
+<span class="nc bnc" id="L693" title="All 2 branches missed.">            	if(iterator.getUnitId() == courseUnitid){</span>
+<span class="nc" id="L694">            		recipients.add(iterator.getMail());        </span>
+<span class="nc" id="L695">            		toDelete.add(iterator);</span>
+            	}
+            }
+<span class="nc" id="L698">            mailSend.removeAll(toDelete);     </span>
+            
+            //Send emails
+<span class="nc" id="L701">            mailBean.sendCourseUnitDeleteMail(</span>
+<span class="nc" id="L702">        	    recipients,</span>
+<span class="nc" id="L703">        	    courseUnitid,</span>
+<span class="nc" id="L704">        	    transaction);</span>
+        } 
+<span class="nc" id="L706">    }</span>
+
+    /**
+     * Deletes a single course unit from database.&lt;br&gt;
+     * That means that all participants off this unit are signed off, the paid
+     * money is transfered back and the unit is deleted.
+     * 
+     * @param trans
+     *            the Transaction object which contains the connection to the
+     *            database
+     * @param unitId
+     *            the id of the unit that is to be deleted
+     * 
+     * @author Tobias Fuchs
+     */
+    private void deleteSingleUnit(Transaction trans, int unitId) {
+
+	try {
+<span class="nc" id="L724">	    List&lt;User&gt; participants = CourseUnitDAO</span>
+<span class="nc" id="L725">		    .getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L726">			    trans,</span>
+<span class="nc" id="L727">			    getPagination(), </span>
+<span class="nc" id="L728">			    unitId,</span>
+<span class="nc" id="L729">			    true);</span>
+
+<span class="nc bnc" id="L731" title="All 2 branches missed.">	    for (User user : participants) {</span>
+<span class="nc" id="L732">		CourseUnitDAO.removeUserFromCourseUnit(</span>
+<span class="nc" id="L733">			    trans, </span>
+<span class="nc" id="L734">			    user.getUserID(),</span>
+<span class="nc" id="L735">			    unitId);</span>
+<span class="nc" id="L736">		float newAccountBalance = calculateNewAccountBalance(</span>
+<span class="nc" id="L737">			(CourseUnitDAO.getPriceOfUnit(trans, unitId)),</span>
+<span class="nc" id="L738">			user,</span>
+<span class="nc" id="L739">			false);</span>
+<span class="nc" id="L740">		UserDAO.updateAccountBalance(</span>
+<span class="nc" id="L741">			    trans, </span>
+<span class="nc" id="L742">			    user.getUserID(),</span>
+<span class="nc" id="L743">			    newAccountBalance);</span>
+	    }
+<span class="nc" id="L745">	    CourseUnitDAO.deleteCourseUnit(trans, unitId);</span>
+
+<span class="nc" id="L747">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L748">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L749">		    &quot;Error during deleting a single course unit.&quot;);</span>
+<span class="nc" id="L750">	    throw new InvalidDBTransferException();</span>
+	}
+<span class="nc" id="L752">    }</span>
+
+    /**
+     * Calculates and returns the account balance of a user is he signs up/signs
+     * off from a course unit.
+     * 
+     * @param courseUnit
+     *            the course unit the user wants to sign up/of from
+     * @param user
+     *            the user whose account balance is to be updated
+     * @param signUp
+     *            whether its a sign up process
+     * @return the updated account balance
+     * @author Tobias Fuchs
+     */
+    private float calculateNewAccountBalance(float price, User user,
+	    boolean signUp) {
+<span class="nc bnc" id="L769" title="All 2 branches missed.">	if (signUp) {</span>
+
+<span class="nc bnc" id="L771" title="All 2 branches missed.">	    if (user.getAccountBalance() &gt;= price) {</span>
+<span class="nc" id="L772">		return user.getAccountBalance() - price;</span>
+	    } else {
+<span class="nc" id="L774">		LogHandler.getInstance().debug(</span>
+<span class="nc" id="L775">			&quot;Not enough money to sign in course unit&quot;);</span>
+<span class="nc" id="L776">		throw new CourseRegistrationException();</span>
+	    }
+
+	} else {
+<span class="nc" id="L780">	    return user.getAccountBalance() + price;</span>
+	}
+    }
+
+    /**
+     * Adds the entered user to the course unit. That means the user is added to
+     * the participants list and the database entry of the course unit is
+     * updated.
+     * 
+     * @author Tobias Fuchs
+     */
+    public void addUserToCourseUnit() {
+<span class="nc" id="L792">	transaction.start();</span>
+	try {
+<span class="nc" id="L794">	    float newAccountBalance = calculateNewAccountBalance(</span>
+<span class="nc" id="L795">		    courseUnit.getPrice(), </span>
+<span class="nc" id="L796">		    userToAdd, </span>
+<span class="nc" id="L797">		    true);</span>
+<span class="nc" id="L798">	    CourseUnitDAO.addUserToCourseUnit(</span>
+<span class="nc" id="L799">		    transaction,</span>
+<span class="nc" id="L800">		    userToAdd.getUserID(),</span>
+<span class="nc" id="L801">		    courseUnit.getCourseUnitID());</span>
+<span class="nc" id="L802">	    UserDAO.updateAccountBalance(</span>
+<span class="nc" id="L803">		    transaction, </span>
+<span class="nc" id="L804">		    userToAdd.getUserID(),</span>
+<span class="nc" id="L805">		    newAccountBalance);</span>
+
+	    // Updates the shown list with the actual data
+<span class="nc" id="L808">	    List&lt;User&gt; temp = CourseUnitDAO.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L809">		    			transaction, </span>
+<span class="nc" id="L810">		    			getPagination(), </span>
+<span class="nc" id="L811">		    			courseUnitID, </span>
+<span class="nc" id="L812">		    			false);</span>
+
+<span class="nc" id="L814">	    participants.setWrappedData(temp);</span>
+<span class="nc" id="L815">	    transaction.commit();</span>
+<span class="nc" id="L816">	    userToAdd = new User();</span>
+	    
+<span class="nc" id="L818">	    FacesMessageCreator.createFacesMessage(</span>
+<span class="nc" id="L819">		    &quot;formUserToAddCourseUnit:addUserCourseUnit&quot;,</span>
+<span class="nc" id="L820">		     sessionUser.getLabel(&quot;courseUnitManagementBean.FacesMessage.addUser&quot;));</span>
+
+<span class="nc" id="L822">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L823">	    transaction.rollback();</span>
+<span class="nc" id="L824">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L825">		    &quot;Error during adding user manually to course unit.&quot;);</span>
+
+<span class="nc" id="L827">	} catch (CourseRegistrationException e) {</span>
+<span class="nc" id="L828">	    transaction.rollback();</span>
+<span class="nc" id="L829">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L830">		    &quot;Error during adding user manually to course unit. &quot;</span>
+			    + &quot;User has not enough money to &quot;
+			    + &quot;participate the course unit&quot;);
+	}
+<span class="nc" id="L834">    }</span>
+
+    /**
+     * Checks whether the inserted start and end dates for a course unit are
+     * valid.&lt;br&gt;
+     * It is checked whether the start date is before the end date and if the
+     * inserted start date is in the range of the corresponding course.
+     * 
+     * @return &lt;code&gt;true&lt;/code&gt;, if the inserted dates are valid&lt;br&gt;
+     *         &lt;code&gt;false&lt;/code&gt;, otherwise
+     * @author Tobias Fuchs
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    private boolean checkDate() {
+
+<span class="fc" id="L849">	Date tempDateBegin = new Date(date.getTime());</span>
+<span class="fc" id="L850">	Date tempDateEnd = new Date(date.getTime());</span>
+<span class="fc" id="L851">	tempDateBegin.setHours(start.getHours());</span>
+<span class="fc" id="L852">	tempDateBegin.setMinutes(start.getMinutes());</span>
+<span class="fc" id="L853">	tempDateEnd.setHours(end.getHours());</span>
+<span class="fc" id="L854">	tempDateEnd.setMinutes(end.getMinutes());</span>
+
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">	if (tempDateBegin.getTime() &gt; tempDateEnd.getTime()) {</span>
+
+<span class="nc" id="L858">	    FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L859">		    sessionUser.getLabel(&quot;courseUnitManagementBean.FacesMessage.problem.date&quot;));</span>
+<span class="nc" id="L860">	    return false;</span>
+
+	} else {
+
+<span class="fc" id="L864">	    transaction.start();</span>
+
+	    try {
+<span class="fc" id="L867">		boolean inRange = isUnitInRangeOfCourse(transaction,</span>
+<span class="fc" id="L868">			tempDateBegin, tempDateEnd);</span>
+
+		// Creating the FacesMessage
+<span class="fc bfc" id="L871" title="All 2 branches covered.">		if (!inRange) {</span>
+<span class="fc" id="L872">		    Course tempCourse = CourseDAO.getCourse(transaction,</span>
+<span class="fc" id="L873">			    courseUnit.getCourseID());</span>
+
+<span class="fc" id="L875">		    long beginCourse = tempCourse.getStartdate().getTime();</span>
+<span class="fc" id="L876">		    long endCourse = tempCourse.getEnddate().getTime();</span>
+
+<span class="fc" id="L878">		    FacesMessageCreator.createFacesMessage(null,</span>
+<span class="fc" id="L879">			    sessionUser.getLabel(&quot;courseUnitManagementBean.FacesMessage.problem.check1&quot;)</span>
+<span class="fc" id="L880">				    + dateAsString(new Date(beginCourse)) + &quot; &quot;</span>
+<span class="fc" id="L881">				    + sessionUser.getLabel(&quot;courseUnitManagementBean.FacesMessage.problem.check2&quot;)</span>
+<span class="fc" id="L882">				    + dateAsString(new Date(endCourse)) + &quot; !&quot;);</span>
+		}
+
+<span class="fc" id="L885">		transaction.commit();</span>
+<span class="fc" id="L886">		return inRange;</span>
+
+<span class="nc" id="L888">	    } catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L889">		LogHandler.getInstance().error(</span>
+<span class="nc" id="L890">			&quot;Error occured during fetching a course&quot;);</span>
+<span class="nc" id="L891">		transaction.rollback();</span>
+<span class="nc" id="L892">		return false;</span>
+	    }
+	}
+    }
+
+    /**
+     * Checks whether begin and end are in the range of the course.
+     * 
+     * @param transaction
+     *            the transaction for database access
+     * @param begin
+     *            begin date
+     * @param end
+     *            end date
+     * @return &lt;code&gt;true&lt;\code&gt;, if begin and end are in range of the course&lt;br&gt;
+     * 	       &lt;code&gt;false&lt;/code&gt;, otherwise
+     */
+    private boolean isUnitInRangeOfCourse(Transaction transaction, Date begin,
+	    Date end) {
+<span class="fc" id="L911">	boolean inRange = false;</span>
+
+	try {
+<span class="fc" id="L914">	    Course tempCourse = CourseDAO.getCourse(transaction,</span>
+<span class="fc" id="L915">		    courseUnit.getCourseID());</span>
+
+<span class="fc" id="L917">	    long beginCourse = tempCourse.getStartdate().getTime();</span>
+<span class="fc" id="L918">	    long endCourse = tempCourse.getEnddate().getTime() + 86400000L;</span>
+
+<span class="pc bpc" id="L920" title="1 of 4 branches missed.">	    if (beginCourse &gt; begin.getTime() || end.getTime() &gt; endCourse) {</span>
+<span class="fc" id="L921">		inRange = false;</span>
+<span class="fc" id="L922">	    } else {</span>
+<span class="fc" id="L923">		inRange = true;</span>
+	    }
+
+<span class="pc" id="L926">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L927">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L928">		    &quot;Error occured during checking whether&quot;</span>
+			    + &quot; the unit is in rage of course.&quot;);
+<span class="nc" id="L930">	    throw e;</span>
+	}
+<span class="fc" id="L932">	return inRange;</span>
+    }
+
+    /**
+     * Returns the given date as a string in a proper format.
+     * 
+     * @param date
+     *            the date that is to be converted to a String
+     * @return the date as String
+     * @author Tobias Fuchs
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    private String dateAsString(Date date) {
+	String dateString;
+<span class="fc" id="L946">	int day = date.getDate();</span>
+<span class="fc" id="L947">	int month = (date.getMonth() + 1);</span>
+<span class="fc" id="L948">	int year = date.getYear() + 1900;</span>
+
+<span class="fc" id="L950">	dateString = &quot;&quot; + day + &quot;.&quot; + month + &quot;.&quot; + year;</span>
+<span class="fc" id="L951">	return dateString;</span>
+
+    }
+
+    /**
+     * Deletes the selected users from the course unit and transfer the paid
+     * price for the course unit automatically back to the accounts of the
+     * participants.&lt;br&gt;
+     * Deleting means the users are removed from the participants list and the
+     * database entry of the course unit is updated.
+     * 
+     * @author Tobias Fuchs
+     */
+    public void deleteUsersFromCourseUnit() {
+	@SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L966">	List&lt;User&gt; items = (List&lt;User&gt;) participants.getWrappedData();</span>
+<span class="nc" id="L967">	usersToDelete = new ArrayList&lt;User&gt;();</span>
+
+	// Fetches the selected user that are to delete
+<span class="nc bnc" id="L970" title="All 2 branches missed.">	for (User item : items) {</span>
+<span class="nc bnc" id="L971" title="All 2 branches missed.">	    if (item.isSelected()</span>
+<span class="nc bnc" id="L972" title="All 2 branches missed.">		    &amp;&amp; !(usersToDelete.contains(item.getUserID()))) {</span>
+
+<span class="nc" id="L974">		this.usersToDelete.add(item);</span>
+	    }
+	}
+
+	// Delete the users from course unit
+<span class="nc" id="L979">	transaction.start();</span>
+	try {
+
+<span class="nc bnc" id="L982" title="All 2 branches missed.">	    for (int i = 0; i &lt; usersToDelete.size(); ++i) {</span>
+<span class="nc" id="L983">		CourseUnitDAO.removeUserFromCourseUnit(</span>
+<span class="nc" id="L984">			transaction,</span>
+<span class="nc" id="L985">			usersToDelete.get(i).getUserID(),</span>
+<span class="nc" id="L986">			courseUnit.getCourseUnitID());</span>
+
+<span class="nc" id="L988">		float newAccountBalance = calculateNewAccountBalance(</span>
+<span class="nc" id="L989">			courseUnit.getPrice(), </span>
+<span class="nc" id="L990">			usersToDelete.get(i), </span>
+<span class="nc" id="L991">			false);</span>
+
+<span class="nc" id="L993">		UserDAO.updateAccountBalance(</span>
+<span class="nc" id="L994">			transaction,</span>
+<span class="nc" id="L995">			usersToDelete.get(i)</span>
+<span class="nc" id="L996">			.getUserID(),</span>
+<span class="nc" id="L997">			newAccountBalance);</span>
+	    }
+
+	    // Updates the shown list with the actual data
+<span class="nc" id="L1001">	    participants.setWrappedData(CourseUnitDAO</span>
+<span class="nc" id="L1002">		    .getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L1003">			    transaction,</span>
+<span class="nc" id="L1004">			    getPagination(),</span>
+<span class="nc" id="L1005">			    courseUnitID,</span>
+<span class="nc" id="L1006">			    false));</span>
+	    
+<span class="nc" id="L1008">	    transaction.commit();</span>
+
+<span class="nc" id="L1010">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L1011">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L1012">		    &quot;Error occured during deleting users&quot;</span>
+			    + &quot; form course unit or while fetching&quot;
+			    + &quot; participants to display.&quot;);
+<span class="nc" id="L1015">	    transaction.rollback();</span>
+	}
+<span class="nc" id="L1017">    }</span>
+
+    private boolean checkCourseUnitLeader(int courseID, int i){
+<span class="fc" id="L1020">	transaction.start();</span>
+<span class="fc" id="L1021">	boolean isValidLeader = false;</span>
+ 
+	
+	try{
+<span class="fc" id="L1025">	List&lt;User&gt; leaders = CourseDAO.getLeaders(transaction, courseID);</span>
+	
+<span class="pc bpc" id="L1027" title="2 of 4 branches missed.">	if(leaders != null &amp;&amp; leaders.size()&gt;0){</span>
+<span class="fc bfc" id="L1028" title="All 2 branches covered.">	for(User user : leaders){</span>
+	    
+<span class="pc bpc" id="L1030" title="1 of 2 branches missed.">	    if(user.getUserID() == i</span>
+<span class="pc bpc" id="L1031" title="1 of 2 branches missed.">		    &amp;&amp; !isValidLeader){</span>
+<span class="fc" id="L1032">		isValidLeader = true;</span>
+	    }  
+	   
+	}}
+<span class="fc" id="L1036">	transaction.commit();</span>
+<span class="pc" id="L1037">	}catch(InvalidDBTransferException e){</span>
+<span class="nc" id="L1038">	    transaction.rollback();</span>
+	}
+	
+<span class="pc bpc" id="L1041" title="1 of 2 branches missed.">	if(!isValidLeader){</span>
+<span class="nc" id="L1042">	    FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L1043">		    sessionUser.getLabel(&quot;courseUnitManagementBean.FacesMessage.problem.courseLeader&quot;)</span>
+<span class="nc" id="L1044">		    + &quot; &quot; + courseID +&quot;.&quot;);</span>
+	}
+<span class="fc" id="L1046">	return isValidLeader;	</span>
+    }
+    
+    public String redirectToCourseDetails(){
+<span class="nc" id="L1050">	return URL_COURSE_DETAIL;</span>
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L1060">	pagination.setCurrentPageNumber(currentPage);</span>
+<span class="nc" id="L1061">	transaction.start();</span>
+
+	//Fetch the participants for the next page
+	try {
+<span class="nc" id="L1065">	    participants.setWrappedData(CourseUnitDAO</span>
+<span class="nc" id="L1066">		    .getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L1067">			    transaction,</span>
+<span class="nc" id="L1068">			    getPagination(),</span>
+<span class="nc" id="L1069">			    courseUnitID,</span>
+<span class="nc" id="L1070">			    false));</span>
+<span class="nc" id="L1071">	    transaction.commit();</span>
+<span class="nc" id="L1072">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L1073">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L1074">		    &quot;Error occured during fething data for pagination.&quot;);</span>
+<span class="nc" id="L1075">	    transaction.rollback();</span>
+	}
+<span class="nc" id="L1077">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+	//Compute sort direction
+<span class="nc" id="L1085">	if(getPagination().getSortColumn().</span>
+<span class="nc bnc" id="L1086" title="All 2 branches missed.">		equals(SortColumn.fromString(orderParam))) {</span>
+		     
+<span class="nc" id="L1088">	  getPagination().changeSortDirection();</span>
+	    
+<span class="nc" id="L1090">	} else {</span>
+<span class="nc" id="L1091">	  getPagination().setSortColumn(SortColumn.fromString(orderParam));</span>
+	}
+	
+	//Fetch the needed users
+<span class="nc" id="L1095">	transaction.start();	</span>
+	try {
+<span class="nc" id="L1097">	    participants.setWrappedData(CourseUnitDAO</span>
+<span class="nc" id="L1098">		    .getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L1099">			    transaction, </span>
+<span class="nc" id="L1100">			    getPagination(),</span>
+<span class="nc" id="L1101">			    courseUnitID,</span>
+<span class="nc" id="L1102">			    false));</span>
+<span class="nc" id="L1103">	    transaction.commit();</span>
+<span class="nc" id="L1104">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L1105">	    transaction.rollback();</span>
+<span class="nc" id="L1106">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L1107">		    &quot;Error occured during sorting my courses&quot;);</span>
+	}
+<span class="nc" id="L1109">    }</span>
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="nc" id="L1118">	return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @author Tobias Fuchs
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L1128">	this.pagination = pagination;</span>
+<span class="nc" id="L1129">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;usersToDelete&lt;/code&gt; that stores
+     * the users that are selected and shall be deleted from the course unit.
+     * 
+     * @return list of users to delete from the course unit
+     * @author Tobias Fuchs
+     */
+    public List&lt;User&gt; getUsersToDelete() {
+<span class="nc" id="L1139">	return usersToDelete;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;usersToDelete&lt;/code&gt; that stores
+     * the users that are selected and shall be deleted from the course unit.
+     * 
+     * @param usersToDelete
+     *            new list of users to delete from the course unit
+     * @author Tobias Fuchs
+     */
+    public void setUsersToDelete(List&lt;User&gt; usersToDelete) {
+<span class="nc" id="L1151">	this.usersToDelete = usersToDelete;</span>
+<span class="nc" id="L1152">    }</span>
+
+    /**
+     * Returns the displayed/ entered date of a course unit.
+     * 
+     * @return the date of the course unit
+     * @author Tobias Fuchs
+     */
+    public Date getDate() {
+<span class="fc" id="L1161">	return date;</span>
+    }
+
+    /**
+     * Sets the displayed/ entered date of a course unit.
+     * 
+     * @param date
+     *            the date to set
+     * @author Tobias Fuchs
+     */
+    public void setDate(Date date) {
+<span class="fc" id="L1172">	this.date = date;</span>
+<span class="fc" id="L1173">    }</span>
+
+    /**
+     * Returns whether it is selected to edit/delete all units of a cycle.
+     * 
+     * @return whether all units are it be edited
+     * @author Tobias Fuchs
+     */
+    public boolean isRegularCourseUnit() {
+<span class="fc" id="L1182">	return regularCourseUnit;</span>
+    }
+
+    /**
+     * Sets whether the entered course unit is regular.
+     * 
+     * @param regularCourseUnit
+     *            the regularCourseUnit to set
+     * @author Tobias Fuchs
+     */
+    public void setRegularCourseUnit(boolean regularCourseUnit) {
+<span class="fc" id="L1193">	this.regularCourseUnit = regularCourseUnit;</span>
+<span class="fc" id="L1194">    }</span>
+
+    /**
+     * @return the participants
+     * @author Tobias Fuchs
+     */
+    public DataModel&lt;User&gt; getParticipants() {
+<span class="fc" id="L1201">	return participants;</span>
+    }
+
+    /**
+     * @param participants
+     *            the participants to set
+     * @author Tobias Fuchs
+     */
+    public void setParticipants(DataModel&lt;User&gt; participants) {
+<span class="nc" id="L1210">	this.participants = participants;</span>
+<span class="nc" id="L1211">    }</span>
+
+    /**
+     * Returns whether the page is to render in edit mode.
+     * 
+     * @return &lt;code&gt;true&lt;/code&gt;, if to render in edit mode&lt;br&gt;
+     *         &lt;code&gt;false&lt;/code&gt;, otherwise
+     * @author Tobias Fuchs
+     */
+    public boolean isEditMode() {
+<span class="fc" id="L1221">	return editMode;</span>
+    }
+
+    /**
+     * Sets whether the page is to be rendered in edit mode.
+     * 
+     * @param editMode
+     *            render in edit mode
+     * @author Tobias Fuchs
+     */
+    public void setEditMode(boolean editMode) {
+<span class="nc" id="L1232">	this.editMode = editMode;</span>
+<span class="nc" id="L1233">    }</span>
+
+    /**
+     * Returns the entered start date.
+     * 
+     * @return the entered start date
+     * @author Tobias Fuchs
+     */
+    public Date getStart() {
+<span class="fc" id="L1242">	return start;</span>
+    }
+
+    /**
+     * Sets the entered start date.
+     * 
+     * @param start
+     *            the entered start date
+     * @author Tobias Fuchs
+     */
+    public void setStart(Date start) {
+<span class="fc" id="L1253">	this.start = start;</span>
+<span class="fc" id="L1254">    }</span>
+
+    /**
+     * Returns the entered end date.
+     * 
+     * @return the entered end date
+     * @author Tobias Fuchs
+     */
+    public Date getEnd() {
+<span class="fc" id="L1263">	return end;</span>
+    }
+
+    /**
+     * Sets the entered end date.
+     * 
+     * @param end
+     *            the entered date
+     * @author Tobias Fuchs
+     */
+    public void setEnd(Date end) {
+<span class="fc" id="L1274">	this.end = end;</span>
+<span class="fc" id="L1275">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;courseUnit&lt;/code&gt;.
+     * 
+     * @return the course unit
+     * @author Tobias Fuchs
+     */
+    public CourseUnit getCourseUnit() {
+<span class="fc" id="L1284">	return courseUnit;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;courseUnit&lt;/code&gt;.
+     * 
+     * @param courseUnit
+     *            the new value of the attribute courseUnit
+     * @author Tobias Fuchs
+     */
+    public void setCourseUnit(CourseUnit courseUnit) {
+<span class="nc" id="L1295">	this.courseUnit = courseUnit;</span>
+<span class="nc" id="L1296">    }</span>
+    
+    /**
+     * Returns the parameter by which the elements are to be sorted.
+     * 
+     * @return the order parameter
+     */
+    public String getOrderParam() {
+<span class="nc" id="L1304">	return orderParam;</span>
+    }
+
+    /**
+     * Sets the parameter by which the elements are to be sorted.
+     * 
+     * @param orderParam
+     *            the order parameter
+     */
+    public void setOrderParam(String orderParam) {
+<span class="nc" id="L1314">	this.orderParam = orderParam;</span>
+<span class="nc" id="L1315">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     * @author Tobias Fuchs
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L1324">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     * @author Tobias Fuchs
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L1335">	this.sessionUser = userSession;</span>
+<span class="fc" id="L1336">    }</span>
+
+    /**
+     * Returns the id of the initializes course unit.
+     * 
+     * @return the id of the initialized course unit
+     * @author Tobias Fuchs
+     */
+    public int getCourseUnitId() {
+<span class="nc" id="L1345">	return courseUnitID;</span>
+    }
+
+    /**
+     * Sets the id of the course unit to initialize.
+     * 
+     * @param courseUnitId
+     *            the courseUnitId of the course unit to initialize
+     * @author Tobias Fuchs
+     */
+    public void setCourseUnitId(int courseUnitId) {
+<span class="nc" id="L1356">	this.courseUnitID = courseUnitId;</span>
+<span class="nc" id="L1357">    }</span>
+
+    /**
+     * Returns the date that is &lt;code&gt;turnus&lt;/code&gt; days more in the future than
+     * the date &lt;code&gt;actual&lt;/code&gt;.
+     * 
+     * @param actual
+     *            the actual date
+     * @param turnus
+     *            number of day to be added to the actual date
+     * @return the calculated date in the future
+     * @author Tobias Fuchs
+     */
+    private Date calculateDate(Date actual, int turnus) {
+	Date calculated;
+<span class="fc" id="L1372">	long miliseconds = actual.getTime();</span>
+
+<span class="fc" id="L1374">	miliseconds = miliseconds + 86400000L * turnus;</span>
+<span class="fc" id="L1375">	calculated = new Date(miliseconds);</span>
+
+<span class="fc" id="L1377">	return calculated;</span>
+    }
+
+    /**
+     * Calculates the &lt;code&gt;starttime&lt;/code&gt; and the &lt;code&gt;endtime&lt;/code&gt; of a
+     * course unit fetched from the inserted values to be displayed properly.
+     * 
+     * @param courseUnit
+     *            the course unit for which the starttime and endtime is
+     *            calculated
+     * @author Tobias Fuchs
+     * 
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    private void calculateStartAndEndTime(CourseUnit courseUnit) {
+<span class="fc" id="L1392">	date.setHours(start.getHours());</span>
+<span class="fc" id="L1393">	date.setMinutes(start.getMinutes());</span>
+<span class="fc" id="L1394">	courseUnit.setStartime(new Date(date.getTime()));</span>
+
+<span class="fc" id="L1396">	date.setHours(end.getHours());</span>
+<span class="fc" id="L1397">	date.setMinutes(end.getMinutes());</span>
+<span class="fc" id="L1398">	courseUnit.setEndtime(new Date(date.getTime()));</span>
+<span class="fc" id="L1399">    }</span>
+
+    /**
+     * Returns the selected inform status.
+     * 
+     * @return the current inform status
+     * @author Tobias Fuchs
+     */
+    public int getSelectedToInform() {
+<span class="fc" id="L1408">	return selectedToInform;</span>
+    }
+
+    /**
+     * Sets the inform status.
+     * 
+     * @param selectedToInform
+     *            the selected inform status
+     * @author Tobias Fuchs
+     */
+    public void setSelectedToInform(int selectedToInform) {
+<span class="fc" id="L1419">	this.selectedToInform = selectedToInform;</span>
+<span class="fc" id="L1420">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;userToAdd&lt;/code&gt;.
+     * 
+     * @return the user to add to the course unit
+     * @author Tobias Fuchs
+     */
+    public User getUserToAdd() {
+<span class="fc" id="L1429">	return userToAdd;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;usersToAdd&lt;/code&gt;.
+     * 
+     * @param userToAdd
+     *            the new user that is to be added to the course unit
+     * @author Tobias Fuchs
+     */
+    public void setUserToAdd(User userToAdd) {
+<span class="nc" id="L1440">	this.userToAdd = userToAdd;</span>
+<span class="nc" id="L1441">    }</span>
+
+    /**
+     * Returns the current displayed page number.
+     * 
+     * @return the page number
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L1449">	return currentPage;</span>
+    }
+
+    /**
+     * Sets the current displayed page number.
+     * 
+     * @param currentPage
+     *            the page number
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L1459">	this.currentPage = currentPage;</span>
+<span class="nc" id="L1460">    }</span>
+
+    /**
+     * Returns the managed property mailBean
+     * 
+     * @return the managed property mailBean
+     * @author Tobias Fuchs
+     */
+    public MailBean getMailBean() {
+<span class="nc" id="L1469">	return mailBean;</span>
+    }
+
+    /**
+     * Sets the managed property mailBean
+     * 
+     * @param mailBean
+     *            the managed property
+     * @author Tobias Fuchs
+     */
+    public void setMailBean(MailBean mailBean) {
+<span class="fc" id="L1480">	this.mailBean = mailBean;</span>
+<span class="fc" id="L1481">    }</span>
+
+    /**
+     * Returns the inform status &lt;code&gt;informNobody&lt;/code&gt;
+     * 
+     * @return the informnobody
+     * @author Tobias Fuchs
+     */
+    public static int getInformnobody() {
+<span class="nc" id="L1490">	return informNobody;</span>
+    }
+
+    /**
+     * Returns the value of &lt;code&gt;completeCycle&lt;/code&gt;
+     * 
+     * @return the completeCycle whether all course units are to be affected.
+     * @author Tobias Fuchs
+     */
+    public boolean isCompleteCycle() {
+<span class="fc" id="L1500">	return completeCycle;</span>
+    }
+
+    /**
+     * Sets the value of &lt;code&gt;completeCycle&lt;/code&gt;.
+     * 
+     * @param completeCycle
+     *            the completeCycle to set
+     * @author Tobias Fuchs
+     */
+    public void setCompleteCycle(boolean completeCycle) {
+<span class="fc" id="L1511">	this.completeCycle = completeCycle;</span>
+<span class="fc" id="L1512">    }</span>
+
+    /**
+     * Returns the value of &lt;code&gt;enteredTurnus&lt;/code&gt;
+     * 
+     * @return the entered turnus
+     */
+    public String getEnteredTurnus() {
+<span class="fc" id="L1520">	return enteredTurnus;</span>
+    }
+
+    /**
+     * Sets the value of &lt;code&gt;eneteredTurnus&lt;/code&gt;.
+     * 
+     * @param enteredTurnus 
+     * 		the entered turnus
+     */
+    public void setEnteredTurnus(String enteredTurnus) {
+<span class="fc" id="L1530">	this.enteredTurnus = enteredTurnus;</span>
+<span class="fc" id="L1531">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

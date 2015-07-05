@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SearchCourseBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">SearchCourseBean.java</span></div><h1>SearchCourseBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Provides the service of displaying the course offer of the system and the
+ * service of searching for courses in the system.&lt;br&gt;
+ * The user can search for courses by certain parameters and a entered
+ * respective search term. Furthermore this class realizes the functionality to
+ * display the complete course offer of the system. In addition it is possible
+ * to constrain the displayed course offer.&lt;br&gt;
+ * This class supports pagination to display the found courses.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet &lt;code&gt;search&lt;/code&gt;.
+ * &lt;/p&gt;
+ * 
+ * @author Patrick Cretu
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L43">public class SearchCourseBean implements Pagination {</span>
+    
+	/**
+     * Stores the number of elements that are displayed by pagination at once
+     */
+<span class="fc" id="L48">    private final int ELEMENTS_PER_PAGE = 10;</span>
+	
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Stores the display period that was selected by the user. With the display
+     * period the user can constrain the time period in which the displayed
+     * courses take place.
+     */
+    private String displayPeriod;
+
+    /**
+     * Stores the the search result that is displayed on the page. In this case
+     * it's a list of users.
+     */
+    private List&lt;Course&gt; searchResult;
+    
+    /**
+     * The parameter required for column sort
+     */
+    private String orderParam;
+    
+    /**
+     * The currently displayed page
+     */
+    private int currentPage;
+     
+    /**
+     * Stores the search parameter that was selected by the user
+     */
+    private String searchParam;
+
+    /**
+     * Stores the search term that was entered by the user
+     */
+    private String searchString;
+    
+    /**
+     * Checks if the result table should to displayed
+     */
+    private boolean renderTable;
+    
+    /**
+     * Checks if the user's search request contained text input
+     */
+    private boolean pagingSearchTerm;
+    
+    /**
+     * Checks if the user requested a column sort
+     */
+    private boolean columnSort;
+    
+    /**
+     * Stores the time period which the user selected in case the user changes
+     * the parameter during column sort or pagination
+     */
+    private String orderPeriod;
+    
+    /**
+     * Stores the search parameter which the user selected in case the user
+     * changes the parameter during column sort or pagination
+     */
+    private String orderSearchParam;
+    
+    /**
+     * Stores the text input which the user entered in case the user inputs new
+     * text during column sort or pagination
+     */
+    private String orderSearchString;
+
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+    
+    @PostConstruct
+    public void init() {
+<span class="fc" id="L138">    	displayPeriod = &quot;total&quot;;</span>
+<span class="fc" id="L139">    	searchParam = &quot;title&quot;;</span>
+<span class="fc" id="L140">    	pagination = new PaginationData();</span>
+<span class="fc" id="L141">    	pagination.setElementsPerPage(ELEMENTS_PER_PAGE);</span>
+<span class="fc" id="L142">    	transaction = Connection.create();</span>
+<span class="fc" id="L143">    }</span>
+
+    /**
+     * Displays the course offer of the system.&lt;br&gt;
+     * The user can constrain by selecting a display period in which time period
+     * the shown courses take place. Furthermore it is also possible to display
+     * the complete course offer of the system. The courses are displayed by
+     * using pagination.
+     * 
+     */
+    public void displayCoursesInPeriod() {
+<span class="fc" id="L154">    	transaction.start();</span>
+    	
+<span class="fc" id="L156">    	pagination.setCurrentPageNumber(0);</span>
+<span class="fc" id="L157">    	pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="fc" id="L158">    	pagination.setSortColumn(SortColumn.ID);</span>
+    	
+    	try {
+<span class="fc" id="L161">    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(</span>
+<span class="fc" id="L162">    				transaction, displayPeriod, searchString));</span>
+<span class="fc" id="L163">	    	List&lt;Course&gt; result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="fc" id="L164">	    			displayPeriod);</span>
+	    	
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">	    	if (result != null) {</span>
+<span class="fc" id="L167">	    		setResultParams(result, false);</span>
+<span class="fc" id="L168">	    		transaction.commit();</span>
+<span class="fc" id="L169">	    	} else {</span>
+<span class="nc" id="L170">	    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L171">						sessionUser.getLabel(&quot;search.message.result&quot;));</span>
+<span class="nc" id="L172">	    		setRenderTable(false);</span>
+<span class="nc" id="L173">	    		transaction.rollback();</span>
+	    	}
+<span class="nc" id="L175">    	} catch (InvalidDBTransferException e) {</span>
+    		LogHandler
+<span class="nc" id="L177">            .getInstance()</span>
+<span class="nc" id="L178">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+                    + &quot;createUser()&quot;);
+<span class="nc" id="L180">    		transaction.rollback();</span>
+    	}
+<span class="fc" id="L182">    }</span>
+    
+    /**
+     * Sets the view's outcome parameters after a result has been retrieved.
+     * 
+     * @param result
+     *             the list containing the requested courses
+     * @param pagingSearchTerm
+     *                       the value whether or not the user searched by text
+     *                       input or by selected period parameters
+     */
+    private void setResultParams(List&lt;Course&gt; result,
+    		boolean pagingSearchTerm) {
+<span class="fc" id="L195">    	searchResult = result;</span>
+<span class="fc" id="L196">		setPagingSearchTerm(pagingSearchTerm);</span>
+<span class="fc" id="L197">		setRenderTable(true);</span>
+<span class="fc" id="L198">		columnSort = false;</span>
+<span class="fc" id="L199">		orderPeriod = displayPeriod;</span>
+<span class="fc" id="L200">		orderSearchParam = searchParam;</span>
+<span class="fc" id="L201">		orderSearchString = searchString;</span>
+<span class="fc" id="L202">    }</span>
+    
+    /**
+     * Returns the value of the attribute &lt;code&gt;displayPeriod&lt;/code&gt; that stores
+     * the selected display period.
+     * 
+     * @return the selected display period
+     */
+    public String getDisplayPeriod() {
+<span class="fc" id="L211">    	return displayPeriod;</span>
+    }
+
+    /**
+     * Sets the value of the attribute code&gt;displayPeriod&lt;/code&gt; that stores the
+     * selected display period.
+     * 
+     * @param displayPeriod
+     *            the selected display period
+     */
+    public void setDisplayPeriod(String displayPeriod) {
+<span class="fc" id="L222">    	this.displayPeriod = displayPeriod;</span>
+<span class="fc" id="L223">    }</span>
+    
+    /**
+     * Searches for courses in the system according to the selected search
+     * parameter and the respective search term. &lt;br&gt;
+     * It performs a database request with the entered search parameter and
+     * search term. The search result is stored locally so it can be displayed
+     * in the facelet.
+     */
+    public void search() {
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">    	if (!searchString.isEmpty()) {</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">    		if (searchParam.equals(&quot;start_date&quot;)) {</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">    			if (isValidDate(searchString)) {</span>
+<span class="nc" id="L236">    				executeSearch();</span>
+<span class="nc" id="L237">    			} else {</span>
+<span class="nc" id="L238">    				FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L239">    						sessionUser.getLabel(&quot;search.message&quot;));</span>
+    			}
+<span class="nc" id="L241">    		} else {</span>
+<span class="fc" id="L242">    			executeSearch();</span>
+    		}
+<span class="fc" id="L244">    	} else {</span>
+<span class="nc" id="L245">    		setRenderTable(false);</span>
+    	}
+<span class="fc" id="L247">    }</span>
+    
+    /**
+     * Checks if the user input has a valid date format.
+     * 
+     * @param date
+     *           the entered date text
+     * @return true, if the entered date format is valid, otherwise false
+     */
+    private boolean isValidDate(String date) {
+<span class="nc" id="L257">        SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="nc" id="L258">        dateFormat.setLenient(true);</span>
+        
+        try {
+<span class="nc" id="L261">        	dateFormat.parse(date.trim());</span>
+<span class="nc" id="L262">        } catch (ParseException pe) {</span>
+<span class="nc" id="L263">        	return false;</span>
+        }
+<span class="nc" id="L265">        return true;</span>
+    }
+    
+    /**
+     * Sets the required pagination values and executes the course search
+     */
+    private void executeSearch() {
+<span class="fc" id="L272">		transaction.start();</span>
+		
+<span class="fc" id="L274">		pagination.setCurrentPageNumber(0);</span>
+<span class="fc" id="L275">		pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="fc" id="L276">		pagination.setSortColumn(SortColumn.fromString(searchParam));</span>
+		try {
+<span class="fc" id="L278">    		pagination.refreshNumberOfPages(CourseDAO.getNumberOfCourses(</span>
+<span class="fc" id="L279">    				transaction, searchParam, searchString));</span>
+<span class="fc" id="L280">    		List&lt;Course&gt; result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="fc" id="L281">    			searchParam, searchString);</span>
+    		
+<span class="fc bfc" id="L283" title="All 2 branches covered.">    		if (result != null) {</span>
+<span class="fc" id="L284">        		setResultParams(result, true);</span>
+<span class="fc" id="L285">        		transaction.commit();</span>
+<span class="fc" id="L286">    		} else {</span>
+<span class="fc" id="L287">    			FacesMessageCreator.createFacesMessage(null,</span>
+<span class="fc" id="L288">						sessionUser.getLabel(&quot;search.message.result&quot;));</span>
+<span class="fc" id="L289">    			setRenderTable(false);</span>
+<span class="fc" id="L290">    			transaction.rollback();</span>
+    		}
+<span class="pc" id="L292">    	} catch (InvalidDBTransferException e) {</span>
+    		LogHandler
+<span class="nc" id="L294">            .getInstance()</span>
+<span class="nc" id="L295">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+                    + &quot;createUser()&quot;);
+<span class="nc" id="L297">    		transaction.rollback();</span>
+    	}
+<span class="fc" id="L299">    }</span>
+
+    /**
+     * Returns the value of the attribute &lt;code&gt;searchResult&lt;/code&gt; that stores
+     * the found database entries which are to be displayed.
+     * 
+     * @return list of found courses
+     */
+    public List&lt;Course&gt; getSearchResult() {
+<span class="fc" id="L308">    	return searchResult;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchResult&lt;/code&gt; that stores the
+     * found database entries which are to be displayed.
+     * 
+     * @param searchResult
+     *            list of users found in the database for the actual search
+     */
+    public void setSearchResult(List&lt;Course&gt; searchResult) {
+<span class="nc" id="L319">    	this.searchResult = searchResult;</span>
+<span class="nc" id="L320">    }</span>
+    
+    /**
+     * 
+     * @return the parameter required for column sort
+     */
+	public String getOrderParam() {
+<span class="nc" id="L327">		return orderParam;</span>
+	}
+
+	/**
+	 * Sets the parameter required for column sort
+	 * 
+	 * @param orderParam
+	 *                 the selected order parameter
+	 */
+	public void setOrderParam(String orderParam) {
+<span class="nc" id="L337">		this.orderParam = orderParam;</span>
+<span class="nc" id="L338">	}</span>
+
+	/**
+     * Returns the value of the attribute &lt;code&gt;searchParam&lt;/code&gt; that stores
+     * the selected search parameter.
+     * 
+     * @return the selected search parameter
+     */
+    public String getSearchParam() {
+<span class="fc" id="L347">    	return searchParam;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchParam&lt;/code&gt; that stores the
+     * selected search parameter.
+     * 
+     * @param searchParam
+     *            the selected search parameter
+     */
+    public void setSearchParam(String searchParam) {
+<span class="fc" id="L358">    	this.searchParam = searchParam;</span>
+<span class="fc" id="L359">    }</span>
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;searchTerm&lt;/code&gt; that stores the
+     * entered search term.
+     * 
+     * @param searchTerm
+     *            the entered search term
+     */
+    public void setSearchString(String searchString) {
+<span class="fc" id="L369">    	this.searchString = searchString;</span>
+<span class="fc" id="L370">    }</span>
+
+    /**
+     * 
+     * @return the user's text input
+     */
+    public String getSearchString() {
+<span class="fc" id="L377">		return searchString;</span>
+	}
+
+    /**
+     * 
+     * @return true, if the result table should be rendered, false otherwise
+     */
+	public boolean isRenderTable() {
+<span class="fc" id="L385">		return renderTable;</span>
+	}
+	
+	/**
+	 * Sets the value, if the result table should be rendered or not
+	 * 
+	 * @param renderTable
+	 *                  the boolean value
+	 */
+	public void setRenderTable(boolean renderTable) {
+<span class="fc" id="L395">		this.renderTable = renderTable;</span>
+<span class="fc" id="L396">	}</span>
+
+	/**
+	 * 
+	 * @return true, if the user searched by text input, false otherwise
+	 */
+	public boolean isPagingSearchTerm() {
+<span class="nc" id="L403">		return pagingSearchTerm;</span>
+	}
+
+	/**
+	 * Sets the value, if the user searched by text input
+	 * 
+	 * @param pagingSearchTerm
+	 *                       the boolean value
+	 */
+	public void setPagingSearchTerm(boolean pagingSearchTerm) {
+<span class="fc" id="L413">		this.pagingSearchTerm = pagingSearchTerm;</span>
+<span class="fc" id="L414">	}</span>
+	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+<span class="nc" id="L421">	    transaction.start();</span>
+    	
+<span class="nc bnc" id="L423" title="All 2 branches missed.">    	if (pagination.getSortColumn().toString().equals(orderParam)) {</span>
+<span class="nc" id="L424">    		pagination.changeSortDirection();</span>
+<span class="nc" id="L425">    	} else {</span>
+<span class="nc" id="L426">    		pagination.setSortDirection(SortDirection.ASC);</span>
+    	}
+<span class="nc" id="L428">    	pagination.setSortColumn(SortColumn.fromString(orderParam));</span>
+<span class="nc" id="L429">    	columnSort = true;</span>
+    	List&lt;Course&gt; result;
+    	
+    	try {
+<span class="nc bnc" id="L433" title="All 2 branches missed.">    		if (pagingSearchTerm) {</span>
+<span class="nc" id="L434">	    		result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="nc" id="L435">	        			orderSearchParam, orderSearchString);</span>
+<span class="nc" id="L436">			} else {</span>
+<span class="nc" id="L437">		    	result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="nc" id="L438">		    			orderPeriod);</span>
+			}
+    		
+<span class="nc bnc" id="L441" title="All 2 branches missed.">    		if (result != null) {</span>
+<span class="nc" id="L442">	    		searchResult = result;</span>
+<span class="nc" id="L443">	    		transaction.commit();</span>
+<span class="nc" id="L444">	    	} else {</span>
+<span class="nc" id="L445">	    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L446">						sessionUser.getLabel(&quot;search.message.result&quot;));</span>
+<span class="nc" id="L447">	    		setRenderTable(false);</span>
+<span class="nc" id="L448">	    		transaction.rollback();</span>
+	    	}
+<span class="nc" id="L450">    	} catch (InvalidDBTransferException e) {</span>
+    		LogHandler
+<span class="nc" id="L452">            .getInstance()</span>
+<span class="nc" id="L453">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+                    + &quot;createUser()&quot;);
+<span class="nc" id="L455">    		transaction.rollback();</span>
+    	}
+<span class="nc" id="L457">    }</span>
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L464">	    transaction.start();</span>
+	    
+	    try {
+<span class="nc" id="L467">	    	this.pagination.setCurrentPageNumber(this.currentPage);</span>
+	    	String period;
+	    	String param;
+	    	String term;
+	    	List&lt;Course&gt; result;
+	    	
+<span class="nc bnc" id="L473" title="All 2 branches missed.">	    	if (columnSort) {</span>
+<span class="nc" id="L474">	    		period = orderPeriod;</span>
+<span class="nc" id="L475">	    		param = orderSearchParam;</span>
+<span class="nc" id="L476">	    		term = orderSearchString;</span>
+<span class="nc" id="L477">	    	} else {</span>
+<span class="nc" id="L478">	    		period = displayPeriod;</span>
+<span class="nc" id="L479">	    		param = searchParam;</span>
+<span class="nc" id="L480">	    		term = searchString;</span>
+	    	}
+			
+<span class="nc bnc" id="L483" title="All 2 branches missed.">			if (pagingSearchTerm) {</span>
+<span class="nc" id="L484">				result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="nc" id="L485">	        			param, term);</span>
+<span class="nc" id="L486">			} else {</span>
+<span class="nc" id="L487">				result = CourseDAO.getCourses(transaction, pagination,</span>
+<span class="nc" id="L488">		    			period);</span>
+			}
+			
+<span class="nc bnc" id="L491" title="All 2 branches missed.">			if (result != null) {</span>
+<span class="nc" id="L492">	    		searchResult = result;</span>
+<span class="nc" id="L493">	    		transaction.commit();</span>
+<span class="nc" id="L494">	    	} else {</span>
+<span class="nc" id="L495">	    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L496">						sessionUser.getLabel(&quot;search.message.result&quot;));</span>
+<span class="nc" id="L497">	    		setRenderTable(false);</span>
+<span class="nc" id="L498">	    		transaction.rollback();</span>
+	    	}
+<span class="nc" id="L500">    	} catch (InvalidDBTransferException e) {</span>
+    		LogHandler
+<span class="nc" id="L502">            .getInstance()</span>
+<span class="nc" id="L503">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+                    + &quot;createUser()&quot;);
+<span class="nc" id="L505">    		transaction.rollback();</span>
+    	}
+<span class="nc" id="L507">    }</span>
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L514">    	return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L522">    	this.pagination = pagination;</span>
+<span class="nc" id="L523">    }</span>
+    
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="fc" id="L531">    	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean sessionUser) {
+<span class="fc" id="L541">    	this.sessionUser = sessionUser;</span>
+<span class="fc" id="L542">    }</span>
+
+    /**
+     * @return the currentPage
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L548">        return currentPage;</span>
+    }
+
+    /**
+     * @param currentPage the currentPage to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L555">        this.currentPage = currentPage;</span>
+<span class="nc" id="L556">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

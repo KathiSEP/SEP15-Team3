@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NavigationBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">NavigationBeanTest.java</span></div><h1>NavigationBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.action;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.model.Language;
+
+/**
+ * This is a test class for the Navigation Bean. It tests if the user is being successfully logged out
+ * and if the language is set correct.
+ * 
+ * @author Ricky Strohmeier
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({FacesContext.class})
+<span class="nc" id="L28">public class NavigationBeanTest {</span>
+
+    private NavigationBean navigationBean;
+
+<span class="nc" id="L32">    private Language SAMPLE_LANGUAGE = Language.EN;</span>
+
+<span class="nc" id="L34">    private int SAMPLE_ID = 10000;</span>
+
+    @Mock
+    private SessionUserBean sessionUser;
+
+    @Mock
+    private FacesContext fc;
+
+    @Mock
+    private ExternalContext ec;
+
+    /**
+     * Sets up the test environment.
+     */
+    @Before
+    public void setup() {
+<span class="nc" id="L50">        PowerMockito.mockStatic(FacesContext.class);</span>
+<span class="nc" id="L51">        when(FacesContext.getCurrentInstance()).thenReturn(fc);</span>
+
+<span class="nc" id="L53">        PowerMockito.mockStatic(ExternalContext.class);</span>
+<span class="nc" id="L54">        when(fc.getExternalContext()).thenReturn(ec);</span>
+
+<span class="nc" id="L56">        navigationBean = new NavigationBean();</span>
+
+<span class="nc" id="L58">        sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L59">        sessionUser.setUserID(SAMPLE_ID);</span>
+<span class="nc" id="L60">        sessionUser.setLanguage(SAMPLE_LANGUAGE);</span>
+<span class="nc" id="L61">        navigationBean.setSessionUser(sessionUser);</span>
+<span class="nc" id="L62">    }</span>
+
+    /**
+     * Tests if the logout is working correct.
+     */
+    @Test
+    public void testLogout() {
+<span class="nc" id="L69">        assertEquals(SAMPLE_ID, navigationBean.getSessionUser().getUserID());</span>
+<span class="nc" id="L70">        assertEquals(&quot;/facelets/open/index.xhtml?faces-redirect=true&quot;, navigationBean.logout());</span>
+<span class="nc" id="L71">        assertEquals(0, navigationBean.getSessionUser().getUserID());</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Tests if the language is set correct.
+     */
+    @Test
+    public void testSetLanguage() {
+<span class="nc" id="L79">        assertEquals(Language.EN, navigationBean.getSessionUser().getLanguage());</span>
+
+<span class="nc" id="L81">        navigationBean.getSessionUser().setLanguage(Language.DE);</span>
+<span class="nc" id="L82">        assertFalse(SAMPLE_LANGUAGE.equals(navigationBean.getSessionUser().getLanguage()));</span>
+
+<span class="nc" id="L84">        navigationBean.getSessionUser().setLanguage(Language.BAY);</span>
+<span class="nc" id="L85">        assertFalse(SAMPLE_LANGUAGE.equals(navigationBean.getSessionUser().getLanguage()));</span>
+<span class="nc" id="L86">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

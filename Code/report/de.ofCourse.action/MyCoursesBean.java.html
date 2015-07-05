@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MyCoursesBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">MyCoursesBean.java</span></div><h1>MyCoursesBean.java</h1><pre class="source lang-java linenums">/**
+ * This package represents the business logic of the ofCourse system.
+ */
+package de.ofCourse.action;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+
+/**
+ * Displays the courses that are attended by a certain user and offers the user
+ * the possibility to go to the details pages pages of the courses he attends.
+ * &lt;p&gt;
+ * 
+ * Supports pagination to display the courses.
+ * 
+ * &lt;p&gt;
+ * This class is ManagedBean and controller of the facelet
+ * &lt;code&gt;myCourses&lt;/code&gt;.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@ManagedBean
+@ViewScoped
+<span class="fc" id="L41">public class MyCoursesBean implements Pagination, Serializable {</span>
+
+    /**
+     * Stores the transaction that is used for database interaction.
+     */
+    private Transaction transaction;
+
+    /**
+     * Serial id of MyCoursesBean
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Number of elements that are to display display with pagination at once
+     */
+    private static final int elementsPerPage = 10;
+
+    /**
+     * List of courses that the user attends
+     */
+    private List&lt;Course&gt; registeredCourses;
+
+    /**
+     * Parameter by which is sorted
+     */
+    private String orderParam;
+
+    /**
+     * Represents the fetched number of the current displayed page.
+     */
+    private int currentPage;
+
+    /**
+     * Represents the url to the course detail page
+     */
+    private final static String URL_COURSE_DETAIL =
+	    &quot;/facelets/open/courses/courseDetail.xhtml&quot;;
+    
+    /**
+     * This attribute represents a pagination object. It stores all the
+     * information that is necessary for pagination, e.g. the number of elements
+     * per page.
+     */
+    private PaginationData pagination;
+
+    /**
+     * This ManagedProperty represents the actual session of a user. It stores
+     * the id, the userRole, the userStatus of the user and the selected
+     * language.
+     */
+    @ManagedProperty(&quot;#{sessionUser}&quot;)
+    private SessionUserBean sessionUser;
+
+    /**
+     * Initializes the data needed for pagination, the transaction and
+     * initializes the page with data sets.
+     */
+    @PostConstruct
+    private void init() {
+<span class="fc" id="L100">	registeredCourses = new ArrayList&lt;Course&gt;();</span>
+<span class="fc" id="L101">	pagination = new PaginationData(</span>
+<span class="fc" id="L102">		elementsPerPage,</span>
+<span class="fc" id="L103">		0,</span>
+<span class="fc" id="L104">		SortColumn.TITLE,</span>
+<span class="fc" id="L105">		SortDirection.ASC);</span>
+
+	//Setting up transaction
+<span class="fc" id="L108">	transaction = Connection.create();</span>
+<span class="fc" id="L109">	transaction.start();</span>
+
+	//Initializing the page
+	try {
+<span class="fc" id="L113">	    pagination.refreshNumberOfPages(</span>
+<span class="fc" id="L114">		    CourseDAO.getNumberOfMyCourses(</span>
+<span class="fc" id="L115">			    transaction,</span>
+<span class="fc" id="L116">			    sessionUser.getUserID()));</span>
+	    
+<span class="fc" id="L118">	    registeredCourses = CourseDAO.getCoursesOf(</span>
+<span class="fc" id="L119">		    	    transaction, </span>
+<span class="fc" id="L120">		    	    getPagination(),</span>
+<span class="fc" id="L121">		    	    sessionUser.getUserID());</span>
+<span class="fc" id="L122">	    transaction.commit();</span>
+	    
+<span class="pc" id="L124">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L125">	    transaction.rollback();</span>
+<span class="nc" id="L126">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L127">		    &quot;Error occured during updating the&quot;</span>
+		    + &quot; page with elements from database.&quot;);
+	}
+
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Redirects the user to the &lt;code&gt;courseDetail&lt;/code&gt; page of the selected
+     * course.
+     * 
+     * @return link to the &lt;code&gt;courseDetail&lt;/code&gt; page
+     */
+    public String loadCourseDetailsPageOfSelectedCourse() {
+<span class="nc" id="L140">	return URL_COURSE_DETAIL;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void goToSpecificPage() {
+<span class="nc" id="L148">	pagination.setCurrentPageNumber(currentPage);</span>
+<span class="nc" id="L149">	transaction.start();</span>
+	
+	try {
+<span class="nc" id="L152">	    registeredCourses = CourseDAO.getCoursesOf(</span>
+<span class="nc" id="L153">		    		transaction, </span>
+<span class="nc" id="L154">		    		getPagination(),</span>
+<span class="nc" id="L155">		    		sessionUser.getUserID());</span>
+<span class="nc" id="L156">	    transaction.commit();</span>
+	    
+<span class="nc" id="L158">	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L159">	    transaction.rollback();</span>
+<span class="nc" id="L160">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L161">		    &quot;Error occured during fetching data for pagination.&quot;);</span>
+	}
+<span class="nc" id="L163">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sortBySpecificColumn() {
+	//Compute sort direction
+<span class="nc" id="L171">	if(getPagination().getSortColumn().equals(</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">		                          SortColumn.fromString(orderParam))) {</span>
+	     
+<span class="nc" id="L174">	    getPagination().changeSortDirection();</span>
+<span class="nc" id="L175">	} else {</span>
+<span class="nc" id="L176">	    getPagination().setSortColumn(SortColumn.fromString(orderParam));</span>
+	}
+	
+	//Fetch the needed courses
+<span class="nc" id="L180">	transaction.start();</span>
+    	try {
+<span class="nc" id="L182">    	    registeredCourses =  CourseDAO.getCoursesOf(</span>
+<span class="nc" id="L183">		    		transaction, </span>
+<span class="nc" id="L184">		    		getPagination(),</span>
+<span class="nc" id="L185">		    		sessionUser.getUserID());</span>
+<span class="nc" id="L186">    	    transaction.commit();</span>
+    	    
+<span class="nc" id="L188">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L189">	    transaction.rollback();</span>
+<span class="nc" id="L190">	    LogHandler.getInstance().error(</span>
+<span class="nc" id="L191">		    &quot;Error occured during sorting my courses&quot;);</span>
+	}
+<span class="nc" id="L193">    }  </span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PaginationData getPagination() {
+<span class="fc" id="L200">	return pagination;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPagination(PaginationData pagination) {
+<span class="nc" id="L208">	this.pagination = pagination;</span>
+<span class="nc" id="L209">    }</span>
+
+    /**
+     * Returns a list of courses that the user attends
+     * 
+     * @return list of courses the user attends
+     */
+    public List&lt;Course&gt; getRegisteredCourses() {
+<span class="fc" id="L217">	return registeredCourses;</span>
+    }
+
+    /**
+     * Sets the value of the attribute &lt;code&gt;registeredCourses&lt;/code&gt;.
+     * 
+     * @param registeredCourses
+     *            list of courses the user attends
+     */
+    public void setRegisteredCourses(List&lt;Course&gt; registeredCourses) {
+<span class="nc" id="L227">	this.registeredCourses = registeredCourses;</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Returns the order parameter.
+     * 
+     * @return the order parameter
+     */
+    public String getOrderParam() {
+<span class="nc" id="L236">	return orderParam;</span>
+    }
+
+    /**
+     * Sets the order parameter.
+     * 
+     * @param orderParam
+     *            the order s to set
+     */
+    public void setOrderParam(String orderParam) {
+<span class="nc" id="L246">	this.orderParam = orderParam;</span>
+<span class="nc" id="L247">    }</span>
+
+    /**
+     * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @return the session of the user
+     */
+    public SessionUserBean getSessionUser() {
+<span class="nc" id="L255">	return sessionUser;</span>
+    }
+
+    /**
+     * Sets the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
+     * 
+     * @param userSession
+     *            session of the user
+     */
+    public void setSessionUser(SessionUserBean userSession) {
+<span class="fc" id="L265">	this.sessionUser = userSession;</span>
+<span class="fc" id="L266">    }</span>
+
+    /**
+     * Returns the current displayed page number.
+     * 
+     * @return the page number
+     */
+    public int getCurrentPage() {
+<span class="nc" id="L274">        return currentPage;</span>
+    }
+
+    /**
+     * Set the current displayed page number. 
+     * 
+     * @param currentPage the page number to set
+     */
+    public void setCurrentPage(int currentPage) {
+<span class="nc" id="L283">        this.currentPage = currentPage;</span>
+<span class="nc" id="L284">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

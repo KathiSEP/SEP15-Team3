@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseParticipantsValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.customValidator</a> &gt; <span class="el_source">CourseParticipantsValidator.java</span></div><h1>CourseParticipantsValidator.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.customValidator;
+
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Checks if the inserted number of participants is positive 
+ * (0 is also not accepted).
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+
+@FacesValidator(&quot;courseParticipantsValidator&quot;)
+<span class="fc" id="L28">public class CourseParticipantsValidator implements Validator {</span>
+
+    /**
+     * Gets called when the administrator wants to create a new course and 
+     * insert the number of max participants.
+     */
+    @Override
+    public void validate(FacesContext fc, UIComponent component, Object value)
+            throws ValidatorException {
+        
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
+<span class="fc" id="L40">        Map&lt;String, Object&gt; sessionMap = FacesContext</span>
+<span class="fc" id="L41">                .getCurrentInstance().getExternalContext().getSessionMap();</span>
+        
+<span class="fc" id="L43">        Language lang = null;</span>
+        
+        //Check if the parameter language exists in the session.
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+            //Convert the string (DE, EN, BAY) into a language object
+<span class="fc" id="L48">            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+            
+<span class="fc" id="L50">        } else {</span>
+            //Set the language to German (DE) an write the parameter into the 
+            //session
+<span class="nc" id="L53">            lang = Language.DE;</span>
+<span class="nc" id="L54">            HttpSession session = (HttpSession) FacesContext</span>
+<span class="nc" id="L55">                    .getCurrentInstance()</span>
+<span class="nc" id="L56">                    .getExternalContext()</span>
+<span class="nc" id="L57">                    .getSession(true);</span>
+<span class="nc" id="L58">            session.setAttribute(&quot;lang&quot;, lang.toString());</span>
+        }
+        
+<span class="fc" id="L61">        String maxParticipantsString = value.toString();</span>
+        
+<span class="fc" id="L63">        int maxParticipants = 1;</span>
+        
+        try {
+            //Check if the insert is a number
+<span class="fc" id="L67">            maxParticipants = Integer.parseInt(maxParticipantsString);</span>
+<span class="pc" id="L68">        } catch(NumberFormatException e) {</span>
+<span class="nc" id="L69">            throw new ValidatorException(</span>
+<span class="nc" id="L70">                    new FacesMessage(</span>
+<span class="nc" id="L71">                            LanguageManager.getInstance().</span>
+<span class="nc" id="L72">                            getProperty(</span>
+<span class="nc" id="L73">                                    &quot;createCourse.Validator.&quot;</span>
+<span class="nc" id="L74">                                    + &quot;CourseParticipants&quot;, lang)));</span>
+        }
+        
+        //Check if the insert is a positive number
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(maxParticipants &lt; 1) {</span>
+<span class="fc" id="L79">            throw new ValidatorException(</span>
+<span class="fc" id="L80">                    new FacesMessage(</span>
+<span class="fc" id="L81">                            LanguageManager.getInstance().</span>
+<span class="fc" id="L82">                            getProperty(</span>
+<span class="fc" id="L83">                                    &quot;createCourse.Validator.&quot;</span>
+                                    + &quot;CourseParticipantsNoPositivNumber&quot;, 
+<span class="fc" id="L85">                                    lang)));</span>
+        }
+<span class="fc" id="L87">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AccountActivationByAdminTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">AccountActivationByAdminTest.java</span></div><h1>AccountActivationByAdminTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+/**
+ * Testing of account activation by the administrator. This test is geared to 
+ * the test T40-20 from our product brief. 
+ * One user will be activated by the administrator in this test. On 
+ * top of that it is asserted that the faces messages are correct and that the 
+ * user will be sent up to the right page.
+ * 
+ * @author Katharina H�lzl
+ */
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+<span class="nc bnc" id="L22" title="All 2 branches missed.">public class AccountActivationByAdminTest {</span>
+  private WebDriver driver;
+  private String baseUrl;
+<span class="nc" id="L25">  private boolean acceptNextAlert = true;</span>
+<span class="nc" id="L26">  private StringBuffer verificationErrors = new StringBuffer();</span>
+  
+<span class="nc" id="L28">  public static final String facesMessages= &quot;facesMessages&quot;;</span>
+
+  @Before
+  public void setUp() throws Exception {
+<span class="nc" id="L32">    driver = new FirefoxDriver();</span>
+<span class="nc" id="L33">    baseUrl = &quot;http://localhost:8003/&quot;;</span>
+<span class="nc" id="L34">    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);</span>
+<span class="nc" id="L35">  }</span>
+
+  @Test
+  public void testAccountActivationByAdmin() throws Exception {
+<span class="nc" id="L39">    driver.get(baseUrl + &quot;OfCourse/facelets/open/index.xhtml&quot;);</span>
+<span class="nc" id="L40">    driver.findElement(By.id(&quot;generalNavigationForm:authenticateLink&quot;)).click();</span>
+    
+    // Login as administrator
+<span class="nc" id="L43">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).clear();</span>
+<span class="nc" id="L44">    driver.findElement(By.id(&quot;formLogin:usernameLogin&quot;)).sendKeys(&quot;admin1&quot;);</span>
+<span class="nc" id="L45">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).clear();</span>
+<span class="nc" id="L46">    driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Password!123&quot;);</span>
+<span class="nc" id="L47">    driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
+<span class="nc" id="L48">    driver.findElement(By.linkText(&quot;Administration&quot;)).click();</span>
+<span class="nc" id="L49">    driver.findElement(By.linkText(&quot;Benutzer aktivieren&quot;)).click();</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">    assert driver.findElement(By.id(&quot;userActivation&quot;)).getText().equals(&quot;Benutzeraktivierung&quot;);</span>
+    
+    // Testing activate account
+<span class="nc" id="L53">    driver.findElement(By.id(&quot;formActivateUsers:participantsTable:0:checked&quot;)).click();</span>
+<span class="nc" id="L54">    driver.findElement(By.id(&quot;formActivateUsers:activate&quot;)).click();</span>
+    //Check alert and close
+<span class="nc" id="L56">    assertTrue(closeAlertAndGetItsText().contains(&quot;Wollen Sie die ausgew�hlten Teilnehmer wirklich aktivieren?&quot;));</span>
+    
+<span class="nc bnc" id="L58" title="All 4 branches missed.">    assert driver.findElement(By.id(facesMessages)).getText().contains(&quot;Der Benutzer wurde erfolgreich aktiviert! &quot;);</span>
+    
+<span class="nc" id="L60">    driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>
+<span class="nc" id="L61">  }</span>
+
+  @After
+  public void tearDown() throws Exception {
+<span class="nc" id="L65">    driver.quit();</span>
+<span class="nc" id="L66">    String verificationErrorString = verificationErrors.toString();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">    if (!&quot;&quot;.equals(verificationErrorString)) {</span>
+<span class="nc" id="L68">      fail(verificationErrorString);</span>
+    }
+<span class="nc" id="L70">  }</span>
+
+  private boolean isElementPresent(By by) {
+    try {
+<span class="nc" id="L74">      driver.findElement(by);</span>
+<span class="nc" id="L75">      return true;</span>
+<span class="nc" id="L76">    } catch (NoSuchElementException e) {</span>
+<span class="nc" id="L77">      return false;</span>
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+<span class="nc" id="L83">      driver.switchTo().alert();</span>
+<span class="nc" id="L84">      return true;</span>
+<span class="nc" id="L85">    } catch (NoAlertPresentException e) {</span>
+<span class="nc" id="L86">      return false;</span>
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+<span class="nc" id="L92">      Alert alert = driver.switchTo().alert();</span>
+<span class="nc" id="L93">      String alertText = alert.getText();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">      if (acceptNextAlert) {</span>
+<span class="nc" id="L95">        alert.accept();</span>
+<span class="nc" id="L96">      } else {</span>
+<span class="nc" id="L97">        alert.dismiss();</span>
+      }
+<span class="nc" id="L99">      return alertText;</span>
+<span class="nc" id="L100">    } finally {</span>
+<span class="nc" id="L101">      acceptNextAlert = true;</span>
+<span class="nc" id="L102">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

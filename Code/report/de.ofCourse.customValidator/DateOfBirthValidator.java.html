@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DateOfBirthValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.customValidator</a> &gt; <span class="el_source">DateOfBirthValidator.java</span></div><h1>DateOfBirthValidator.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.customValidator;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
+
+import de.ofCourse.model.Language;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * Checks whether the inserted date is in the future or more than 150 years in
+ * the past.
+ * 
+ * @author Katharina H�lzl
+ *
+ */
+
+@FacesValidator(&quot;dateOfBirthValidator&quot;)
+<span class="fc" id="L29">public class DateOfBirthValidator implements Validator {</span>
+
+    /**
+     * Gets called when you want to register or change your date of birth when
+     * you�re already registered. This method checks if the entered date is in
+     * the future or more than 150 years in the past.
+     */
+    @Override
+    public void validate(FacesContext arg0, UIComponent arg1, Object value)
+	    throws ValidatorException {
+        
+        //Fetch the parameter language with the value DE, EN ore BAY out of the 
+        //Session Map
+<span class="fc" id="L42">        Map&lt;String, Object&gt; sessionMap = FacesContext</span>
+<span class="fc" id="L43">                .getCurrentInstance().getExternalContext().getSessionMap();</span>
+        
+<span class="fc" id="L45">        Language lang = null;</span>
+        
+        //Check if the parameter language exists in the session.
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if(sessionMap.containsKey(&quot;lang&quot;)) {</span>
+            //Convert the string (DE, EN, BAY) into a language object
+<span class="fc" id="L50">            lang = Language.fromString(sessionMap.get(&quot;lang&quot;).toString());</span>
+            
+<span class="fc" id="L52">        } else {</span>
+            //Set the language to German (DE) an write the parameter into the 
+            //session
+<span class="nc" id="L55">            lang = Language.DE;</span>
+<span class="nc" id="L56">            HttpSession session = (HttpSession) FacesContext</span>
+<span class="nc" id="L57">                    .getCurrentInstance()</span>
+<span class="nc" id="L58">                    .getExternalContext()</span>
+<span class="nc" id="L59">                    .getSession(true);</span>
+<span class="nc" id="L60">            session.setAttribute(&quot;lang&quot;, lang.toString());</span>
+        }
+        
+<span class="fc" id="L63">	Date dateToday = new Date();</span>
+<span class="fc" id="L64">	Date dateOfBirth = null;</span>
+	
+	try {
+	    //Check if the insert has a right format
+<span class="fc" id="L68">	    dateOfBirth = (Date) value;</span>
+<span class="pc" id="L69">	} catch(Exception e) {</span>
+<span class="nc" id="L70">	    throw new ValidatorException(</span>
+<span class="nc" id="L71">	            new FacesMessage(</span>
+<span class="nc" id="L72">	                 LanguageManager.getInstance().</span>
+<span class="nc" id="L73">                         getProperty(</span>
+<span class="nc" id="L74">                            &quot;authenticate.validator.DateOfBirthFormat&quot;, lang)));</span>
+	}
+	
+<span class="fc" id="L77">	    long spread = dateToday.getTime() - dateOfBirth.getTime();</span>
+<span class="fc" id="L78">	    long hundredFiftyYears = 4730400000000L;</span>
+<span class="fc" id="L79">	    long past = dateToday.getTime() - hundredFiftyYears;</span>
+
+	    //Check if the inserted date is in the future or if its more than 
+	    //150 years ago
+<span class="pc bpc" id="L83" title="1 of 4 branches missed.">	    if ((spread &lt; 0) || (dateOfBirth.getTime() &lt; past)) {</span>
+<span class="fc" id="L84">		throw new ValidatorException(</span>
+<span class="fc" id="L85">		        new FacesMessage(</span>
+<span class="fc" id="L86">		              LanguageManager.getInstance().</span>
+<span class="fc" id="L87">                              getProperty(</span>
+<span class="fc" id="L88">                                &quot;authenticate.validator.DateOfBirth&quot;, lang)));</span>
+	    }
+<span class="fc" id="L90">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

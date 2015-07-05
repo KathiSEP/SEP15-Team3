@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FacesMessageCreator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.action</a> &gt; <span class="el_source">FacesMessageCreator.java</span></div><h1>FacesMessageCreator.java</h1><pre class="source lang-java linenums">package de.ofCourse.action;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
+import javax.faces.context.FacesContext;
+
+/**
+ * Creates faces messages.
+ * 
+ * @author Tobias Fuchs, Kathi H�lzl
+ *
+ */
+<span class="nc" id="L13">public class FacesMessageCreator {</span>
+
+    /**
+     * Create the FacesMessage with the given message.
+     * 
+     * @param component
+     *          binding of the message to the component
+     * @param message
+     *          exception which was thrown
+     */
+    public static void createFacesMessage(String component, String message) {
+<span class="fc" id="L24">        createFacesMessage(component, message, FacesMessage.SEVERITY_INFO);</span>
+<span class="fc" id="L25">    }</span>
+
+
+    /**
+     * Create the FacesMessage with the message of the given exception.
+     * 
+     * @param component
+     *          binding of the message to the component
+     * @param e
+     *          exception which was thrown
+     */
+    public static void createFacesMessage(String component, Exception e) {
+<span class="nc" id="L37">        createFacesMessage(component, e.getMessage(),</span>
+<span class="nc" id="L38">                FacesMessage.SEVERITY_INFO);</span>
+<span class="nc" id="L39">    }</span>
+    /**
+     * Creates the FacesMessage with the given message of the exception and the
+     * given severity.
+     * 
+     * @param component
+     *            binding of the message to the component
+     * @param e
+     *            exception which was thrown
+     * @param facesSeverity
+     *            severity of the message
+     */
+    public static void createFacesMessage(String component, Exception e,
+            Severity facesSeverity) {
+<span class="nc" id="L53">        createFacesMessage(component, e.getMessage(), facesSeverity);</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Creates the FacesMessage with the given message and the given severity.
+     * 
+     * @param component
+     *            binding of the message to the component
+     * @param message
+     *            text of the message
+     * @param facesSeverity
+     *            severity of the message
+     */
+    public static void createFacesMessage(String component, String message,
+            Severity facesSeverity) {
+<span class="fc" id="L68">        FacesContext facesContext = FacesContext.getCurrentInstance();</span>
+<span class="fc" id="L69">        FacesMessage msg = new FacesMessage(message);</span>
+<span class="fc" id="L70">        msg.setSeverity(FacesMessage.SEVERITY_INFO);</span>
+<span class="fc" id="L71">        facesContext.addMessage(component, msg);</span>
+<span class="fc" id="L72">        facesContext.renderResponse();</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
