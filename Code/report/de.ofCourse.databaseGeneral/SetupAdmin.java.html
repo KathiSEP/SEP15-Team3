@@ -18,7 +18,7 @@ import de.ofCourse.utilities.PasswordHash;
  * the database.
  * 
  * &lt;p&gt;
-<span class="nc" id="L21"> * This class is only required in the class</span>
+<span class="fc" id="L21"> * This class is only required in the class</span>
  * &lt;code&gt;de.ofCourse.system.LaunchSystem&lt;/code&gt;.
  * &lt;/p&gt;
  * 
@@ -94,10 +94,10 @@ import de.ofCourse.utilities.PasswordHash;
 <span class="fc" id="L94">    	try (Statement check = conn.createStatement()) {</span>
 <span class="fc" id="L95">    		try (ResultSet rst = check.executeQuery(checkQuery)) {</span>
 <span class="fc" id="L96">    			rst.next();</span>
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">	    		if ((Long) rst.getObject(1) &lt; 1) {</span>
-<span class="nc" id="L98">	    			try (Statement init = conn.createStatement()) {</span>
-<span class="nc" id="L99">	    				init.execute(initQuery);</span>
-<span class="nc bnc" id="L100" title="All 8 branches missed.">	    			}</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">	    		if ((Long) rst.getObject(1) &lt; 1) {</span>
+<span class="fc" id="L98">	    			try (Statement init = conn.createStatement()) {</span>
+<span class="fc" id="L99">	    				init.execute(initQuery);</span>
+<span class="pc bpc" id="L100" title="7 of 8 branches missed.">	    			}</span>
 	    		}
 <span class="pc bpc" id="L102" title="7 of 8 branches missed.">    		}</span>
 <span class="fc" id="L103">    		trans.commit();</span>

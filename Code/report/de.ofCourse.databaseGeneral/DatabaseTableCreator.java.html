@@ -221,18 +221,18 @@ import de.ofCourse.system.Transaction;
 <span class="fc" id="L221">    			count.next();</span>
 <span class="fc" id="L222">    			Long numTables = (Long) count.getObject(1);</span>
     			
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">    			if (numTables == 0) {</span>
-<span class="nc bnc" id="L225" title="All 2 branches missed.">					for (int i = 0; i &lt; createStatements.size(); i++) {</span>
-<span class="nc" id="L226">						Statement stmt = conn.createStatement();</span>
-<span class="nc" id="L227">						stmt.execute(createStatements.get(i));</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">    			if (numTables == 0) {</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">					for (int i = 0; i &lt; createStatements.size(); i++) {</span>
+<span class="fc" id="L226">						Statement stmt = conn.createStatement();</span>
+<span class="fc" id="L227">						stmt.execute(createStatements.get(i));</span>
 						
-<span class="nc bnc" id="L229" title="All 2 branches missed.">						if (i &lt; createStatements.size() - 1) {</span>
-<span class="nc" id="L230">							conn.commit();</span>
-<span class="nc" id="L231">						} else {</span>
-<span class="nc" id="L232">							trans.commit();</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">						if (i &lt; createStatements.size() - 1) {</span>
+<span class="fc" id="L230">							conn.commit();</span>
+<span class="fc" id="L231">						} else {</span>
+<span class="fc" id="L232">							trans.commit();</span>
 						}
 					}
-<span class="nc" id="L235">				} else {</span>
+<span class="fc" id="L235">				} else {</span>
 <span class="fc" id="L236">					trans.rollback();</span>
 				}
 <span class="pc bpc" id="L238" title="7 of 8 branches missed.">    		}</span>

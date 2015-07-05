@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseUnitManagementBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">CourseUnitManagementBeanTest.java</span></div><h1>CourseUnitManagementBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.GregorianCalendar;
+
+import de.ofCourse.action.CourseUnitManagementBean;
+import de.ofCourse.action.FacesMessageCreator;
+import de.ofCourse.action.SessionUserBean;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.CycleDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.Cycle;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.Period;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
+
+
+/**
+ * JUnit test for the class CourseUnitManagementBean.
+ * 
+ * @author Tobias Fuchs
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class,
+                  Connection.class, 
+                  UserDAO.class,
+	          CourseUnitDAO.class, 
+	          CourseDAO.class, 
+	          CycleDAO.class,
+	          FacesContext.class,
+	          PaginationData.class, 
+	          LanguageManager.class,
+	          FacesMessageCreator.class })
+<span class="nc" id="L65">public class CourseUnitManagementBeanTest {</span>
+
+    //bean attribute
+    private CourseUnitManagementBean bean;
+
+    // RequestparameterMap
+    private Map&lt;String, String&gt; pm;
+
+    // participant user
+    private User part;
+    
+    // course admin
+    private User admin;
+    
+    //Course units
+    private CourseUnit unit;
+    private CourseUnit unit2;
+    private CourseUnit unit3;
+    
+    //corresponding course
+    private Course course;
+    
+    //SessionUserBean to define the language
+    private SessionUserBean sessionUser;
+
+    //Cycle of regular course unit
+    @SuppressWarnings(&quot;unused&quot;)
+    private String enteredTurnus;
+    private Cycle cycle;
+
+
+    //Participants lists of the course units
+    private List&lt;User&gt; participants;
+    private List&lt;User&gt; participants2;
+    private List&lt;User&gt; participants3;
+
+    private LanguageManager myLang;
+
+    // Connection for database access
+    private Connection conn;
+
+    private PaginationData pagination;
+    
+    @SuppressWarnings(&quot;deprecation&quot;)
+    @Before
+    public void setup() {
+	// Mock the FacesContext
+<span class="nc" id="L112">	PowerMockito.mockStatic(FacesContext.class);</span>
+<span class="nc" id="L113">	FacesContext fc = mock(FacesContext.class);</span>
+<span class="nc" id="L114">	Mockito.when(FacesContext.getCurrentInstance()).thenReturn(fc);</span>
+
+	// Mock the ExternalContext
+<span class="nc" id="L117">	ExternalContext ec = mock(ExternalContext.class);</span>
+<span class="nc" id="L118">	Mockito.when(fc.getExternalContext()).thenReturn(ec);</span>
+
+	// Determine returning of getRequestParameterMap()
+<span class="nc" id="L121">	pm = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L122">	Mockito.when(ec.getRequestParameterMap()).thenReturn(pm);</span>
+
+	// Mock the connection
+<span class="nc" id="L125">	PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L126">	conn = mock(Connection.class);</span>
+<span class="nc" id="L127">	Mockito.when(Connection.create()).thenReturn(conn);</span>
+
+	// Mock CourseUnitDAO
+<span class="nc" id="L130">	PowerMockito.mockStatic(CourseUnitDAO.class);</span>
+
+	// Mock CourseUnitDAO
+<span class="nc" id="L133">	PowerMockito.mockStatic(UserDAO.class);</span>
+
+	// Mock CourseDAO
+<span class="nc" id="L136">	PowerMockito.mockStatic(CourseDAO.class);</span>
+
+	// Mock CycleaDAO
+<span class="nc" id="L139">	PowerMockito.mockStatic(CycleDAO.class);</span>
+	
+	//Mock LanguageManagerCreator
+<span class="nc" id="L142">	PowerMockito.mockStatic(LanguageManager.class);</span>
+<span class="nc" id="L143">	myLang = mock(LanguageManager.class);</span>
+	
+	// Mock FacesMessageCreator
+<span class="nc" id="L146">	PowerMockito.mockStatic(FacesMessageCreator.class);</span>
+	
+
+	// Create courseUnit
+<span class="nc" id="L150">	CourseUnit cu1 = new CourseUnit();</span>
+<span class="nc" id="L151">	cu1.setStartime(new GregorianCalendar(2015, 6, 1).getTime());</span>
+<span class="nc" id="L152">	cu1.setEndtime(new GregorianCalendar(2015, 6, 2).getTime());</span>
+
+	// Initialization work
+<span class="nc" id="L155">	participants = new ArrayList&lt;User&gt;();</span>
+
+<span class="nc" id="L157">	part = new User();</span>
+<span class="nc" id="L158">	part.setUserId(1);</span>
+<span class="nc" id="L159">	part.setFirstname(&quot;Tobias&quot;);</span>
+<span class="nc" id="L160">	part.setLastname(&quot;Fuchs&quot;);</span>
+<span class="nc" id="L161">	part.setDateOfBirth(new Date(1993, 5, 29));</span>
+<span class="nc" id="L162">	part.setEmail(&quot;fuchs249@live.de&quot;);</span>
+<span class="nc" id="L163">	part.setUsername(&quot;Tobi249&quot;);</span>
+<span class="nc" id="L164">	part.setAccountBalance(20);</span>
+
+<span class="nc" id="L166">	cycle = new Cycle();</span>
+<span class="nc" id="L167">	cycle.setCycleID(0);</span>
+<span class="nc" id="L168">	cycle.setCourseID(1);</span>
+<span class="nc" id="L169">	cycle.setNumberOfUnits(3);</span>
+<span class="nc" id="L170">	cycle.setTurnus(Period.DAYS);</span>
+
+<span class="nc" id="L172">	unit = new CourseUnit();</span>
+<span class="nc" id="L173">	unit.setCourseUnitID(1);</span>
+<span class="nc" id="L174">	unit.setPrice(2);</span>
+<span class="nc" id="L175">	unit.setCourseID(1);</span>
+<span class="nc" id="L176">	unit.setCycle(cycle);</span>
+
+<span class="nc" id="L178">	unit2 = new CourseUnit();</span>
+<span class="nc" id="L179">	unit2.setCourseUnitID(2);</span>
+<span class="nc" id="L180">	unit2.setPrice(2);</span>
+<span class="nc" id="L181">	unit2.setCourseID(1);</span>
+<span class="nc" id="L182">	unit2.setCycle(cycle);</span>
+
+<span class="nc" id="L184">	unit3 = new CourseUnit();</span>
+<span class="nc" id="L185">	unit3.setCourseUnitID(3);</span>
+<span class="nc" id="L186">	unit3.setPrice(2);</span>
+<span class="nc" id="L187">	unit3.setCourseID(1);</span>
+<span class="nc" id="L188">	unit3.setCycle(cycle);</span>
+
+<span class="nc" id="L190">	pagination = new PaginationData();</span>
+<span class="nc" id="L191">	pagination.setCurrentPageNumber(0);</span>
+<span class="nc" id="L192">	pagination.setElementsPerPage(10);</span>
+<span class="nc" id="L193">	pagination.setNumberOfPages(1);</span>
+<span class="nc" id="L194">	pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="nc" id="L195">	pagination.setSortColumn(SortColumn.TITLE);</span>
+
+<span class="nc" id="L197">	course = new Course();</span>
+<span class="nc" id="L198">	course.setStartdate(new Date(2015, 1, 1));</span>
+<span class="nc" id="L199">	course.setEnddate(new Date(2015, 12, 12));</span>
+
+<span class="nc" id="L201">	participants = new ArrayList&lt;User&gt;();</span>
+<span class="nc" id="L202">	participants.add(part);</span>
+
+<span class="nc" id="L204">	participants2 = new ArrayList&lt;User&gt;();</span>
+<span class="nc" id="L205">	participants2.add(part);</span>
+
+<span class="nc" id="L207">	participants3 = new ArrayList&lt;User&gt;();</span>
+<span class="nc" id="L208">	participants3.add(part);</span>
+	
+<span class="nc" id="L210">	admin = new User();</span>
+<span class="nc" id="L211">	admin.setUserID(2);</span>
+	
+<span class="nc" id="L213">	sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L214">	sessionUser.setLanguage(Language.DE);</span>
+	
+<span class="nc" id="L216">	List&lt;Integer&gt; idsToDelete = new ArrayList&lt;Integer&gt;();</span>
+<span class="nc" id="L217">	idsToDelete.add(1);</span>
+<span class="nc" id="L218">	idsToDelete.add(2);</span>
+<span class="nc" id="L219">	idsToDelete.add(3);</span>
+	
+	// Determine the return values of called static methods
+<span class="nc" id="L222">	Mockito.when(CourseUnitDAO.getCourseUnit(conn, 1)).thenReturn(cu1);</span>
+	
+<span class="nc" id="L224">	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L225">		conn,</span>
+<span class="nc" id="L226">		pagination,</span>
+<span class="nc" id="L227">		1,</span>
+<span class="nc" id="L228">		false)).thenReturn(participants);</span>
+
+<span class="nc" id="L230">	Mockito.when(CourseDAO.getCourse(conn, 1)).thenReturn(course);</span>
+
+<span class="nc" id="L232">	Mockito.when(CycleDAO.createCycle(conn, 1, cycle)).thenReturn(1);</span>
+
+<span class="nc" id="L234">	Mockito.when(CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1))</span>
+<span class="nc" id="L235">		.thenReturn(idsToDelete);</span>
+
+<span class="nc" id="L237">	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L238">		conn,</span>
+<span class="nc" id="L239">		pagination,</span>
+<span class="nc" id="L240">		1,	</span>
+<span class="nc" id="L241">		true)).thenReturn(participants);</span>
+	
+<span class="nc" id="L243">	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L244">		conn,</span>
+<span class="nc" id="L245">		pagination,</span>
+<span class="nc" id="L246">		2,</span>
+<span class="nc" id="L247">		true)).thenReturn(participants2);</span>
+	
+<span class="nc" id="L249">	Mockito.when(CourseUnitDAO.getParticipiantsOfCourseUnit(</span>
+<span class="nc" id="L250">		conn,</span>
+<span class="nc" id="L251">		pagination,</span>
+<span class="nc" id="L252">		3,</span>
+<span class="nc" id="L253">		true)).thenReturn(participants2);</span>
+
+<span class="nc" id="L255">	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 1))</span>
+<span class="nc" id="L256">		.thenReturn((float) 2.0);</span>
+<span class="nc" id="L257">	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 2))</span>
+<span class="nc" id="L258">		.thenReturn((float) 2.0);</span>
+<span class="nc" id="L259">	Mockito.when(CourseUnitDAO.getPriceOfUnit(conn, 3))</span>
+<span class="nc" id="L260">		.thenReturn((float) 2.0);</span>
+
+<span class="nc" id="L262">	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 1))</span>
+<span class="nc" id="L263">		.thenReturn(true);</span>
+<span class="nc" id="L264">	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 2))</span>
+<span class="nc" id="L265">		.thenReturn(true);</span>
+<span class="nc" id="L266">	Mockito.when(UserDAO.userIsParticipantInCourseUnit(conn, 1, 3))</span>
+<span class="nc" id="L267">		.thenReturn(true);</span>
+	
+<span class="nc" id="L269">	Mockito.when(CourseDAO.getLeaders(conn, 1)).thenReturn(Arrays.asList(admin));</span>
+	
+<span class="nc" id="L271">	Mockito.when(LanguageManager.getInstance()).thenReturn(myLang);</span>
+
+	// Create the course unit management
+<span class="nc" id="L274">	bean = new CourseUnitManagementBean();</span>
+<span class="nc" id="L275">    }</span>
+
+    
+    /**
+     * Tests the addUserToCourseUnit() - method
+     */
+    @Test
+    public void testAddUserToCourseUnit() {
+	// Initializes the session
+<span class="nc" id="L284">	pm.put(&quot;editMode&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L285">	pm.put(&quot;courseID&quot;, &quot;1&quot;);</span>
+<span class="nc" id="L286">	pm.put(&quot;courseUnitID&quot;, &quot;1&quot;);</span>
+
+	// Initializes the Bean
+<span class="nc" id="L289">	bean.init();</span>
+
+	//Does some further initialization
+<span class="nc" id="L292">	bean.setPagination(pagination);</span>
+<span class="nc" id="L293">	bean.setCourseUnit(unit);</span>
+<span class="nc" id="L294">	bean.setUserToAdd(part);</span>
+<span class="nc" id="L295">	assertEquals(pagination, bean.getPagination());</span>
+
+	// Adds user part to course unit unit
+<span class="nc" id="L298">	bean.addUserToCourseUnit();</span>
+
+	// Checks whether the methods were executed correctly
+<span class="nc" id="L301">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L302">	UserDAO.updateAccountBalance(conn, 1, 18);</span>
+
+<span class="nc" id="L304">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L305">	CourseUnitDAO.addUserToCourseUnit(conn, part.getUserID(),</span>
+<span class="nc" id="L306">		unit.getCourseUnitID());</span>
+
+<span class="nc" id="L308">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L309">	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, false);</span>
+<span class="nc" id="L310">    }</span>
+
+    /**
+     * Tests the deleteCourseUnit - method
+     */
+    @Test
+    public void testDeleteCourseUnit() {
+
+	// Initializes the session
+<span class="nc" id="L319">	pm.put(&quot;editMode&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L320">	pm.put(&quot;courseID&quot;, &quot;1&quot;);</span>
+<span class="nc" id="L321">	pm.put(&quot;courseUnitID&quot;, &quot;1&quot;);</span>
+
+	//Initialization work
+<span class="nc" id="L324">	bean.init();</span>
+<span class="nc" id="L325">	bean.setPagination(pagination);</span>
+<span class="nc" id="L326">	bean.setCourseUnit(unit);</span>
+<span class="nc" id="L327">	bean.setCompleteCycle(true);</span>
+<span class="nc" id="L328">	bean.setSelectedToInform(0);</span>
+
+	// Executes the deleteCourseUnit() method
+<span class="nc" id="L331">	String url = bean.deleteCourseUnit();</span>
+
+	// Checks whether the methods were executed
+<span class="nc" id="L334">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L335">	CourseUnitDAO.getIdsCourseUnitsOfCycle(conn, 1);</span>
+
+	// Fetches the participants of unit
+<span class="nc" id="L338">	PowerMockito.verifyStatic(times(1));</span>
+<span class="nc" id="L339">	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 1, true);</span>
+
+	// Fetches the participants of unit1
+<span class="nc" id="L342">	PowerMockito.verifyStatic(times(1));</span>
+<span class="nc" id="L343">	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 2, true);</span>
+
+	// Fetches the participants of unit2
+<span class="nc" id="L346">	PowerMockito.verifyStatic(times(1));</span>
+<span class="nc" id="L347">	CourseUnitDAO.getParticipiantsOfCourseUnit(conn, pagination, 3, true);</span>
+
+	// Removes user part from course unit unit
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+<span class="nc" id="L352">	PowerMockito.verifyStatic(times(3));</span>
+<span class="nc" id="L353">	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 1);</span>
+
+	// Removes user part from course unit unit1
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+<span class="nc" id="L358">	PowerMockito.verifyStatic(times(3));</span>
+<span class="nc" id="L359">	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 2);</span>
+
+	// Removes user part from course unit unit2
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+<span class="nc" id="L364">	PowerMockito.verifyStatic(times(3));</span>
+<span class="nc" id="L365">	CourseUnitDAO.removeUserFromCourseUnit(conn, 1, 3);</span>
+	// Updates the account balance of the user with the sum of all prices of
+	// all signed off units
+	// (In reality only invoked once but in test the database mock returns
+	// always true )
+<span class="nc" id="L370">	PowerMockito.verifyStatic(times(3));</span>
+<span class="nc" id="L371">	UserDAO.updateAccountBalance(conn, 1, 26);</span>
+
+	// Delete the units
+<span class="nc" id="L374">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L375">	CourseUnitDAO.deleteCourseUnit(conn, 1);</span>
+	
+<span class="nc" id="L377">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L378">	CourseUnitDAO.deleteCourseUnit(conn, 2);</span>
+
+<span class="nc" id="L380">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L381">	CourseUnitDAO.deleteCourseUnit(conn, 3);</span>
+	
+	//Deletes the corresponding cycle
+<span class="nc" id="L384">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L385">	CycleDAO.deleteCycle(conn, 0);</span>
+
+	//Checks whether you are redirected to course details page
+<span class="nc" id="L388">	assertEquals(url, &quot;/facelets/open/courses/courseDetail.xhtml&quot;);</span>
+<span class="nc" id="L389">    }</span>
+
+    /**
+     * Tests the createCourseUnit() - method
+     */
+    @SuppressWarnings(&quot;deprecation&quot;)
+    @Test
+    public void testCreateCourseUnit() {
+	// Initializes the session
+<span class="nc" id="L398">	pm.put(&quot;editMode&quot;, &quot;false&quot;);</span>
+<span class="nc" id="L399">	pm.put(&quot;courseID&quot;, &quot;1&quot;);</span>
+<span class="nc" id="L400">	pm.put(&quot;courseUnitID&quot;, &quot;1&quot;);</span>
+
+	//Initialization work
+<span class="nc" id="L403">	bean.init();</span>
+<span class="nc" id="L404">	bean.setCourseUnit(unit);</span>
+<span class="nc" id="L405">	bean.setEnteredTurnus(&quot;WEEKS&quot;);</span>
+<span class="nc" id="L406">	bean.getCourseUnit().setCourseAdmin(admin);</span>
+
+	// Regular unit
+<span class="nc" id="L409">	bean.setRegularCourseUnit(true);</span>
+
+	// Entered date for unit is in rage of corresponding course
+<span class="nc" id="L412">	bean.setDate(new Date(2015, 2, 2));</span>
+<span class="nc" id="L413">	bean.setStart(new Date(2015, 2, 2, 12, 0));</span>
+<span class="nc" id="L414">	bean.setEnd(new Date(2015, 2, 2, 14, 0));</span>
+
+	// Checks whether you are redirected to course detail page
+<span class="nc" id="L417">	String url = bean.createCourseUnit();</span>
+<span class="nc" id="L418">	assertEquals(url, &quot;/facelets/open/courses/courseDetail.xhtml&quot;);</span>
+
+	// Check whether the entered dates are in course range
+	// Check whether the automatically created cycle units are in course
+	// range
+<span class="nc" id="L423">	PowerMockito.verifyStatic(times(4));</span>
+<span class="nc" id="L424">	CourseDAO.getCourse(conn, 1);</span>
+
+<span class="nc" id="L426">	PowerMockito.verifyStatic();</span>
+<span class="nc" id="L427">	CycleDAO.createCycle(conn, 1, cycle);</span>
+
+	// The number of units in the cycle was set to 3
+<span class="nc" id="L430">	PowerMockito.verifyStatic(times(3));</span>
+<span class="nc" id="L431">	CourseUnitDAO.createCourseUnit(conn, unit, unit.getCourseID(), true);</span>
+
+	// Entered date for unit is not in rage of corresponding course
+<span class="nc" id="L434">	bean.setDate(new Date(2016, 2, 2));</span>
+<span class="nc" id="L435">	bean.setStart(new Date(2016, 2, 2, 12, 0));</span>
+<span class="nc" id="L436">	bean.setEnd(new Date(2016, 2, 2, 14, 0));</span>
+<span class="nc" id="L437">        bean.setSessionUser(sessionUser);</span>
+	
+        // Check whether you stay on the same page in case of the entered dates
+        // are not in range of the course
+<span class="nc" id="L441">	String url2 = bean.createCourseUnit();</span>
+<span class="nc" id="L442">	assertEquals(url2, &quot;x&quot;);</span>
+<span class="nc" id="L443">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

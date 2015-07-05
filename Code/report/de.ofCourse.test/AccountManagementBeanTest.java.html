@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AccountManagementBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">AccountManagementBeanTest.java</span></div><h1>AccountManagementBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import static org.mockito.Mockito.*;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.action.AccountManagementBean;
+import de.ofCourse.action.FacesMessageCreator;
+import de.ofCourse.action.SessionUserBean;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.SortColumn;
+import de.ofCourse.model.SortDirection;
+import de.ofCourse.system.Connection;
+import de.ofCourse.utilities.LanguageManager;
+import de.ofCourse.model.User;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Connection.class, UserDAO.class, PaginationData.class, 
+                 FacesMessage.class, FacesMessageCreator.class, 
+                 InvalidDBTransferException.class, 
+                 FacesContext.class, LanguageManager.class})
+
+<span class="nc" id="L54">public class AccountManagementBeanTest {</span>
+    
+    // Create new Bean for testing
+    private AccountManagementBean accountManagementBean;
+    
+    private SessionUserBean sessionUser;
+    
+    private LanguageManager languageManager;
+    
+    // Create necessary attributes of the test bean
+    private PaginationData pagination;
+    private List&lt;User&gt; notAdminActivatedUsers;
+    private Connection connection;
+    
+    // Mock FacesContext and ExternalContext .
+    @Mock
+    FacesContext facesContext;
+    
+    @Mock
+    ExternalContext externalContext;
+    
+    // Create captor for the FacesMessages.
+    ArgumentCaptor&lt;String&gt; clientIdCaptor;
+    ArgumentCaptor&lt;FacesMessage&gt; facesMessageCaptor;
+    private FacesMessage captured;
+    
+    // Create RequestParameterMap
+    private Map&lt;String, String&gt; requestParameterMap;
+    
+    /**
+     * Preparations for the test
+     */
+    @SuppressWarnings({ &quot;deprecation&quot;, &quot;unchecked&quot; })
+    @Before
+    public void setup() {
+        // Mock FacesContext statically .
+<span class="nc" id="L90">        PowerMockito.mockStatic(FacesContext.class);</span>
+        
+        // Specify what should be returned if it's ask for the instance of the
+        // FacesContext or the ExternalContext.
+<span class="nc" id="L94">        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(</span>
+<span class="nc" id="L95">                                                               facesContext);</span>
+
+<span class="nc" id="L97">        Mockito.when(facesContext.getExternalContext()).thenReturn(</span>
+<span class="nc" id="L98">                                                               externalContext);</span>
+        
+        // Create RequestParameterMap.
+<span class="nc" id="L101">        requestParameterMap = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L102">        Mockito.when(externalContext.getRequestParameterMap()).thenReturn(</span>
+<span class="nc" id="L103">                                                           requestParameterMap);</span>
+        
+        // Mock the Connection class statically.
+<span class="nc" id="L106">        PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L107">        connection = mock(Connection.class);          </span>
+<span class="nc" id="L108">        Mockito.when(Connection.create()).thenReturn(connection);</span>
+        
+<span class="nc" id="L110">        sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L111">        sessionUser.setLanguage(Language.DE);</span>
+                
+        //Mock LanguageManagerCreator
+<span class="nc" id="L114">        PowerMockito.mockStatic(LanguageManager.class);</span>
+<span class="nc" id="L115">        languageManager = mock(LanguageManager.class);</span>
+ 
+<span class="nc" id="L117">        Mockito.when(LanguageManager.getInstance()).thenReturn(languageManager);</span>
+        
+<span class="nc" id="L119">        Mockito.when(LanguageManager.getInstance().</span>
+<span class="nc" id="L120">                getProperty(&quot;AccountManagementBean.facesMessage.NoUsers&quot;, </span>
+<span class="nc" id="L121">                                                                Language.DE)).</span>
+<span class="nc" id="L122">                thenReturn(&quot;Keine Benutzer ausgew�hlt!&quot;);</span>
+        
+<span class="nc" id="L124">        Mockito.when(LanguageManager.getInstance().</span>
+<span class="nc" id="L125">                getProperty(&quot;AccountManagementBean.facesMessage.&quot;</span>
+                                                        + &quot;ActivationSucceed&quot;, 
+<span class="nc" id="L127">                                                        Language.DE)).</span>
+<span class="nc" id="L128">                thenReturn(&quot;Benutzer erfolgreich aktiviert!&quot;);</span>
+        
+        // Mock the database class statically.
+<span class="nc" id="L131">        PowerMockito.mockStatic(UserDAO.class);</span>
+        
+        // Specify what the methods of the database should return by specific 
+        // requests.
+<span class="nc" id="L135">        Mockito.when(UserDAO.AdminActivateUsers(eq(connection), anyList())).</span>
+<span class="nc" id="L136">                                                               thenReturn(true);</span>
+
+<span class="nc" id="L138">        Mockito.when(UserDAO.getNumberOfNotAdminActivatedUsers(connection)).</span>
+<span class="nc" id="L139">                                                               thenReturn(2);</span>
+
+        // Initialize and fill the return list.
+<span class="nc" id="L142">        notAdminActivatedUsers = new ArrayList&lt;User&gt;();</span>
+        
+<span class="nc" id="L144">        User user1 = new User();</span>
+<span class="nc" id="L145">        user1.setUserId(1);</span>
+<span class="nc" id="L146">        user1.setUsername(&quot;Kathi&quot;);</span>
+<span class="nc" id="L147">        user1.setFirstname(&quot;Kathi&quot;);</span>
+<span class="nc" id="L148">        user1.setLastname(&quot;H�lzl&quot;);</span>
+<span class="nc" id="L149">        user1.setEmail(&quot;katharina_hoelzl@web.de&quot;);</span>
+<span class="nc" id="L150">        user1.setDateOfBirth(new Date(1993, 5, 29));</span>
+<span class="nc" id="L151">        notAdminActivatedUsers.add(user1);</span>
+        
+<span class="nc" id="L153">        User user2 = new User();</span>
+<span class="nc" id="L154">        user2.setUserId(2);</span>
+<span class="nc" id="L155">        user2.setUsername(&quot;Tobi&quot;);</span>
+<span class="nc" id="L156">        user2.setFirstname(&quot;Tobias&quot;);</span>
+<span class="nc" id="L157">        user2.setLastname(&quot;Fuchs&quot;);</span>
+<span class="nc" id="L158">        user2.setEmail(&quot;tobias.fuchs@web.de&quot;);</span>
+<span class="nc" id="L159">        user2.setDateOfBirth(new Date(1993, 12, 24));  </span>
+<span class="nc" id="L160">        notAdminActivatedUsers.add(user2);</span>
+        
+<span class="nc" id="L162">        pagination = new PaginationData();</span>
+<span class="nc" id="L163">        pagination.setCurrentPageNumber(0);</span>
+<span class="nc" id="L164">        pagination.setElementsPerPage(10);</span>
+<span class="nc" id="L165">        pagination.setNumberOfPages(1);</span>
+<span class="nc" id="L166">        pagination.setSortDirection(SortDirection.ASC);</span>
+<span class="nc" id="L167">        pagination.setSortColumn(SortColumn.NICKNAME);</span>
+        
+<span class="nc" id="L169">        Mockito.when(UserDAO.getNotAdminActivatedUsers(connection, pagination)).</span>
+<span class="nc" id="L170">                                            thenReturn(notAdminActivatedUsers);</span>
+                
+        // Initialize the captor for the FacesMessages.
+<span class="nc" id="L173">        clientIdCaptor = ArgumentCaptor.forClass(String.class);</span>
+<span class="nc" id="L174">        facesMessageCaptor = ArgumentCaptor.forClass(FacesMessage.class);</span>
+<span class="nc" id="L175">    }</span>
+    
+    /**
+     * Actual test method.
+     */
+    @Test
+    public void test() {
+        // Initialize new test bean.
+<span class="nc" id="L183">        accountManagementBean = new AccountManagementBean();</span>
+        
+<span class="nc" id="L185">        accountManagementBean.setSessionUser(sessionUser);</span>
+        
+        // Set necessary attributes.
+<span class="nc" id="L188">        DataModel&lt;User&gt; dataModelUserList = new ListDataModel&lt;User&gt;();</span>
+<span class="nc" id="L189">        dataModelUserList.setWrappedData(notAdminActivatedUsers);</span>
+        
+<span class="nc" id="L191">        accountManagementBean.setUsers(dataModelUserList);</span>
+<span class="nc" id="L192">        accountManagementBean.setPagination(pagination);</span>
+        
+        // Check if the attribute setting was correct.
+<span class="nc" id="L195">        assertEquals(dataModelUserList, accountManagementBean.getUsers());</span>
+<span class="nc" id="L196">        assertEquals(pagination, accountManagementBean.getPagination());</span>
+        
+        // Call the method for testing.
+<span class="nc" id="L199">        accountManagementBean.activateAccounts();</span>
+        
+        // Check FacesMessage.
+<span class="nc" id="L202">        verify(facesContext, times(1)).addMessage(clientIdCaptor.capture(), </span>
+<span class="nc" id="L203">                                                  facesMessageCaptor.capture());</span>
+<span class="nc" id="L204">        assertNull(clientIdCaptor.getValue());</span>
+<span class="nc" id="L205">        captured = facesMessageCaptor.getValue();</span>
+<span class="nc" id="L206">        assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());</span>
+<span class="nc" id="L207">        assertEquals(&quot;Keine Benutzer ausgew�hlt!&quot;, captured.getSummary());</span>
+        
+        // Select user.
+<span class="nc" id="L210">        notAdminActivatedUsers.get(0).setSelected(true);</span>
+<span class="nc" id="L211">        notAdminActivatedUsers.get(1).setSelected(true);</span>
+<span class="nc" id="L212">        dataModelUserList.setWrappedData(notAdminActivatedUsers);</span>
+        
+        // Set attributes new.
+<span class="nc" id="L215">        accountManagementBean.setUsers(dataModelUserList);</span>
+                
+        // Call the method for testing again.
+<span class="nc" id="L218">        accountManagementBean.activateAccounts();</span>
+        
+        // Check FacesMessage.
+<span class="nc" id="L221">        verify(facesContext, times(2)).addMessage(clientIdCaptor.capture(), </span>
+<span class="nc" id="L222">                                                  facesMessageCaptor.capture());</span>
+<span class="nc" id="L223">        assertNull(clientIdCaptor.getValue());</span>
+<span class="nc" id="L224">        captured = facesMessageCaptor.getValue();</span>
+<span class="nc" id="L225">        assertEquals(FacesMessage.SEVERITY_INFO, captured.getSeverity());</span>
+<span class="nc" id="L226">        assertEquals(&quot;Benutzer erfolgreich aktiviert!&quot;, captured.getSummary());</span>
+
+<span class="nc" id="L228">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

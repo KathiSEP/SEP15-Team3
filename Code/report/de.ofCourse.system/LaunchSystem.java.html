@@ -15,16 +15,9 @@ import javax.faces.bean.ManagedBean;
 
 
 
-
-
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-
-
 import de.ofCourse.databaseGeneral.DatabaseTableCreator;
 import de.ofCourse.databaseGeneral.DatabaseTableDestroyer;
 import de.ofCourse.databaseGeneral.SetupAdmin;
-import de.ofCourse.test.AllTests;
 import de.ofCourse.utilities.PropertyManager;
 
 /**
@@ -45,7 +38,7 @@ import de.ofCourse.utilities.PropertyManager;
  */
 @ManagedBean(eager = true)
 @ApplicationScoped
-<span class="fc" id="L48">public class LaunchSystem {</span>
+<span class="fc" id="L41">public class LaunchSystem {</span>
 
    
 
@@ -59,38 +52,36 @@ import de.ofCourse.utilities.PropertyManager;
     @PostConstruct
     public void startSystem() {
 
-<span class="fc" id="L62">        PropertyManager.getInstance();</span>
-<span class="fc" id="L63">        DatabaseConnectionManager.getInstance();</span>
-<span class="fc" id="L64">        LogHandler.getInstance();</span>
+<span class="fc" id="L55">        PropertyManager.getInstance();</span>
+<span class="fc" id="L56">        DatabaseConnectionManager.getInstance();</span>
+<span class="fc" id="L57">        LogHandler.getInstance();</span>
         
-<span class="fc" id="L66">        LogHandler.getInstance().debug(&quot;LogHandler initialized&quot;);</span>
-<span class="fc" id="L67">        DatabaseTableCreator.buildUpDatabase();</span>
-<span class="fc" id="L68">        SetupAdmin.createInitialAdmin();</span>
-<span class="fc" id="L69">        SetupAdmin.setSystemAttributes();</span>
-<span class="fc" id="L70">        Maintenance.getInstance().run();</span>
-<span class="fc" id="L71">        LogHandler.getInstance().debug(&quot;Database created, System started&quot;);</span>
-        
+<span class="fc" id="L59">        LogHandler.getInstance().debug(&quot;LogHandler initialized&quot;);</span>
+<span class="fc" id="L60">        DatabaseTableCreator.buildUpDatabase();</span>
+<span class="fc" id="L61">        SetupAdmin.createInitialAdmin();</span>
+<span class="fc" id="L62">        SetupAdmin.setSystemAttributes();</span>
+<span class="fc" id="L63">        Maintenance.getInstance().run();</span>
+<span class="fc" id="L64">        LogHandler.getInstance().debug(&quot;Database created, System started&quot;);</span>
         
         //DatabaseTableDestroyer.dropTables();
+        
         //adds a Shutdown Hook which closes all Connection to the Database in case it crashes
-<span class="fc" id="L76">        Runtime.getRuntime().addShutdownHook(new Thread(){</span>
+<span class="fc" id="L69">        Runtime.getRuntime().addShutdownHook(new Thread(){</span>
             @Override
             public void run(){
-<span class="fc" id="L79">                shutdownMaintenance();</span>
-<span class="fc" id="L80">            }</span>
+<span class="fc" id="L72">                shutdownMaintenance();</span>
+<span class="fc" id="L73">            }</span>
         });
-        
-        
-<span class="fc" id="L84">   }</span>
+<span class="fc" id="L75">   }</span>
 
     /**
      * Terminates the maintenance thread.
      */
     @PreDestroy
     public void shutdownMaintenance() {
-<span class="fc" id="L91">        DatabaseConnectionManager.getInstance().shutDown();</span>
-<span class="fc" id="L92">        Maintenance.getInstance().shutDown();</span>
-<span class="fc" id="L93">    }</span>
+<span class="fc" id="L82">        DatabaseConnectionManager.getInstance().shutDown();</span>
+<span class="fc" id="L83">        Maintenance.getInstance().shutDown();</span>
+<span class="fc" id="L84">    }</span>
 
     
 }

@@ -3,8 +3,6 @@
  */
 package de.ofCourse.action;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.text.DecimalFormat;
 
 import javax.annotation.PostConstruct;
@@ -16,10 +14,10 @@ import javax.servlet.http.Part;
 
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
+import de.ofCourse.model.Language;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -46,20 +44,20 @@ import de.ofCourse.utilities.PasswordHash;
  */
 @ManagedBean
 @ViewScoped
-<span class="fc" id="L49">public class UserProfileBean {</span>
+<span class="fc" id="L47">public class UserProfileBean {</span>
     
 	/**
 	 * The URL which is returned if an administrator unsuccessfully edits the
 	 * user's data
 	 */
-<span class="fc" id="L55">	private final String URL_PROFILE = &quot;/facelets/user/systemAdministrator/&quot; +</span>
+<span class="fc" id="L53">	private final String URL_PROFILE = &quot;/facelets/user/systemAdministrator/&quot; +</span>
 			&quot;profile.xhtml?faces-redirect=false&quot;;
 	
 	/**
 	 * The URL which is returned if an administrator successfully edits the
 	 * user's data
 	 */
-<span class="fc" id="L62">	private final String URL_ADMIN_MANAGEMENT = &quot;/facelets/user/&quot; +</span>
+<span class="fc" id="L60">	private final String URL_ADMIN_MANAGEMENT = &quot;/facelets/user/&quot; +</span>
 			&quot;systemAdministrator/adminManagement.xhtml?faces-redirect=true&quot;;
 	
     /**
@@ -133,27 +131,44 @@ import de.ofCourse.utilities.PasswordHash;
     
     @PostConstruct
     public void init() {
-<span class="fc" id="L136">    	readOnly = true;</span>
+<span class="fc" id="L134">    	readOnly = true;</span>
 
-<span class="fc" id="L138">    	transaction = Connection.create();</span>
+<span class="fc" id="L136">    	transaction = Connection.create();</span>
 
     	try {
-<span class="fc" id="L141">    	    transaction.start();</span>
-<span class="fc" id="L142">    	    userID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
-<span class="fc" id="L143">    	                .getExternalContext().getRequestParameterMap()</span>
-<span class="fc" id="L144">    	                .get(&quot;userID&quot;));</span>
-<span class="fc" id="L145">    		user = UserDAO.getUser(transaction, userID);</span>
-<span class="fc" id="L146">    		transaction.commit();</span>
+<span class="fc" id="L139">    	    transaction.start();</span>
+<span class="fc" id="L140">    	    userID = Integer.parseInt(FacesContext.getCurrentInstance()</span>
+<span class="fc" id="L141">    	                .getExternalContext().getRequestParameterMap()</span>
+<span class="fc" id="L142">    	                .get(&quot;userID&quot;));</span>
+<span class="fc" id="L143">    		user = UserDAO.getUser(transaction, userID);</span>
+<span class="fc" id="L144">    		transaction.commit();</span>
     		
-<span class="fc" id="L148">    		DecimalFormat f = new DecimalFormat(&quot;#0.00&quot;);</span>
-<span class="fc" id="L149">    		setCreditBalance(f.format(user.getAccountBalance()));</span>
-<span class="fc" id="L150">    		role = user.getUserRole().toString();</span>
-<span class="pc" id="L151">    	} catch (InvalidDBTransferException e) {</span>
-<span class="nc" id="L152">    		LogHandler.getInstance().error(&quot;SQL Exception occoured during&quot; +</span>
+<span class="fc" id="L146">    		DecimalFormat f = new DecimalFormat(&quot;#0.00&quot;);</span>
+<span class="fc" id="L147">    		setCreditBalance(f.format(user.getAccountBalance()));</span>
+<span class="fc" id="L148">    		salutation = user.getSalutation().toString();</span>
+<span class="fc" id="L149">    		role = user.getUserRole().toString();</span>
+<span class="pc" id="L150">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L151">    		LogHandler.getInstance().error(&quot;SQL Exception occoured during&quot; +</span>
     				&quot;executing init() in UserProfileBean&quot;);
-<span class="nc" id="L154">    		transaction.rollback();</span>
+<span class="nc" id="L153">    		transaction.rollback();</span>
     	}
-<span class="fc" id="L156">    }</span>
+<span class="fc" id="L155">    }</span>
+    
+    /**
+     * Returns the user's salutaion in the selected language as a string
+     * 
+     * @return the user's salutaion
+     */
+    public String getSalutationLabel() {
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">    	if (!sessionUser.getLanguage().equals(Language.EN)) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">    		if (user.getSalutation().equals(Salutation.MS)) {</span>
+<span class="fc" id="L165">    			return &quot;Frau&quot;;</span>
+    		} else {
+<span class="fc" id="L167">    			return &quot;Herr&quot;;</span>
+    		}
+    	}
+<span class="nc" id="L170">    	return user.getSalutation().toString().toUpperCase();</span>
+    }
 
     /**
      * Saves the edited user data and sets the user details page to its
@@ -162,75 +177,75 @@ import de.ofCourse.utilities.PasswordHash;
      * page is returned.
      */
     public void saveSettings() {
-<span class="fc" id="L165">    	setEnums();</span>
-<span class="fc" id="L166">    	transaction.start();</span>
+<span class="fc" id="L180">    	setEnums();</span>
+<span class="fc" id="L181">    	transaction.start();</span>
     	
     	try {
-<span class="fc" id="L169">    		User checkUser = UserDAO.getUser(transaction, userID);</span>
-<span class="fc" id="L170">    		boolean nickTaken = UserDAO.nickTaken(transaction,</span>
-<span class="fc" id="L171">    				user.getUsername());</span>
-<span class="fc" id="L172">    		boolean emailTaken = UserDAO.emailExists(transaction,</span>
-<span class="fc" id="L173">    				user.getEmail());</span>
+<span class="fc" id="L184">    		User checkUser = UserDAO.getUser(transaction, userID);</span>
+<span class="fc" id="L185">    		boolean nickTaken = UserDAO.nickTaken(transaction,</span>
+<span class="fc" id="L186">    				user.getUsername());</span>
+<span class="fc" id="L187">    		boolean emailTaken = UserDAO.emailExists(transaction,</span>
+<span class="fc" id="L188">    				user.getEmail());</span>
     		
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">    		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {</span>
-<span class="fc" id="L176">    			String pwHash = null;</span>
-<span class="fc" id="L177">    			String salt = null;</span>
-<span class="pc bpc" id="L178" title="2 of 4 branches missed.">    			if (password != null &amp;&amp; password.trim().length() &gt; 0) {</span>
-<span class="nc" id="L179">    				salt = PasswordHash.getSalt();</span>
-<span class="nc" id="L180">    				pwHash = PasswordHash.hash(password, salt);</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">    		if (acceptUserInput(checkUser, nickTaken, emailTaken)) {</span>
+<span class="fc" id="L191">    			String pwHash = null;</span>
+<span class="fc" id="L192">    			String salt = null;</span>
+<span class="pc bpc" id="L193" title="2 of 4 branches missed.">    			if (password != null &amp;&amp; password.trim().length() &gt; 0) {</span>
+<span class="nc" id="L194">    				salt = PasswordHash.getSalt();</span>
+<span class="nc" id="L195">    				pwHash = PasswordHash.hash(password, salt);</span>
     			}
     			
-<span class="fc" id="L183">    			UserDAO.updateUser(transaction, user, pwHash, salt);</span>
+<span class="fc" id="L198">    			UserDAO.updateUser(transaction, user, pwHash, salt);</span>
     			
-<span class="fc" id="L185">    			if (!checkUser.getEmail().toLowerCase().equals(user.getEmail().</span>
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">    					toLowerCase())) {</span>
-<span class="fc" id="L187">    				String veriString = UserDAO.checkVeriString(transaction);</span>
-<span class="fc" id="L188">    				UserDAO.setVerification(transaction, veriString, userID);</span>
-<span class="fc" id="L189">    				mailBean.sendUpdateMessage(userID, veriString, user.getEmail());</span>
+<span class="fc" id="L200">    			if (!checkUser.getEmail().toLowerCase().equals(user.getEmail().</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">    					toLowerCase())) {</span>
+<span class="fc" id="L202">    				String veriString = UserDAO.checkVeriString(transaction);</span>
+<span class="fc" id="L203">    				UserDAO.setVerification(transaction, veriString, userID);</span>
+<span class="fc" id="L204">    				mailBean.sendUpdateMessage(userID, veriString, user.getEmail());</span>
     			}
-<span class="fc" id="L191">    			transaction.commit();</span>
+<span class="fc" id="L206">    			transaction.commit();</span>
     			
-<span class="fc" id="L193">    			FacesMessageCreator.createFacesMessage(null,</span>
-<span class="fc" id="L194">						sessionUser.getLabel(&quot;profile.message.success&quot;));</span>
-<span class="fc" id="L195">    			readOnly = true;</span>
-<span class="fc" id="L196">    		} else {</span>
-<span class="nc" id="L197">    			FacesMessageCreator.createFacesMessage(null,</span>
-<span class="nc" id="L198">    					sessionUser.getLabel(&quot;profile.message.invalid&quot;));</span>
-<span class="nc" id="L199">    			transaction.rollback();</span>
+<span class="fc" id="L208">    			FacesMessageCreator.createFacesMessage(null,</span>
+<span class="fc" id="L209">						sessionUser.getLabel(&quot;profile.message.success&quot;));</span>
+<span class="fc" id="L210">    			readOnly = true;</span>
+<span class="fc" id="L211">    		} else {</span>
+<span class="nc" id="L212">    			FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L213">    					sessionUser.getLabel(&quot;profile.message.invalid&quot;));</span>
+<span class="nc" id="L214">    			transaction.rollback();</span>
     		}
-<span class="nc" id="L201">    	} catch (InvalidDBTransferException e) {</span>
-<span class="nc" id="L202">    		FacesMessageCreator.createFacesMessage(null,</span>
-<span class="nc" id="L203">					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
+<span class="nc" id="L216">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L217">    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L218">					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
     		LogHandler
-<span class="nc" id="L205">            .getInstance()</span>
-<span class="nc" id="L206">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+<span class="nc" id="L220">            .getInstance()</span>
+<span class="nc" id="L221">            .error(&quot;SQL Exception occoured during executing &quot;</span>
                     + &quot;saveSettings()&quot;);
-<span class="nc" id="L208">    		transaction.rollback();</span>
+<span class="nc" id="L223">    		transaction.rollback();</span>
     	}
-<span class="fc" id="L210">    }</span>
+<span class="fc" id="L225">    }</span>
     
     /**
      * Sets the selected user salutation and role in the user object.
      */
     private void setEnums() {
-<span class="pc bpc" id="L216" title="1 of 2 branches missed.">    	if (salutation != null) {</span>
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">    		if (salutation.equals(&quot;ms&quot;)) {</span>
-<span class="nc" id="L218">    		user.setSalutation(Salutation.MS);</span>
-<span class="nc" id="L219">	    	} else {</span>
-<span class="fc" id="L220">	    		user.setSalutation(Salutation.MR);</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">    	if (salutation != null) {</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">    		if (salutation.equals(&quot;ms&quot;)) {</span>
+<span class="nc" id="L233">    		user.setSalutation(Salutation.MS);</span>
+<span class="nc" id="L234">	    	} else {</span>
+<span class="fc" id="L235">	    		user.setSalutation(Salutation.MR);</span>
 	    	}
     	}
     	
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">    	if (role != null) {</span>
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">    		if (role.equals(&quot;SYSTEM_ADMINISTRATOR&quot;)) {</span>
-<span class="nc" id="L226">    		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);</span>
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">	    	} else if (role.equals(&quot;COURSE_LEADER&quot;)) {</span>
-<span class="nc" id="L228">	    		user.setUserRole(UserRole.COURSE_LEADER);</span>
-<span class="nc" id="L229">	    	} else {</span>
-<span class="fc" id="L230">	    		user.setUserRole(UserRole.REGISTERED_USER);</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">    	if (role != null) {</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">    		if (role.equals(&quot;SYSTEM_ADMINISTRATOR&quot;)) {</span>
+<span class="nc" id="L241">    		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">	    	} else if (role.equals(&quot;COURSE_LEADER&quot;)) {</span>
+<span class="nc" id="L243">	    		user.setUserRole(UserRole.COURSE_LEADER);</span>
+<span class="nc" id="L244">	    	} else {</span>
+<span class="fc" id="L245">	    		user.setUserRole(UserRole.REGISTERED_USER);</span>
 	    	}
     	}
-<span class="fc" id="L233">    }</span>
+<span class="fc" id="L248">    }</span>
     
     /**
      * Checks whether or not the entered user nickname and e-mail address are
@@ -246,20 +261,20 @@ import de.ofCourse.utilities.PasswordHash;
      */
     private boolean acceptUserInput(User checkUser, boolean nickTaken,
     		boolean emailTaken) {
-<span class="fc" id="L249">    	boolean check = false;</span>
-<span class="fc" id="L250">    	boolean sameEmail = checkUser.getEmail().equals(user.getEmail());</span>
-<span class="fc" id="L251">    	boolean sameNick = checkUser.getUsername().equals(user.getUsername());</span>
+<span class="fc" id="L264">    	boolean check = false;</span>
+<span class="fc" id="L265">    	boolean sameEmail = checkUser.getEmail().equals(user.getEmail());</span>
+<span class="fc" id="L266">    	boolean sameNick = checkUser.getUsername().equals(user.getUsername());</span>
     	
-<span class="pc bpc" id="L253" title="3 of 4 branches missed.">    	if (sameEmail &amp;&amp; sameNick) {</span>
-<span class="nc" id="L254">    		check = true;</span>
-<span class="pc bpc" id="L255" title="5 of 6 branches missed.">    	} else if(sameEmail &amp;&amp; !sameNick &amp;&amp; !nickTaken) {</span>
-<span class="nc" id="L256">    		check = true;</span>
-<span class="pc bpc" id="L257" title="3 of 6 branches missed.">    	} else if (!sameEmail &amp;&amp; !emailTaken &amp;&amp; sameNick) {</span>
-<span class="fc" id="L258">    		check = true;</span>
-<span class="pc bnc" id="L259" title="All 8 branches missed.">    	} else if (!sameEmail &amp;&amp; !emailTaken &amp;&amp; !sameNick &amp;&amp; !nickTaken) {</span>
-<span class="nc" id="L260">    		check = true;</span>
+<span class="pc bpc" id="L268" title="3 of 4 branches missed.">    	if (sameEmail &amp;&amp; sameNick) {</span>
+<span class="nc" id="L269">    		check = true;</span>
+<span class="pc bpc" id="L270" title="5 of 6 branches missed.">    	} else if(sameEmail &amp;&amp; !sameNick &amp;&amp; !nickTaken) {</span>
+<span class="nc" id="L271">    		check = true;</span>
+<span class="pc bpc" id="L272" title="3 of 6 branches missed.">    	} else if (!sameEmail &amp;&amp; !emailTaken &amp;&amp; sameNick) {</span>
+<span class="fc" id="L273">    		check = true;</span>
+<span class="pc bnc" id="L274" title="All 8 branches missed.">    	} else if (!sameEmail &amp;&amp; !emailTaken &amp;&amp; !sameNick &amp;&amp; !nickTaken) {</span>
+<span class="nc" id="L275">    		check = true;</span>
     	}
-<span class="fc" id="L262">    	return check;</span>
+<span class="fc" id="L277">    	return check;</span>
     }
     
     /**
@@ -268,22 +283,22 @@ import de.ofCourse.utilities.PasswordHash;
      * @return the subsequent URL
      */
     public String deleteUser() {
-<span class="fc" id="L271">    	String goToPage = URL_PROFILE;</span>
-<span class="fc" id="L272">    	transaction.start();</span>
+<span class="fc" id="L286">    	String goToPage = URL_PROFILE;</span>
+<span class="fc" id="L287">    	transaction.start();</span>
     	
     	try {
-<span class="fc" id="L275">    		UserDAO.delete(transaction, userID, true);</span>
-<span class="fc" id="L276">    		transaction.commit();</span>
+<span class="fc" id="L290">    		UserDAO.delete(transaction, userID, true);</span>
+<span class="fc" id="L291">    		transaction.commit();</span>
     		
-<span class="fc" id="L278">    		goToPage = URL_ADMIN_MANAGEMENT;</span>
-<span class="pc" id="L279">    	} catch (InvalidDBTransferException e) {</span>
+<span class="fc" id="L293">    		goToPage = URL_ADMIN_MANAGEMENT;</span>
+<span class="pc" id="L294">    	} catch (InvalidDBTransferException e) {</span>
     		LogHandler
-<span class="nc" id="L281">            .getInstance()</span>
-<span class="nc" id="L282">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+<span class="nc" id="L296">            .getInstance()</span>
+<span class="nc" id="L297">            .error(&quot;SQL Exception occoured during executing &quot;</span>
                     + &quot;deleteUser()&quot;);
-<span class="nc" id="L284">    		transaction.rollback();</span>
+<span class="nc" id="L299">    		transaction.rollback();</span>
     	}
-<span class="fc" id="L286">    	return goToPage;</span>
+<span class="fc" id="L301">    	return goToPage;</span>
     }
 
     /**
@@ -291,49 +306,49 @@ import de.ofCourse.utilities.PasswordHash;
      * picture needs to be a .jpg &lt;br&gt;
      */
     public void uploadProfilePic() {
-<span class="pc bpc" id="L294" title="1 of 2 branches missed.">    	if (image != null) {</span>
-<span class="fc" id="L295">	    	transaction.start();</span>
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">    	if (image != null) {</span>
+<span class="fc" id="L310">	    	transaction.start();</span>
 	    	try {
-<span class="fc" id="L297">	    		UserDAO.uploadImage(transaction, user.getUserID(), image);</span>
-<span class="fc" id="L298">	    		transaction.commit();</span>
+<span class="fc" id="L312">	    		UserDAO.uploadImage(transaction, user.getUserID(), image);</span>
+<span class="fc" id="L313">	    		transaction.commit();</span>
 	    		
-<span class="fc" id="L300">	    		FacesMessageCreator.createFacesMessage(null,</span>
-<span class="fc" id="L301">    					sessionUser.getLabel(&quot;profile.message.image.success&quot;));</span>
-<span class="fc" id="L302">	    		uploadPic = false;</span>
-<span class="pc" id="L303">	    	} catch (InvalidDBTransferException e) {</span>
-<span class="nc" id="L304">	    		FacesMessageCreator.createFacesMessage(null,</span>
-<span class="nc" id="L305">    					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
+<span class="fc" id="L315">	    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="fc" id="L316">    					sessionUser.getLabel(&quot;profile.message.image.success&quot;));</span>
+<span class="fc" id="L317">	    		uploadPic = false;</span>
+<span class="pc" id="L318">	    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L319">	    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L320">    					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
 	    		LogHandler
-<span class="nc" id="L307">	            .getInstance()</span>
-<span class="nc" id="L308">	            .error(&quot;SQL Exception occoured during executing &quot;</span>
+<span class="nc" id="L322">	            .getInstance()</span>
+<span class="nc" id="L323">	            .error(&quot;SQL Exception occoured during executing &quot;</span>
 	                    + &quot;uploadProfilePic()&quot;);
-<span class="nc" id="L310">	            this.transaction.rollback();</span>
+<span class="nc" id="L325">	            this.transaction.rollback();</span>
 	        }
     	}
-<span class="fc" id="L313">    }</span>
+<span class="fc" id="L328">    }</span>
     
     /**
      * Deletes the user's profile image from the database.
      */
     public void deleteProfilePic() {
-<span class="nc" id="L319">    	transaction.start();</span>
+<span class="nc" id="L334">    	transaction.start();</span>
     	try {
-<span class="nc" id="L321">    		UserDAO.delete(transaction, user.getUserID(), false);</span>
-<span class="nc" id="L322">    		transaction.commit();</span>
+<span class="nc" id="L336">    		UserDAO.delete(transaction, user.getUserID(), false);</span>
+<span class="nc" id="L337">    		transaction.commit();</span>
     		
-<span class="nc" id="L324">    		FacesMessageCreator.createFacesMessage(null,</span>
-<span class="nc" id="L325">					sessionUser.getLabel(&quot;profile.message.image.delete&quot;));</span>
-<span class="nc" id="L326">    		uploadPic = false;</span>
-<span class="nc" id="L327">    	} catch (InvalidDBTransferException e) {</span>
-<span class="nc" id="L328">    		FacesMessageCreator.createFacesMessage(null,</span>
-<span class="nc" id="L329">					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
+<span class="nc" id="L339">    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L340">					sessionUser.getLabel(&quot;profile.message.image.delete&quot;));</span>
+<span class="nc" id="L341">    		uploadPic = false;</span>
+<span class="nc" id="L342">    	} catch (InvalidDBTransferException e) {</span>
+<span class="nc" id="L343">    		FacesMessageCreator.createFacesMessage(null,</span>
+<span class="nc" id="L344">					sessionUser.getLabel(&quot;profile.message.error&quot;));</span>
     		LogHandler
-<span class="nc" id="L331">            .getInstance()</span>
-<span class="nc" id="L332">            .error(&quot;SQL Exception occoured during executing &quot;</span>
+<span class="nc" id="L346">            .getInstance()</span>
+<span class="nc" id="L347">            .error(&quot;SQL Exception occoured during executing &quot;</span>
                     + &quot;deleteProfilePic()&quot;);
-<span class="nc" id="L334">            this.transaction.rollback();</span>
+<span class="nc" id="L349">            this.transaction.rollback();</span>
         }
-<span class="nc" id="L336">    }</span>
+<span class="nc" id="L351">    }</span>
 
     /**
      * Returns the value of the attribute &lt;code&gt;user&lt;/code&gt;.
@@ -341,7 +356,7 @@ import de.ofCourse.utilities.PasswordHash;
      * @return the actual displayed user
      */
     public User getUser() {
-<span class="fc" id="L344">        return user;</span>
+<span class="fc" id="L359">        return user;</span>
     }
 
     /**
@@ -351,15 +366,15 @@ import de.ofCourse.utilities.PasswordHash;
      *            the displayed user
      */
     public void setUser(User user) {
-<span class="nc" id="L354">        this.user = user;</span>
-<span class="nc" id="L355">    }</span>
+<span class="nc" id="L369">        this.user = user;</span>
+<span class="nc" id="L370">    }</span>
 
     /**
      * 
      * @return the value of &quot;readOnly&quot;
      */
 	public boolean isReadOnly() {
-<span class="fc" id="L362">		return readOnly;</span>
+<span class="fc" id="L377">		return readOnly;</span>
 	}
 
 	/**
@@ -369,15 +384,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *               the boolean value
 	 */
 	public void setReadOnly(boolean readOnly) {
-<span class="fc" id="L372">		this.readOnly = readOnly;</span>
-<span class="fc" id="L373">	}</span>
+<span class="fc" id="L387">		this.readOnly = readOnly;</span>
+<span class="fc" id="L388">	}</span>
 
 	/**
 	 * 
 	 * @return the value of uploadPic
 	 */
 	public boolean isUploadPic() {
-<span class="fc" id="L380">		return uploadPic;</span>
+<span class="fc" id="L395">		return uploadPic;</span>
 	}
 
 	/**
@@ -387,15 +402,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *                the boolean value
 	 */
 	public void setUploadPic(boolean uploadPic) {
-<span class="fc" id="L390">		this.uploadPic = uploadPic;</span>
-<span class="fc" id="L391">	}</span>
+<span class="fc" id="L405">		this.uploadPic = uploadPic;</span>
+<span class="fc" id="L406">	}</span>
 
 	/**
 	 * 
 	 * @return the password value as a string
 	 */
 	public String getPassword() {
-<span class="fc" id="L398">		return password;</span>
+<span class="fc" id="L413">		return password;</span>
 	}
 
 	/**
@@ -405,15 +420,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *               the password value
 	 */
 	public void setPassword(String password) {
-<span class="fc" id="L408">		this.password = password;</span>
-<span class="fc" id="L409">	}</span>
+<span class="fc" id="L423">		this.password = password;</span>
+<span class="fc" id="L424">	}</span>
 
 	/**
 	 * 
 	 * @return the confirmation password's value
 	 */
 	public String getConfirmPassword() {
-<span class="fc" id="L416">		return confirmPassword;</span>
+<span class="fc" id="L431">		return confirmPassword;</span>
 	}
 
 	/**
@@ -423,15 +438,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *                      the confirmation password's value
 	 */
 	public void setConfirmPassword(String confirmPassword) {
-<span class="fc" id="L426">		this.confirmPassword = confirmPassword;</span>
-<span class="fc" id="L427">	}</span>
+<span class="fc" id="L441">		this.confirmPassword = confirmPassword;</span>
+<span class="fc" id="L442">	}</span>
 
 	/**
 	 * 
 	 * @return the selected user image
 	 */
 	public Part getImage() {
-<span class="fc" id="L434">		return image;</span>
+<span class="fc" id="L449">		return image;</span>
 	}
 
 	/**
@@ -441,8 +456,8 @@ import de.ofCourse.utilities.PasswordHash;
 	 *            the selected user image
 	 */
 	public void setImage(Part image) {
-<span class="fc" id="L444">		this.image = image;</span>
-<span class="fc" id="L445">	}</span>
+<span class="fc" id="L459">		this.image = image;</span>
+<span class="fc" id="L460">	}</span>
 
     /**
      * Returns the ManagedProperty &lt;code&gt;SessionUser&lt;/code&gt;.
@@ -450,7 +465,7 @@ import de.ofCourse.utilities.PasswordHash;
      * @return the session of the user
      */
     public SessionUserBean getSessionUser() {
-<span class="fc" id="L453">    	return sessionUser;</span>
+<span class="fc" id="L468">    	return sessionUser;</span>
     }
 
     /**
@@ -460,28 +475,28 @@ import de.ofCourse.utilities.PasswordHash;
      *            session of the user
      */
     public void setSessionUser(SessionUserBean sessionUser) {
-<span class="fc" id="L463">    	this.sessionUser = sessionUser;</span>
-<span class="fc" id="L464">    }</span>
+<span class="fc" id="L478">    	this.sessionUser = sessionUser;</span>
+<span class="fc" id="L479">    }</span>
     
     /**
      * @return the userID
      */
     public int getUserID() {
-<span class="fc" id="L470">        return userID;</span>
+<span class="fc" id="L485">        return userID;</span>
     }
 
     /**
      * @param userID the userID to set
      */
     public void setUserID(int userID) {
-<span class="nc" id="L477">        this.userID = userID;</span>
-<span class="nc" id="L478">    }</span>
+<span class="nc" id="L492">        this.userID = userID;</span>
+<span class="nc" id="L493">    }</span>
     
     /**
      * @return the userID
      */
     public String getUserIDString() {
-<span class="nc" id="L484">        return &quot;&quot; + userID;</span>
+<span class="nc" id="L499">        return &quot;&quot; + userID;</span>
     }
 
     /**
@@ -489,7 +504,7 @@ import de.ofCourse.utilities.PasswordHash;
      * @return the selected user salutation
      */
 	public String getSalutation() {
-<span class="fc" id="L492">		return salutation;</span>
+<span class="fc" id="L507">		return salutation;</span>
 	}
 
 	/**
@@ -499,15 +514,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *                 the user salutation
 	 */
 	public void setSalutation(String salutation) {
-<span class="fc" id="L502">		this.salutation = salutation;</span>
-<span class="fc" id="L503">	}</span>
+<span class="fc" id="L517">		this.salutation = salutation;</span>
+<span class="fc" id="L518">	}</span>
 
 	/**
 	 * 
 	 * @return the selected user role
 	 */
 	public String getRole() {
-<span class="fc" id="L510">		return role;</span>
+<span class="fc" id="L525">		return role;</span>
 	}
 
 	/**
@@ -517,15 +532,15 @@ import de.ofCourse.utilities.PasswordHash;
 	 *           the user role
 	 */
 	public void setRole(String role) {
-<span class="nc" id="L520">		this.role = role;</span>
-<span class="nc" id="L521">	}</span>
+<span class="nc" id="L535">		this.role = role;</span>
+<span class="nc" id="L536">	}</span>
 
 	/**
 	 * 
 	 * @return the user's credit balance
 	 */
 	public String getCreditBalance() {
-<span class="fc" id="L528">		return creditBalance;</span>
+<span class="fc" id="L543">		return creditBalance;</span>
 	}
 
 	/**
@@ -535,16 +550,16 @@ import de.ofCourse.utilities.PasswordHash;
 	 *                    the user's credit balance
 	 */
 	public void setCreditBalance(String creditBalance) {
-<span class="fc" id="L538">		this.creditBalance = creditBalance;</span>
-<span class="fc" id="L539">	}</span>
+<span class="fc" id="L553">		this.creditBalance = creditBalance;</span>
+<span class="fc" id="L554">	}</span>
 
 	public MailBean getMailBean() {
-<span class="nc" id="L542">		return mailBean;</span>
+<span class="nc" id="L557">		return mailBean;</span>
 	}
 
 	public void setMailBean(MailBean mailBean) {
-<span class="fc" id="L546">		this.mailBean = mailBean;</span>
-<span class="fc" id="L547">	}</span>
+<span class="fc" id="L561">		this.mailBean = mailBean;</span>
+<span class="fc" id="L562">	}</span>
 	
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

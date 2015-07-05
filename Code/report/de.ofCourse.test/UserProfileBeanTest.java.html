@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserProfileBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">UserProfileBeanTest.java</span></div><h1>UserProfileBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import static org.mockito.Mockito.mock;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.action.FacesMessageCreator;
+import de.ofCourse.action.SessionUserBean;
+import de.ofCourse.action.UserProfileBean;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.model.Address;
+import de.ofCourse.model.Language;
+import de.ofCourse.model.Salutation;
+import de.ofCourse.model.User;
+import de.ofCourse.model.UserRole;
+import de.ofCourse.model.UserStatus;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.LogHandler;
+import de.ofCourse.system.Transaction;
+import de.ofCourse.utilities.LanguageManager;
+
+/**
+ * 
+ * JUnit test for the class UserProfileBean.
+ * 
+ * @author Patrick Cretu
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
+	LanguageManager.class, FacesContext.class, FacesMessageCreator.class })
+<span class="nc" id="L47">public class UserProfileBeanTest {</span>
+
+	/**
+	 * Connection to access the database
+	 */
+	private Connection conn;
+	
+	/**
+	 * The user object of the displayed user to which the changed data is passed
+	 */
+	private User user;
+	
+	/**
+	 * The user object containing the displayed user's stored data
+	 */
+	private User checkUser;
+	
+	/**
+	 * The session user attribute
+	 */
+	private SessionUserBean sessionUser;
+	
+	/**
+	 * The language manager attribue
+	 */
+	private LanguageManager lang;
+	
+	/**
+	 * The backing bean attribute
+	 */
+	private UserProfileBean bean;
+	
+	// RequestparameterMap
+    private Map&lt;String, String&gt; pm;
+	
+	@Before
+    public void setup() {
+		// Mock the FacesContext
+<span class="nc" id="L85">		PowerMockito.mockStatic(FacesContext.class);</span>
+<span class="nc" id="L86">		FacesContext fc = mock(FacesContext.class);</span>
+<span class="nc" id="L87">		Mockito.when(FacesContext.getCurrentInstance()).thenReturn(fc);</span>
+		
+		// Mock the ExternalContext
+<span class="nc" id="L90">		ExternalContext ec = mock(ExternalContext.class);</span>
+<span class="nc" id="L91">		Mockito.when(fc.getExternalContext()).thenReturn(ec);</span>
+		
+		// Determine returning of getRequestParameterMap()
+<span class="nc" id="L94">		pm = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L95">		Mockito.when(ec.getRequestParameterMap()).thenReturn(pm);</span>
+		
+		// Mock the connection
+<span class="nc" id="L98">		PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L99">		conn = mock(Connection.class);</span>
+<span class="nc" id="L100">		Mockito.when(Connection.create()).thenReturn(conn);</span>
+		
+		//Mock LanguageManagerCreator
+<span class="nc" id="L103">		PowerMockito.mockStatic(LanguageManager.class);</span>
+<span class="nc" id="L104">		lang = mock(LanguageManager.class);</span>
+		
+		// Mock FacesMessageCreator
+<span class="nc" id="L107">		PowerMockito.mockStatic(FacesMessageCreator.class);</span>
+		
+		// Mock CourseDAO
+<span class="nc" id="L110">		PowerMockito.mockStatic(UserDAO.class);</span>
+		
+<span class="nc" id="L112">		sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L113">		sessionUser.setLanguage(Language.DE);</span>
+		
+		// Set initial user
+<span class="nc" id="L116">		Address address = new Address();</span>
+<span class="nc" id="L117">		address.setCity(&quot;L.A.&quot;);</span>
+<span class="nc" id="L118">		address.setCountry(&quot;USA&quot;);</span>
+<span class="nc" id="L119">		address.setHouseNumber(10);</span>
+<span class="nc" id="L120">		address.setId(2);</span>
+<span class="nc" id="L121">		address.setStreet(&quot;Abbey Road&quot;);</span>
+<span class="nc" id="L122">		address.setZipCode(9723930);</span>
+		
+<span class="nc" id="L124">		user = new User();</span>
+<span class="nc" id="L125">		user.setUserId(10002);</span>
+<span class="nc" id="L126">		user.setAccountBalance(0);</span>
+<span class="nc" id="L127">		user.setAddress(address);</span>
+
+<span class="nc" id="L129">		SimpleDateFormat dateformat = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="nc" id="L130">		Date date = null;</span>
+		try {
+<span class="nc" id="L132">			date = dateformat.parse(&quot;4.8.1965&quot;);</span>
+<span class="nc" id="L133">		} catch (ParseException e) {</span>
+<span class="nc" id="L134">			LogHandler.getInstance().error(&quot;Error ocurred in setup() in &quot; +</span>
+					&quot;class UserProfileBeanTest&quot;);
+		}
+		
+<span class="nc" id="L138">		user.setDateOfBirth(date);</span>
+<span class="nc" id="L139">		user.setEmail(&quot;strat-fan@web.de&quot;);</span>
+<span class="nc" id="L140">		user.setUsername(&quot;Slash&quot;);</span>
+<span class="nc" id="L141">		user.setFirstname(&quot;Saul&quot;);</span>
+<span class="nc" id="L142">		user.setLastname(&quot;Hudson&quot;);</span>
+<span class="nc" id="L143">		user.setSalutation(Salutation.MR);</span>
+<span class="nc" id="L144">		user.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);</span>
+<span class="nc" id="L145">		user.setUserStatus(UserStatus.REGISTERED);</span>
+		
+		// Set user data which should be updated
+<span class="nc" id="L148">		checkUser = new User();</span>
+<span class="nc" id="L149">		checkUser.setUserId(10002);</span>
+<span class="nc" id="L150">		checkUser.setAccountBalance(0);</span>
+<span class="nc" id="L151">		checkUser.setAddress(address);</span>
+
+<span class="nc" id="L153">		SimpleDateFormat checkDateformat = new SimpleDateFormat(&quot;dd.MM.yyyy&quot;);</span>
+<span class="nc" id="L154">		Date checkDate = null;</span>
+		try {
+<span class="nc" id="L156">			checkDate = checkDateformat.parse(&quot;4.8.1965&quot;);</span>
+<span class="nc" id="L157">		} catch (ParseException e) {</span>
+<span class="nc" id="L158">			LogHandler.getInstance().error(&quot;Error ocurred in setup() in &quot; +</span>
+					&quot;class UserProfileBeanTest&quot;);
+		}
+		
+<span class="nc" id="L162">		checkUser.setDateOfBirth(checkDate);</span>
+<span class="nc" id="L163">		checkUser.setEmail(&quot;strat-fan@web.de&quot;);</span>
+<span class="nc" id="L164">		checkUser.setUsername(&quot;Slash&quot;);</span>
+<span class="nc" id="L165">		checkUser.setFirstname(&quot;Saul&quot;);</span>
+<span class="nc" id="L166">		checkUser.setLastname(&quot;Hudson&quot;);</span>
+<span class="nc" id="L167">		checkUser.setSalutation(Salutation.MR);</span>
+<span class="nc" id="L168">		checkUser.setUserRole(UserRole.SYSTEM_ADMINISTRATOR);</span>
+<span class="nc" id="L169">		checkUser.setUserStatus(UserStatus.REGISTERED);</span>
+		
+<span class="nc" id="L171">		pm.put(&quot;userID&quot;, &quot;10002&quot;);</span>
+		
+<span class="nc" id="L173">		bean = new UserProfileBean();</span>
+<span class="nc" id="L174">		bean.setSalutation(&quot;mr&quot;);</span>
+<span class="nc" id="L175">		bean.setRole(&quot;admin&quot;);</span>
+<span class="nc" id="L176">		bean.setSessionUser(sessionUser);</span>
+		
+<span class="nc" id="L178">		Mockito.when(LanguageManager.getInstance()).thenReturn(lang);</span>
+		
+		// Determine the return value of getUser
+<span class="nc" id="L181">		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(user);</span>
+		
+		// Determine the return value of getUser
+<span class="nc" id="L184">		Mockito.when(UserDAO.getUser(conn, 10002)).thenReturn(checkUser);</span>
+		
+		// Determine the return value of emailExists
+<span class="nc" id="L187">		Mockito.when(UserDAO.emailExists(conn,</span>
+<span class="nc" id="L188">				user.getEmail())).thenReturn(true);</span>
+		
+<span class="nc" id="L190">		bean.init();</span>
+<span class="nc" id="L191">	}</span>
+	
+	/**
+	 * Tests the backing bean method saveSettings() with invalid user input
+	 */
+	@Test
+	public void testIncorrectSaveSettings() {
+		// Set nickname to &quot;blacky&quot;, which is already in use by another user
+<span class="nc" id="L199">		user.setUsername(&quot;blacky&quot;);</span>
+<span class="nc" id="L200">		bean.setUser(user);</span>
+		
+		// Determine the return value of nickTaken
+<span class="nc" id="L203">		Mockito.when(UserDAO.nickTaken(conn,</span>
+<span class="nc" id="L204">				user.getUsername())).thenReturn(true);</span>
+		
+		// At this point the user data is not updated,
+		//because the nickname is already taken
+<span class="nc" id="L208">		bean.saveSettings();</span>
+<span class="nc" id="L209">	}</span>
+	
+	/**
+	 * Tests the backing bean method saveSettings() with valid user input
+	 */
+	@Test
+	public void testSaveSettings() {		
+		// Set new user nickname
+<span class="nc" id="L217">		user.setUsername(&quot;Slash90&quot;);</span>
+<span class="nc" id="L218">		bean.setUser(user);</span>
+		
+		// Determine the return value of nickTaken
+<span class="nc" id="L221">		Mockito.when(UserDAO.nickTaken(conn,</span>
+<span class="nc" id="L222">				user.getUsername())).thenReturn(false);</span>
+		
+<span class="nc" id="L224">		bean.saveSettings();</span>
+		
+<span class="nc" id="L226">		PowerMockito.verifyStatic();</span>
+<span class="nc" id="L227">		UserDAO.updateUser(conn, user, null, null);</span>
+<span class="nc" id="L228">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

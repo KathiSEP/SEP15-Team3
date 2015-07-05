@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CourseDetailBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">CourseDetailBeanTest.java</span></div><h1>CourseDetailBeanTest.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package de.ofCourse.test;
+
+import static org.junit.Assert.*;
+
+import java.sql.ResultSet;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.action.CourseDetailBean;
+import de.ofCourse.action.SessionUserBean;
+import de.ofCourse.databaseDAO.CourseDAO;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.CycleDAO;
+import de.ofCourse.databaseDAO.UserDAO;
+import de.ofCourse.model.Course;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.model.PaginationData;
+import de.ofCourse.model.User;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+
+/**
+ * @author Sebastian Schwarz
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, UserDAO.class,
+    CourseUnitDAO.class, CourseDAO.class, CycleDAO.class,
+    FacesContext.class, PaginationData.class })
+<span class="nc" id="L50">public class CourseDetailBeanTest {</span>
+    
+    private CourseDetailBean bean, courseDetailBean; 
+    private Connection connection;
+    User userToSignUp;
+    private Course courseWhereToSignUp, testCourse;
+    private SessionUserBean sessionUser;
+    
+<span class="nc" id="L58">    List&lt;CourseUnit&gt; resultList = new ArrayList&lt;CourseUnit&gt;();</span>
+    
+<span class="nc" id="L60">    private ResultSet resultSet = null;</span>
+
+<span class="nc" id="L62">    private int SAMPLE_ID = 10050;</span>
+    
+    
+    @Before
+    public void setup(){
+        
+<span class="nc" id="L68">        PowerMockito.mockStatic(FacesContext.class);</span>
+<span class="nc" id="L69">        FacesContext fc = mock(FacesContext.class);</span>
+<span class="nc" id="L70">        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(fc);</span>
+
+        // Mock the ExternalContext
+<span class="nc" id="L73">        ExternalContext ec = mock(ExternalContext.class);</span>
+<span class="nc" id="L74">        Mockito.when(fc.getExternalContext()).thenReturn(ec);</span>
+        
+     // Mock the connection
+<span class="nc" id="L77">        PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L78">        connection = mock(Connection.class);</span>
+<span class="nc" id="L79">        Mockito.when(Connection.create()).thenReturn(connection);</span>
+
+     // Mock UserDAO
+<span class="nc" id="L82">        PowerMockito.mockStatic(UserDAO.class);</span>
+
+        // Mock CourseDAO
+<span class="nc" id="L85">        PowerMockito.mockStatic(CourseDAO.class);</span>
+        
+     // Mock CourseUnitDAO
+<span class="nc" id="L88">        PowerMockito.mockStatic(CourseUnitDAO.class);</span>
+        
+<span class="nc" id="L90">        userToSignUp = new User();</span>
+<span class="nc" id="L91">        userToSignUp.setUserId(1);</span>
+<span class="nc" id="L92">        userToSignUp.setFirstname(&quot;Sebastian&quot;);</span>
+<span class="nc" id="L93">        userToSignUp.setLastname(&quot;Schwarz&quot;);</span>
+<span class="nc" id="L94">        userToSignUp.setDateOfBirth(new Date(1990, 2, 8));</span>
+<span class="nc" id="L95">        userToSignUp.setEmail(&quot;sebastian@nrschwarz.de&quot;);</span>
+<span class="nc" id="L96">        userToSignUp.setUsername(&quot;blacky&quot;);</span>
+        
+<span class="nc" id="L98">        courseWhereToSignUp = new Course();</span>
+<span class="nc" id="L99">        courseWhereToSignUp.setCourseID(10000);</span>
+<span class="nc" id="L100">        courseWhereToSignUp.setMaxUsers(10);</span>
+        
+<span class="nc" id="L102">        sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L103">        sessionUser.setUserID(1);</span>
+        
+      
+               
+<span class="nc" id="L107">        bean = new CourseDetailBean();</span>
+<span class="nc" id="L108">        bean.setSessionUser(sessionUser);</span>
+<span class="nc" id="L109">        bean.setCourseID(10000);</span>
+        
+<span class="nc" id="L111">        Mockito.when(UserDAO.getUser(connection, userToSignUp.getUserID())).thenReturn(userToSignUp);</span>
+        
+<span class="nc" id="L113">        Mockito.when(UserDAO.getUser(connection, userToSignUp.getUsername())).thenReturn(userToSignUp);</span>
+        
+<span class="nc" id="L115">        Mockito.when(CourseDAO.getNumberOfParticipants(connection, courseWhereToSignUp.getCourseID())).thenReturn(0);</span>
+        
+<span class="nc" id="L117">        Mockito.when(CourseDAO.getCourse(connection, courseWhereToSignUp.getCourseID())).thenReturn(courseWhereToSignUp);</span>
+        
+<span class="nc" id="L119">        Mockito.when(CourseUnitDAO.getCourseUnitsOf(connection, userToSignUp.getUserID())).thenReturn(resultList);</span>
+        
+        //Mockito.when(CourseUnitDAO.getResult(resultSet)).thenReturn(resultList);
+
+        //ab hier Code von Ricky Strohmeier
+<span class="nc" id="L124">        testCourse = new Course();</span>
+<span class="nc" id="L125">        testCourse.setCourseID(SAMPLE_ID);</span>
+<span class="nc" id="L126">        testCourse.setTitle(&quot;Unmodified TestCourse&quot;);</span>
+<span class="nc" id="L127">        testCourse.setDescription(&quot;This is the unmodifierd TestCourse&quot;);</span>
+
+<span class="nc" id="L129">        SimpleDateFormat df = new SimpleDateFormat(&quot;dd/MM/yyyy&quot;);</span>
+        Date endDate, startDate;
+
+        try {
+<span class="nc" id="L133">            endDate = df.parse(&quot;10/12/2015&quot;);</span>
+<span class="nc" id="L134">            testCourse.setEnddate(endDate);</span>
+            
+<span class="nc" id="L136">            startDate = df.parse(&quot;11/12/2015&quot;); </span>
+<span class="nc" id="L137">            testCourse.setStartdate(startDate);            </span>
+<span class="nc" id="L138">        } catch(ParseException e) {</span>
+            //ignored
+        }
+
+<span class="nc" id="L142">        testCourse.setMaxUsers(100);</span>
+<span class="nc" id="L143">        courseDetailBean = new CourseDetailBean();</span>
+<span class="nc" id="L144">        courseDetailBean.setCourse(testCourse);</span>
+<span class="nc" id="L145">    }</span>
+
+    /**
+     * This method tests if the editation of a course is working properly.
+     * 
+     * @author Ricky Strohmeier
+     */
+    @Test
+    public void testCourseEditation() {
+<span class="nc" id="L154">        Course editedCourse = new Course();</span>
+<span class="nc" id="L155">        editedCourse.setCourseID(courseDetailBean.getCourse().getCourseID());</span>
+
+<span class="nc" id="L157">        assertEquals(false, courseDetailBean.getEditMode());</span>
+<span class="nc" id="L158">        courseDetailBean.enableEditMode();</span>
+<span class="nc" id="L159">        assertEquals(true, courseDetailBean.getEditMode());</span>
+
+<span class="nc" id="L161">        courseDetailBean.saveCourse();</span>
+<span class="nc" id="L162">        assertEquals(false, courseDetailBean.getEditMode());</span>
+<span class="nc" id="L163">    }</span>
+
+    /**
+     * Test method for {@link de.ofCourse.action.CourseDetailBean#signUpForCourse()}.
+     */
+    @Test
+    public void testSignUpForCourse() {
+<span class="nc" id="L170">        bean.signUpForCourse();</span>
+        
+<span class="nc" id="L172">        PowerMockito.verifyStatic();</span>
+<span class="nc" id="L173">        CourseDAO.getNumberOfParticipants(connection, courseWhereToSignUp.getCourseID());</span>
+        
+<span class="nc" id="L175">        PowerMockito.verifyStatic();</span>
+<span class="nc" id="L176">        CourseDAO.getCourse(connection, courseWhereToSignUp.getCourseID() );</span>
+        
+        
+<span class="nc" id="L179">    }</span>
+    
+    
+    /**
+     * 
+     */
+    @Test
+    public void testSignOffFromCourse(){
+<span class="nc" id="L187">        bean.signOffFromCourse();</span>
+        
+        
+        
+<span class="nc" id="L191">        PowerMockito.verifyStatic();</span>
+<span class="nc" id="L192">        Mockito.when(CourseUnitDAO.getCourseUnitsOf(connection, userToSignUp.getUserID())).thenReturn(resultList);</span>
+        
+<span class="nc" id="L194">        PowerMockito.verifyStatic();</span>
+<span class="nc" id="L195">        Mockito.when(UserDAO.getUser(connection, userToSignUp.getUserID())).thenReturn(userToSignUp);</span>
+<span class="nc" id="L196">    }</span>
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

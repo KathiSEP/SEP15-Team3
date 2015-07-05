@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SchedulerBeanTest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">C:\Users\blacky\Documents\GitHub\SEP15-Team3\Code</a> &gt; <a href="index.source.html" class="el_package">de.ofCourse.test</a> &gt; <span class="el_source">SchedulerBeanTest.java</span></div><h1>SchedulerBeanTest.java</h1><pre class="source lang-java linenums">package de.ofCourse.test;
+
+import static org.mockito.Mockito.mock;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import de.ofCourse.action.SchedulerBean;
+import de.ofCourse.action.SessionUserBean;
+import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.model.CourseUnit;
+import de.ofCourse.system.Connection;
+import de.ofCourse.system.Transaction;
+
+/**
+ * 
+ * JUnit test for the class SchedulerBean.
+ * 
+ * @author Patrick Cretu
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Transaction.class, Connection.class, CourseUnitDAO.class })
+<span class="nc" id="L34">public class SchedulerBeanTest {</span>
+	
+	/**
+	 * The week's current Monday
+	 */
+	private Date currentMonday;
+	
+	/**
+	 * The week's current Sunday
+	 */
+	private Date currentSunday;
+	
+	/**
+	 * Connection to access the database
+	 */
+	private Connection conn;
+	
+	/**
+	 * The backing bean attribute
+	 */
+	private SchedulerBean bean;
+	
+	@Before
+    public void setup() {
+		// Mock the connection
+<span class="nc" id="L59">		PowerMockito.mockStatic(Connection.class);</span>
+<span class="nc" id="L60">		conn = mock(Connection.class);</span>
+<span class="nc" id="L61">		Mockito.when(Connection.create()).thenReturn(conn);</span>
+		
+		// Mock CourseDAO
+<span class="nc" id="L64">		PowerMockito.mockStatic(CourseUnitDAO.class);</span>
+		
+		// initialize date (Sunday) from where to begin the computation of the
+		// following week
+<span class="nc" id="L68">		Date date = Date.valueOf(&quot;2015-7-8&quot;);</span>
+		
+<span class="nc" id="L70">		Calendar calMon = Calendar.getInstance();</span>
+<span class="nc" id="L71">		calMon.setTime(date);</span>
+<span class="nc" id="L72">		calMon.add(Calendar.DATE, +1);</span>
+<span class="nc" id="L73">		currentMonday = new Date(calMon.getTime().getTime());</span>
+		
+<span class="nc" id="L75">		Calendar calSun = Calendar.getInstance();</span>
+<span class="nc" id="L76">		calSun.setTime(currentMonday);</span>
+<span class="nc" id="L77">		calSun.add(Calendar.DATE, +6);</span>
+<span class="nc" id="L78">		currentSunday = new Date(calSun.getTime().getTime());</span>
+		
+<span class="nc" id="L80">		bean = new SchedulerBean();</span>
+<span class="nc" id="L81">	}</span>
+	
+	/**
+	 * Tests the backing bean method displayNextWeek()
+	 */
+	@Test
+	public void testDisplayNextWeek() {
+		// Initialize the result list of course units
+<span class="nc" id="L89">		List&lt;CourseUnit&gt; weeklyUnits = new ArrayList&lt;CourseUnit&gt;();</span>
+<span class="nc" id="L90">		CourseUnit unit = new CourseUnit();</span>
+<span class="nc" id="L91">		unit.setCourseUnitID(10005);</span>
+<span class="nc" id="L92">		unit.setCourseID(10005);</span>
+<span class="nc" id="L93">		unit.setTitle(&quot;Bilder&quot;);</span>
+<span class="nc" id="L94">		unit.setPrice(0);</span>
+<span class="nc" id="L95">		unit.setStartime(Date.valueOf(&quot;2015-7-10&quot;));</span>
+<span class="nc" id="L96">		unit.setEndtime(Date.valueOf(&quot;2015-7-10&quot;));</span>
+<span class="nc" id="L97">		weeklyUnits.add(unit);</span>
+		
+		// Determine the return value of getWeeklyCourseUnitsOf
+<span class="nc" id="L100">		Mockito.when(CourseUnitDAO.getWeeklyCourseUnitsOf(conn, 10002,</span>
+<span class="nc" id="L101">				currentMonday)).thenReturn(weeklyUnits);</span>
+		
+<span class="nc" id="L103">		SessionUserBean sessionUser = new SessionUserBean();</span>
+<span class="nc" id="L104">		sessionUser.setUserID(10002);</span>
+		
+<span class="nc" id="L106">		bean.setSessionUser(sessionUser);</span>
+<span class="nc" id="L107">		bean.setCurrentMonday(currentMonday);</span>
+<span class="nc" id="L108">		bean.setCurrentSunday(currentSunday);</span>
+		
+<span class="nc" id="L110">		bean.displayNextWeek();</span>
+<span class="nc" id="L111">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

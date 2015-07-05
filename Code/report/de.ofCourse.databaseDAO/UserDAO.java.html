@@ -347,7 +347,7 @@ import de.ofCourse.system.Transaction;
 <span class="pc bpc" id="L347" title="1 of 2 branches missed.">	    if (user.getSalutation() == null) {</span>
 <span class="nc" id="L348">		pS.setString(7, null);</span>
 <span class="nc" id="L349">	    } else {</span>
-<span class="fc" id="L350">		pS.setString(7, user.getSalutation().toString());</span>
+<span class="fc" id="L350">		pS.setString(7, user.getSalutation().toString().toUpperCase());</span>
 	    }
 <span class="fc" id="L352">	    pS.setDouble(8, user.getAccountBalance());</span>
 <span class="fc" id="L353">	    pS.setBoolean(9, false);</span>
@@ -1076,7 +1076,7 @@ import de.ofCourse.system.Transaction;
 <span class="fc" id="L1076">    	    statement.setString(2, user.getLastname());</span>
 <span class="fc" id="L1077">    	    statement.setString(3, user.getUsername());</span>
 <span class="fc" id="L1078">    	    statement.setString(4, user.getEmail());</span>
-<span class="fc" id="L1079">    	    statement.setString(5, user.getSalutation().toString());</span>
+<span class="fc" id="L1079">    	    statement.setString(5, user.getSalutation().toString().toUpperCase());</span>
 
     	    java.sql.Date birthday;
 <span class="pc bpc" id="L1082" title="1 of 2 branches missed.">    	    if(user.getDateOfBirth() != null) {</span>
@@ -1436,15 +1436,15 @@ import de.ofCourse.system.Transaction;
 <span class="fc" id="L1436">			    * pagination.getElementsPerPage());</span>
 
 <span class="fc" id="L1438">	    try(ResultSet res = pS.executeQuery()){</span>
-<span class="fc bfc" id="L1439" title="All 2 branches covered.">        	    while (res.next()) {</span>
-<span class="fc" id="L1440">        		User user = new User();</span>
-<span class="fc" id="L1441">        		user.setUserId(res.getInt(&quot;id&quot;));</span>
-<span class="fc" id="L1442">        		user.setEmail(res.getString(&quot;email&quot;));</span>
-<span class="fc" id="L1443">        		user.setUsername(res.getString(&quot;nickname&quot;));</span>
-<span class="fc" id="L1444">        		user.setCourseNewsSubscribed(</span>
-<span class="fc" id="L1445">        		                         res.getBoolean(&quot;courseNews&quot;));</span>
-<span class="fc" id="L1446">        		user.setProfilImage(res.getBytes(&quot;profile_image&quot;));</span>
-<span class="fc" id="L1447">        		userList.add(user);</span>
+<span class="pc bpc" id="L1439" title="1 of 2 branches missed.">        	    while (res.next()) {</span>
+<span class="nc" id="L1440">        		User user = new User();</span>
+<span class="nc" id="L1441">        		user.setUserId(res.getInt(&quot;id&quot;));</span>
+<span class="nc" id="L1442">        		user.setEmail(res.getString(&quot;email&quot;));</span>
+<span class="nc" id="L1443">        		user.setUsername(res.getString(&quot;nickname&quot;));</span>
+<span class="nc" id="L1444">        		user.setCourseNewsSubscribed(</span>
+<span class="nc" id="L1445">        		                         res.getBoolean(&quot;courseNews&quot;));</span>
+<span class="nc" id="L1446">        		user.setProfilImage(res.getBytes(&quot;profile_image&quot;));</span>
+<span class="nc" id="L1447">        		userList.add(user);</span>
         	    }
 <span class="pc bpc" id="L1449" title="7 of 8 branches missed.">	    }catch (SQLException e) {</span>
 <span class="nc" id="L1450">	            throw new SQLException();</span>
@@ -1474,48 +1474,48 @@ import de.ofCourse.system.Transaction;
     public static boolean removeParticipantsFromCourse(Transaction trans,
 	    int courseID, List&lt;User&gt; usersToRemove) {
         
-<span class="fc" id="L1477">	boolean success = false;</span>
+<span class="nc" id="L1477">	boolean success = false;</span>
 	
-<span class="pc bpc" id="L1479" title="2 of 4 branches missed.">	if (usersToRemove != null &amp;&amp; usersToRemove.size() &gt; 0) {</span>
+<span class="nc bnc" id="L1479" title="All 4 branches missed.">	if (usersToRemove != null &amp;&amp; usersToRemove.size() &gt; 0) {</span>
 	    
 	    // prepare SQL- request and database connection.
-<span class="fc" id="L1482">	    Connection connection = (Connection) trans;</span>
-<span class="fc" id="L1483">	    java.sql.Connection conn = connection.getConn();</span>
+<span class="nc" id="L1482">	    Connection connection = (Connection) trans;</span>
+<span class="nc" id="L1483">	    java.sql.Connection conn = connection.getConn();</span>
 
-<span class="fc" id="L1485">	    String sql = &quot;DELETE FROM course_participants &quot;</span>
+<span class="nc" id="L1485">	    String sql = &quot;DELETE FROM course_participants &quot;</span>
 	                + &quot;WHERE course_id = ? &quot;
 	                + &quot;AND participant_id IN (?&quot;;
 	    
 	    // Add an '?' for each selected user to remove
-<span class="pc bpc" id="L1490" title="1 of 2 branches missed.">	    for (int i = 1; i &lt; usersToRemove.size(); i++) {</span>
+<span class="nc bnc" id="L1490" title="All 2 branches missed.">	    for (int i = 1; i &lt; usersToRemove.size(); i++) {</span>
 <span class="nc" id="L1491">		sql += &quot;,?&quot;;</span>
 	    }
-<span class="fc" id="L1493">	    sql += &quot;);&quot;;</span>
+<span class="nc" id="L1493">	    sql += &quot;);&quot;;</span>
 
-<span class="fc" id="L1495">	    try (PreparedStatement pS = conn.prepareStatement(sql)) {</span>
-<span class="fc" id="L1496">		pS.setInt(1, courseID);</span>
-<span class="fc" id="L1497">		int counter = 2;</span>
+<span class="nc" id="L1495">	    try (PreparedStatement pS = conn.prepareStatement(sql)) {</span>
+<span class="nc" id="L1496">		pS.setInt(1, courseID);</span>
+<span class="nc" id="L1497">		int counter = 2;</span>
 		
 		// Sets the '?' in the prepared statement
-<span class="fc bfc" id="L1500" title="All 2 branches covered.">		for (User user : usersToRemove) {</span>
-<span class="fc" id="L1501">		    pS.setInt(counter, user.getUserID());</span>
-<span class="fc" id="L1502">		    counter++;</span>
+<span class="nc bnc" id="L1500" title="All 2 branches missed.">		for (User user : usersToRemove) {</span>
+<span class="nc" id="L1501">		    pS.setInt(counter, user.getUserID());</span>
+<span class="nc" id="L1502">		    counter++;</span>
 		}
 		
-<span class="pc bpc" id="L1505" title="1 of 2 branches missed.">		if (pS.executeUpdate() &gt; 0) {</span>
-<span class="fc" id="L1506">		    success = true;</span>
-<span class="fc" id="L1507">		} else {</span>
+<span class="nc bnc" id="L1505" title="All 2 branches missed.">		if (pS.executeUpdate() &gt; 0) {</span>
+<span class="nc" id="L1506">		    success = true;</span>
+<span class="nc" id="L1507">		} else {</span>
 <span class="nc" id="L1508">		    success = false;</span>
 		}
 
-<span class="pc bpc" id="L1511" title="7 of 8 branches missed.">	    } catch (SQLException e) {</span>
+<span class="nc bnc" id="L1511" title="All 8 branches missed.">	    } catch (SQLException e) {</span>
 <span class="nc" id="L1512">	        throw new InvalidDBTransferException(</span>
 <span class="nc" id="L1513">	                &quot;Error occured during removeParticipantsFromCourse&quot;, e);</span>
 	    }
 	} else {
 <span class="nc" id="L1516">	    success = true;</span>
 	}
-<span class="fc" id="L1518">	return success;</span>
+<span class="nc" id="L1518">	return success;</span>
     }
 
     /**
@@ -2023,10 +2023,10 @@ import de.ofCourse.system.Transaction;
 <span class="fc" id="L2023">                    counter++;</span>
                 }
                 
-<span class="pc bpc" id="L2026" title="1 of 2 branches missed.">                if (pS.executeUpdate() &gt; 0) {</span>
+<span class="fc bfc" id="L2026" title="All 2 branches covered.">                if (pS.executeUpdate() &gt; 0) {</span>
 <span class="fc" id="L2027">                    success = true;</span>
 <span class="fc" id="L2028">                } else {</span>
-<span class="nc" id="L2029">                    success = false;</span>
+<span class="fc" id="L2029">                    success = false;</span>
                 }
 
 <span class="pc bpc" id="L2032" title="7 of 8 branches missed.">            } catch (SQLException e) {</span>
