@@ -236,7 +236,7 @@ public class SearchCourseBean implements Pagination {
     				executeSearch();
     			} else {
     				FacesMessageCreator.createFacesMessage(null,
-    						sessionUser.getLabel("search.message"));
+    						sessionUser.getLabel("search.message.date"));
     			}
     		} else {
     			executeSearch();
