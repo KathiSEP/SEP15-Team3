@@ -3,8 +3,6 @@
  */
 package de.ofCourse.action;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.text.DecimalFormat;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +18,6 @@ import de.ofCourse.model.Language;
 import de.ofCourse.model.Salutation;
 import de.ofCourse.model.User;
 import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
