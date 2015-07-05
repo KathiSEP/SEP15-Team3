@@ -119,13 +119,13 @@ import de.ofCourse.system.Transaction;
 <span class="fc" id="L119">                	} else {</span>
 <span class="fc" id="L120">                		pwSalt = null;</span>
                 	}
-<span class="pc bpc" id="L122" title="7 of 8 branches missed.">	    }  catch (SQLException e) {</span>
-<span class="nc" id="L123">	        throw new SQLException();</span>
+<span class="pc bpc" id="L122" title="6 of 8 branches missed.">	    }  catch (SQLException e) {</span>
+<span class="fc" id="L123">	        throw new SQLException();</span>
 	    }
 	    
-<span class="pc bpc" id="L126" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
-<span class="nc" id="L127">	    throw new InvalidDBTransferException(</span>
-<span class="nc" id="L128">	                                &quot;Error occured during getPWSalt&quot;, e);</span>
+<span class="pc bpc" id="L126" title="4 of 8 branches missed.">	} catch (SQLException e) {</span>
+<span class="fc" id="L127">	    throw new InvalidDBTransferException(</span>
+<span class="fc" id="L128">	                                &quot;Error occured during getPWSalt&quot;, e);</span>
 	}
 
 <span class="fc" id="L131">	return pwSalt;</span>
@@ -847,13 +847,13 @@ import de.ofCourse.system.Transaction;
 <span class="fc bfc" id="L847" title="All 2 branches covered.">        			            equals(Activation.EMAIL)) {</span>
 <span class="fc" id="L848">        				id = res.getInt(&quot;id&quot;);</span>
 <span class="fc" id="L849">        			    } else {</span>
-<span class="pc bpc" id="L850" title="1 of 2 branches missed.">        				if (adminVerification == true) {</span>
+<span class="fc bfc" id="L850" title="All 2 branches covered.">        				if (adminVerification == true) {</span>
 <span class="fc" id="L851">        				    id = res.getInt(&quot;id&quot;);</span>
 <span class="fc" id="L852">        				} else {</span>
-<span class="nc" id="L853">        				    id = accountNotActivated;</span>
+<span class="fc" id="L853">        				    id = accountNotActivated;</span>
         				}
         			    }
-<span class="nc" id="L856">        			} else {</span>
+<span class="fc" id="L856">        			} else {</span>
 <span class="nc" id="L857">        			    id = accountNotActivated;</span>
         			}
 <span class="nc" id="L859">        		    } else {</span>
@@ -1588,19 +1588,19 @@ import de.ofCourse.system.Transaction;
     public static boolean userWantsToBeInformed(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 	
-<span class="nc" id="L1591">        Connection connection = (Connection) trans;</span>
-<span class="nc" id="L1592">        java.sql.Connection conn = connection.getConn();</span>
-<span class="nc" id="L1593">        String searchUserInUserToInform = &quot;SELECT * FROM \&quot;inform_users\&quot; WHERE user_id=? AND course_id=?&quot;;</span>
+<span class="fc" id="L1591">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1592">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1593">        String searchUserInUserToInform = &quot;SELECT * FROM \&quot;inform_users\&quot; WHERE user_id=? AND course_id=?&quot;;</span>
 
         try {
 	    
-<span class="nc" id="L1597">            boolean returnStatment = isInTable(userID, courseID, conn,</span>
-<span class="nc" id="L1598">                    searchUserInUserToInform);</span>
+<span class="fc" id="L1597">            boolean returnStatment = isInTable(userID, courseID, conn,</span>
+<span class="fc" id="L1598">                    searchUserInUserToInform);</span>
             
             //TODO Remove here
-<span class="nc" id="L1601">            LogHandler.getInstance().debug(</span>
-<span class="nc" id="L1602">                    &quot;UserWantsToBeInformed methode was succesfull&quot;);</span>
-<span class="nc" id="L1603">            return returnStatment;</span>
+<span class="fc" id="L1601">            LogHandler.getInstance().debug(</span>
+<span class="fc" id="L1602">                    &quot;UserWantsToBeInformed methode was succesfull&quot;);</span>
+<span class="fc" id="L1603">            return returnStatment;</span>
 
 <span class="nc" id="L1605">        } catch (SQLException e) {</span>
 <span class="nc" id="L1606">            throw new InvalidDBTransferException(&quot;Error occured during UserWantsToBeInformed methode &quot;, e);</span>
@@ -1675,25 +1675,25 @@ import de.ofCourse.system.Transaction;
     public static void updateAccountBalance(Transaction trans, int userID,
 	    float newAccountBalance) {
 	
-<span class="nc" id="L1678">        Connection connection = (Connection) trans;</span>
-<span class="nc" id="L1679">        java.sql.Connection conn = connection.getConn();</span>
-<span class="nc" id="L1680">        String updateAccountBalance = &quot;UPDATE \&quot;users\&quot; SET credit_balance = ? WHERE id = ?&quot;;</span>
+<span class="fc" id="L1678">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1679">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1680">        String updateAccountBalance = &quot;UPDATE \&quot;users\&quot; SET credit_balance = ? WHERE id = ?&quot;;</span>
 
-<span class="nc" id="L1682">        try (PreparedStatement pS = conn.prepareStatement(updateAccountBalance)){</span>
+<span class="fc" id="L1682">        try (PreparedStatement pS = conn.prepareStatement(updateAccountBalance)){</span>
 
-<span class="nc" id="L1684">            pS.setFloat(1, newAccountBalance);</span>
-<span class="nc" id="L1685">            pS.setInt(2, userID);</span>
-<span class="nc" id="L1686">            pS.executeUpdate();</span>
+<span class="fc" id="L1684">            pS.setFloat(1, newAccountBalance);</span>
+<span class="fc" id="L1685">            pS.setInt(2, userID);</span>
+<span class="fc" id="L1686">            pS.executeUpdate();</span>
 
             //TODO Remove
-<span class="nc" id="L1689">            LogHandler.getInstance().debug(</span>
-<span class="nc" id="L1690">                    &quot;AccountBalance succesfully update of User:&quot; + userID);</span>
-<span class="nc bnc" id="L1691" title="All 8 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L1689">            LogHandler.getInstance().debug(</span>
+<span class="fc" id="L1690">                    &quot;AccountBalance succesfully update of User:&quot; + userID);</span>
+<span class="pc bpc" id="L1691" title="7 of 8 branches missed.">        } catch (SQLException e) {</span>
            
 <span class="nc" id="L1693">            throw new InvalidDBTransferException(&quot;Error acurred while updating Account Balance of User:&quot;</span>
 <span class="nc" id="L1694">                    + userID, e);</span>
         }
-<span class="nc" id="L1696">    }</span>
+<span class="fc" id="L1696">    }</span>
 
     /**
      * Checks whether the User is already Participant in the CourseUnit or not

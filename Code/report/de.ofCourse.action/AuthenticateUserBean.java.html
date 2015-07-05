@@ -174,18 +174,18 @@ import de.ofCourse.utilities.PasswordHash;
 <span class="fc" id="L174">                    this.transaction.rollback();</span>
 <span class="fc" id="L175">                    return URL_AUTHENTICATE;</span>
                     
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                } else if (id == accountNotActivated) {</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                } else if (id == accountNotActivated) {</span>
                     // Throwing error message into the faces context:
                     // 'Account not active'
-<span class="nc" id="L180">                    FacesMessageCreator.createFacesMessage(</span>
-<span class="nc" id="L181">                            null,</span>
-<span class="nc" id="L182">                            sessionUser.getLabel(</span>
-<span class="nc" id="L183">                              &quot;authenticateUserBean.facesMessage.UserAccount&quot;));</span>
+<span class="fc" id="L180">                    FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L181">                            null,</span>
+<span class="fc" id="L182">                            sessionUser.getLabel(</span>
+<span class="fc" id="L183">                              &quot;authenticateUserBean.facesMessage.UserAccount&quot;));</span>
     
                     // Return to the login page again, because the login went 
                     // wrong.
-<span class="nc" id="L187">                    this.transaction.rollback();</span>
-<span class="nc" id="L188">                    return URL_AUTHENTICATE;</span>
+<span class="fc" id="L187">                    this.transaction.rollback();</span>
+<span class="fc" id="L188">                    return URL_AUTHENTICATE;</span>
                     
 <span class="pc bpc" id="L190" title="1 of 2 branches missed.">                } else if (id == dbErrorOccured) {</span>
                     // Throwing error message into the faces context:
@@ -228,9 +228,9 @@ import de.ofCourse.utilities.PasswordHash;
                 }
             }
 
-<span class="nc" id="L231">        } catch (InvalidDBTransferException e) {</span>
-<span class="nc" id="L232">            LogHandler.getInstance().error(e.getMessage());</span>
-<span class="nc" id="L233">            this.transaction.rollback();</span>
+<span class="fc" id="L231">        } catch (InvalidDBTransferException e) {</span>
+<span class="fc" id="L232">            LogHandler.getInstance().error(e.getMessage());</span>
+<span class="fc" id="L233">            this.transaction.rollback();</span>
         }
 
 <span class="fc" id="L236">        return URL_AUTHENTICATE;</span>

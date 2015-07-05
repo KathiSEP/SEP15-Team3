@@ -37,29 +37,29 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 <span class="nc" id="L37">	driver.findElement(By.id(&quot;formLogin:passwordLogin&quot;)).sendKeys(&quot;Muhmuh1!&quot;);</span>
 <span class="nc" id="L38">	driver.findElement(By.id(&quot;formLogin:login&quot;)).click();</span>
 <span class="nc" id="L39">	driver.findElement(By.id(&quot;leadedCoursesList:courseTable:1:details&quot;)).click();</span>
-<span class="nc" id="L40">	driver.findElement(By.id(&quot;j_idt113:j_idt115:0:bearbeiten&quot;)).click();</span>
+<span class="nc" id="L40">	driver.findElement(By.id(&quot;courseDetailsID:edit&quot;)).click();</span>
 
 <span class="nc bnc" id="L42" title="All 4 branches missed.">	assert driver.findElement(By.id(&quot;headingEditUnit&quot;)).getText().equals(&quot;Kurseinheit bearbeiten&quot;);</span>
-<span class="nc" id="L43">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).clear();</span>
-<span class="nc" id="L44">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).sendKeys(&quot;1.06.2015&quot;);</span>
-<span class="nc" id="L45">	driver.findElement(By.id(&quot;formCourseUnit:saveCourseUnit&quot;)).click();</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">	assert driver</span>
-<span class="nc" id="L47">		.findElement(By.id(&quot;globalMessages&quot;))</span>
-<span class="nc" id="L48">		.getText()</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">		.equals(&quot;Die Kurseinheit liegt nicht im Bereich des Kurses vom 27.7.2015 bis zum 27.7.2016 !&quot;);</span>
-<span class="nc" id="L50">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).clear();</span>
-<span class="nc" id="L51">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).sendKeys(&quot;5.13.2015&quot;);</span>
-<span class="nc" id="L52">	driver.findElement(By.id(&quot;formCourseUnit:saveCourseUnit&quot;)).click();</span>
+//	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).clear();
+//	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).sendKeys(&quot;1.03.2015&quot;);
+//	driver.findElement(By.id(&quot;courseDetailsID:saveChanges&quot;)).click();
+//	assert driver
+//		.findElement(By.id(&quot;globalMessages&quot;))
+//		.getText()
+//		.equals(&quot;Die Kurseinheit liegt nicht im Bereich des Kurses vom 27.7.2015 bis zum 27.7.2016 !&quot;);
+<span class="nc" id="L50">	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).clear();</span>
+<span class="nc" id="L51">	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).sendKeys(&quot;5.13.2015&quot;);</span>
+<span class="nc" id="L52">	driver.findElement(By.id(&quot;courseDetailsID:saveChanges&quot;)).click();</span>
 
 <span class="nc bnc" id="L54" title="All 2 branches missed.">	assert driver</span>
 <span class="nc" id="L55">		.findElement(By.id(&quot;dateCourseUnitMessage&quot;))</span>
 <span class="nc" id="L56">		.getText()</span>
 <span class="nc bnc" id="L57" title="All 2 branches missed.">		.equals(&quot;Datum existiert nicht oder Format (dd.MM.yyyy) ist falsch.&quot;);</span>
-<span class="nc" id="L58">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).clear();</span>
-<span class="nc" id="L59">	driver.findElement(By.id(&quot;formCourseUnit:dateCourseUnit&quot;)).sendKeys(&quot;4.8.2015&quot;);</span>
-<span class="nc" id="L60">	driver.findElement(By.id(&quot;formCourseUnit:maxUsersCourseUnit&quot;)).clear();</span>
-<span class="nc" id="L61">	driver.findElement(By.id(&quot;formCourseUnit:maxUsersCourseUnit&quot;)).sendKeys(&quot;20&quot;);</span>
-<span class="nc" id="L62">	driver.findElement(By.id(&quot;formCourseUnit:saveCourseUnit&quot;)).click();</span>
+<span class="nc" id="L58">	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).clear();</span>
+<span class="nc" id="L59">	driver.findElement(By.id(&quot;courseDetailsID:startDateCourse&quot;)).sendKeys(&quot;4.8.2015&quot;);</span>
+<span class="nc" id="L60">	driver.findElement(By.id(&quot;courseDetailsID:minPersonsCourse&quot;)).clear();</span>
+<span class="nc" id="L61">	driver.findElement(By.id(&quot;courseDetailsID:minPersonsCourse&quot;)).sendKeys(&quot;20&quot;);</span>
+<span class="nc" id="L62">	driver.findElement(By.id(&quot;courseDetailsID:saveChanges&quot;)).click();</span>
 <span class="nc bnc" id="L63" title="All 4 branches missed.">	assert driver.findElement(By.id(&quot;courseDetailTitle&quot;)).getText().equals(&quot;Kursdetails&quot;);</span>
 
 <span class="nc" id="L65">	driver.findElement(By.id(&quot;generalNavigationForm:logoutLink&quot;)).click();</span>

@@ -752,21 +752,21 @@ import de.ofCourse.system.Transaction;
     public static void addUserToCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
 		
-<span class="nc" id="L755">    	Connection connection = (Connection) trans;</span>
-<span class="nc" id="L756">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L755">    	Connection connection = (Connection) trans;</span>
+<span class="fc" id="L756">		java.sql.Connection conn = connection.getConn();</span>
 	
-<span class="nc" id="L758">		String addUserToCourseUnit = &quot;INSERT INTO \&quot;course_unit_participants\&quot;&quot;</span>
+<span class="fc" id="L758">		String addUserToCourseUnit = &quot;INSERT INTO \&quot;course_unit_participants\&quot;&quot;</span>
 			+ &quot; (participant_id,course_unit_id) VALUES (?,?)&quot;;
 	
 		try {
-<span class="nc" id="L762">		    CourseDAO.setRelationMethode(userID, courseUnitID, conn,</span>
-<span class="nc" id="L763">			    addUserToCourseUnit);</span>
-<span class="nc" id="L764">		} catch (SQLException e) {</span>
+<span class="fc" id="L762">		    CourseDAO.setRelationMethode(userID, courseUnitID, conn,</span>
+<span class="fc" id="L763">			    addUserToCourseUnit);</span>
+<span class="pc" id="L764">		} catch (SQLException e) {</span>
 <span class="nc" id="L765">		    throw new InvalidDBTransferException(&quot;User:&quot; + userID + &quot;couldnt be added to CourseUnit:&quot;</span>
 <span class="nc" id="L766">				    + courseUnitID, e);</span>
 		}
 
-<span class="nc" id="L769">    }</span>
+<span class="fc" id="L769">    }</span>
 
     /**
      * Removes a user from a course unit's list of participants.
@@ -789,20 +789,20 @@ import de.ofCourse.system.Transaction;
     public static void removeUserFromCourseUnit(Transaction trans, int userID,
 	    int courseUnitID) throws InvalidDBTransferException {
 
-<span class="nc" id="L792">		Connection connection = (Connection) trans;</span>
-<span class="nc" id="L793">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L792">		Connection connection = (Connection) trans;</span>
+<span class="fc" id="L793">		java.sql.Connection conn = connection.getConn();</span>
 	
-<span class="nc" id="L795">		String deleteFromCourseUnit = &quot;DELETE FROM \&quot;course_unit_participants\&quot; WHERE participant_id = ? AND course_unit_id = ?&quot;;</span>
+<span class="fc" id="L795">		String deleteFromCourseUnit = &quot;DELETE FROM \&quot;course_unit_participants\&quot; WHERE participant_id = ? AND course_unit_id = ?&quot;;</span>
 	
 		try {
-<span class="nc" id="L798">		    CourseDAO.setRelationMethode(userID, courseUnitID, conn,</span>
-<span class="nc" id="L799">			    deleteFromCourseUnit);</span>
+<span class="fc" id="L798">		    CourseDAO.setRelationMethode(userID, courseUnitID, conn,</span>
+<span class="fc" id="L799">			    deleteFromCourseUnit);</span>
 
-<span class="nc" id="L801">		} catch (SQLException e) {</span>
+<span class="pc" id="L801">		} catch (SQLException e) {</span>
 <span class="nc" id="L802">		    throw new InvalidDBTransferException(&quot;User:&quot; + userID + &quot;couldnt be deleted from CourseUnit:&quot;</span>
 <span class="nc" id="L803">				    + courseUnitID, e);</span>
 		}
-<span class="nc" id="L805">    }</span>
+<span class="fc" id="L805">    }</span>
 
     /**
      * Returns a list of course units which the user with the passed ID
@@ -823,24 +823,24 @@ import de.ofCourse.system.Transaction;
     public static List&lt;CourseUnit&gt; getCourseUnitsOf(Transaction trans,
 	    int userID) throws InvalidDBTransferException {
     	
-<span class="nc" id="L826">		Connection connection = (Connection) trans;</span>
-<span class="nc" id="L827">		java.sql.Connection conn = connection.getConn();</span>
-<span class="nc" id="L828">		List&lt;CourseUnit&gt; result = new ArrayList&lt;CourseUnit&gt;();</span>
+<span class="fc" id="L826">		Connection connection = (Connection) trans;</span>
+<span class="fc" id="L827">		java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L828">		List&lt;CourseUnit&gt; result = new ArrayList&lt;CourseUnit&gt;();</span>
 		
-<span class="nc" id="L830">		try (PreparedStatement stmt = conn.prepareStatement(GET_UNITS_OF)) {</span>
-<span class="nc" id="L831">		    stmt.setInt(1, userID);</span>
+<span class="fc" id="L830">		try (PreparedStatement stmt = conn.prepareStatement(GET_UNITS_OF)) {</span>
+<span class="fc" id="L831">		    stmt.setInt(1, userID);</span>
 		    
-<span class="nc" id="L833">		    try (ResultSet rst = stmt.executeQuery()) {</span>
-<span class="nc" id="L834">		    	result = getResult(rst);</span>
-<span class="nc bnc" id="L835" title="All 8 branches missed.">		    }</span>
+<span class="fc" id="L833">		    try (ResultSet rst = stmt.executeQuery()) {</span>
+<span class="fc" id="L834">		    	result = getResult(rst);</span>
+<span class="pc bpc" id="L835" title="7 of 8 branches missed.">		    }</span>
 	
-<span class="nc bnc" id="L837" title="All 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="pc bpc" id="L837" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
 <span class="nc" id="L838">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
 		    		&quot;during getCoursesInPeriod(java.sql.Connection conn, &quot; +
 		    		&quot;int limit, int offset, String orderParam, &quot; +
 <span class="nc" id="L841">		    		&quot;String query)&quot;, e);</span>
 		}
-<span class="nc" id="L843">		return result;</span>
+<span class="fc" id="L843">		return result;</span>
     }
 
     /**
@@ -861,20 +861,20 @@ import de.ofCourse.system.Transaction;
 		try {
 <span class="fc" id="L862">		    int cols = rst.getMetaData().getColumnCount();</span>
 	
-<span class="pc bpc" id="L864" title="1 of 2 branches missed.">		    while (rst.next()) {</span>
-<span class="nc" id="L865">				int i = 1;</span>
-<span class="nc" id="L866">				List&lt;Object&gt; tuple = new ArrayList&lt;Object&gt;();</span>
-<span class="nc" id="L867">				CourseUnit unit = new CourseUnit();</span>
-<span class="nc bnc" id="L868" title="All 2 branches missed.">				while (i &lt;= cols) {</span>
-<span class="nc" id="L869">				    Object o = rst.getObject(i);</span>
-<span class="nc" id="L870">				    tuple.add(o);</span>
-<span class="nc" id="L871">				    i++;</span>
+<span class="fc bfc" id="L864" title="All 2 branches covered.">		    while (rst.next()) {</span>
+<span class="fc" id="L865">				int i = 1;</span>
+<span class="fc" id="L866">				List&lt;Object&gt; tuple = new ArrayList&lt;Object&gt;();</span>
+<span class="fc" id="L867">				CourseUnit unit = new CourseUnit();</span>
+<span class="fc bfc" id="L868" title="All 2 branches covered.">				while (i &lt;= cols) {</span>
+<span class="fc" id="L869">				    Object o = rst.getObject(i);</span>
+<span class="fc" id="L870">				    tuple.add(o);</span>
+<span class="fc" id="L871">				    i++;</span>
 				}
-<span class="nc" id="L873">				setProperties(unit, tuple);</span>
-<span class="nc" id="L874">				result.add(unit);</span>
+<span class="fc" id="L873">				setProperties(unit, tuple);</span>
+<span class="fc" id="L874">				result.add(unit);</span>
 		    }
-<span class="pc bpc" id="L876" title="1 of 2 branches missed.">		    if (!result.isEmpty()) {</span>
-<span class="nc" id="L877">		    	return result;</span>
+<span class="fc bfc" id="L876" title="All 2 branches covered.">		    if (!result.isEmpty()) {</span>
+<span class="fc" id="L877">		    	return result;</span>
 		    }
 <span class="nc" id="L879">		} catch (SQLException e) {</span>
 <span class="nc" id="L880">		    throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
@@ -894,14 +894,14 @@ import de.ofCourse.system.Transaction;
      * @author Patrick Cretu
      */
     private static void setProperties(CourseUnit unit, List&lt;Object&gt; tuple) {
-<span class="nc" id="L897">		unit.setCourseUnitID((Integer) tuple.get(0));</span>
-<span class="nc" id="L898">		unit.setCourseID((Integer) tuple.get(1));</span>
-<span class="nc" id="L899">		unit.setTitle((String) tuple.get(2));</span>
-<span class="nc" id="L900">		BigDecimal bg = (BigDecimal) tuple.get(3);</span>
-<span class="nc" id="L901">		unit.setPrice(bg.floatValue());</span>
-<span class="nc" id="L902">		unit.setStartime((Date) tuple.get(4));</span>
-<span class="nc" id="L903">		unit.setEndtime((Date) tuple.get(5));</span>
-<span class="nc" id="L904">    }</span>
+<span class="fc" id="L897">		unit.setCourseUnitID((Integer) tuple.get(0));</span>
+<span class="fc" id="L898">		unit.setCourseID((Integer) tuple.get(1));</span>
+<span class="fc" id="L899">		unit.setTitle((String) tuple.get(2));</span>
+<span class="fc" id="L900">		BigDecimal bg = (BigDecimal) tuple.get(3);</span>
+<span class="fc" id="L901">		unit.setPrice(bg.floatValue());</span>
+<span class="fc" id="L902">		unit.setStartime((Date) tuple.get(4));</span>
+<span class="fc" id="L903">		unit.setEndtime((Date) tuple.get(5));</span>
+<span class="fc" id="L904">    }</span>
     
     /**
      * Returns the current week day's date as a string.

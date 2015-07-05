@@ -99,13 +99,13 @@ import de.ofCourse.utilities.PasswordHash;
 <span class="fc" id="L99">	    				init.execute(initQuery);</span>
 <span class="pc bpc" id="L100" title="7 of 8 branches missed.">	    			}</span>
 	    		}
-<span class="pc bpc" id="L102" title="7 of 8 branches missed.">    		}</span>
+<span class="pc bpc" id="L102" title="6 of 8 branches missed.">    		}</span>
 <span class="fc" id="L103">    		trans.commit();</span>
-<span class="pc bpc" id="L104" title="7 of 8 branches missed.">		} catch (SQLException e) {</span>
-<span class="nc" id="L105">			trans.rollback();</span>
-<span class="nc" id="L106">			throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
+<span class="pc bpc" id="L104" title="4 of 8 branches missed.">		} catch (SQLException e) {</span>
+<span class="fc" id="L105">			trans.rollback();</span>
+<span class="fc" id="L106">			throw new InvalidDBTransferException(&quot;SQL Exception occoured &quot; +</span>
 					&quot;during executeInitialization(String checkQuery, &quot; +
-<span class="nc" id="L108">					&quot;String initQuery)&quot;, e);</span>
+<span class="fc" id="L108">					&quot;String initQuery)&quot;, e);</span>
 		}
 <span class="fc" id="L110">    }</span>
 }

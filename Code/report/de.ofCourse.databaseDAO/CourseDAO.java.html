@@ -747,16 +747,16 @@ import de.ofCourse.system.Transaction;
 <span class="fc bfc" id="L747" title="All 2 branches covered.">	    while (resultSet.next()) {</span>
 <span class="fc" id="L748">		User leader = new User();</span>
 
-<span class="pc bpc" id="L750" title="1 of 2 branches missed.">		if (resultSet.getString(&quot;name&quot;) != null) {</span>
+<span class="fc bfc" id="L750" title="All 2 branches covered.">		if (resultSet.getString(&quot;name&quot;) != null) {</span>
 <span class="fc" id="L751">		    leader.setLastname(resultSet.getString(&quot;name&quot;));</span>
 <span class="fc" id="L752">		} else {</span>
-<span class="nc" id="L753">		    leader.setLastname(&quot;geheim&quot;);</span>
+<span class="fc" id="L753">		    leader.setLastname(&quot;geheim&quot;);</span>
 		}
 
-<span class="pc bpc" id="L756" title="1 of 2 branches missed.">		if (resultSet.getString(&quot;first_name&quot;) != null) {</span>
+<span class="fc bfc" id="L756" title="All 2 branches covered.">		if (resultSet.getString(&quot;first_name&quot;) != null) {</span>
 <span class="fc" id="L757">		    leader.setFirstname(resultSet.getString(&quot;first_name&quot;));</span>
 <span class="fc" id="L758">		} else {</span>
-<span class="nc" id="L759">		    leader.setFirstname(&quot;geheim&quot;);</span>
+<span class="fc" id="L759">		    leader.setFirstname(&quot;geheim&quot;);</span>
 		}
 <span class="fc" id="L761">		leader.setEmail(resultSet.getString(&quot;email&quot;));</span>
 <span class="fc" id="L762">		leader.setUserId(resultSet.getInt(&quot;id&quot;));</span>
@@ -871,40 +871,40 @@ import de.ofCourse.system.Transaction;
 		Address unitAddress;
 		// Fills the list coursesOf with courses from the database.
 		// At this time only id an title is set
-<span class="pc bpc" id="L874" title="1 of 2 branches missed.">		while (fetchedCourses.next()) {</span>
-<span class="nc" id="L875">		    fetchedCourse = new Course();</span>
-<span class="nc" id="L876">		    courseUnit = new CourseUnit();</span>
+<span class="fc bfc" id="L874" title="All 2 branches covered.">		while (fetchedCourses.next()) {</span>
+<span class="fc" id="L875">		    fetchedCourse = new Course();</span>
+<span class="fc" id="L876">		    courseUnit = new CourseUnit();</span>
 		    
-<span class="nc" id="L878">		    fetchedCourse.setCourseID(fetchedCourses.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L878">		    fetchedCourse.setCourseID(fetchedCourses.getInt(&quot;id&quot;));</span>
 		
-<span class="nc bnc" id="L880" title="All 2 branches missed.">		    if (fetchedCourses.getString(&quot;title&quot;) != null) {</span>
-<span class="nc" id="L881">			fetchedCourse.setTitle(fetchedCourses.getString(&quot;title&quot;));</span>
-<span class="nc" id="L882">		    } else {</span>
+<span class="pc bpc" id="L880" title="1 of 2 branches missed.">		    if (fetchedCourses.getString(&quot;title&quot;) != null) {</span>
+<span class="fc" id="L881">			fetchedCourse.setTitle(fetchedCourses.getString(&quot;title&quot;));</span>
+<span class="fc" id="L882">		    } else {</span>
 <span class="nc" id="L883">			fetchedCourse.setTitle(&quot;Nicht angegeben&quot;);</span>
 		    }
 		
 		    
-<span class="nc" id="L887">		    stamp = fetchedCourses.getTimestamp(&quot;start_time&quot;);</span>
-<span class="nc bnc" id="L888" title="All 2 branches missed.">		    if (stamp != null) {</span>
-<span class="nc" id="L889">			date = new Date(stamp.getYear(),</span>
-<span class="nc" id="L890">				stamp.getMonth(),</span>
-<span class="nc" id="L891">				stamp.getDate(), </span>
-<span class="nc" id="L892">				stamp.getHours(),</span>
-<span class="nc" id="L893">				stamp.getMinutes());</span>
-<span class="nc" id="L894">		    courseUnit.setStartime(date);</span>
+<span class="fc" id="L887">		    stamp = fetchedCourses.getTimestamp(&quot;start_time&quot;);</span>
+<span class="pc bpc" id="L888" title="1 of 2 branches missed.">		    if (stamp != null) {</span>
+<span class="fc" id="L889">			date = new Date(stamp.getYear(),</span>
+<span class="fc" id="L890">				stamp.getMonth(),</span>
+<span class="fc" id="L891">				stamp.getDate(), </span>
+<span class="fc" id="L892">				stamp.getHours(),</span>
+<span class="fc" id="L893">				stamp.getMinutes());</span>
+<span class="fc" id="L894">		    courseUnit.setStartime(date);</span>
 		    }
 		    
-<span class="nc" id="L897">		    unitAddress = new Address();</span>
-<span class="nc bnc" id="L898" title="All 2 branches missed.">		    if(fetchedCourses.getString(&quot;location&quot;)!= null){</span>
-<span class="nc" id="L899">			    unitAddress.setLocation(</span>
-<span class="nc" id="L900">				    fetchedCourses.getString(&quot;location&quot;));</span>
-<span class="nc" id="L901">		    }</span>
+<span class="fc" id="L897">		    unitAddress = new Address();</span>
+<span class="pc bpc" id="L898" title="1 of 2 branches missed.">		    if(fetchedCourses.getString(&quot;location&quot;)!= null){</span>
+<span class="fc" id="L899">			    unitAddress.setLocation(</span>
+<span class="fc" id="L900">				    fetchedCourses.getString(&quot;location&quot;));</span>
+<span class="fc" id="L901">		    }</span>
 		    else{
 <span class="nc" id="L903">			    unitAddress.setLocation(&quot;Nicht angegeben&quot;);</span>
 		    }
-<span class="nc" id="L905">		courseUnit.setAddress(unitAddress);</span>
-<span class="nc" id="L906">		fetchedCourse.setNextCourseUnit(courseUnit);</span>
-<span class="nc" id="L907">		coursesOf.add(fetchedCourse);</span>
+<span class="fc" id="L905">		courseUnit.setAddress(unitAddress);</span>
+<span class="fc" id="L906">		fetchedCourse.setNextCourseUnit(courseUnit);</span>
+<span class="fc" id="L907">		coursesOf.add(fetchedCourse);</span>
 	    }
 <span class="pc bpc" id="L909" title="7 of 8 branches missed.">	  }</span>
 <span class="pc bpc" id="L910" title="7 of 8 branches missed.">	} catch (SQLException e) {</span>
@@ -1087,19 +1087,19 @@ import de.ofCourse.system.Transaction;
     public static void addUserToCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
-<span class="nc" id="L1090">        Connection connection = (Connection) trans;</span>
-<span class="nc" id="L1091">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1090">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1091">        java.sql.Connection conn = connection.getConn();</span>
 
-<span class="nc" id="L1093">        String addUserToCourse = &quot;INSERT INTO \&quot;course_participants\&quot; (participant_id,course_id) VALUES (?,?)&quot;;</span>
+<span class="fc" id="L1093">        String addUserToCourse = &quot;INSERT INTO \&quot;course_participants\&quot; (participant_id,course_id) VALUES (?,?)&quot;;</span>
 
         try {
-<span class="nc" id="L1096">            setRelationMethode(userID, courseID, conn, addUserToCourse);</span>
+<span class="fc" id="L1096">            setRelationMethode(userID, courseID, conn, addUserToCourse);</span>
 
-<span class="nc" id="L1098">	        } catch (SQLException e) {</span>
+<span class="pc" id="L1098">	        } catch (SQLException e) {</span>
 	    
 <span class="nc" id="L1100">	            throw new InvalidDBTransferException(&quot;Error occured during addUserToCOurse&quot;, e);</span>
 	        }
-<span class="nc" id="L1102">    }</span>
+<span class="fc" id="L1102">    }</span>
 
     /**
      * Removes a user from a course's list of participants.
@@ -1122,20 +1122,20 @@ import de.ofCourse.system.Transaction;
     public static void removeUserFromCourse(Transaction trans, int userID,
 	    int courseID) throws InvalidDBTransferException {
 
-<span class="nc" id="L1125">        Connection connection = (Connection) trans;</span>
-<span class="nc" id="L1126">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1125">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1126">        java.sql.Connection conn = connection.getConn();</span>
 
-<span class="nc" id="L1128">        String removeUserFromCourse = &quot;DELETE FROM \&quot;course_participants\&quot; WHERE participant_id = ? AND course_id = ?&quot;;</span>
+<span class="fc" id="L1128">        String removeUserFromCourse = &quot;DELETE FROM \&quot;course_participants\&quot; WHERE participant_id = ? AND course_id = ?&quot;;</span>
 
         try {
-<span class="nc" id="L1131">            setRelationMethode(userID, courseID, conn, removeUserFromCourse);</span>
+<span class="fc" id="L1131">            setRelationMethode(userID, courseID, conn, removeUserFromCourse);</span>
 
-<span class="nc" id="L1133">        } catch (SQLException e) {           </span>
+<span class="pc" id="L1133">        } catch (SQLException e) {           </span>
 <span class="nc" id="L1134">            throw new InvalidDBTransferException(&quot;Error occured while trying to delete User:&quot; + userID</span>
 <span class="nc" id="L1135">                + &quot; from course:&quot; + courseID, e);</span>
         }
 
-<span class="nc" id="L1138">    }</span>
+<span class="fc" id="L1138">    }</span>
 
     /**
      * Adds a user to a course's list of course leaders.
@@ -1280,18 +1280,18 @@ import de.ofCourse.system.Transaction;
     public static void addUserToInformUser(Transaction trans, int userID,
 	    int courseID) {
 
-<span class="nc" id="L1283">        Connection connection = (Connection) trans;</span>
-<span class="nc" id="L1284">        java.sql.Connection conn = connection.getConn();</span>
-<span class="nc" id="L1285">        String addUserToInformUser = &quot;INSERT INTO \&quot;inform_users\&quot; (user_id,course_id) VALUES (?,?)&quot;;</span>
+<span class="fc" id="L1283">        Connection connection = (Connection) trans;</span>
+<span class="fc" id="L1284">        java.sql.Connection conn = connection.getConn();</span>
+<span class="fc" id="L1285">        String addUserToInformUser = &quot;INSERT INTO \&quot;inform_users\&quot; (user_id,course_id) VALUES (?,?)&quot;;</span>
         
         try {
-<span class="nc" id="L1288">            setRelationMethode(userID, courseID, conn, addUserToInformUser);</span>
+<span class="fc" id="L1288">            setRelationMethode(userID, courseID, conn, addUserToInformUser);</span>
 
         
-<span class="nc" id="L1291">        } catch (SQLException e) {</span>
+<span class="pc" id="L1291">        } catch (SQLException e) {</span>
 <span class="nc" id="L1292">            throw new InvalidDBTransferException(&quot;Exception occured during addUserToInformUser&quot;, e);</span>
         }
-<span class="nc" id="L1294">    }</span>
+<span class="fc" id="L1294">    }</span>
 
     /**
      * This DAO Methode removes a User from The Inform_Users Table.(For example when the Users

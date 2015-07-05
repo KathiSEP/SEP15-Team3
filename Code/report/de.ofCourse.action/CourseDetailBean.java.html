@@ -298,7 +298,7 @@ import de.ofCourse.system.Transaction;
 
 				//Checks if the User wants to be informed about course news, if so put him
 				//in the Database List 
-<span class="pc bpc" id="L301" title="1 of 2 branches missed.">				if (registeredForCourseNews) {</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">				if (registeredForCourseNews) {</span>
 <span class="fc" id="L302">					CourseDAO.addUserToInformUser(transaction,</span>
 <span class="fc" id="L303">							sessionUser.getUserID(), courseID);</span>
 <span class="fc" id="L304">					LogHandler.getInstance().debug(</span>
@@ -350,74 +350,74 @@ import de.ofCourse.system.Transaction;
      */
     public void signOffFromCourse() throws CourseRegistrationException {
 
-<span class="nc" id="L353">		transaction.start();</span>
+<span class="fc" id="L353">		transaction.start();</span>
 	
 		try {
-<span class="nc" id="L356">		    User userWhoTryToSignOff = UserDAO.getUser(transaction,</span>
-<span class="nc" id="L357">			    sessionUser.getUserID());</span>
-<span class="nc" id="L358">		    LogHandler.getInstance().debug(</span>
-<span class="nc" id="L359">		            &quot;Methode getUser(&quot; + sessionUser.getUserID() + &quot;) was succesfull&quot;);</span>
+<span class="fc" id="L356">		    User userWhoTryToSignOff = UserDAO.getUser(transaction,</span>
+<span class="fc" id="L357">			    sessionUser.getUserID());</span>
+<span class="fc" id="L358">		    LogHandler.getInstance().debug(</span>
+<span class="fc" id="L359">		            &quot;Methode getUser(&quot; + sessionUser.getUserID() + &quot;) was succesfull&quot;);</span>
 		    
 		    // Fetching a List of all CourseUnits the User takes part in
-<span class="nc" id="L362">		    List&lt;CourseUnit&gt; signedCourseUnits = CourseUnitDAO</span>
-<span class="nc" id="L363">			    .getCourseUnitsOf(transaction,</span>
-<span class="nc" id="L364">				    userWhoTryToSignOff.getUserID());</span>
-<span class="nc" id="L365">		    LogHandler.getInstance().debug(</span>
-<span class="nc" id="L366">		            &quot;Methode signedCourseUnits of:&quot; + sessionUser.getUserID() </span>
-<span class="nc" id="L367">		            	+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L362">		    List&lt;CourseUnit&gt; signedCourseUnits = CourseUnitDAO</span>
+<span class="fc" id="L363">			    .getCourseUnitsOf(transaction,</span>
+<span class="fc" id="L364">				    userWhoTryToSignOff.getUserID());</span>
+<span class="fc" id="L365">		    LogHandler.getInstance().debug(</span>
+<span class="fc" id="L366">		            &quot;Methode signedCourseUnits of:&quot; + sessionUser.getUserID() </span>
+<span class="fc" id="L367">		            	+&quot; was succesfull&quot;);</span>
 		    
 		    // Getting a List of CourseUnits which only belongs to the Course and
 		    // the User is signed Up
-<span class="nc" id="L371">		    ArrayList&lt;CourseUnit&gt; courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);</span>
+<span class="fc" id="L371">		    ArrayList&lt;CourseUnit&gt; courseUnitsToSignOff = findCourseUnitsOfThisCourse(signedCourseUnits);</span>
 	
 		    // If the list is not empty the users gets signed Off from every
 		    // CourseUnit which belongs to the Course and he is signedUp to
-<span class="nc bnc" id="L375" title="All 2 branches missed.">		    if (!courseUnitsToSignOff.isEmpty()) {</span>
-<span class="nc" id="L376">				float money = 0;</span>
-<span class="nc bnc" id="L377" title="All 2 branches missed.">				for (int i = 0; i &lt; courseUnitsToSignOff.size(); i++) {</span>
-<span class="nc" id="L378">				    CourseUnitDAO.removeUserFromCourseUnit(transaction,</span>
-<span class="nc" id="L379">					    sessionUser.getUserID(), courseUnitsToSignOff</span>
-<span class="nc" id="L380">						    .get(i).getCourseUnitID());</span>
-<span class="nc" id="L381">				    LogHandler.getInstance().debug(</span>
-<span class="nc" id="L382">				            &quot;Methode removeUserFromCouseUnit:&quot; + sessionUser.getUserID()</span>
-<span class="nc" id="L383">				            	+&quot; was succesfull&quot;);</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">		    if (!courseUnitsToSignOff.isEmpty()) {</span>
+<span class="fc" id="L376">				float money = 0;</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">				for (int i = 0; i &lt; courseUnitsToSignOff.size(); i++) {</span>
+<span class="fc" id="L378">				    CourseUnitDAO.removeUserFromCourseUnit(transaction,</span>
+<span class="fc" id="L379">					    sessionUser.getUserID(), courseUnitsToSignOff</span>
+<span class="fc" id="L380">						    .get(i).getCourseUnitID());</span>
+<span class="fc" id="L381">				    LogHandler.getInstance().debug(</span>
+<span class="fc" id="L382">				            &quot;Methode removeUserFromCouseUnit:&quot; + sessionUser.getUserID()</span>
+<span class="fc" id="L383">				            	+&quot; was succesfull&quot;);</span>
 				    
-<span class="nc" id="L385">				    money += courseUnitsToSignOff.get(i).getPrice();</span>
-<span class="nc bnc" id="L386" title="All 2 branches missed.">				    for (int x = 0; x &lt; courseUnitsOfCourse.size(); x++) {</span>
-<span class="nc bnc" id="L387" title="All 2 branches missed.">						if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff</span>
-<span class="nc" id="L388">							.get(i).getCourseUnitID()) {</span>
-<span class="nc" id="L389">						    courseUnitsOfCourse.get(x).setUserIsParticipant(</span>
-<span class="nc" id="L390">							    false);</span>
-<span class="nc" id="L391">						    break;</span>
+<span class="fc" id="L385">				    money += courseUnitsToSignOff.get(i).getPrice();</span>
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">				    for (int x = 0; x &lt; courseUnitsOfCourse.size(); x++) {</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">						if (courseUnitsOfCourse.get(x).getCourseUnitID() == courseUnitsToSignOff</span>
+<span class="fc" id="L388">							.get(i).getCourseUnitID()) {</span>
+<span class="fc" id="L389">						    courseUnitsOfCourse.get(x).setUserIsParticipant(</span>
+<span class="fc" id="L390">							    false);</span>
+<span class="fc" id="L391">						    break;</span>
 						}
 				    }	
 				}
 	
-<span class="nc" id="L396">				float newAccountBalance = userWhoTryToSignOff</span>
-<span class="nc" id="L397">					.getAccountBalance() + money;</span>
-<span class="nc" id="L398">				UserDAO.updateAccountBalance(transaction,</span>
-<span class="nc" id="L399">					sessionUser.getUserID(), newAccountBalance);</span>
-<span class="nc" id="L400">				LogHandler.getInstance().debug(</span>
-<span class="nc" id="L401">			            &quot;Methode updateAccountBalance:&quot; + sessionUser.getUserID() </span>
-<span class="nc" id="L402">			            	+ &quot; was succesfull&quot;);</span>
+<span class="fc" id="L396">				float newAccountBalance = userWhoTryToSignOff</span>
+<span class="fc" id="L397">					.getAccountBalance() + money;</span>
+<span class="fc" id="L398">				UserDAO.updateAccountBalance(transaction,</span>
+<span class="fc" id="L399">					sessionUser.getUserID(), newAccountBalance);</span>
+<span class="fc" id="L400">				LogHandler.getInstance().debug(</span>
+<span class="fc" id="L401">			            &quot;Methode updateAccountBalance:&quot; + sessionUser.getUserID() </span>
+<span class="fc" id="L402">			            	+ &quot; was succesfull&quot;);</span>
 				
-<span class="nc" id="L404">				CourseDAO.removeUserFromCourse(transaction,</span>
-<span class="nc" id="L405">					sessionUser.getUserID(), courseID);</span>
-<span class="nc" id="L406">				LogHandler.getInstance().debug(</span>
-<span class="nc" id="L407">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID() </span>
-<span class="nc" id="L408">			            	+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L404">				CourseDAO.removeUserFromCourse(transaction,</span>
+<span class="fc" id="L405">					sessionUser.getUserID(), courseID);</span>
+<span class="fc" id="L406">				LogHandler.getInstance().debug(</span>
+<span class="fc" id="L407">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID() </span>
+<span class="fc" id="L408">			            	+&quot; was succesfull&quot;);</span>
 	
-<span class="nc" id="L410">		    } else {</span>
-<span class="nc" id="L411">				CourseDAO.removeUserFromCourse(transaction,</span>
-<span class="nc" id="L412">					sessionUser.getUserID(), courseID);</span>
-<span class="nc" id="L413">				LogHandler.getInstance().debug(</span>
-<span class="nc" id="L414">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID()</span>
-<span class="nc" id="L415">			            	+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L410">		    } else {</span>
+<span class="fc" id="L411">				CourseDAO.removeUserFromCourse(transaction,</span>
+<span class="fc" id="L412">					sessionUser.getUserID(), courseID);</span>
+<span class="fc" id="L413">				LogHandler.getInstance().debug(</span>
+<span class="fc" id="L414">			            &quot;Methode removeUserFromCourse:&quot; + sessionUser.getUserID()</span>
+<span class="fc" id="L415">			            	+&quot; was succesfull&quot;);</span>
 		    }
 	
 		    // if the User was in the InformUser List we have to Delete him there
-<span class="nc" id="L419">		    if (UserDAO.userWantsToBeInformed(transaction,</span>
-<span class="nc bnc" id="L420" title="All 2 branches missed.">			    sessionUser.getUserID(), courseID)) {</span>
+<span class="fc" id="L419">		    if (UserDAO.userWantsToBeInformed(transaction,</span>
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">			    sessionUser.getUserID(), courseID)) {</span>
 <span class="nc" id="L421">				CourseDAO.removeUserToInformUser(transaction,</span>
 <span class="nc" id="L422">					sessionUser.getUserID(), courseID);</span>
 <span class="nc" id="L423">				LogHandler.getInstance().debug(</span>
@@ -425,15 +425,15 @@ import de.ofCourse.system.Transaction;
 <span class="nc" id="L425">			            	+&quot; was succesfull&quot;);</span>
 		    }
 	
-<span class="nc" id="L428">		    transaction.commit();</span>
-<span class="nc" id="L429">		    isRegistered = false;</span>
+<span class="fc" id="L428">		    transaction.commit();</span>
+<span class="fc" id="L429">		    isRegistered = false;</span>
 		
-<span class="nc" id="L431">		} catch (InvalidDBTransferException e) {</span>
+<span class="pc" id="L431">		} catch (InvalidDBTransferException e) {</span>
 <span class="nc" id="L432">		    transaction.rollback();</span>
 <span class="nc" id="L433">		    throw new CourseRegistrationException(&quot;Error occured while trying to sign off from course&quot;);</span>
 		}
 
-<span class="nc" id="L436">    }</span>
+<span class="fc" id="L436">    }</span>
 
     /**
      * Finds all the CourseUnits from the specific Course the user is signed in
@@ -447,22 +447,22 @@ import de.ofCourse.system.Transaction;
 	
 		// This array stores the CourseUnitIDs which belong to the course the
 		// user wants to sign off
-<span class="nc" id="L450">		ArrayList&lt;CourseUnit&gt; courseUnitsOfThatCourse = new ArrayList&lt;CourseUnit&gt;();</span>
+<span class="fc" id="L450">		ArrayList&lt;CourseUnit&gt; courseUnitsOfThatCourse = new ArrayList&lt;CourseUnit&gt;();</span>
 	
 		// If the user has not signed up to any courseUnits the Methode returns
 		// a empty list
-<span class="nc bnc" id="L454" title="All 2 branches missed.">		if (!signedCourseUnits.isEmpty()) {</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">		if (!signedCourseUnits.isEmpty()) {</span>
 	
 		    // If the user is in no courseUnit which belongs to the course he
 		    // wants to leave the methode returns a empty list
-<span class="nc bnc" id="L458" title="All 2 branches missed.">		    for (int i = 0; i &lt; signedCourseUnits.size(); i++) {</span>
-<span class="nc bnc" id="L459" title="All 2 branches missed.">				if (signedCourseUnits.get(i).getCourseID() == courseID) {</span>
-<span class="nc" id="L460">				    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));</span>
+<span class="fc bfc" id="L458" title="All 2 branches covered.">		    for (int i = 0; i &lt; signedCourseUnits.size(); i++) {</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">				if (signedCourseUnits.get(i).getCourseID() == courseID) {</span>
+<span class="fc" id="L460">				    courseUnitsOfThatCourse.add(signedCourseUnits.get(i));</span>
 				}
 		    }
-<span class="nc" id="L463">		    return courseUnitsOfThatCourse;</span>
+<span class="fc" id="L463">		    return courseUnitsOfThatCourse;</span>
 		} else {
-<span class="nc" id="L465">		    return courseUnitsOfThatCourse;</span>
+<span class="fc" id="L465">		    return courseUnitsOfThatCourse;</span>
 		}
 
     }
@@ -492,67 +492,67 @@ import de.ofCourse.system.Transaction;
      */
     public void signUpForCourseUnits() throws CourseRegistrationException {
 	
-<span class="nc" id="L495">        transaction.start();</span>
-<span class="nc bnc" id="L496" title="All 2 branches missed.">		if (!UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)){</span>
+<span class="fc" id="L495">        transaction.start();</span>
+<span class="pc bpc" id="L496" title="1 of 2 branches missed.">		if (!UserDAO.userIsParticpant(transaction, sessionUser.getUserID(), courseID)){</span>
 <span class="nc" id="L497">		    signUpForCourse();</span>
 		}
 		
 		
-<span class="nc" id="L501">		transaction.start();	</span>
+<span class="fc" id="L501">		transaction.start();	</span>
 		//Gets the CourseUnitID from the faclet
-<span class="nc" id="L503">	    int courseUnitID = Integer.parseInt(FacesContext</span>
-<span class="nc" id="L504">		    .getCurrentInstance().getExternalContext()</span>
-<span class="nc" id="L505">		    .getRequestParameterMap().get(&quot;courseUnitID&quot;));</span>
+<span class="fc" id="L503">	    int courseUnitID = Integer.parseInt(FacesContext</span>
+<span class="fc" id="L504">		    .getCurrentInstance().getExternalContext()</span>
+<span class="fc" id="L505">		    .getRequestParameterMap().get(&quot;courseUnitID&quot;));</span>
 	    try {
 
-<span class="nc" id="L508">			CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(</span>
-<span class="nc" id="L509">				transaction, courseUnitID);</span>
-<span class="nc" id="L510">			LogHandler.getInstance().debug(&quot;Methode getCourseUnit:&quot; + courseUnitID </span>
-<span class="nc" id="L511">						+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L508">			CourseUnit courseUnitToSign = CourseUnitDAO.getCourseUnit(</span>
+<span class="fc" id="L509">				transaction, courseUnitID);</span>
+<span class="fc" id="L510">			LogHandler.getInstance().debug(&quot;Methode getCourseUnit:&quot; + courseUnitID </span>
+<span class="fc" id="L511">						+&quot; was succesfull&quot;);</span>
 			
-<span class="nc" id="L513">			User userWhoTryToSignUp = UserDAO.getUser(transaction,</span>
-<span class="nc" id="L514">				sessionUser.getUserID());</span>
-<span class="nc" id="L515">			LogHandler.getInstance().debug(&quot;Methode getUser:&quot; + sessionUser.getUserID()</span>
-<span class="nc" id="L516">					+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L513">			User userWhoTryToSignUp = UserDAO.getUser(transaction,</span>
+<span class="fc" id="L514">				sessionUser.getUserID());</span>
+<span class="fc" id="L515">			LogHandler.getInstance().debug(&quot;Methode getUser:&quot; + sessionUser.getUserID()</span>
+<span class="fc" id="L516">					+&quot; was succesfull&quot;);</span>
 			
-<span class="nc" id="L518">			int currentAmountOfParticipants = CourseUnitDAO</span>
-<span class="nc" id="L519">				.getNumberOfParticipants(transaction, courseUnitID);</span>
-<span class="nc" id="L520">			LogHandler.getInstance().debug(&quot;Methode getNumberOfParticipants of:&quot; + courseUnitID </span>
-<span class="nc" id="L521">					+&quot; was succesfull&quot;);</span>
+<span class="fc" id="L518">			int currentAmountOfParticipants = CourseUnitDAO</span>
+<span class="fc" id="L519">				.getNumberOfParticipants(transaction, courseUnitID);</span>
+<span class="fc" id="L520">			LogHandler.getInstance().debug(&quot;Methode getNumberOfParticipants of:&quot; + courseUnitID </span>
+<span class="fc" id="L521">					+&quot; was succesfull&quot;);</span>
 	
 			//Checks whether the CourseUnit is maxed out or not
-<span class="nc" id="L524">			if (courseUnitIsFull(courseUnitToSign,</span>
-<span class="nc bnc" id="L525" title="All 2 branches missed.">				currentAmountOfParticipants)) {</span>
+<span class="fc" id="L524">			if (courseUnitIsFull(courseUnitToSign,</span>
+<span class="pc bpc" id="L525" title="1 of 2 branches missed.">				currentAmountOfParticipants)) {</span>
 	
 			    // The methode calculates the new Amount of monez
-<span class="nc" id="L528">			    float newAccountBalance = signingUpForUser(</span>
-<span class="nc" id="L529">				    courseUnitToSign, userWhoTryToSignUp);</span>
+<span class="fc" id="L528">			    float newAccountBalance = signingUpForUser(</span>
+<span class="fc" id="L529">				    courseUnitToSign, userWhoTryToSignUp);</span>
 	
 			    // Updates the Account and signs up the User for the CourseUnit
-<span class="nc" id="L532">			    CourseUnitDAO.addUserToCourseUnit(transaction,</span>
-<span class="nc" id="L533">				    sessionUser.getUserID(), courseUnitID);</span>
-<span class="nc" id="L534">			    LogHandler.getInstance().debug(&quot;Methode addUserToCourseUnit, User:&quot; </span>
-<span class="nc" id="L535">				    + sessionUser.getUserID() +&quot; Course:&quot;+ courseUnitID +&quot; was succesfull&quot;);</span>
+<span class="fc" id="L532">			    CourseUnitDAO.addUserToCourseUnit(transaction,</span>
+<span class="fc" id="L533">				    sessionUser.getUserID(), courseUnitID);</span>
+<span class="fc" id="L534">			    LogHandler.getInstance().debug(&quot;Methode addUserToCourseUnit, User:&quot; </span>
+<span class="fc" id="L535">				    + sessionUser.getUserID() +&quot; Course:&quot;+ courseUnitID +&quot; was succesfull&quot;);</span>
 			    
-<span class="nc" id="L537">			    UserDAO.updateAccountBalance(transaction,</span>
-<span class="nc" id="L538">				    sessionUser.getUserID(), newAccountBalance);</span>
-<span class="nc" id="L539">			    LogHandler.getInstance().debug(&quot;Methode updateAccountBalance of:&quot; </span>
-<span class="nc" id="L540">				    + sessionUser.getUserID()  +&quot; was succesfull&quot;);</span>
+<span class="fc" id="L537">			    UserDAO.updateAccountBalance(transaction,</span>
+<span class="fc" id="L538">				    sessionUser.getUserID(), newAccountBalance);</span>
+<span class="fc" id="L539">			    LogHandler.getInstance().debug(&quot;Methode updateAccountBalance of:&quot; </span>
+<span class="fc" id="L540">				    + sessionUser.getUserID()  +&quot; was succesfull&quot;);</span>
 	
 			    //Refreshes the LoginButton
-<span class="nc bnc" id="L543" title="All 2 branches missed.">			    for (int i = 0; i &lt; courseUnitsOfCourse.size(); i++) {</span>
-<span class="nc bnc" id="L544" title="All 2 branches missed.">					if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {</span>
-<span class="nc" id="L545">					    courseUnitsOfCourse.get(i).setUserIsParticipant(</span>
-<span class="nc" id="L546">						    true);</span>
-<span class="nc" id="L547">					    break;</span>
+<span class="pc bpc" id="L543" title="1 of 2 branches missed.">			    for (int i = 0; i &lt; courseUnitsOfCourse.size(); i++) {</span>
+<span class="fc bfc" id="L544" title="All 2 branches covered.">					if (courseUnitsOfCourse.get(i).getCourseUnitID() == courseUnitID) {</span>
+<span class="fc" id="L545">					    courseUnitsOfCourse.get(i).setUserIsParticipant(</span>
+<span class="fc" id="L546">						    true);</span>
+<span class="fc" id="L547">					    break;</span>
 					}
 			    }
 	
-<span class="nc" id="L551">			    LogHandler.getInstance().debug(</span>
-<span class="nc" id="L552">				    &quot;User succesfully added to CourseUnit&quot;);</span>
+<span class="fc" id="L551">			    LogHandler.getInstance().debug(</span>
+<span class="fc" id="L552">				    &quot;User succesfully added to CourseUnit&quot;);</span>
 	
-<span class="nc" id="L554">			    transaction.commit();</span>
-<span class="nc" id="L555">			} else {</span>
+<span class="fc" id="L554">			    transaction.commit();</span>
+<span class="fc" id="L555">			} else {</span>
 
 <span class="nc" id="L557">			    transaction.rollback();</span>
 <span class="nc" id="L558">			    FacesMessageCreator.createFacesMessage(null, sessionUser</span>
@@ -578,7 +578,7 @@ import de.ofCourse.system.Transaction;
 		    
 		
 
-<span class="nc" id="L581">    }</span>
+<span class="fc" id="L581">    }</span>
 
     /**
      * Signs a user off from a course unit and returns the updated page.&lt;br&gt;
@@ -670,7 +670,7 @@ import de.ofCourse.system.Transaction;
     private boolean courseUnitIsFull(CourseUnit courseUnitToSign,
 	    int currentAmountOfParticipants) {
     	
-<span class="nc bnc" id="L673" title="All 2 branches missed.">    	return courseUnitToSign.getMaxUsers() &gt; currentAmountOfParticipants;</span>
+<span class="pc bpc" id="L673" title="1 of 2 branches missed.">    	return courseUnitToSign.getMaxUsers() &gt; currentAmountOfParticipants;</span>
     }
 
     /**
@@ -876,10 +876,10 @@ import de.ofCourse.system.Transaction;
     private float signingUpForUser(CourseUnit courseUnitToSign,
 	    User userWhoTryToSignUp) {
 		
-<span class="nc" id="L879">    	if (userWhoTryToSignUp.getAccountBalance() &gt;= courseUnitToSign</span>
-<span class="nc bnc" id="L880" title="All 2 branches missed.">			.getPrice()) {</span>
-<span class="nc" id="L881">		    return userWhoTryToSignUp.getAccountBalance()</span>
-<span class="nc" id="L882">			    - courseUnitToSign.getPrice();</span>
+<span class="fc" id="L879">    	if (userWhoTryToSignUp.getAccountBalance() &gt;= courseUnitToSign</span>
+<span class="pc bpc" id="L880" title="1 of 2 branches missed.">			.getPrice()) {</span>
+<span class="fc" id="L881">		    return userWhoTryToSignUp.getAccountBalance()</span>
+<span class="fc" id="L882">			    - courseUnitToSign.getPrice();</span>
 		} else {
 <span class="nc" id="L884">		    FacesMessageCreator.createFacesMessage(null, sessionUser.getLabel(&quot;errorMessage.courseRegistration.notEnoughMoney1&quot;)</span>
 <span class="nc" id="L885">                    + userWhoTryToSignUp.getUsername()</span>
@@ -970,18 +970,18 @@ import de.ofCourse.system.Transaction;
     public String addCourseLeader() {
 
 	// Create a new transaction object for the database connection.
-<span class="nc" id="L973">	transaction.start();</span>
+<span class="fc" id="L973">	transaction.start();</span>
 	try {
-<span class="nc" id="L975">	    if (CourseDAO.addLeaderToCourse(this.transaction,</span>
-<span class="nc bnc" id="L976" title="All 2 branches missed.">		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {</span>
+<span class="fc" id="L975">	    if (CourseDAO.addLeaderToCourse(this.transaction,</span>
+<span class="pc bpc" id="L976" title="1 of 2 branches missed.">		    this.leaderToAdd.getUserID(), this.course.getCourseID())) {</span>
 	        
-<span class="nc" id="L978">                this.transaction.commit();</span>
+<span class="fc" id="L978">                this.transaction.commit();</span>
 	        //FacesMessage: Add courseleader successful
-<span class="nc" id="L980">		FacesMessageCreator.createFacesMessage(</span>
-<span class="nc" id="L981">		        null,</span>
-<span class="nc" id="L982">		        sessionUser.getLabel(</span>
-<span class="nc" id="L983">	                      &quot;courseDetailBean.facesMessage.CourseLeaderAdd&quot;));</span>
-<span class="nc" id="L984">		return URL_COURSE_DETAIL_NEW + courseID;</span>
+<span class="fc" id="L980">		FacesMessageCreator.createFacesMessage(</span>
+<span class="fc" id="L981">		        null,</span>
+<span class="fc" id="L982">		        sessionUser.getLabel(</span>
+<span class="fc" id="L983">	                      &quot;courseDetailBean.facesMessage.CourseLeaderAdd&quot;));</span>
+<span class="fc" id="L984">		return URL_COURSE_DETAIL_NEW + courseID;</span>
 		
 	    }else{
 	        //FacesMessage: Add course leader failed

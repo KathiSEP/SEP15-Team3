@@ -68,7 +68,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 <span class="fc" id="L68">                    .getSource();</span>
 <span class="fc" id="L69">            Throwable thr = context.getException();</span>
 
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            while (thr != null) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            while (thr != null) {</span>
 <span class="fc bfc" id="L72" title="All 2 branches covered.">                if (thr instanceof java.lang.RuntimeException) {</span>
 <span class="fc" id="L73">                    thr = thr.getCause();</span>
 <span class="fc" id="L74">                    redirectToDefault();</span>
@@ -130,9 +130,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 <span class="fc" id="L130">             fc.addMessage( null , new FacesMessage(&quot;Dear User that shouldnt have happened&quot;) );</span>
 <span class="fc" id="L131">             nav.handleNavigation(fc, null , &quot;/facelets/ErrorPages/default.xthml?faces-redirect=true&quot; );</span>
 <span class="fc" id="L132">             fc.renderResponse();</span>
-<span class="pc" id="L133">          } finally {</span>
-<span class="pc" id="L134">             exceptionList.remove();</span>
-<span class="nc" id="L135">          }</span>
+<span class="fc" id="L133">          } finally {</span>
+<span class="fc" id="L134">             exceptionList.remove();</span>
+<span class="fc" id="L135">          }</span>
 <span class="fc" id="L136">    }</span>
     
 }
