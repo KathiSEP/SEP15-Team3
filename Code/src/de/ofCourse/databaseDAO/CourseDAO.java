@@ -442,7 +442,8 @@ public class CourseDAO {
 				    java.sql.Date date = new java.sql.Date(parsed.getTime());
 				    stmt.setDate(1, date);
 				} else {
-				    stmt.setString(1, searchString);
+					String search = "%" + searchString + "%";
+					stmt.setString(1, search);
 				}
 		    }
 	
