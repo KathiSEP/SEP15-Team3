@@ -125,7 +125,7 @@
 	                                    </div>
 	                                
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}: *</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.username')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="usernameRegister"
 	                                            value="#{userProfileBean.user.username}" 
 	                                            required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.Username')}">
@@ -206,7 +206,7 @@
 	                                    </div>
 	                                    
 	                                    <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}: *</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.mail')}:</span>
 	                                        <h:inputText class="form-control" style="width:340px;" id="emailRegister"
 	                                            value="#{userProfileBean.user.email}" 
 	                                            required="true" requiredMessage="#{sessionUser.getLabel('authenticate.validatorMessage.MailRequired')}">
@@ -215,7 +215,7 @@
 	                                    </div>
 	                                    
                                         <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.password')}: *</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.password')}:</span>
 	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordRegister"
 	                                            value="#{userProfileBean.password}" >
 	                                                <f:attribute name="confirmPassword" value="#{confirmPassword}" />
@@ -224,7 +224,7 @@
                                         </div>
                                         
                                         <div class="input-group" style="padding-top:5px;">
-	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.passwordConfirmation')}: *</span>
+	                                        <span class="input-group-addon" style="width:160px; text-align:right;">#{sessionUser.getLabel('profile.row.userData.passwordConfirmation')}:</span>
 	                                        <h:inputSecret class="form-control" style="width:340px;" id="passwordConfirmRegister"
 	                                            value="#{userProfileBean.confirmPassword}" binding="#{confirmPassword}">
 	                                        </h:inputSecret>
