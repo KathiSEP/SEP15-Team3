@@ -212,8 +212,6 @@ public class LeaderProfileBean implements Pagination {
      */
     @Override
     public void sortBySpecificColumn() {
-	// TODO Auto-generated method stub
-
     }
     
     /**
