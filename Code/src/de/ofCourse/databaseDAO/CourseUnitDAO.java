@@ -436,7 +436,7 @@ public class CourseUnitDAO {
 			.getInt("max_participants"));
 		requestedCourseUnit.setMinUsers(resultSet
 			.getInt("min_participants"));
-		requestedCourseUnit.setPrice(resultSet.getInt("fee"));
+		requestedCourseUnit.setPrice(resultSet.getFloat("fee"));
 		requestedCourseUnit.setTitle(resultSet.getString("title"));
 		
 		return requestedCourseUnit;
