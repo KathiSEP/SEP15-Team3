@@ -86,22 +86,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 
     /**
-     * 
-     */
-    private void redirectToCourseRegistration(Throwable thr) {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        NavigationHandler nav = fc.getApplication().getNavigationHandler();
-        try {
-           fc.addMessage(null, new FacesMessage("Dear User that shouldnt have happened") );
-           nav.handleNavigation(fc, null, "/facelets/ErrorPages/CourseRegistrationException.xthml?faces-redirect=true" );
-           fc.renderResponse();
-        } finally {
-           this.exceptionList.remove();
-        }
-    }
-
-
-    /**
      * Redirects to the 404 Error Page
      * 
      * @param exceptionList
@@ -110,8 +94,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
         FacesContext fc = FacesContext.getCurrentInstance();
         NavigationHandler nav = fc.getApplication().getNavigationHandler();
         
-           fc.addMessage( null, new FacesMessage("Dear User that shouldnt have happened") );
-           nav.handleNavigation(fc, null, "/facelets/ErrorPages/404.xthml?faces-redirect=true" );
+          
+           nav.handleNavigation(fc, null, "/facelets/ErrorPages/404.xthml" );
            fc.renderResponse();
         
         
@@ -126,13 +110,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
     private void redirectToDefault() {
         FacesContext fc = FacesContext.getCurrentInstance();
           NavigationHandler nav = fc.getApplication().getNavigationHandler();
-          try {
-             fc.addMessage( null , new FacesMessage("Dear User that shouldnt have happened") );
-             nav.handleNavigation(fc, null , "/facelets/ErrorPages/default.xthml?faces-redirect=true" );
-             fc.renderResponse();
-          } finally {
-             exceptionList.remove();
-          }
+          nav.handleNavigation(fc, null , "/facelets/ErrorPages/default.xthml" );
+          fc.renderResponse();
+          
     }
     
 }
