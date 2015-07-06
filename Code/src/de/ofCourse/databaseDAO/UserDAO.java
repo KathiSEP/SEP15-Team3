@@ -1409,25 +1409,20 @@ public class UserDAO {
 	Connection connection = (Connection) trans;
 	java.sql.Connection conn = connection.getConn();
 
-	String sql = "SELECT DISTINCT "
-	                                + "u.id, "
-	                                + "u.nickname, "
-	                                + "u.email, "
-	                                + "u.profile_image, "
-		+ "(SELECT EXISTS(SELECT * FROM inform_users "
-		               + "WHERE user_id = cP.participant_id "
-		               + "AND course_id = cP.course_id)) "
-		     + "AS courseNews "
-		     + "FROM course_participants cP, "
-		               + "users u, "
-		               + "inform_users iU "
-		+ "WHERE cP.course_id = ? AND u.id = cP.participant_id "
-		+ "ORDER BY %s %s LIMIT ? OFFSET ?;";
+	String sql = "SELECT DISTINCT users.id, users.nickname, users.email, users.profile_image, " +
+		"(SELECT EXISTS(SELECT * FROM inform_users, course_participants " +
+		"WHERE inform_users.user_id = course_participants.participant_id " +
+		"AND inform_users.course_id = course_participants.course_id)) AS courseNews " +
+		"FROM course_participants, users " +
+		"WHERE course_participants.course_id = ? " +
+		"AND users.id = course_participants.participant_id " +
+		"ORDER BY %s %s LIMIT ? OFFSET ?";
 
 	sql = String.format(sql, pagination.getSortColumn().toString(),
 		pagination.getSortDirection().toString());
 
 	try (PreparedStatement pS = conn.prepareStatement(sql)) {
+		
 	    pS.setInt(1, courseID);
 	    pS.setInt(2, pagination.getElementsPerPage());
 	    pS.setInt(
