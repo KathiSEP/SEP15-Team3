@@ -93,6 +93,7 @@
 					                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-1}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and (leaderProfileBean.pagination.numberOfPages== leaderProfileBean.pagination.currentPageNumber)}"
@@ -100,6 +101,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-4}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=3 and (leaderProfileBean.pagination.numberOfPages== leaderProfileBean.pagination.currentPageNumber)}"
@@ -107,6 +109,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-3}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and (leaderProfileBean.pagination.numberOfPages-1== leaderProfileBean.pagination.currentPageNumber)}"
@@ -114,6 +117,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-3}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.currentPageNumber>=2}"
@@ -121,6 +125,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-2}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                            	<li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
@@ -128,6 +133,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-1}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                            	<li><h:commandButton style="font-weight:bold;"
 					                                                    class="btn btn-primary"
@@ -135,6 +141,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                           		<li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=(leaderProfileBean.pagination.currentPageNumber+1)}"
@@ -142,6 +149,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+1}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                
 					                                                <li><h:commandButton class="btn btn-default"
@@ -150,6 +158,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+2}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and leaderProfileBean.pagination.currentPageNumber==1}"
@@ -157,6 +166,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+3}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=3 and leaderProfileBean.pagination.currentPageNumber==0}"
@@ -164,6 +174,7 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+3}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                                <li><h:commandButton class="btn btn-default"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and leaderProfileBean.pagination.currentPageNumber==0}"
@@ -171,12 +182,14 @@
 					                                                    action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+4}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                            	<li><h:commandButton class="btn btn-info"
 					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
 					                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{leaderProfileBean.goToSpecificPage}">
 					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
 					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+1}"/>
+                                                    					<f:param name="userID" value="#{leaderProfileBean.userID}"/>
 					                                                </h:commandButton></li>
 					                                        </ul>
 					                                    </div>

@@ -114,7 +114,7 @@ public class AccessPhaseListener implements PhaseListener {
      * Represents the url to the profile page of a course leader
      */
     private final static String URL_LEADER_PROFILE = 
-	    "/facelets/user/registeredUser/leaderProfile.xhtml";
+	    "/facelets/open/leaderProfile.xhtml";
     
     /**
      * Represents the url to the participants list page of a course
@@ -396,6 +396,7 @@ public class AccessPhaseListener implements PhaseListener {
 	listForAnonymousUsers.add(URL_HELP);
 	listForAnonymousUsers.add(URL_SEARCH);
 	listForAnonymousUsers.add(URL_COURSE_DETAIL);
+    listForAnonymousUsers.add(URL_LEADER_PROFILE);
 	return listForAnonymousUsers;
     }
        
@@ -411,7 +412,6 @@ public class AccessPhaseListener implements PhaseListener {
 	listForRegisteredUsers.add(URL_MY_COURSES);
 	listForRegisteredUsers.add(URL_PROFILE);
 	listForRegisteredUsers.add(URL_SCHEDULER);
-	listForRegisteredUsers.add(URL_LEADER_PROFILE);
 	listForRegisteredUsers.add(URL_PARTICIPANTS_LIST);
 	return listForRegisteredUsers;
     }   
