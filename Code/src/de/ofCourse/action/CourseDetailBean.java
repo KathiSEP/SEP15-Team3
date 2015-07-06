@@ -763,6 +763,11 @@ public class CourseDetailBean implements Pagination, Serializable {
     	try {
     	    courseUnitsOfCourse = CourseUnitDAO.getCourseUnitsFromCourse(
     	                                        transaction, courseID, pagination);
+    	    for (int i = 0; i < courseUnitsOfCourse.size(); i++) {
+                courseUnitsOfCourse.get(i).setUserIsParticipant(
+                            UserDAO.userIsParticipantInCourseUnit(transaction, sessionUser.getUserID(),
+                                                                    courseUnitsOfCourse.get(i).getCourseUnitID()));
+            }
     	    transaction.commit();
     	} catch (InvalidDBTransferException e) {
     	    LogHandler.getInstance().error("Error occured during fetching data for pagination.");
