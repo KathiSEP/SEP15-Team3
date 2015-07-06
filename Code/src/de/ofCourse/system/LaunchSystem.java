@@ -16,7 +16,6 @@ import javax.faces.bean.ManagedBean;
 
 
 import de.ofCourse.databaseGeneral.DatabaseTableCreator;
-import de.ofCourse.databaseGeneral.DatabaseTableDestroyer;
 import de.ofCourse.databaseGeneral.SetupAdmin;
 import de.ofCourse.utilities.PropertyManager;
 

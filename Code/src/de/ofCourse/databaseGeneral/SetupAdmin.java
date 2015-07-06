@@ -33,7 +33,7 @@ public class SetupAdmin {
 	
 	private static final String INIT_ADMIN =
 			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, " +
-			"form_of_addres, credit_balance, email_verification, " +
+			"form_of_address, credit_balance, email_verification, " +
 			"admin_verification, " +
 			"veri_string, role, status) VALUES (" +
 			"'admin1', 'bazinga@gmail.com', %s, %s, 'MR'::form_of_address, " +
