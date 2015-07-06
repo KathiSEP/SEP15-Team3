@@ -136,6 +136,7 @@ public class UserManagementBean {
 	        	int userID = UserDAO.getUserID(this.transaction,
 	        			user.getUsername());
 	        	
+	        	user.setUserId(userID);
 	        	List<User> activateUser = new ArrayList<User>();
 	        	activateUser.add(user);
 	        	
