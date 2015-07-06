@@ -263,12 +263,11 @@
                                         <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                     </h:commandButton>
                                 </h:column>
-                                       <f:facet name="footer">
-                                <h:panelGroup
-                                    rendered="#{courseDetailBean.pagination.numberOfPages>0}">
-                                    <div class="row" style="text-align: center;">
-                                        <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info"
+                                <f:facet name="footer">
+                                	<h:panelGroup rendered="#{courseDetailBean.pagination.numberOfPages > 0}">
+                                    	<div class="row" style="text-align: center;">
+                                        	<ul class="pagination">
+                                            	<li><h:commandButton class="btn btn-info"
                                                     rendered="#{courseDetailBean.pagination.currentPageNumber>=1}"
                                                     value="#{sessionUser.getLabel('pagination.back')}" action="#{courseDetailBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener target="#{courseDetailBean.currentPage}"
@@ -402,10 +401,10 @@
                                                                                     value="#{courseDetailBean.pagination.currentPageNumber+1}"/>
                                                 <f:param name="courseID" value="#{courseDetailBean.course.courseID}"/>
                                                 </h:commandButton></li>
-                                        </ul>
-                                    </div>
-                                </h:panelGroup>
-                            </f:facet>
+                                        	</ul>
+                                    	</div>
+                                	</h:panelGroup>
+                            	</f:facet>
                             </h:dataTable>
                         </div>
                     </div>
