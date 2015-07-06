@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
 import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.CourseUnitDAO;
+import de.ofCourse.databaseDAO.SystemDAO;
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.CourseRegistrationException;
 import de.ofCourse.exception.InvalidDBTransferException;
@@ -876,7 +877,7 @@ public class CourseDetailBean implements Pagination, Serializable {
     private float signingUpForUser(CourseUnit courseUnitToSign,
 	    User userWhoTryToSignUp) {
 		
-    	if (userWhoTryToSignUp.getAccountBalance() >= courseUnitToSign
+    	if ((userWhoTryToSignUp.getAccountBalance() + SystemDAO.getOverdraftCredit(transaction)) >= courseUnitToSign
 			.getPrice()) {
 		    return userWhoTryToSignUp.getAccountBalance()
 			    - courseUnitToSign.getPrice();
