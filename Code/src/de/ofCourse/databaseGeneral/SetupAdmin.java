@@ -33,9 +33,11 @@ public class SetupAdmin {
 	
 	private static final String INIT_ADMIN =
 			"INSERT INTO \"users\"(nickname, email, pw_hash, pw_salt, " +
-			"credit_balance, email_verification, admin_verification, " +
+			"form_of_addres, credit_balance, email_verification, " +
+			"admin_verification, " +
 			"veri_string, role, status) VALUES (" +
-			"'admin1', 'bazinga@gmail.com', %s, %s, 0, TRUE, " +
+			"'admin1', 'bazinga@gmail.com', %s, %s, 'MR'::form_of_address, " +
+			"0, TRUE, " +
 			"TRUE, 'veristring', 'SYSTEM_ADMINISTRATOR', 'REGISTERED')";
 	
 	private static final String CHECK_ATTRIBUTES = "SELECT COUNT(*) " +

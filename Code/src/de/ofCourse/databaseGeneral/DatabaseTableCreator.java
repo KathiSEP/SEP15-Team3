@@ -62,7 +62,7 @@ public class DatabaseTableCreator {
 				"pw_hash VARCHAR(256) NOT NULL," +
 				"pw_salt VARCHAR(256) NOT NULL," +
 				"date_of_birth DATE," +
-				"form_of_address FORM_OF_ADDRESS," +
+				"form_of_address FORM_OF_ADDRESS NOT NULL," +
 				"credit_balance DECIMAL(10, 2) NOT NULL," +
 				"email_verification BOOLEAN NOT NULL," +
 				"admin_verification BOOLEAN NOT NULL," +
@@ -221,7 +221,7 @@ public class DatabaseTableCreator {
     			count.next();
     			Long numTables = (Long) count.getObject(1);
     			
-    			if (numTables == 0) {
+    			if (numTables == 4) {
 					for (int i = 0; i < createStatements.size(); i++) {
 						Statement stmt = conn.createStatement();
 						stmt.execute(createStatements.get(i));
