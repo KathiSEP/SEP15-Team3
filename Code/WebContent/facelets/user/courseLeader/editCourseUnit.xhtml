@@ -3,547 +3,645 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <ui:composition template="/WEB-INF/template.xhtml">
-    <ui:define name="title">#{sessionUser.getLabel('createCourseUnit.title')}</ui:define>
-    <ui:define name="content">
-        <body>
-            <h:form rendered="#{!courseUnitManagementBean.editMode}">
-                <h1 id="headingCreatedUnit">#{sessionUser.getLabel('createCourseUnit.header')}</h1>
-            </h:form>
-            <h:form rendered="#{courseUnitManagementBean.editMode}">
-                <h1 id="headingEditUnit">#{sessionUser.getLabel('editCourseUnit.header')}</h1>
-            </h:form>
-            <div class="row">
-                <div class="col-lg-12">
-                    <h:message id="titleCourseUnitMessage" for="titleCourseUnit" style="color:red" />
-                    <h:message id="dateCourseUnitMessage" for="dateCourseUnit" style="color:red" />
-                    <h:message id="startTimeCourseUnitMessage" for="startTimeCourseUnit" style="color:red" />
-                    <h:message id="endTimeCourseUnitMessage" for="endTimeCourseUnit" style="color:red" />
-                    <h:message id="locationCourseUnitMessage" for="locationCourseUnit" style="color:red" />
-                    <h:message id="streetCourseUnitMessage" for="streetCourseUnit" style="color:red" />
-                    <h:message id="houseNumberCourseUnitMessage" for="houseNumberCourseUnit" style="color:red" />
-                    <h:message id="cityCourseUniMessage" for="cityCourseUnit" style="color:red" />
-                    <h:message id="zipcodeCourseUnitMessage" for="zipcodeCourseUnit" style="color:red" />
-                    <h:message id="descriptionCourseUnitMessage" for="descriptionCourseUnit" style="color:red" />
-                    <h:message id="priceCourseUnittMessage" for="priceCourseUnit" style="color:red" />
-                    <h:message id="leaderCourseUniMessage" for="leaderCourseUnit" style="color:red" />
-                    <h:message id="minUsersCourseUnitMessage" for="minUsersCourseUnit" style="color:red" />
-                    <h:message id="maxUsersCourseUnitMessage" for="maxUsersCourseUnit" style="color:red" />
-                    <h:message id="numberOfCourseUnitsMessage" for="numberOfCourseUnits" style="color:red" />
-                    <h:message for="idUser" style="color:red" />
-                    <h:message for="nameUser" style="color:red" />
-                    <h:message for="firstNameUser" style="color:red" />
-                    <h:message id="countryCourseUnitMessage" for="countryCourseUnit" style="color:red" />
-                    <h:messages id="globalMessages" globalOnly="true" layout="table"
-                        class="alert alert-danger" />
-                </div>
-            </div>
-            <div class="row" style="padding-top: 20px;">
-                <div class="col-lg-6">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <strong>#{sessionUser.getLabel('createCourseUnit.row.header')}</strong>
-                        </div>
-                        <div class="panel-body">
-                            <h:form class="form-horizontal" id="formCourseUnit">
+	<ui:define name="title">#{sessionUser.getLabel('createCourseUnit.title')}</ui:define>
+	<ui:define name="content">
+		<body>
+			<h:form rendered="#{!courseUnitManagementBean.editMode}">
+				<h1 id="headingCreatedUnit">#{sessionUser.getLabel('createCourseUnit.header')}</h1>
+			</h:form>
+			<h:form rendered="#{courseUnitManagementBean.editMode}">
+				<h1 id="headingEditUnit">#{sessionUser.getLabel('editCourseUnit.header')}</h1>
+			</h:form>
+			<div class="row">
+				<div class="col-lg-12">
+					<h:message id="titleCourseUnitMessage" for="titleCourseUnit"
+						style="color:red" />
+					<h:message id="dateCourseUnitMessage" for="dateCourseUnit"
+						style="color:red" />
+					<h:message id="startTimeCourseUnitMessage"
+						for="startTimeCourseUnit" style="color:red" />
+					<h:message id="endTimeCourseUnitMessage" for="endTimeCourseUnit"
+						style="color:red" />
+					<h:message id="locationCourseUnitMessage" for="locationCourseUnit"
+						style="color:red" />
+					<h:message id="streetCourseUnitMessage" for="streetCourseUnit"
+						style="color:red" />
+					<h:message id="houseNumberCourseUnitMessage"
+						for="houseNumberCourseUnit" style="color:red" />
+					<h:message id="cityCourseUniMessage" for="cityCourseUnit"
+						style="color:red" />
+					<h:message id="zipcodeCourseUnitMessage" for="zipcodeCourseUnit"
+						style="color:red" />
+					<h:message id="descriptionCourseUnitMessage"
+						for="descriptionCourseUnit" style="color:red" />
+					<h:message id="priceCourseUnittMessage" for="priceCourseUnit"
+						style="color:red" />
+					<h:message id="leaderCourseUniMessage" for="leaderCourseUnit"
+						style="color:red" />
+					<h:message id="minUsersCourseUnitMessage" for="minUsersCourseUnit"
+						style="color:red" />
+					<h:message id="maxUsersCourseUnitMessage" for="maxUsersCourseUnit"
+						style="color:red" />
+					<h:message id="numberOfCourseUnitsMessage"
+						for="numberOfCourseUnits" style="color:red" />
+					<h:message for="idUser" style="color:red" />
+					<h:message for="nameUser" style="color:red" />
+					<h:message for="firstNameUser" style="color:red" />
+					<h:message id="countryCourseUnitMessage" for="countryCourseUnit"
+						style="color:red" />
+					<h:messages id="globalMessages" globalOnly="true" layout="table"
+						class="alert alert-danger" />
+				</div>
+			</div>
+			<div class="row" style="padding-top: 20px;">
+				<div class="col-lg-6">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<strong>#{sessionUser.getLabel('createCourseUnit.row.header')}</strong>
+						</div>
+						<div class="panel-body">
+							<h:form class="form-horizontal" id="formCourseUnit">
 
-                                <div class="input-group">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.title')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="titleCourseUnit" required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.title')}"
-                                        value="#{courseUnitManagementBean.courseUnit.title}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.title')}">
-                                        <f:validateLength minimum="0" maximum="150" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.title')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="titleCourseUnit" required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.title')}"
+										value="#{courseUnitManagementBean.courseUnit.title}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.title')}">
+										<f:validateLength minimum="0" maximum="150" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.date')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="dateCourseUnit" value="#{courseUnitManagementBean.date}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.date')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.date')}">
-                                        <f:convertDateTime pattern="dd.MM.yyyy"
-                                            timeZone="Europe/Berlin" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.date')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="dateCourseUnit" value="#{courseUnitManagementBean.date}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.date')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.date')}">
+										<f:convertDateTime pattern="dd.MM.yyyy"
+											timeZone="Europe/Berlin" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.start')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="startTimeCourseUnit"
-                                        value="#{courseUnitManagementBean.start}" required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.start')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.start')}">
-                                        <f:convertDateTime pattern="HH:mm" type="time"
-                                            timeZone="Europe/Berlin" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.start')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="startTimeCourseUnit"
+										value="#{courseUnitManagementBean.start}" required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.start')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.start')}">
+										<f:convertDateTime pattern="HH:mm" type="time"
+											timeZone="Europe/Berlin" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.end')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="endTimeCourseUnit" value="#{courseUnitManagementBean.end}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.end')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.start')}">
-                                        <f:convertDateTime pattern="HH:mm" type="time"
-                                            timeZone="Europe/Berlin" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.end')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="endTimeCourseUnit" value="#{courseUnitManagementBean.end}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.end')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.start')}">
+										<f:convertDateTime pattern="HH:mm" type="time"
+											timeZone="Europe/Berlin" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.location')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="locationCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.address.location}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.location')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.location')}">
-                                        <f:validateLength minimum="1" maximum="100" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.location')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="locationCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.address.location}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.location')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.location')}">
+										<f:validateLength minimum="1" maximum="100" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.street')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="streetCourseUnit" required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.street')}"
-                                        value="#{courseUnitManagementBean.courseUnit.address.street}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.street')}">
-                                        <f:validateLength minimum="0" maximum="100" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.street')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="streetCourseUnit" required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.street')}"
+										value="#{courseUnitManagementBean.courseUnit.address.street}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.street')}">
+										<f:validateLength minimum="0" maximum="100" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.houseNumber')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="houseNumberCourseUnit" required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.houseNumber')}"
-                                        value="#{courseUnitManagementBean.courseUnit.address.houseNumber}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.houseNumber')}">
-                                        <f:validateLongRange minimum="1" maximum="1000000000"/>
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.houseNumber')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="houseNumberCourseUnit" required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.houseNumber')}"
+										value="#{courseUnitManagementBean.courseUnit.address.houseNumber}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.houseNumber')}">
+										<f:validateLongRange minimum="1" maximum="1000000000" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.city')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="cityCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.address.city}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.city')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.city')}">
-                                        <f:validateLength minimum="1" maximum="100" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.city')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="cityCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.address.city}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.city')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.city')}">
+										<f:validateLength minimum="1" maximum="100" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.zipcode')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="zipcodeCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.address.zipCode}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.zipCode')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.zipCode')}">
-                                        <f:validateLongRange minimum="1" maximum="1000000000"/>
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.zipcode')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="zipcodeCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.address.zipCode}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.zipCode')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.zipCode')}">
+										<f:validateLongRange minimum="1" maximum="1000000000" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.country')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="countryCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.address.country}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.country')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.city')}">
-                                        <f:validateLength minimum="1" maximum="100" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.country')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="countryCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.address.country}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.country')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.city')}">
+										<f:validateLength minimum="1" maximum="100" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.description')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="descriptionCourseUnit" required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.description')}"
-                                        value="#{courseUnitManagementBean.courseUnit.description}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.description')}">
-                                        <f:validateLength minimum="0" maximum="1000" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.description')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="descriptionCourseUnit" required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.description')}"
+										value="#{courseUnitManagementBean.courseUnit.description}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.description')}">
+										<f:validateLength minimum="0" maximum="1000" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                  <h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.price')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="priceCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.price}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.price')}"
-                                        converterMessage="#{sessionUser.getLabel('converterMessage.money')}">
-                                        <f:validator validatorId="priceValidator" />
-                                    </h:inputText>
-                                   </h:panelGroup>
-                                </div>
-   
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.leader')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="leaderCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.courseAdmin.userID}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.idLeader')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.idLeader')}">
-                                        <f:convertNumber integerOnly="true" pattern="#####"/>
-                                        <f:validator validatorId="courseInstructorValidator" />
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.price')}:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="priceCourseUnit"
+											value="#{courseUnitManagementBean.courseUnit.price}"
+											required="true"
+											requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.price')}"
+											converterMessage="#{sessionUser.getLabel('converterMessage.money')}">
+											<f:validator validatorId="priceValidator" />
+										</h:inputText>
+									</h:panelGroup>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.minParticipants')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="minUsersCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.minUsers}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.minUsers')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.minUsers')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.minUsers')}">
-                                        <f:validateLongRange minimum="1" maximum="999"/>
-                                        <f:attribute name="maxUsersCourseUnit" value="#{maxUsersCourseUnit}"/>
-                                        <f:validator validatorId="minMaxValidator"/> 
-                                     </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.leader')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="leaderCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.courseAdmin.userID}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.idLeader')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.idLeader')}">
+										<f:convertNumber integerOnly="true" pattern="#####" />
+										<f:validator validatorId="courseInstructorValidator" />
+									</h:inputText>
+								</div>
 
-                                <div class="input-group" style="padding-top: 5px;">
-                                    <span class="input-group-addon"
-                                        style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.maxParticipants')}:</span>
-                                    <h:inputText class="form-control" style="width:300px;"
-                                        id="maxUsersCourseUnit"
-                                        value="#{courseUnitManagementBean.courseUnit.maxUsers}"
-                                        required="true"
-                                        requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.maxUsers')}"
-                                        converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.maxUsers')}"
-                                        validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.maxUsers')}"
-                                        binding="#{maxUsersCourseUnit}">
-                                        <f:validateLongRange minimum="1" maximum="999"/>
-                                    </h:inputText>
-                                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.minParticipants')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="minUsersCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.minUsers}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.minUsers')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.minUsers')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.minUsers')}">
+										<f:validateLongRange minimum="1" maximum="999" />
+										<f:attribute name="maxUsersCourseUnit"
+											value="#{maxUsersCourseUnit}" />
+										<f:validator validatorId="minMaxValidator" />
+									</h:inputText>
+								</div>
 
-                                <br />
-                                <br />
-                                <h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
-                                    <div class="checkbox">
-                                        <label> <h:selectBooleanCheckbox id="cycleCheckBox"
-                                                value="#{courseUnitManagementBean.regularCourseUnit}" />
-                                            #{sessionUser.getLabel('createCourseUnit.table.cycleCheckbox')}
-                                        </label>
-                                    </div>
-                                    <br />
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.cycle')}:</span>
-                                        <h:selectOneMenu class="form-control" id="turnusCourseUnit"
-                                            value="#{courseUnitManagementBean.enteredTurnus}">
-                                            <f:selectItem itemValue="DAYS" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.daily')}" />
-                                            <f:selectItem itemValue="WEEKS" itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.weekly')}" />
-                                        </h:selectOneMenu>
-                                    </div>
-                                    <div class="input-group" style="padding-top: 5px;">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.numUnits')}:</span>
-                                        <h:inputText class="form-control" style="width:300px;"
-                                            id="numberOfCourseUnits"
-                                            value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
-                                            converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.numberOfUnits')}"
-                                            validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.numberOfUnits')}">
-                                           <f:validateLongRange minimum="0" maximum="999"/>
-                                        </h:inputText>
-                                    </div>
-                                </h:panelGroup>
-                                <br />
-                                <br />
-                                <h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.notification')}:</span>
-                                        <h:selectOneMenu class="form-control" id="messageCourseUnit"
-                                            width="100%"
-                                            value="#{courseUnitManagementBean.selectedToInform}">
-                                            <f:selectItem itemValue="0" itemLabel="#{sessionUser.getLabel('editCourseUnit.nobody')}" />
-                                            <f:selectItem itemValue="1"
-                                                itemLabel="#{sessionUser.getLabel('editCourseUnit.participants')}" />
-                                        </h:selectOneMenu>
-                                    </div>
-                                </h:panelGroup>
-                                <br />
-                                <br />
-                                <h:commandButton id="createCourseUnit"
-                                    rendered="#{!courseUnitManagementBean.editMode}"
-                                    action="#{courseUnitManagementBean.createCourseUnit}"
-                                    class="btn btn-info" value="#{sessionUser.getLabel('createCourseUnit.table.createButton')}">
-                                    <f:param name="courseID"
-                                        value="#{courseUnitManagementBean.courseUnit.courseID}" />
-                                </h:commandButton>
-                                <h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
-                                    <div class="input-group" style="padding-top: 5px;">
-                                        <div class="checkbox">
-                                            <h:panelGroup
-                                                rendered="#{!(courseUnitManagementBean.courseUnit.cycle.cycleID==0)}">
-                                                <label> <h:selectBooleanCheckbox id="completeCycle"
-                                                        value="#{courseUnitManagementBean.completeCycle}" /> 
-                                                        #{sessionUser.getLabel('createCourseUnit.cycle.checkCox')}
-                                                </label>
-                                            </h:panelGroup>
-                                        </div>
-                                    </div>
-                                    <br />
-                                    <h:commandButton id="saveCourseUnit"
-                                        action="#{courseUnitManagementBean.saveCourseUnit}"
-                                        class="btn btn-info" value="#{sessionUser.getLabel('editCourseUnit.saveButton')}">
-                                        <f:param name="courseID"
-                                            value="#{courseUnitManagementBean.courseUnit.courseID}" />
-                                    </h:commandButton>
-                                    <h:commandButton id="deleteCourseUnit"
-                                        action="#{courseUnitManagementBean.deleteCourseUnit}"
-                                        class="btn btn-info pull-right" value="#{sessionUser.getLabel('editCourseUnit.deleteButton')}"
-                                        onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.unit')}')) return false">
-                                        <f:param name="courseID"
-                                            value="#{courseUnitManagementBean.courseUnit.courseID}" />
-                                    </h:commandButton>
-                                    
-                                </h:panelGroup>
-                              <br/>
-                                 <br/>
-                            <h:commandButton value="#{sessionUser.getLabel('courseUnitManagementBean.BackButton')}" class="btn btn-info pull-right" 
-                                             immediate="true" action="#{courseUnitManagementBean.redirectToCourseDetails}">
-                             <f:param name="courseID"
-                                        value="#{courseUnitManagementBean.courseUnit.courseID}" /> 
-                            </h:commandButton>
-                            </h:form>
-                            </div>
-                         
-                    </div>
-                </div>
+								<div class="input-group" style="padding-top: 5px;">
+									<span class="input-group-addon"
+										style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.maxParticipants')}:</span>
+									<h:inputText class="form-control" style="width:300px;"
+										id="maxUsersCourseUnit"
+										value="#{courseUnitManagementBean.courseUnit.maxUsers}"
+										required="true"
+										requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.maxUsers')}"
+										converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.maxUsers')}"
+										validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.maxUsers')}"
+										binding="#{maxUsersCourseUnit}">
+										<f:validateLongRange minimum="1" maximum="999" />
+									</h:inputText>
+								</div>
 
-                <div class="col-lg-6">
-                    <h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">#{sessionUser.getLabel('editCourseUnit.row.participants.header')}</h3>
-                            </div>
-                            <div class="panel-body">
-                                <h:form
-                                    rendered="#{courseUnitManagementBean.participants.getRowCount()>0}"
-                                    class="form-horizontal" id="formParticipants">
-                                    <h:dataTable id="participantsTable"
-                                        value="#{courseUnitManagementBean.participants}" var="user"
-                                        class=" table table-hover" cellspacing="0" width="100%">
-                                        <h:column>
-                                            <f:facet name="header">
+								<br />
+								<br />
+								<h:panelGroup rendered="#{!courseUnitManagementBean.editMode}">
+									<div class="checkbox">
+										<label> <h:selectBooleanCheckbox id="cycleCheckBox"
+												value="#{courseUnitManagementBean.regularCourseUnit}" />
+											#{sessionUser.getLabel('createCourseUnit.table.cycleCheckbox')}
+										</label>
+									</div>
+									<br />
+									<div class="input-group">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.cycle')}:</span>
+										<h:selectOneMenu class="form-control" id="turnusCourseUnit"
+											value="#{courseUnitManagementBean.enteredTurnus}">
+											<f:selectItem itemValue="DAYS"
+												itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.daily')}" />
+											<f:selectItem itemValue="WEEKS"
+												itemLabel="#{sessionUser.getLabel('createCourseUnit.table.cycle.weekly')}" />
+										</h:selectOneMenu>
+									</div>
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourseUnit.table.numUnits')}:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="numberOfCourseUnits"
+											value="#{courseUnitManagementBean.courseUnit.cycle.numberOfUnits}"
+											converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.numberOfUnits')}"
+											validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.numberOfUnits')}">
+											<f:validateLongRange minimum="0" maximum="999" />
+										</h:inputText>
+									</div>
+								</h:panelGroup>
+								<br />
+								<br />
+								<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+									<div class="input-group">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.notification')}:</span>
+										<h:selectOneMenu class="form-control" id="messageCourseUnit"
+											width="100%"
+											value="#{courseUnitManagementBean.selectedToInform}">
+											<f:selectItem itemValue="0"
+												itemLabel="#{sessionUser.getLabel('editCourseUnit.nobody')}" />
+											<f:selectItem itemValue="1"
+												itemLabel="#{sessionUser.getLabel('editCourseUnit.participants')}" />
+										</h:selectOneMenu>
+									</div>
+								</h:panelGroup>
+								<br />
+								<br />
+								<h:commandButton id="createCourseUnit"
+									rendered="#{!courseUnitManagementBean.editMode}"
+									action="#{courseUnitManagementBean.createCourseUnit}"
+									class="btn btn-info"
+									value="#{sessionUser.getLabel('createCourseUnit.table.createButton')}">
+									<f:param name="courseID"
+										value="#{courseUnitManagementBean.courseUnit.courseID}" />
+								</h:commandButton>
+								<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+									<div class="input-group" style="padding-top: 5px;">
+										<div class="checkbox">
+											<h:panelGroup
+												rendered="#{!(courseUnitManagementBean.courseUnit.cycle.cycleID==0)}">
+												<label> <h:selectBooleanCheckbox id="completeCycle"
+														value="#{courseUnitManagementBean.completeCycle}" />
+													#{sessionUser.getLabel('createCourseUnit.cycle.checkCox')}
+												</label>
+											</h:panelGroup>
+										</div>
+									</div>
+									<br />
+									<h:commandButton id="saveCourseUnit"
+										action="#{courseUnitManagementBean.saveCourseUnit}"
+										class="btn btn-info"
+										value="#{sessionUser.getLabel('editCourseUnit.saveButton')}">
+										<f:param name="courseID"
+											value="#{courseUnitManagementBean.courseUnit.courseID}" />
+									</h:commandButton>
+									<h:commandButton id="deleteCourseUnit"
+										action="#{courseUnitManagementBean.deleteCourseUnit}"
+										class="btn btn-info pull-right"
+										value="#{sessionUser.getLabel('editCourseUnit.deleteButton')}"
+										onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.unit')}')) return false">
+										<f:param name="courseID"
+											value="#{courseUnitManagementBean.courseUnit.courseID}" />
+									</h:commandButton>
+
+								</h:panelGroup>
+								<br />
+								<br />
+								<h:commandButton
+									value="#{sessionUser.getLabel('courseUnitManagementBean.BackButton')}"
+									class="btn btn-info pull-right" immediate="true"
+									action="#{courseUnitManagementBean.redirectToCourseDetails}">
+									<f:param name="courseID"
+										value="#{courseUnitManagementBean.courseUnit.courseID}" />
+								</h:commandButton>
+							</h:form>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-lg-6">
+					<h:panelGroup rendered="#{courseUnitManagementBean.editMode}">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">#{sessionUser.getLabel('editCourseUnit.row.participants.header')}</h3>
+							</div>
+							<div class="panel-body">
+								<h:form
+									rendered="#{courseUnitManagementBean.participants.getRowCount()>0}"
+									class="form-horizontal" id="formParticipants">
+									<h:dataTable id="participantsTable"
+										value="#{courseUnitManagementBean.participants}" var="user"
+										class=" table table-hover" cellspacing="0" width="100%">
+										<h:column>
+											<f:facet name="header">
                                               #{sessionUser.getLabel('editCourseUnit.row.participants.picture')}
                                             </f:facet>
-                                            <h:graphicImage value="/image?profilImage=#{user.userID}"
-                                                height="25" />
+											<h:graphicImage value="/image?profilImage=#{user.userID}"
+												height="25" />
 
-                                        </h:column>
-                                        <h:column>
-                                            <f:facet name="header">
-                                                <h:commandLink
-                                                    action="#{courseUnitManagementBean.sortBySpecificColumn()}"
-                                                    styleClass="theader">
-                                                    <f:setPropertyActionListener
-                                                        target="#{courseUnitManagementBean.orderParam}" value="id" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}" value="id" />
                                                 #{sessionUser.getLabel('editCourseUnit.row.addUser.userID')}
                                             </h:commandLink>
-                                            </f:facet>
-                                            <h:outputText value="#{user.userID}" />
-                                        </h:column>
-                                        <h:column>
-                                            <f:facet name="header">
-                                                <h:commandLink
-                                                    action="#{courseUnitManagementBean.sortBySpecificColumn()}"
-                                                    styleClass="theader">
-                                                    <f:setPropertyActionListener
-                                                        target="#{courseUnitManagementBean.orderParam}"
-                                                        value="nickname" />
+											</f:facet>
+											<h:outputText value="#{user.userID}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="nickname" />
                                                 #{sessionUser.getLabel('editCourseUnit.row.addUser.username')}
                                             </h:commandLink>
-                                            </f:facet>
-                                            <h:outputText value="#{user.username}" />
-                                        </h:column>
-                                        <h:column>
-                                            <f:facet name="header">
-                                                <h:commandLink
-                                                    action="#{courseUnitManagementBean.sortBySpecificColumn()}"
-                                                    styleClass="theader">
-                                                    <f:setPropertyActionListener
-                                                        target="#{courseUnitManagementBean.orderParam}"
-                                                        value="name" />
+											</f:facet>
+											<h:outputText value="#{user.username}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="name" />
                                                 #{sessionUser.getLabel('editCourseUnit.row.addUser.name')}
                                             </h:commandLink>
-                                            </f:facet>
-                                            <h:outputText value="#{user.lastname}" />
-                                        </h:column>
-                                        <h:column>
-                                            <f:facet name="header">
-                                                <h:commandLink
-                                                    action="#{courseUnitManagementBean.sortBySpecificColumn()}"
-                                                    styleClass="theader">
-                                                    <f:setPropertyActionListener
-                                                        target="#{courseUnitManagementBean.orderParam}"
-                                                        value="first_name" />
+											</f:facet>
+											<h:outputText value="#{user.lastname}" />
+										</h:column>
+										<h:column>
+											<f:facet name="header">
+												<h:commandLink
+													action="#{courseUnitManagementBean.sortBySpecificColumn()}"
+													styleClass="theader">
+													<f:setPropertyActionListener
+														target="#{courseUnitManagementBean.orderParam}"
+														value="first_name" />
                                                 #{sessionUser.getLabel('editCourseUnit.row.addUser.prename')}
                                             </h:commandLink>
-                                            </f:facet>
-                                            <h:outputText value="#{user.firstname}" />
-                                        </h:column>
+											</f:facet>
+											<h:outputText value="#{user.firstname}" />
+										</h:column>
 
-                                        <h:column>
-                                            <f:facet name="header">
+										<h:column>
+											<f:facet name="header">
                                         #{sessionUser.getLabel('editCourseUnit.row.addUser.select')}
                                         </f:facet>
-                                            <h:selectBooleanCheckbox id="checked"
-                                                value="#{user.selected}" />
-                                        </h:column>
-                                        <f:facet name="footer">
-                                            <h:panelGroup
-                                                rendered="#{courseUnitManagementBean.pagination.numberOfPages>0}">
-                                                <div class="row" style="text-align: center;">
-                                                    <ul class="pagination">
-                                                        <li><h:commandButton class="btn btn-info"
-                                                                rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
-                                                                value=" #{sessionUser.getLabel('pagination.back')}" 
-                                                                action="#{courseUnitManagementBean.goToSpecificPage}">
-                                                                <f:setPropertyActionListener
-                                                                    target="#{courseUnitManagementBean.currentPage}"
-                                                                    value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
-                                                            </h:commandButton></li>
-                                                        <li><h:commandButton class="btn btn-default"
-                                                                rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
-                                                                value="#{courseUnitManagementBean.pagination.currentPageNumber}"
-                                                                action="#{courseUnitManagementBean.goToSpecificPage}">
-                                                                <f:setPropertyActionListener
-                                                                    target="#{courseUnitManagementBean.currentPage}"
-                                                                    value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
-                                                            </h:commandButton></li>
-                                                        <li><h:commandButton style="font-weight:bold;"
-                                                                class="btn btn-primary"
-                                                                value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
-                                                                action="#{courseUnitManagementBean.goToSpecificPage}">
-                                                                <f:setPropertyActionListener
-                                                                    target="#{courseUnitManagementBean.currentPage}"
-                                                                    value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
-                                                            </h:commandButton></li>
-                                                        <li><h:commandButton class="btn btn-default"
-                                                                rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
-                                                                value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
-                                                                action="#{courseUnitManagementBean.goToSpecificPage}">
-                                                                <f:setPropertyActionListener
-                                                                    target="#{courseUnitManagementBean.currentPage}"
-                                                                    value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
-                                                            </h:commandButton></li>
-                                                        <li><h:commandButton class="btn btn-info"
-                                                                rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
-                                                                value=" #{sessionUser.getLabel('pagination.forward')}" 
-                                                                action="#{courseUnitManagementBean.goToSpecificPage}">
-                                                                <f:setPropertyActionListener
-                                                                    target="#{courseUnitManagementBean.currentPage}"
-                                                                    value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
-                                                            </h:commandButton></li>
-                                                    </ul>
-                                                </div>
-                                            </h:panelGroup>
-                                        </f:facet>
-                                    </h:dataTable>
-                                    <br />
-                                    <br />
-                                    <h:commandButton value="#{sessionUser.getLabel('editCourseUnit.row.addUser.deleteSelected')}"
-                                        class="btn btn-info pull-right"
-                                        actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}"
-                                        onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.participant')}')) return false" />
-                                </h:form>
-                                <h:form
-                                    rendered="#{courseUnitManagementBean.participants.getRowCount()==0}"
-                                    class="alert alert-warning">
-                                    <strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong> #{sessionUser.getLabel('editCourseUnit.row.addUser.infoText')}
+											<h:selectBooleanCheckbox id="checked"
+												value="#{user.selected}" />
+										</h:column>
+										<f:facet name="footer">
+											<h:panelGroup
+												rendered="#{courseUnitManagementBean.pagination.numberOfPages>0}">
+												<div class="row" style="text-align: center;">
+													<ul class="pagination">
+														<li><h:commandButton class="btn btn-info"
+																rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
+																value=" #{sessionUser.getLabel('pagination.back')}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
+															</h:commandButton></li>
+
+
+														<!-- Für die Form -->
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and (courseUnitManagementBean.pagination.numberOfPages== courseUnitManagementBean.pagination.currentPageNumber)}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber-3}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber-4}" />
+															</h:commandButton></li>
+
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=3 and (courseUnitManagementBean.pagination.numberOfPages== courseUnitManagementBean.pagination.currentPageNumber)}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber-2}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber-3}" />
+															</h:commandButton></li>
+
+
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and (courseUnitManagementBean.pagination.numberOfPages-1== courseUnitManagementBean.pagination.currentPageNumber)}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber-2}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber-3}" />
+															</h:commandButton></li>
+
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
+															</h:commandButton></li>
+														<li><h:commandButton style="font-weight:bold;"
+																class="btn btn-primary"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber +1}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber}" />
+															</h:commandButton></li>
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber+2}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
+															</h:commandButton></li>
+
+														<!-- Für die Form -->
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and courseUnitManagementBean.pagination.currentPageNumber==1}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber+4}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber+3}" />
+															</h:commandButton></li>
+
+
+
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=3 and courseUnitManagementBean.pagination.currentPageNumber==0}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber+4}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber+3}" />
+															</h:commandButton></li>
+
+														<li><h:commandButton class="btn btn-default"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and courseUnitManagementBean.pagination.currentPageNumber==0}"
+																value="#{courseUnitManagementBean.pagination.currentPageNumber+5}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber+4}" />
+															</h:commandButton></li>
+
+
+
+
+														<li><h:commandButton class="btn btn-info"
+																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
+																value=" #{sessionUser.getLabel('pagination.forward')}"
+																action="#{courseUnitManagementBean.goToSpecificPage}">
+																<f:setPropertyActionListener
+																	target="#{courseUnitManagementBean.currentPage}"
+																	value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
+															</h:commandButton></li>
+													</ul>
+												</div>
+											</h:panelGroup>
+										</f:facet>
+									</h:dataTable>
+									<br />
+									<br />
+									<h:commandButton
+										value="#{sessionUser.getLabel('editCourseUnit.row.addUser.deleteSelected')}"
+										class="btn btn-info pull-right"
+										actionListener="#{courseUnitManagementBean.deleteUsersFromCourseUnit}"
+										onclick="if (!confirm('#{sessionUser.getLabel('courseUnitManagement.popUpDelete.participant')}')) return false" />
+								</h:form>
+								<h:form
+									rendered="#{courseUnitManagementBean.participants.getRowCount()==0}"
+									class="alert alert-warning">
+									<strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong> #{sessionUser.getLabel('editCourseUnit.row.addUser.infoText')}
                 </h:form>
-                            </div>
-                        </div>
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">#{sessionUser.getLabel('editCourseUnit.row.addUser.addUserButton')}</h3>
-                            </div>
-                            <div class="panel-body">
-                                <h:form class="form-horizontal" id="formUserToAddCourseUnit">
+							</div>
+						</div>
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">#{sessionUser.getLabel('editCourseUnit.row.addUser.addUserButton')}</h3>
+							</div>
+							<div class="panel-body">
+								<h:form class="form-horizontal" id="formUserToAddCourseUnit">
 
-                                    <div class="input-group" style="padding-top: 5px;">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.userID')}:</span>
-                                        <h:inputText class="form-control" style="width:300px;"
-                                            id="idUser"
-                                            value="#{courseUnitManagementBean.userToAdd.userID}"
-                                            required="true"
-                                            requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.addId')}"
-                                            converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.addId')}">
-                                            <f:convertNumber integerOnly="true" />
-                                            <f:validator validatorId="userExistsValidator" />
-                                        </h:inputText>
-                                    </div>
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.userID')}:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="idUser"
+											value="#{courseUnitManagementBean.userToAdd.userID}"
+											required="true"
+											requiredMessage="#{sessionUser.getLabel('editCourseUnit.requiredMessage.addId')}"
+											converterMessage="#{sessionUser.getLabel('editCourseUnit.converterMessage.addId')}">
+											<f:convertNumber integerOnly="true" />
+											<f:validator validatorId="userExistsValidator" />
+										</h:inputText>
+									</div>
 
-                                    <div class="input-group" style="padding-top: 5px;">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.name')}:</span>
-                                        <h:inputText class="form-control" style="width:300px;"
-                                            id="nameUser"
-                                            value="#{courseUnitManagementBean.userToAdd.lastname}"
-                                            validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.addLastName')}">
-                                            <f:validateLength minimum="0" maximum="100" />
-                                        </h:inputText>
-                                    </div>
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.name')}:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="nameUser"
+											value="#{courseUnitManagementBean.userToAdd.lastname}"
+											validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.addLastName')}">
+											<f:validateLength minimum="0" maximum="100" />
+										</h:inputText>
+									</div>
 
-                                    <div class="input-group" style="padding-top: 5px;">
-                                        <span class="input-group-addon"
-                                            style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.prename')}:</span>
-                                        <h:inputText class="form-control" style="width:300px;"
-                                            id="firstNameUser"
-                                            value="#{courseUnitManagementBean.userToAdd.firstname}"
-                                            validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.addFirstName')}">
-                                            <f:validateLength minimum="0" maximum="100" />
-                                        </h:inputText>
-                                    </div>
-                                    <br />
-                                    <br />
-                                    <h:commandButton id="addUserCourseUnit"
-                                        action="#{courseUnitManagementBean.addUserToCourseUnit}"
-                                        class="btn btn-info pull-right" value="#{sessionUser.getLabel('editCourseUnit.row.addUser.addUserButton')}" />
-                                        <h:message id="userAddedMessage" for="addUserCourseUnit" style="color:green" />
-                                </h:form>
-                            </div>
-                        </div>
-                    </h:panelGroup>
-                </div>
-            </div>
-        </body>
-    </ui:define>
+									<div class="input-group" style="padding-top: 5px;">
+										<span class="input-group-addon"
+											style="width: 160px; text-align: right;">#{sessionUser.getLabel('editCourseUnit.row.addUser.prename')}:</span>
+										<h:inputText class="form-control" style="width:300px;"
+											id="firstNameUser"
+											value="#{courseUnitManagementBean.userToAdd.firstname}"
+											validatorMessage="#{sessionUser.getLabel('editCourseUnit.validatorMessage.addFirstName')}">
+											<f:validateLength minimum="0" maximum="100" />
+										</h:inputText>
+									</div>
+									<br />
+									<br />
+									<h:commandButton id="addUserCourseUnit"
+										action="#{courseUnitManagementBean.addUserToCourseUnit}"
+										class="btn btn-info pull-right"
+										value="#{sessionUser.getLabel('editCourseUnit.row.addUser.addUserButton')}" />
+									<h:message id="userAddedMessage" for="addUserCourseUnit"
+										style="color:green" />
+								</h:form>
+							</div>
+						</div>
+					</h:panelGroup>
+				</div>
+			</div>
+		</body>
+	</ui:define>
 </ui:composition>
 </html>

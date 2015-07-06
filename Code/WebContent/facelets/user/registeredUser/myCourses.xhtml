@@ -9,7 +9,7 @@
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="title">#{sessionUser.getLabel('myCourses.title')}</ui:define>
 	<ui:define name="content">
-		<h1 id = "myCoursesPage" >#{sessionUser.getLabel('myCourses.header')}</h1>
+		<h1 id="myCoursesPage">#{sessionUser.getLabel('myCourses.header')}</h1>
 		<div class="row">
 			<div class="col-lg-12">
 				<p style="font-size: 16px;">#{sessionUser.getLabel('myCourses.welcomeText')}</p>
@@ -39,8 +39,7 @@
 									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
 										styleClass="theader">
 										<f:setPropertyActionListener
-											target="#{myCoursesBean.orderParam}"
-											value="id" />
+											target="#{myCoursesBean.orderParam}" value="id" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.id')}
                                             </h:commandLink>
 								</f:facet>
@@ -59,24 +58,24 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                    <h:commandLink  action="#{myCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{myCoursesBean.orderParam}" value="location" />
+									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+										styleClass="theader">
+										<f:setPropertyActionListener
+											target="#{myCoursesBean.orderParam}" value="location" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.location')}
                                             </h:commandLink>
-                                </f:facet>
+								</f:facet>
 								<h:outputText value="#{course.nextCourseUnit.address.location}" />
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                    <h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{myCoursesBean.orderParam}" value="start_time" />
+									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+										styleClass="theader">
+										<f:setPropertyActionListener
+											target="#{myCoursesBean.orderParam}" value="start_time" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.start')}
                                             </h:commandLink>
-                                </f:facet>
+								</f:facet>
 								<h:outputText class="nowrap"
 									value="#{course.nextCourseUnit.startime}">
 									<f:convertDateTime pattern="HH:mm" />
@@ -84,13 +83,13 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-                                    <h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{myCoursesBean.orderParam}" value="start_time" />
+									<h:commandLink action="#{myCoursesBean.sortBySpecificColumn()}"
+										styleClass="theader">
+										<f:setPropertyActionListener
+											target="#{myCoursesBean.orderParam}" value="start_time" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.date')}
                                             </h:commandLink>
-                                </f:facet>
+								</f:facet>
 								<h:outputText class="nowrap"
 									value="#{course.nextCourseUnit.startime}">
 									<f:convertDateTime pattern="dd.MM.yyyy" />
@@ -111,36 +110,107 @@
 										<ul class="pagination">
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
-													value="#{sessionUser.getLabel('pagination.back')}" action="#{myCoursesBean.goToSpecificPage}">
+													value="#{sessionUser.getLabel('pagination.back')}"
+													action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
-                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
 												</h:commandButton></li>
+
+											<!-- Für die Form Teil 1-->
+											
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=4 and (myCoursesBean.pagination.numberOfPages== myCoursesBean.pagination.currentPageNumber)}"
+													value="#{myCoursesBean.pagination.currentPageNumber-3}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber-4}" />
+												</h:commandButton></li>
+
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=3 and (myCoursesBean.pagination.numberOfPages== myCoursesBean.pagination.currentPageNumber)}"
+													value="#{myCoursesBean.pagination.currentPageNumber-2}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber-3}" />
+												</h:commandButton></li>
+
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=4 and (myCoursesBean.pagination.numberOfPages-1== myCoursesBean.pagination.currentPageNumber)}"
+													value="#{myCoursesBean.pagination.currentPageNumber-2}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber-3}" />
+												</h:commandButton></li>
+
+											<!-- Für die Form ENDE Teil 1-->
+
 											<li><h:commandButton class="btn btn-default"
 													rendered="#{myCoursesBean.pagination.currentPageNumber>=1}"
 													value="#{myCoursesBean.pagination.currentPageNumber}"
 													action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
-                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber-1}"  />
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber-1}" />
 												</h:commandButton></li>
 											<li><h:commandButton style="font-weight:bold;"
 													class="btn btn-primary"
 													value="#{myCoursesBean.pagination.currentPageNumber +1}"
 													action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
-                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber}"  />
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber}" />
 												</h:commandButton></li>
 											<li><h:commandButton class="btn btn-default"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
 													value="#{myCoursesBean.pagination.currentPageNumber+2}"
 													action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
-                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}" />
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
 												</h:commandButton></li>
+
+											<!-- Für die Form  Teil 2-->
+
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=4 and myCoursesBean.pagination.currentPageNumber==1}"
+													value="#{myCoursesBean.pagination.currentPageNumber+4}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber+3}" />
+												</h:commandButton></li>
+
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=3 and myCoursesBean.pagination.currentPageNumber==0}"
+													value="#{myCoursesBean.pagination.currentPageNumber+4}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber+3}" />
+												</h:commandButton></li>
+
+											<li><h:commandButton class="btn btn-default"
+													rendered="#{myCoursesBean.pagination.numberOfPages>=4 and myCoursesBean.pagination.currentPageNumber==0}"
+													value="#{myCoursesBean.pagination.currentPageNumber+5}"
+													action="#{myCoursesBean.goToSpecificPage}">
+													<f:setPropertyActionListener
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber+4}" />
+												</h:commandButton></li>
+
+											<!-- Für die Form ENDE Teil 2-->
+
 											<li><h:commandButton class="btn btn-info"
 													rendered="#{myCoursesBean.pagination.numberOfPages>=myCoursesBean.pagination.currentPageNumber+1}"
-													value="#{sessionUser.getLabel('pagination.forward')}"  action="#{myCoursesBean.goToSpecificPage}">
+													value="#{sessionUser.getLabel('pagination.forward')}"
+													action="#{myCoursesBean.goToSpecificPage}">
 													<f:setPropertyActionListener
-                                            target="#{myCoursesBean.currentPage}" value="#{myCoursesBean.pagination.currentPageNumber+1}"  />
+														target="#{myCoursesBean.currentPage}"
+														value="#{myCoursesBean.pagination.currentPageNumber+1}" />
 												</h:commandButton></li>
 										</ul>
 									</div>
@@ -155,134 +225,207 @@
 			class="alert alert-warning">
 			<strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong>#{sessionUser.getLabel('myCourses.infoText')}
                 </h:form>
-       <br/>
-       <br/>
-      <h:panelGroup rendered="#{(leadedCoursesBean.sessionUser.userRole == 'COURSE_LEADER'  || leadedCoursesBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
-       <h:form rendered="#{leadedCoursesBean.leadedCourses.size() !=0}"
-            id="leadedCoursesList">
-            <div class="col-lg-12 ">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <strong>#{sessionUser.getLabel('leadedCourses.row.leadedCourses.header')}</strong>
-                    </div>
-                    <div class="panel-body">
-                        <h:dataTable value="#{leadedCoursesBean.leadedCourses}"
-                            var="course" id="courseTable" class=" table table-hover"
-                            cellspacing="0" width="100%">
-                            <h:column>
-                                <f:facet name="header">
+		<br />
+		<br />
+		<h:panelGroup
+			rendered="#{(leadedCoursesBean.sessionUser.userRole == 'COURSE_LEADER'  || leadedCoursesBean.sessionUser.userRole == 'SYSTEM_ADMINISTRATOR')}">
+			<h:form rendered="#{leadedCoursesBean.leadedCourses.size() !=0}"
+				id="leadedCoursesList">
+				<div class="col-lg-12 ">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<strong>#{sessionUser.getLabel('leadedCourses.row.leadedCourses.header')}</strong>
+						</div>
+						<div class="panel-body">
+							<h:dataTable value="#{leadedCoursesBean.leadedCourses}"
+								var="course" id="courseTable" class=" table table-hover"
+								cellspacing="0" width="100%">
+								<h:column>
+									<f:facet name="header">
                                               #{sessionUser.getLabel('myCourses.row.registeredCourses.table.picture')}
                                             </f:facet>
-                                <h:graphicImage value="/image?courseImage=#{course.courseID}"
-                                    height="25" />
+									<h:graphicImage value="/image?courseImage=#{course.courseID}"
+										height="25" />
 
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:commandLink action="#{leadedCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.orderParam}"
-                                            value="id" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">
+										<h:commandLink
+											action="#{leadedCoursesBean.sortBySpecificColumn()}"
+											styleClass="theader">
+											<f:setPropertyActionListener
+												target="#{leadedCoursesBean.orderParam}" value="id" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.id')}
                                             </h:commandLink>
-                                </f:facet>
-                                <h:outputText value="#{course.courseID}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:commandLink action="#{leadedCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.orderParam}" value="title" />
+									</f:facet>
+									<h:outputText value="#{course.courseID}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">
+										<h:commandLink
+											action="#{leadedCoursesBean.sortBySpecificColumn()}"
+											styleClass="theader">
+											<f:setPropertyActionListener
+												target="#{leadedCoursesBean.orderParam}" value="title" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.title')}
                                             </h:commandLink>
-                                </f:facet>
-                                <h:outputText value="#{course.title}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">                                    
+									</f:facet>
+									<h:outputText value="#{course.title}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">                                    
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.location')}                                      
                                 </f:facet>
-                                <h:outputText value="#{course.description}" />
-                            </h:column>
-                           
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:commandLink action="#{leadedCoursesBean.sortBySpecificColumn()}"
-                                        styleClass="theader">
-                                        <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.orderParam}" value="start_date" />
+									<h:outputText value="#{course.description}" />
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:commandLink
+											action="#{leadedCoursesBean.sortBySpecificColumn()}"
+											styleClass="theader">
+											<f:setPropertyActionListener
+												target="#{leadedCoursesBean.orderParam}" value="start_date" />
                                                  #{sessionUser.getLabel('myCourses.row.registeredCourses.table.date')}
                                             </h:commandLink>
-                                </f:facet>
-                                <h:outputText class="nowrap"
-                                    value="#{course.startdate}">
-                                    <f:convertDateTime pattern="dd.MM.yyyy" />
-                                </h:outputText>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header" />
-                                <h:commandButton id="details" class="btn btn-info"
-                                    value="#{sessionUser.getLabel('myCourses.row.registeredCourses.table.details')}"
-                                    action="#{leadedCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
-                                    <f:param name="courseID" value="#{course.courseID}" />
-                                </h:commandButton>
-                            </h:column>
-                            <f:facet name="footer">
-                                <h:panelGroup
-                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>0}">
-                                    <div class="row" style="text-align: center;">
-                                        <ul class="pagination">
-                                            <li><h:commandButton class="btn btn-info"
-                                                    rendered="#{leadedCoursesBean.pagination.currentPageNumber>=1}"
-                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{leadedCoursesBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.currentPage}" value="#{leadedCoursesBean.pagination.currentPageNumber-1}"  />
-                                                </h:commandButton></li>
+									</f:facet>
+									<h:outputText class="nowrap" value="#{course.startdate}">
+										<f:convertDateTime pattern="dd.MM.yyyy" />
+									</h:outputText>
+								</h:column>
+								<h:column>
+									<f:facet name="header" />
+									<h:commandButton id="details" class="btn btn-info"
+										value="#{sessionUser.getLabel('myCourses.row.registeredCourses.table.details')}"
+										action="#{leadedCoursesBean.loadCourseDetailsPageOfSelectedCourse}">
+										<f:param name="courseID" value="#{course.courseID}" />
+									</h:commandButton>
+								</h:column>
+								<f:facet name="footer">
+									<h:panelGroup
+										rendered="#{leadedCoursesBean.pagination.numberOfPages>0}">
+										<div class="row" style="text-align: center;">
+											<ul class="pagination">
+												<li><h:commandButton class="btn btn-info"
+														rendered="#{leadedCoursesBean.pagination.currentPageNumber>=1}"
+														value="#{sessionUser.getLabel('pagination.back')}"
+														action="#{leadedCoursesBean.goToSpecificPage}">
+														<f:setPropertyActionListener
+															target="#{leadedCoursesBean.currentPage}"
+															value="#{leadedCoursesBean.pagination.currentPageNumber-1}" />
+													</h:commandButton></li>
+													
+													<!-- Für die Form Teil 1-->
+                                            
                                             <li><h:commandButton class="btn btn-default"
-                                                    rendered="#{leadedCoursesBean.pagination.currentPageNumber>=1}"
-                                                    value="#{leadedCoursesBean.pagination.currentPageNumber}"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=4 and (leadedCoursesBean.pagination.numberOfPages== leadedCoursesBean.pagination.currentPageNumber)}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber-3}"
                                                     action="#{leadedCoursesBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.currentPage}" value="#{leadedCoursesBean.pagination.currentPageNumber-1}"  />
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber-4}" />
                                                 </h:commandButton></li>
-                                            <li><h:commandButton style="font-weight:bold;"
-                                                    class="btn btn-primary"
-                                                    value="#{leadedCoursesBean.pagination.currentPageNumber +1}"
-                                                    action="#{leadedCoursesBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.currentPage}" value="#{leadedCoursesBean.pagination.currentPageNumber}"  />
-                                                </h:commandButton></li>
+
                                             <li><h:commandButton class="btn btn-default"
-                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=leadedCoursesBean.pagination.currentPageNumber+1}"
-                                                    value="#{leadedCoursesBean.pagination.currentPageNumber+2}"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=3 and (leadedCoursesBean.pagination.numberOfPages== leadedCoursesBean.pagination.currentPageNumber)}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber-2}"
                                                     action="#{leadedCoursesBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.currentPage}" value="#{leadedCoursesBean.pagination.currentPageNumber+1}" />
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber-3}" />
                                                 </h:commandButton></li>
-                                            <li><h:commandButton class="btn btn-info"
-                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=leadedCoursesBean.pagination.currentPageNumber+1}"
-                                                    value="#{sessionUser.getLabel('pagination.forward')}"  action="#{leadedCoursesBean.goToSpecificPage}">
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=4 and (leadedCoursesBean.pagination.numberOfPages-1== leadedCoursesBean.pagination.currentPageNumber)}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber-2}"
+                                                    action="#{leadedCoursesBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{leadedCoursesBean.currentPage}" value="#{leadedCoursesBean.pagination.currentPageNumber+1}"  />
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber-3}" />
                                                 </h:commandButton></li>
-                                        </ul>
-                                    </div>
-                                </h:panelGroup>
-                            </f:facet>
-                        </h:dataTable>
-                    </div>
-                </div>
-            </div>
-        </h:form>
-        <h:form rendered="#{leadedCoursesBean.leadedCourses.size()==0}"
-            class="alert alert-warning">
-            <strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong>#{sessionUser.getLabel('leadedCourses.infoText')}
+
+                                            <!-- Für die Form ENDE Teil 1-->
+													
+												<li><h:commandButton class="btn btn-default"
+														rendered="#{leadedCoursesBean.pagination.currentPageNumber>=1}"
+														value="#{leadedCoursesBean.pagination.currentPageNumber}"
+														action="#{leadedCoursesBean.goToSpecificPage}">
+														<f:setPropertyActionListener
+															target="#{leadedCoursesBean.currentPage}"
+															value="#{leadedCoursesBean.pagination.currentPageNumber-1}" />
+													</h:commandButton></li>
+												<li><h:commandButton style="font-weight:bold;"
+														class="btn btn-primary"
+														value="#{leadedCoursesBean.pagination.currentPageNumber +1}"
+														action="#{leadedCoursesBean.goToSpecificPage}">
+														<f:setPropertyActionListener
+															target="#{leadedCoursesBean.currentPage}"
+															value="#{leadedCoursesBean.pagination.currentPageNumber}" />
+													</h:commandButton></li>
+												<li><h:commandButton class="btn btn-default"
+														rendered="#{leadedCoursesBean.pagination.numberOfPages>=leadedCoursesBean.pagination.currentPageNumber+1}"
+														value="#{leadedCoursesBean.pagination.currentPageNumber+2}"
+														action="#{leadedCoursesBean.goToSpecificPage}">
+														<f:setPropertyActionListener
+															target="#{leadedCoursesBean.currentPage}"
+															value="#{leadedCoursesBean.pagination.currentPageNumber+1}" />
+													</h:commandButton></li>
+													
+													<!-- Für die Form  Teil 2-->
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=4 and leadedCoursesBean.pagination.currentPageNumber==1}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber+4}"
+                                                    action="#{leadedCoursesBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=3 and leadedCoursesBean.pagination.currentPageNumber==0}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber+4}"
+                                                    action="#{leadedCoursesBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{leadedCoursesBean.pagination.numberOfPages>=4 and leadedCoursesBean.pagination.currentPageNumber==0}"
+                                                    value="#{leadedCoursesBean.pagination.currentPageNumber+5}"
+                                                    action="#{leadedCoursesBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{leadedCoursesBean.currentPage}"
+                                                        value="#{leadedCoursesBean.pagination.currentPageNumber+4}" />
+                                                </h:commandButton></li>
+
+                                            <!-- Für die Form ENDE Teil 2-->
+													
+												<li><h:commandButton class="btn btn-info"
+														rendered="#{leadedCoursesBean.pagination.numberOfPages>=leadedCoursesBean.pagination.currentPageNumber+1}"
+														value="#{sessionUser.getLabel('pagination.forward')}"
+														action="#{leadedCoursesBean.goToSpecificPage}">
+														<f:setPropertyActionListener
+															target="#{leadedCoursesBean.currentPage}"
+															value="#{leadedCoursesBean.pagination.currentPageNumber+1}" />
+													</h:commandButton></li>
+											</ul>
+										</div>
+									</h:panelGroup>
+								</f:facet>
+							</h:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+			<h:form rendered="#{leadedCoursesBean.leadedCourses.size()==0}"
+				class="alert alert-warning">
+				<strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong>#{sessionUser.getLabel('leadedCourses.infoText')}
                 </h:form>
-       
-   </h:panelGroup> 
-       
+
+		</h:panelGroup>
+
 	</ui:define>
 </ui:composition>
 </html>
