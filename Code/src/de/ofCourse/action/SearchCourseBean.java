@@ -242,6 +242,8 @@ public class SearchCourseBean implements Pagination {
     			executeSearch();
     		}
     	} else {
+    		FacesMessageCreator.createFacesMessage(null,
+					sessionUser.getLabel("search.message.result"));
     		setRenderTable(false);
     	}
     }
