@@ -61,7 +61,8 @@ public class CourseDAO {
     private final static String NUM_COURSES_WEEK = "SELECT COUNT(DISTINCT " +
     		"\"courses\".id) FROM \"courses\", \"course_units\" " +
 	    "WHERE \"course_units\".start_time::date between current_date " +
-	    "AND current_date + integer '6'";
+	    "AND current_date + integer '6' " +
+	    "AND \"course_units\".course_id = \"courses\".id";
 
     /**
 	 * @author Patrick Cretu
