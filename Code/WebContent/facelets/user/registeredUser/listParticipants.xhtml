@@ -79,36 +79,99 @@
                                         <ul class="pagination">
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{listParticipantsBean.pagination.currentPageNumber>=1}"
-                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{listParticipantsBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.back')}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean.pagination.currentPageNumber-1}"  />
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-1}" />
                                                 </h:commandButton></li>
+                                            
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=4 and (listParticipantsBean.pagination.numberOfPages== listParticipantsBean.pagination.currentPageNumber)}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber-3}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-4}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=3 and (listParticipantsBean.pagination.numberOfPages== listParticipantsBean.pagination.currentPageNumber)}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber-2}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=4 and (listParticipantsBean.pagination.numberOfPages-1== listParticipantsBean.pagination.currentPageNumber)}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber-2}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-3}" />
+                                                </h:commandButton></li>
+
                                             <li><h:commandButton class="btn btn-default"
                                                     rendered="#{listParticipantsBean.pagination.currentPageNumber>=1}"
                                                     value="#{listParticipantsBean.pagination.currentPageNumber}"
                                                     action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean.pagination.currentPageNumber-1}"  />
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber-1}" />
                                                 </h:commandButton></li>
                                             <li><h:commandButton style="font-weight:bold;"
                                                     class="btn btn-primary"
                                                     value="#{listParticipantsBean.pagination.currentPageNumber +1}"
                                                     action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean.pagination.currentPageNumber}"  />
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber}" />
                                                 </h:commandButton></li>
                                             <li><h:commandButton class="btn btn-default"
                                                     rendered="#{listParticipantsBean.pagination.numberOfPages>=listParticipantsBean.pagination.currentPageNumber+1}"
                                                     value="#{listParticipantsBean.pagination.currentPageNumber+2}"
                                                     action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean.pagination.currentPageNumber+1}" />
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+1}" />
                                                 </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=4 and listParticipantsBean.pagination.currentPageNumber==1}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber+4}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=3 and listParticipantsBean.pagination.currentPageNumber==0}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber+4}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{listParticipantsBean.pagination.numberOfPages>=4 and listParticipantsBean.pagination.currentPageNumber==0}"
+                                                    value="#{listParticipantsBean.pagination.currentPageNumber+5}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+4}" />
+                                                </h:commandButton></li>
+
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{listParticipantsBean.pagination.numberOfPages>=listParticipantsBean.pagination.currentPageNumber+1}"
-                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{listParticipantsBean.goToSpecificPage}">
+                                                    value="#{sessionUser.getLabel('pagination.forward')}"
+                                                    action="#{listParticipantsBean.goToSpecificPage}">
                                                     <f:setPropertyActionListener
-                                            target="#{listParticipantsBean.currentPage}" value="#{listParticipantsBean.pagination.currentPageNumber+1}"  />
+                                                        target="#{listParticipantsBean.currentPage}"
+                                                        value="#{listParticipantsBean.pagination.currentPageNumber+1}" />
                                                 </h:commandButton></li>
                                         </ul>
                                     </div>
