@@ -85,47 +85,103 @@
                            							<h:outputText class="nowrap" value="#{course.courseID}"/>
                            						</h:column>
 												<f:facet name="footer">
-													<h:panelGroup
-														rendered="#{leaderProfileBean.pagination.numberOfPages>0}">
-														<div class="row" style="text-align: center;">
-															<ul class="pagination">
-																<li><h:commandButton class="btn btn-info"
-																		rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
-																		value="#{sessionUser.getLabel('pagination.back')}" action="#{leaderProfileBean.goToSpecificPage}">
-																		<f:setPropertyActionListener
-					                                            target="#{myCoursesBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber-1}"  />
-																	</h:commandButton></li>
-																<li><h:commandButton class="btn btn-default"
-																		rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
-																		value="#{leaderProfileBean.pagination.currentPageNumber}"
-																		action="#{leaderProfileBean.goToSpecificPage}">
-																		<f:setPropertyActionListener
-					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber-1}"  />
-																	</h:commandButton></li>
-																<li><h:commandButton style="font-weight:bold;"
-																		class="btn btn-primary"
-																		value="#{leaderProfileBean.pagination.currentPageNumber +1}"
-																		action="#{leaderProfileBean.goToSpecificPage}">
-																		<f:setPropertyActionListener
-					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber}"  />
-																	</h:commandButton></li>
-																<li><h:commandButton class="btn btn-default"
-																		rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
-																		value="#{leaderProfileBean.pagination.currentPageNumber+2}"
-																		action="#{leaderProfileBean.goToSpecificPage}">
-																		<f:setPropertyActionListener
-					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber+1}" />
-																	</h:commandButton></li>
-																<li><h:commandButton class="btn btn-info"
-																		rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
-																		value="#{sessionUser.getLabel('pagination.forward')}"  action="#{leaderProfileBean.goToSpecificPage}">
-																		<f:setPropertyActionListener
-					                                            target="#{leaderProfileBean.currentPage}" value="#{leaderProfileBean.pagination.currentPageNumber+1}"  />
-																	</h:commandButton></li>
-															</ul>
-														</div>
-													</h:panelGroup>
-												</f:facet>
+					                                <h:panelGroup rendered="#{leaderProfileBean.pagination.numberOfPages > 0}">
+					                                    <div class="row" style="text-align: center;">
+					                                        <ul class="pagination">
+					                                            <li><h:commandButton class="btn btn-info"
+					                                                    rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
+					                                                    value="#{sessionUser.getLabel('pagination.back')}" action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-1}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and (leaderProfileBean.pagination.numberOfPages== leaderProfileBean.pagination.currentPageNumber)}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber-3}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-4}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=3 and (leaderProfileBean.pagination.numberOfPages== leaderProfileBean.pagination.currentPageNumber)}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber-2}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-3}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and (leaderProfileBean.pagination.numberOfPages-1== leaderProfileBean.pagination.currentPageNumber)}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber-2}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-3}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.currentPageNumber>=2}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber-1}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-2}"/>
+					                                                </h:commandButton></li>
+					                                            	<li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.currentPageNumber>=1}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber-1}"/>
+					                                                </h:commandButton></li>
+					                                            	<li><h:commandButton style="font-weight:bold;"
+					                                                    class="btn btn-primary"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber +1}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber}"/>
+					                                                </h:commandButton></li>
+					                                           		<li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=(leaderProfileBean.pagination.currentPageNumber+1)}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber+2}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+1}"/>
+					                                                </h:commandButton></li>
+					                                                
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=(leaderProfileBean.pagination.currentPageNumber+2)}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber+3}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+2}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and leaderProfileBean.pagination.currentPageNumber==1}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber+4}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+3}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=3 and leaderProfileBean.pagination.currentPageNumber==0}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber+4}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+3}"/>
+					                                                </h:commandButton></li>
+					                                                <li><h:commandButton class="btn btn-default"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=4 and leaderProfileBean.pagination.currentPageNumber==0}"
+					                                                    value="#{leaderProfileBean.pagination.currentPageNumber+5}"
+					                                                    action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+4}"/>
+					                                                </h:commandButton></li>
+					                                            	<li><h:commandButton class="btn btn-info"
+					                                                    rendered="#{leaderProfileBean.pagination.numberOfPages>=leaderProfileBean.pagination.currentPageNumber+1}"
+					                                                    value="#{sessionUser.getLabel('pagination.forward')}" action="#{leaderProfileBean.goToSpecificPage}">
+					                                                    <f:setPropertyActionListener target="#{leaderProfileBean.currentPage}"
+					                                                                                    value="#{leaderProfileBean.pagination.currentPageNumber+1}"/>
+					                                                </h:commandButton></li>
+					                                        </ul>
+					                                    </div>
+					                                </h:panelGroup>
+					                            </f:facet>
 	                                		</h:dataTable>
 	                                		<h:outputText rendered="#{leaderProfileBean.managedCourses.size() == 0}" class="alert alert-warning">
 	                                			<strong>#{sessionUser.getLabel('leaderProfile.sign')}:</strong>
