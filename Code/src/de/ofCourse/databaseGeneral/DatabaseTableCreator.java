@@ -221,7 +221,7 @@ public class DatabaseTableCreator {
     			count.next();
     			Long numTables = (Long) count.getObject(1);
     			
-    			if (numTables == 4) {
+    			if (numTables == 0) {
 					for (int i = 0; i < createStatements.size(); i++) {
 						Statement stmt = conn.createStatement();
 						stmt.execute(createStatements.get(i));
