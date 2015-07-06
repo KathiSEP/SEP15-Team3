@@ -32,7 +32,7 @@ public class PriceValidator implements Validator {
 	 Language lang = getLanguage();
 	 String priceAsString = "" + price;
 	 
-	 if(!priceAsString.matches("[0-9][0-9]*([.][0-9])?")){
+	 if(!priceAsString.matches("[0-9][0-9]*([.][0-9][0-9])?")){
 	     throw new ValidatorException(
 		            new FacesMessage(
 		                 LanguageManager.getInstance().
