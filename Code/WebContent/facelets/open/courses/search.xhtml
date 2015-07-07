@@ -133,47 +133,120 @@
                                      </h:column>
                                      
                                      <f:facet name="footer">
-                                <h:panelGroup
-                                    rendered="#{searchCourseBean.pagination.numberOfPages>0}">
-                                    <div class="row" style="text-align: center;">
-                                        <ul class="pagination">
+                                
+                                    <h:panelGroup rendered="#{searchCourseBean.pagination.numberOfPages > 0}">
+                                        <div class="row" style="text-align: center;">
+                                            <ul class="pagination">
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchCourseBean.pagination.currentPageNumber>=1}"
                                                     value="#{sessionUser.getLabel('pagination.back')}" action="#{searchCourseBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber-1}"  />
+                                                    <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                    value="#{searchCourseBean.pagination.currentPageNumber-1}"/>
+                                                    
                                                 </h:commandButton></li>
+                                                
+                                            <li><h:commandButton class="btn btn-default"
+                                                rendered="#{searchCourseBean.pagination.numberOfPages>=4 and (searchCourseBean.pagination.numberOfPages == searchCourseBean.pagination.currentPageNumber)}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber-3}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber-4}"/>
+                                                </h:commandButton></li>
+                                                
+                                                
+                                            <li><h:commandButton class="btn btn-default"
+                                                rendered="#{searchCourseBean.pagination.numberOfPages>=3 and (searchCourseBean.pagination.numberOfPages == searchCourseBean.pagination.currentPageNumber)}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber-2}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber-3}"/>
+                                                </h:commandButton></li>
+                                                
+                                            <li><h:commandButton class="btn btn-default"
+                                                rendered="#{searchCourseBean.pagination.numberOfPages>=4 and (searchCourseBean.pagination.numberOfPages-1 == searchCourseBean.pagination.currentPageNumber)}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber-2}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber-3}"/>
+                                                </h:commandButton></li>
+                                                
+                                            <li><h:commandButton class="btn btn-default"
+                                                rendered="#{searchCourseBean.pagination.currentPageNumber>=2}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber-1}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber-2}"/>
+                                                </h:commandButton></li>
+                                                
                                             <li><h:commandButton class="btn btn-default"
                                                     rendered="#{searchCourseBean.pagination.currentPageNumber>=1}"
                                                     value="#{searchCourseBean.pagination.currentPageNumber}"
                                                     action="#{searchCourseBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber-1}"  />
+                                                    <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                    value="#{searchCourseBean.pagination.currentPageNumber-1}"/>
                                                 </h:commandButton></li>
-                                            <li><h:commandButton style="font-weight:bold;"
-                                                    class="btn btn-primary"
-                                                    value="#{searchCourseBean.pagination.currentPageNumber +1}"
-                                                    action="#{searchCourseBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber}"  />
+                                                
+	                                        <li><h:commandButton style="font-weight:bold;"
+	                                                class="btn btn-primary"
+	                                                value="#{searchCourseBean.pagination.currentPageNumber +1}"
+	                                                action="#{searchCourseBean.goToSpecificPage}">
+	                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+	                                                                                value="#{searchCourseBean.pagination.currentPageNumber}"/>
                                                 </h:commandButton></li>
+                                                
+	                                        <li><h:commandButton class="btn btn-default"
+	                                                rendered="#{searchCourseBean.pagination.numberOfPages>=(searchCourseBean.pagination.currentPageNumber+1)}"
+	                                                value="#{searchCourseBean.pagination.currentPageNumber+2}"
+	                                                action="#{searchCourseBean.goToSpecificPage}">
+	                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+	                                                                                value="#{searchCourseBean.pagination.currentPageNumber+1}"/>
+                                                </h:commandButton></li>
+                                                
                                             <li><h:commandButton class="btn btn-default"
-                                                    rendered="#{searchCourseBean.pagination.numberOfPages>=searchCourseBean.pagination.currentPageNumber+1}"
-                                                    value="#{searchCourseBean.pagination.currentPageNumber+2}"
-                                                    action="#{searchCourseBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber+1}" />
+                                                rendered="#{searchCourseBean.pagination.numberOfPages>=(searchCourseBean.pagination.currentPageNumber+2)}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber+3}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber+2}"/>
                                                 </h:commandButton></li>
+                                                
+                                            <li><h:commandButton class="btn btn-default"
+                                                rendered="#{searchCourseBean.pagination.numberOfPages>=4 and searchCourseBean.pagination.currentPageNumber==1}"
+                                                value="#{searchCourseBean.pagination.currentPageNumber+4}"
+                                                action="#{searchCourseBean.goToSpecificPage}">
+                                                <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                value="#{searchCourseBean.pagination.currentPageNumber+3}"/>
+                                                </h:commandButton></li>
+                                               
+	                                        <li><h:commandButton class="btn btn-default"
+	                                            rendered="#{searchCourseBean.pagination.numberOfPages>=3 and searchCourseBean.pagination.currentPageNumber==0}"
+	                                            value="#{searchCourseBean.pagination.currentPageNumber+4}"
+	                                            action="#{searchCourseBean.goToSpecificPage}">
+	                                            <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+	                                                                            value="#{searchCourseBean.pagination.currentPageNumber+3}"/>
+                                                </h:commandButton></li>
+                                                
+	                                        <li><h:commandButton class="btn btn-default"
+	                                            rendered="#{searchCourseBean.pagination.numberOfPages>=4 and searchCourseBean.pagination.currentPageNumber==0}"
+	                                            value="#{searchCourseBean.pagination.currentPageNumber+5}"
+	                                            action="#{searchCourseBean.goToSpecificPage}">
+	                                            <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+	                                                                            value="#{searchCourseBean.pagination.currentPageNumber+4}"/>
+                                                </h:commandButton></li>
+                                                
+                                                
+                                                
                                             <li><h:commandButton class="btn btn-info"
                                                     rendered="#{searchCourseBean.pagination.numberOfPages>=searchCourseBean.pagination.currentPageNumber+1}"
                                                     value="#{sessionUser.getLabel('pagination.forward')}" action="#{searchCourseBean.goToSpecificPage}">
-                                                    <f:setPropertyActionListener
-                                            target="#{searchCourseBean.currentPage}" value="#{searchCourseBean.pagination.currentPageNumber+1}"  />
+                                                    <f:setPropertyActionListener target="#{searchCourseBean.currentPage}"
+                                                                                    value="#{searchCourseBean.pagination.currentPageNumber+1}"/>
                                                 </h:commandButton></li>
-                                        </ul>
-                                    </div>
-                                </h:panelGroup>
-                            </f:facet>
+                                            </ul>
+                                        </div>
+                                    </h:panelGroup>
+                                
+                                    </f:facet>
                                     
                                  </h:dataTable>
                             </div>
