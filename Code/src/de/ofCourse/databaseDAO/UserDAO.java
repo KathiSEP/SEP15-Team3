@@ -1419,8 +1419,7 @@ public class UserDAO {
 	                     + "AND course_id = cP.course_id)) "
 	         + "AS courseNews "
 	         + "FROM course_participants cP, "
-	                 + "users u, "
-	                 + "inform_users iU "
+	                 + "users u "
 	         + "WHERE cP.course_id = ? AND u.id = cP.participant_id "
 	         + "ORDER BY %s %s LIMIT ? OFFSET ?;";
 
