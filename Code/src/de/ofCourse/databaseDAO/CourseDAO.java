@@ -969,7 +969,7 @@ public class CourseDAO {
      *             if any error occurred during the execution of the method
      * @author Ricky Strohmeier
      */
-    public static void updateCourse(Transaction trans, Course course)
+    public static void updateCourse(Transaction trans, Course course, Part image)
 	    throws InvalidDBTransferException {
         String emptyString = new String("nothing entered");
         java.sql.Date emptyDate = new java.sql.Date(0);
@@ -981,6 +981,15 @@ public class CourseDAO {
     	String courseQuery = "UPDATE \"courses\" "
     		+ "SET description = ?, max_participants = ?, start_date = ?, end_date = ? "
     		+ "WHERE id = ?";
+
+    	try {
+        	if(image!= null && image.getInputStream() != null) {
+        	    courseQuery = courseQuery + "; UPDATE \"courses\" SET image = ? WHERE id = ?";
+        	}
+    	} catch (IOException e) {
+            LogHandler.getInstance().error("SQL Exception occoured in updateCourse of CourseDAO");
+            throw new InvalidDBTransferException();
+    	}
     
     	try(PreparedStatement statement = conn.prepareStatement(courseQuery)) {
     	    if (!course.getDescription().equals(null)) {
@@ -1014,9 +1023,15 @@ public class CourseDAO {
     	    } else {
     	        statement.setInt(5, emptyNumber);
     	    }
+    	    
+    	    if (image != null && image.getInputStream() != null) {
+    	        InputStream inputStream = image.getInputStream();
+    	        statement.setBinaryStream(6, inputStream, image.getSize());
+    	        statement.setInt(7, course.getCourseID());
+    	    }
 
     	    statement.executeUpdate();
-    	} catch (SQLException e) {
+    	} catch (SQLException | IOException e) {
     	    LogHandler.getInstance().error("SQL Exception occoured in updateCourse of CourseDAO");
     	    throw new InvalidDBTransferException();
     	}

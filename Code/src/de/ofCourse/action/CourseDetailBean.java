@@ -3,20 +3,18 @@
  */
 package de.ofCourse.action;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.annotation.PostConstruct;
 
-import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
+
+import javax.servlet.http.Part;
 
 import de.ofCourse.databaseDAO.CourseDAO;
 import de.ofCourse.databaseDAO.CourseUnitDAO;
@@ -30,7 +28,6 @@ import de.ofCourse.model.PaginationData;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
@@ -132,8 +129,16 @@ public class CourseDetailBean implements Pagination, Serializable {
     private boolean isRegistered;
     private int courseID;
     private static int pageElements = 10;
-
+    private Part courseImage;
     private int currentPage;
+
+    public Part getCourseImage() {
+        return courseImage;
+    }
+    
+    public void setCourseImage(Part courseImage) {
+        this.courseImage = courseImage;
+    }
 
     /**
      * @return the currentPage
@@ -163,7 +168,7 @@ public class CourseDetailBean implements Pagination, Serializable {
     	    transaction = Connection.create();
     	    try {
         		transaction.start();
-        		CourseDAO.updateCourse(transaction, course);
+        		CourseDAO.updateCourse(transaction, course, courseImage);
         		transaction.commit();
     	    } catch (InvalidDBTransferException e) {
         		transaction.rollback();

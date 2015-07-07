@@ -26,10 +26,11 @@
                         <h:message for="endDateCourse" style="color:red"/>
                         <h:message for="minPersonsCourse" style="color:red"/>
                         <h:message for="leaderIDField" style="color:red"/>
+                      	<h:message for="courseImage" style="color:red"/>
                     </div>
                 </div>
                 
-                <h:form id="courseDetailsID">
+                <h:form id="courseDetailsID" method="post" enctype="multipart/form-data">
                 <div class="row" style="padding-top:20px;">
                     <div class="col-lg-5">
                         <div class="panel panel-info">
@@ -99,6 +100,16 @@
                             <div class="panel-body">
                                 <div class="row" style="text-align:center;"></div>
                                 <h:graphicImage value="/image?courseImage=#{courseDetailBean.courseID}" width="200" height="200" ></h:graphicImage>
+                                <h:panelGroup rendered="#{courseDetailBean.editMode}">
+                                	<p/>
+			                        <div class="input-group" style="width:500px;">
+			                            <span class="input-group-addon"
+	                                              style="width: 160px; text-align: right;">#{sessionUser.getLabel('createCourse.row.image')}:</span>
+			                            <h:inputFile class="form-control" id="courseImage" dir="RTL" value ="#{courseDetailBean.courseImage}">
+			                                <f:validator validatorId="imageValidator"/>
+			                            </h:inputFile>
+			                        </div>
+                                </h:panelGroup>
                                 <div class="row" style="padding-top:12px;">
                                     <div class="col-lg-12">
                                         <h:inputText class="form-control" rendered="#{courseDetailBean.editMode}" value="#{courseDetailBean.course.description}"/>
