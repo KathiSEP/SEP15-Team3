@@ -3,34 +3,27 @@
  */
 package de.ofCourse.action;
 
-import java.io.IOException;
 import java.util.List;
+import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import de.ofCourse.databaseDAO.CourseUnitDAO;
+
 import de.ofCourse.databaseDAO.UserDAO;
 import de.ofCourse.exception.InvalidDBTransferException;
 import de.ofCourse.model.Course;
 import de.ofCourse.model.PaginationData;
-import de.ofCourse.model.Salutation;
 import de.ofCourse.model.SortColumn;
 import de.ofCourse.model.SortDirection;
 import de.ofCourse.model.User;
-import de.ofCourse.model.UserRole;
-import de.ofCourse.model.UserStatus;
 import de.ofCourse.system.Connection;
 import de.ofCourse.system.LogHandler;
 import de.ofCourse.system.Transaction;
-import de.ofCourse.utilities.PasswordHash;
 
 /**
  * Displays the profile of a course instructor.
@@ -42,8 +35,13 @@ import de.ofCourse.utilities.PasswordHash;
  */
 @ManagedBean
 @ViewScoped
-public class LeaderProfileBean implements Pagination {
+public class LeaderProfileBean implements Pagination, Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5756395056323366426L;
+
     /**
      * Stores the transaction that is used for database interaction.
      */

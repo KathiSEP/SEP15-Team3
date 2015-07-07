@@ -10,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import de.ofCourse.model.Language;
-import de.ofCourse.utilities.LanguageManager;
 
 /**
  * Provides the services of directing to the login page, selecting the displayed
