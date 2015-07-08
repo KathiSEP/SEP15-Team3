@@ -356,7 +356,33 @@ public class AccessPhaseListener implements PhaseListener {
 		}
 	}
 	}
+	
+	if(isPermitted){
+	    isPermitted = isOwnProfile(fctx, role);}
+	
 	return isPermitted;
+    }
+    
+    
+    /**
+     * @param fctx
+     * @return
+     */
+    private boolean isOwnProfile(FacesContext fctx, String role){
+	boolean ownProfile = true;
+	if (fctx.getViewRoot().getViewId().endsWith("profile.xhtml") && !role.equals("SYSTEM_ADMINISTRATOR")) {
+	    	int userID = Integer.parseInt(FacesContext.getCurrentInstance()
+	                .getExternalContext().getRequestParameterMap()
+	                .get("userID"));
+	    	if (sessionUser.getUserID() != userID) {
+	    		ownProfile = false;;
+	    	}
+	}
+	return ownProfile;
+	
+	
+	
+	
     }
 
     /**
