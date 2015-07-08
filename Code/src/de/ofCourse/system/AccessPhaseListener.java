@@ -350,44 +350,35 @@ public class AccessPhaseListener implements PhaseListener {
 	    default:
 		for (int i = 0; i < anonymousUsers.size() && !isPermitted; ++i) {
 		    if (fctx.getViewRoot().getViewId()
-			.equals(anonymousUsers.get(i))) {
+			.equals(anonymousUsers.get(i))|| isOwnProfile(fctx)) {
 			isPermitted = true;
 		    }
 		}
 	}
 	}
-	
-	if(isPermitted){
-	    isPermitted = isOwnProfile(fctx, role);}
-	
 	return isPermitted;
     }
-    
     
     /**
      * @param fctx
      * @return
      */
-    private boolean isOwnProfile(FacesContext fctx, String role){
-	boolean ownProfile = true;
-	if (fctx.getViewRoot().getViewId().endsWith("profile.xhtml") && !role.equals("SYSTEM_ADMINISTRATOR")) {
-	    	int userID  = 0;
-	    		try{
-	    		userID= Integer.parseInt(FacesContext.getCurrentInstance()
-	                .getExternalContext().getRequestParameterMap()
-	                .get("userID"));}
-	    	catch(NumberFormatException e){
-	    	    userID = sessionUser.getUserID();
-	    	}
-	    	if (sessionUser.getUserID() != userID) {
-	    		ownProfile = false;;
-	    	}
+    private boolean isOwnProfile(FacesContext fctx) {
+	boolean ownProfile = false;
+	if (fctx.getViewRoot().getViewId().endsWith("profile.xhtml")) {
+	    int userID = 0;
+	    try {
+		userID = Integer.parseInt(FacesContext.getCurrentInstance()
+			.getExternalContext().getRequestParameterMap()
+			.get("userID"));
+	    } catch (NumberFormatException e) {
+		userID = sessionUser.getUserID();
+	    }
+	    if (sessionUser.getUserID() == userID) {
+		ownProfile = true;
+	    }
 	}
 	return ownProfile;
-	
-	
-	
-	
     }
 
     /**
@@ -441,7 +432,6 @@ public class AccessPhaseListener implements PhaseListener {
 	ArrayList<String> listForRegisteredUsers = new ArrayList<String>();
 
 	listForRegisteredUsers.add(URL_MY_COURSES);
-	listForRegisteredUsers.add(URL_PROFILE);
 	listForRegisteredUsers.add(URL_SCHEDULER);
 	listForRegisteredUsers.add(URL_PARTICIPANTS_LIST);
 	return listForRegisteredUsers;
@@ -472,6 +462,7 @@ public class AccessPhaseListener implements PhaseListener {
 
 	listForAdministrators.add(URL_ADMIN_MANAGEMENT);
 	listForAdministrators.add(URL_SEARCH_USER);
+	listForAdministrators.add(URL_PROFILE);
 	listForAdministrators.add(URL_CREATE_USER);
 	listForAdministrators.add(URL_CREATE_COURSE);
 	return listForAdministrators;
