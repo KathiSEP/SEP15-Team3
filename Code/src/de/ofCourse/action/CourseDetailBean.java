@@ -119,6 +119,9 @@ public class CourseDetailBean implements Pagination, Serializable {
             "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true"
             + "&courseID=";
     
+    private final static String URL_ADMIN_MANAGEMENT =
+            "/facelets/user/systemAdministrator/adminManagement.xhtml";
+    
     /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
@@ -955,7 +958,7 @@ public class CourseDetailBean implements Pagination, Serializable {
 		
 		// Forwarding to the page site administration, because the delete was
 		// successful.
-		return "/facelets/user/systemAdministrator/adminManagement.xhtml";
+		return URL_ADMIN_MANAGEMENT;
 		
 	    } else {
 	        // FacesMessage: Delete course failed.
