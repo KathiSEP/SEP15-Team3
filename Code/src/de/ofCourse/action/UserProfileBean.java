@@ -137,9 +137,15 @@ public class UserProfileBean {
 
     	try {
     	    transaction.start();
-    	    userID = Integer.parseInt(FacesContext.getCurrentInstance()
+    	    
+    	    try {
+    	    	userID = Integer.parseInt(FacesContext.getCurrentInstance()
     	                .getExternalContext().getRequestParameterMap()
     	                .get("userID"));
+    	    } catch (NumberFormatException e) {
+    	    	userID = sessionUser.getUserID();
+    	    }
+    	    
     		user = UserDAO.getUser(transaction, userID);
     		transaction.commit();
     		
