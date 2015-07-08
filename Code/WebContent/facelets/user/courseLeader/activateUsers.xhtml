@@ -6,216 +6,210 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html">
-<ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">#{sessionUser.getLabel('activateUsers.title')}</ui:define>
-	<ui:define name="content">
-		<body>
-			<h:form class="form-horizontal" id="formMessages">
-				<h1 id="userActivation">#{sessionUser.getLabel('activateUsers.header')}</h1>
-				<div class="row" style="padding-top: 20px;">
-					<div class="col-lg-12">
-						<h:messages id="facesMessages" globalOnly="true" layout="table"
-							class="alert alert-danger" />
-					</div>
-				</div>
-			</h:form>
-
-			<div class="row" style="padding-top: 20px;">
-				<div class="col-lg-12">
-					<h:form class="form-horizontal" id="formActivateUsers">
-						<h:dataTable value="#{accountManagementBean.users}" var="user"
-							id="participantsTable" class=" table table-hover" cellspacing="0"
-							width="100%">
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}" value="id" />
+	<ui:composition template="/WEB-INF/template.xhtml">
+		<ui:define name="title">#{sessionUser.getLabel('activateUsers.title')}</ui:define>
+		<ui:define name="content">
+            <body>
+                <h:form class="form-horizontal" id="formMessages">
+	                 <h1 id ="userActivation" >#{sessionUser.getLabel('activateUsers.header')}</h1> 
+	                 <div class="row" style="padding-top:20px;">
+	                     <div class="col-lg-12">
+	                        <h:messages id = "facesMessages" globalOnly="true" layout="table" class="alert alert-danger"/>
+	                    </div>  
+	                 </div>
+                 </h:form>
+                 
+                 <div class="row" style="padding-top:20px;">
+                    <div class="col-lg-12">
+                    
+                    <h:form class="form-horizontal" id="formActivateUsers">
+                        <h:dataTable value="#{accountManagementBean.users}"
+                            var="user" id="participantsTable" class=" table table-hover"
+                            cellspacing="0" width="100%">
+                           <h:column>
+                                <f:facet name="header">
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="id" />
                                         #{sessionUser.getLabel('activateUsers.table.userID')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.userID}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}" value="nickname" />
+                                </f:facet>
+                                <h:outputText value="#{user.userID}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="nickname" />
                                         #{sessionUser.getLabel('activateUsers.table.username')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.username}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}" value="email" />
+                                </f:facet>
+                                <h:outputText value="#{user.username}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                     <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="email" />
                                         #{sessionUser.getLabel('activateUsers.table.mail')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.email}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}" value="name" />
+                                </f:facet>
+                                <h:outputText value="#{user.email}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                      <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="name" />
                                         #{sessionUser.getLabel('activateUsers.table.name')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.lastname}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}"
-											value="first_name" />
+                                </f:facet>
+                                <h:outputText value="#{user.lastname}" />
+                                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="first_name" />
                                         #{sessionUser.getLabel('activateUsers.table.prename')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.firstname}" />
-							</h:column>
-							<h:column>
-								<f:facet name="header">
-									<h:commandLink
-										action="#{accountManagementBean.sortBySpecificColumn()}"
-										styleClass="theader">
-										<f:setPropertyActionListener
-											target="#{accountManagementBean.sortColumn}"
-											value="date_of_birth" />
+                                </f:facet>
+                                <h:outputText value="#{user.firstname}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:commandLink action="#{accountManagementBean.sortBySpecificColumn()}" styleClass="theader">
+                                        <f:setPropertyActionListener target="#{accountManagementBean.sortColumn}" value="date_of_birth" />
                                         #{sessionUser.getLabel('activateUsers.table.birthday')}
                                     </h:commandLink>
-								</f:facet>
-								<h:outputText value="#{user.dateOfBirth}">
-									<f:convertDateTime pattern="dd.MM.yyyy" />
-								</h:outputText>
-							</h:column>
-							<h:column>
-								<f:facet name="header">
+                                </f:facet>
+                                <h:outputText value="#{user.dateOfBirth}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header" >
                                      #{sessionUser.getLabel('activateUsers.table.activate')}
                                      </f:facet>
-								<h:selectBooleanCheckbox id="checked" value="#{user.selected}" />
-							</h:column>
+                                     <h:selectBooleanCheckbox id="checked" value="#{user.selected}" /> 
+                            </h:column>
+                        
+                            <f:facet name="footer">
+                                <h:panelGroup
+                                    rendered="#{accountManagementBean.pagination.numberOfPages>0}">
+                                    <div class="row" style="text-align: center;">
+                                        <ul class="pagination">
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
+                                                    value="#{sessionUser.getLabel('pagination.back')}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber-1}" />
+                                                </h:commandButton></li>
+                                            
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=4 and (accountManagementBean.pagination.numberOfPages== accountManagementBean.pagination.currentPageNumber)}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber-3}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber-4}" />
+                                                </h:commandButton></li>
 
-							<f:facet name="footer">
-								<h:panelGroup
-									rendered="#{accountManagementBean.pagination.numberOfPages>0}">
-									<div class="row" style="text-align: center;">
-										<ul class="pagination">
-											<li><h:commandButton class="btn btn-info"
-													rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
-													value="#{sessionUser.getLabel('pagination.back')}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber-1}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=4 and (accountManagementBean.pagination.numberOfPages== accountManagementBean.pagination.currentPageNumber)}"
-													value="#{accountManagementBean.pagination.currentPageNumber-3}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber-4}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=3 and (accountManagementBean.pagination.numberOfPages== accountManagementBean.pagination.currentPageNumber)}"
-													value="#{accountManagementBean.pagination.currentPageNumber-2}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber-3}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=4 and (accountManagementBean.pagination.numberOfPages-1== accountManagementBean.pagination.currentPageNumber)}"
-													value="#{accountManagementBean.pagination.currentPageNumber-2}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber-3}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
-													value="#{accountManagementBean.pagination.currentPageNumber}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber-1}" />
-												</h:commandButton></li>
-											<li><h:commandButton style="font-weight:bold;"
-													class="btn btn-primary"
-													value="#{accountManagementBean.pagination.currentPageNumber +1}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
-													value="#{accountManagementBean.pagination.currentPageNumber+2}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber+1}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=4 and accountManagementBean.pagination.currentPageNumber==1}"
-													value="#{accountManagementBean.pagination.currentPageNumber+4}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber+3}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=3 and accountManagementBean.pagination.currentPageNumber==0}"
-													value="#{accountManagementBean.pagination.currentPageNumber+4}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber+3}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-default"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=4 and accountManagementBean.pagination.currentPageNumber==0}"
-													value="#{accountManagementBean.pagination.currentPageNumber+5}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber+4}" />
-												</h:commandButton></li>
-											<li><h:commandButton class="btn btn-info"
-													rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
-													value="#{sessionUser.getLabel('pagination.forward')}"
-													action="#{accountManagementBean.goToSpecificPage}">
-													<f:setPropertyActionListener
-														target="#{accountManagementBean.currentPage}"
-														value="#{accountManagementBean.pagination.currentPageNumber+1}" />
-												</h:commandButton></li>
-										</ul>
-									</div>
-								</h:panelGroup>
-							</f:facet>
-						</h:dataTable>
-						<h:commandButton id="activate" class="btn btn-info"
-							value="#{sessionUser.getLabel('activateUsers.activateButton')}"
-							onclick="if(!confirm ('#{sessionUser.getLabel('activateUsers.popUp.Activate')}')) return false"
-							action="#{accountManagementBean.activateAccounts}">
-						</h:commandButton>
-					</h:form>
-				</div>
-			</div>
-		</body>
-	</ui:define>
-</ui:composition>
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=3 and (accountManagementBean.pagination.numberOfPages== accountManagementBean.pagination.currentPageNumber)}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber-2}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber-3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=4 and (accountManagementBean.pagination.numberOfPages-1== accountManagementBean.pagination.currentPageNumber)}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber-2}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber-3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.currentPageNumber>=1}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber-1}" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton style="font-weight:bold;"
+                                                    class="btn btn-primary"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber +1}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber}" />
+                                                </h:commandButton></li>
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber+2}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber+1}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=4 and accountManagementBean.pagination.currentPageNumber==1}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber+4}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=3 and accountManagementBean.pagination.currentPageNumber==0}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber+4}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber+3}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-default"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=4 and accountManagementBean.pagination.currentPageNumber==0}"
+                                                    value="#{accountManagementBean.pagination.currentPageNumber+5}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber+4}" />
+                                                </h:commandButton></li>
+
+                                            <li><h:commandButton class="btn btn-info"
+                                                    rendered="#{accountManagementBean.pagination.numberOfPages>=accountManagementBean.pagination.currentPageNumber+1}"
+                                                    value="#{sessionUser.getLabel('pagination.forward')}"
+                                                    action="#{accountManagementBean.goToSpecificPage}">
+                                                    <f:setPropertyActionListener
+                                                        target="#{accountManagementBean.currentPage}"
+                                                        value="#{accountManagementBean.pagination.currentPageNumber+1}" />
+                                                </h:commandButton></li>
+                                        </ul>
+                                    </div>
+                                </h:panelGroup>
+                            </f:facet>
+                        
+                            </h:dataTable>
+                        
+                        
+	                        <h:commandButton id="activate" class="btn btn-info"
+	                                    value="#{sessionUser.getLabel('activateUsers.activateButton')}"
+	                                    onclick ="if(!confirm ('#{sessionUser.getLabel('activateUsers.popUp.Activate')}')) return false"
+	                                    action="#{accountManagementBean.activateAccounts}">
+	                        </h:commandButton>
+	                    
+	                   
+                    </h:form>
+                  </div>
+               </div>
+            </body>
+        </ui:define>
+	</ui:composition>
 </html>
