@@ -354,19 +354,24 @@ public class AccessPhaseListener implements PhaseListener {
 			isPermitted = true;
 		    }
 		}
-	}
+	    }
 	}
 	return isPermitted;
     }
     
     /**
+     * Checks whether the user requested his own profile.
+     * 
      * @param fctx
-     * @return
+     * 		the faces context
+     * @return <code>true</code>, if the user is allowed to visit the requested profile.
+     *         <cod>false</code>, otherwise
      */
     private boolean isOwnProfile(FacesContext fctx) {
 	boolean ownProfile = false;
 	if (fctx.getViewRoot().getViewId().endsWith("profile.xhtml")) {
 	    int userID = 0;
+	    
 	    try {
 		userID = Integer.parseInt(FacesContext.getCurrentInstance()
 			.getExternalContext().getRequestParameterMap()
@@ -374,10 +379,12 @@ public class AccessPhaseListener implements PhaseListener {
 	    } catch (NumberFormatException e) {
 		userID = sessionUser.getUserID();
 	    }
+	    
 	    if (sessionUser.getUserID() == userID) {
 		ownProfile = true;
 	    }
 	}
+	
 	return ownProfile;
     }
 
@@ -418,7 +425,7 @@ public class AccessPhaseListener implements PhaseListener {
 	listForAnonymousUsers.add(URL_HELP);
 	listForAnonymousUsers.add(URL_SEARCH);
 	listForAnonymousUsers.add(URL_COURSE_DETAIL);
-    listForAnonymousUsers.add(URL_LEADER_PROFILE);
+	listForAnonymousUsers.add(URL_LEADER_PROFILE);
 	return listForAnonymousUsers;
     }
        
