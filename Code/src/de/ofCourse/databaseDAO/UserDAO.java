@@ -957,9 +957,7 @@ public class UserDAO {
                     address.setZipCode(res2.getInt("zip_code"));
                     address.setStreet(res2.getString("street"));
                     address.setHouseNumber(res2.getInt("house_nr"));
-                } else {
-                    address = null;
-                }
+                } 
                 // Assign the address object to the user object.
                 user.setAddress(address);
                 pr.close();
