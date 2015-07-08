@@ -52,7 +52,7 @@ public class UserManagementBean {
 	 * The URL returned at the successful creating of a new user
 	 */
 	private final String URL_ADMIN_MANAGEMENT  = "/facelets/user/systemAdministrator/" +
-			"adminManagement.xhtml?faces-redirect=true";
+			"adminManagement.xhtml";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -115,7 +115,6 @@ public class UserManagementBean {
      */
     public String createUser() {
     	transaction.start();
-        String goToPage = URL_CREATE_USER;
         
         try {
 	        if (UserDAO.emailExists(transaction, user.getEmail())) {
@@ -146,14 +145,14 @@ public class UserManagementBean {
 	        	if (image != null) {
 	        		UserDAO.uploadImage(transaction, userID, image);
 	        	}
+	        	transaction.commit();
 	        	
 	        	FacesMessageCreator
                 .createFacesMessage(
                         null,
                         sessionUser.getLabel(
                                 "createUser.successMessage"));
-	        	goToPage = URL_ADMIN_MANAGEMENT;
-	        	transaction.commit();
+	        	return URL_ADMIN_MANAGEMENT;
 	        }
         } catch (InvalidDBTransferException e) {
         	LogHandler
@@ -162,7 +161,7 @@ public class UserManagementBean {
                     + "createUser()");
         	transaction.rollback();
         }
-    	return goToPage;
+    	return URL_CREATE_USER;
     }
     
     /**
