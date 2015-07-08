@@ -221,6 +221,17 @@ public class ListParticipantsBean implements Pagination {
                 LogHandler.getInstance().error(
                         "Error occured during deleteUsersFromCourse().");
             } else {
+                
+                // if the User was in the InformUser List we have to Delete him there
+                if (UserDAO.userWantsToBeInformed(transaction,
+                        sessionUser.getUserID(), courseID)) {
+                            CourseDAO.removeUserToInformUser(transaction,
+                                    sessionUser.getUserID(), courseID);
+                            LogHandler.getInstance().debug(
+                                "Methode removeUserToInformUser:" + sessionUser.getUserID()
+                                    +" was succesfull");
+                }
+                
                 //Refresh page content
                 this.pagination.refreshNumberOfPages(CourseDAO
                         .getNumberOfParticipants(transaction, 
