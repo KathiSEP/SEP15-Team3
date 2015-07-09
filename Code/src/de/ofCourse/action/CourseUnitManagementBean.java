@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -310,8 +311,8 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     public String createCourseUnit() {
+	boolean allInRange = true;
 	
-
 	//Checks whether the unit to create is in the range of the course
 	if (checkDate() 
 		&& checkCourseUnitLeader(
@@ -370,6 +371,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 						    .toString()
 					    + " was not edited because it's no "
 					    + "more in range of the corresponding course.");
+			    if(allInRange){
+				allInRange = false;
+			    }
 			}
 		    }
 		} else {
@@ -380,6 +384,17 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 			    false);
 		}
 		transaction.commit();
+		if(allInRange){
+		    FacesMessageCreator.createFacesMessage(
+			    null,
+			    sessionUser.getLabel(
+				    "courseUnitManagement.createMesssage.All"));
+		} else{
+		    FacesMessageCreator.createFacesMessage(
+			    null,
+			    sessionUser.getLabel(
+				    "Eine oder mehrere Kurseinheiten konnten nicht erstellt werden, da sie nicht im Zeitraum des Kurses liegen. Die restlichen Einheiten wurden erfolgreich erstellt."));
+		}
 		return URL_COURSE_DETAIL;
 
 	    } catch (InvalidDBTransferException e) {
