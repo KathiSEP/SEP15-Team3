@@ -463,9 +463,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-1}" />
 															</h:commandButton></li>
-
-
-														<!-- Für die Form -->
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and (courseUnitManagementBean.pagination.numberOfPages== courseUnitManagementBean.pagination.currentPageNumber)}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber-3}"
@@ -474,8 +471,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-4}" />
 															</h:commandButton></li>
-
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=3 and (courseUnitManagementBean.pagination.numberOfPages== courseUnitManagementBean.pagination.currentPageNumber)}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber-2}"
@@ -484,9 +479,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-3}" />
 															</h:commandButton></li>
-
-
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and (courseUnitManagementBean.pagination.numberOfPages-1== courseUnitManagementBean.pagination.currentPageNumber)}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber-2}"
@@ -495,8 +487,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber-3}" />
 															</h:commandButton></li>
-
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.currentPageNumber>=1}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber}"
@@ -521,9 +511,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+1}" />
 															</h:commandButton></li>
-
-														<!-- Für die Form -->
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and courseUnitManagementBean.pagination.currentPageNumber==1}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber+4}"
@@ -532,10 +519,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+3}" />
 															</h:commandButton></li>
-
-
-
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=3 and courseUnitManagementBean.pagination.currentPageNumber==0}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber+4}"
@@ -544,7 +527,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+3}" />
 															</h:commandButton></li>
-
 														<li><h:commandButton class="btn btn-default"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=4 and courseUnitManagementBean.pagination.currentPageNumber==0}"
 																value="#{courseUnitManagementBean.pagination.currentPageNumber+5}"
@@ -553,10 +535,6 @@
 																	target="#{courseUnitManagementBean.currentPage}"
 																	value="#{courseUnitManagementBean.pagination.currentPageNumber+4}" />
 															</h:commandButton></li>
-
-
-
-
 														<li><h:commandButton class="btn btn-info"
 																rendered="#{courseUnitManagementBean.pagination.numberOfPages>=courseUnitManagementBean.pagination.currentPageNumber+1}"
 																value=" #{sessionUser.getLabel('pagination.forward')}"
@@ -582,7 +560,7 @@
 									rendered="#{courseUnitManagementBean.participants.getRowCount()==0}"
 									class="alert alert-warning">
 									<strong>#{sessionUser.getLabel('editCourseUnit.row.addUser.info')}:</strong> #{sessionUser.getLabel('editCourseUnit.row.addUser.infoText')}
-                </h:form>
+                                </h:form>
 							</div>
 						</div>
 						<div class="panel panel-info">
