@@ -207,7 +207,10 @@ public class UserProfileBean {
     					toLowerCase())) {
     				String veriString = UserDAO.checkVeriString(transaction);
     				UserDAO.setVerification(transaction, veriString, userID);
-    				mailBean.sendUpdateMessage(userID, veriString, user.getEmail());
+    				mailBean.sendUpdateMessage(userID, veriString,
+    						user.getEmail());
+    				FacesMessageCreator.createFacesMessage(null,
+    						sessionUser.getLabel("profile.message.updateMail"));
     			}
     			transaction.commit();
     			
