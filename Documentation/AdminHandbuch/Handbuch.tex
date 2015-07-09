@@ -96,6 +96,7 @@ Für die Vorbereitung, Einrichtung und Inbetriebnahme der Webapplikation \textbf
 	{\it Link:\\} \url{http://de.enterprisedb.com/products-services-training/pgdownload}
 \end{itemize}
 \chapter{Einrichtung des Tomcat Servers}
+\section{Windows}
 \paragraph{The simple way}\ \\
 \ \\
 Laden Sie die JRE von URL
@@ -117,6 +118,7 @@ Fuehren Sie das Setup durch, bis Sie auf die Seite {\it Configuration} kommen.
 \label{fig:TomcatInstall1}
 \end{figure}\\
 Aendern Sie den {\it HTTP/1.1 Connector Port} auf \textbf{8003} und legen Sie einen {\it User Name} und ein {\it Password} fuer den Administrator fest.(vgl Abbildung \ref{fig:TomcatInstall1})\\
+\newpage
 \ \\
 Auf der darauffolgenden Seite des Setups werden Sie aufgefordert den Pfad der {\it Java Virtual Machine} anzugeben.\\
 Geben Sie hier den Pfad der im vorherigen installierten {\it Java Runtime Environment} an.\\
@@ -131,8 +133,9 @@ Wechseln Sie nun in da Installationsverzeichnis des Tomcat Servers. Dort finden 
 \caption{Installationsverzeichnis}
 \label{fig:TomcatDirectory}
 \end{figure}\\
-Durch Klicken auf die Datei {\it Tomcat8} starten Sie den Tomcat Server direkt.\\
 \newpage
+\ \\
+Durch Klicken auf die Datei {\it Tomcat8} starten Sie den Tomcat Server direkt.\\
 \ \\
 Durch Klicken auf die Datei {\it Tomcat8w} oeffnen Sie ein Fenster in dem Sie den Server weiter konfigurieren koennen und durch 
 Betaetigen des \textbf{Start} Buttons starten Sie den Server.
@@ -143,13 +146,207 @@ Betaetigen des \textbf{Start} Buttons starten Sie den Server.
 \label{fig:TomcatStartup}
 \end{figure}
 
-
+\newpage
+\ \\
+\ \\
+\ \\
+\ \\
 \paragraph{The long and hard way}\ \\
 \ \\
 Wenn Sie nicht den Installer verwenden wollen, folgen Sie bitte den Anweisungen unter:
 \begin{center}
 	\url{http://tomcat.apache.org/tomcat-8.0-doc/RUNNING.txt}
 \end{center}
+\newpage
+\section{Linux}
+\subsection{Installation von Java Development Kit 8}
+Die aktuelle Version des {\it Java Development Kit 8} finden Sie unter
+\begin{center}
+	\url{http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}
+\end{center}
+Laden Sie sich hier das JDK für Ihr System herunter.\\
+Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in den Sie das heruntergeladene JDK gespeichert haben.\\
+\ \\
+Entpacken Sie das heruntergeladene JDK mit dem Befehl
+\begin{center}
+	tar -zxvf {\it \{JDK - Datei mit der Endung .tar.gz\} }
+\end{center}
+Beispielsweise:
+\begin{center}
+\includegraphics[width=0.85\linewidth]{Grafiken/Linux_Java_pfad}
+\end{center}
+Wechseln Sie nun in den Ordner {\it usr$/$lib} und erzeugen Sie dort einen {\it java} - Ordner mit dem Befehl
+\begin{center}
+\includegraphics[width=0.6\linewidth]{Grafiken/Linux_create_java}
+\end{center}
+Verschieben Sie nun den extrahierten JDK - Ordner in das eben erstellte java - Verzeichnis.\\
+Wechseln Sie dafür in den Ordner in dem das JDK liegt und verschieben Sie den Ordner mittels dem Befehl
+\begin{center}
+	sudo mv \{{\it JDK - Ordner}\} $/$usr$/$lib$/$java
+\end{center}
+Beispielsweise: 
+\begin{center}
+\includegraphics[width=0.75\linewidth]{Grafiken/Linux_Move_befehl}
+\end{center}
+Wechseln Sie nun in den JDK - Ordner. \\
+Führen Sie nun folgende Befehle nacheinander im Terminal aus. Ersetzen Sie dabei die JDK - Version durch die Version ihres heruntergeladenen JDK.
+\begin{center}
+\includegraphics[width=1.1\linewidth]{Grafiken/Liunux_befehle}
+\end{center}
+\newpage
+\ \\
+Nun müssen Sie noch den \textbf{JAVA\_HOME} Pfad in ihrer {\it ~/.bashrc} - Datei.\\
+Öffnen Sie diese und fügen Sie am Ende folgendes ein(mit angepasster JDK - Versionsnummer):
+\begin{center}
+\includegraphics[width=0.7\linewidth]{Grafiken/JAVAHome}
+\end{center}
+
+\subsection{Installation von Tomcat 8}
+Laden Sie sich unter 
+\begin{center}
+	\url{http://tomcat.apache.org/download-80.cgi}
+\end{center}
+unter dem Abschnitt {\it Binary Distributions} die aktuellste Version des Tomcat - Servers im .zip - Format herunter.\\
+Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in den Sie den heruntergeladenen Tomcat -Server gespeichert haben.\\
+\ \\
+Entpacken Sie das heruntergeladenen Tomcat mit dem Befehl
+\begin{center}
+	unuzip  {\it \{Apache Tomcat - Datei mit der Endung .zip\} }
+\end{center}
+In dem Ordner befindet sich nun die entpackte Tomcat - Datei.\\
+\ \\
+Wechseln Sie nun in den Ordner {\it $/$usr} und erzeugen Sie dort einen {\it apache} - Ordner mit dem Befehl
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Grafiken/apache_linux_path}
+\end{center}
+\ \\
+Verschieben Sie nun den extrahierten Tomcat - Ordner in das eben erstellte apache - Verzeichnis.\\
+Wechseln Sie dafür in den Ordner in dem der Tomcat Server liegt und verschieben Sie den Ordner mittels dem Befehl
+\begin{center}
+	sudo mv \{{\it Apache Tomcat - Ordner}\} $/$usr$/$apache
+\end{center}
+Wechseln Sie nun in dem Tomcat Server - Ordner mit dem Befehl({\it Versionsnummer an heruntergeladenen Server anpassen})
+\begin{center}
+\includegraphics[width=0.65\linewidth]{Grafiken/wechseln_server_ordner}
+\end{center}
+Geben Sie nun folgenden Befehl ein({\it Versionsnummer an heruntergeladenen Server anpassen}):
+\begin{center}
+\includegraphics[width=0.9\linewidth]{Grafiken/Befhel}
+\end{center}
+\newpage
+\ \\
+Es öffnet sich nun eine Datei. Fügen Sie in diese Datei die im folgenden abgebildeten Zeilen ({\it Versionsnummer an heruntergeladenen Server anpassen}).
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{Grafiken/Catalina_Home}
+\caption{Definieren des CATALINA - Homeverzeichnises}
+\label{fig:Catalina_Home}
+\end{figure}
+\ \\
+Führen Sie nun anschließend noch folgenden Befehl aus:
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Grafiken/Befehl_idonKnow}
+\end{center}
+\ \\
+Wechseln Sie jetzt in das {\it$/$bin} des Tomcat Servers
+\begin{center}
+\includegraphics[width=0.7\linewidth]{Grafiken/Bin_direct}
+\end{center}
+\ \\
+Dort müssen Sie nun noch die Zugriff- bzw. Ausführungsrechte der Dateien ändern, damit Sie nachher den Server auch starten und beenden können. Die Rechte ändern Sie durch Eingabe des folgenden Befehls:
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Grafiken/rechte}
+\end{center}
+\ \\
+Da Sie nun die entsprechenden Berechtigungen besitzen, können Sie den Server mit folgendem Befehl starten:
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Grafiken/Tomcat_starten_linux}
+\end{center}
+\ \\
+Öffnen Sie nun ihren Browser und geben folgende URL ein
+\begin{center}
+	{\it http://localhost:8080}
+\end{center}
+Sie sehen nun die Startseite des Tomcat Servers\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{Grafiken/ServerStartPage}
+\caption{Startseite des Tomcat Servers}
+\label{fig:ServerStartPage1}
+\end{figure}
+\ \\
+\newpage
+\ \\
+Bevor Sie nun  auf die Managementseite des Tomcat Servers gelangen können, auf der Sie wie im folgenden Kapitel Web - Applikationen deployen können, müssen Sie einen Benutzer autorisieren indem Sie einen Benutzernamen und ein Passwort festlegen.\ \\
+\ \\
+Wechseln Sie dafür wieder aus dem {\it $/$ bin} - Ordner des Tomcat Servers zurück in den Hauptordner des Servers.\\
+Geben Sie dann folgenden Befehl ein:
+\begin{center}
+\includegraphics[width=0.7\linewidth]{Grafiken/conf-ordner}
+\end{center}
+\ \\
+Damit wechseln Sie in den {\it $/$conf} - Ordner der Servers, welcher Konfigurationsdateien enthält.\\
+Öffnen Sie nun die Datei {\it tomcat-users.xml}.\\
+Diese öffnen Sie mit folgendem Befehl:
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Grafiken/zomcat_users}
+\end{center}
+\newpage
+\ \\
+In der geöffneten Datei tragen Sie nun folgende Informationen ein:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{Grafiken/server-user+}
+\caption{Hinzufügen eines neuen Benutzers zum Tomcat Server}
+\label{fig:server-user+}
+\end{figure}
+\ \\
+Zusätzlich ändern wir nun noch den Port des Servers von 8080 auf 8003.\\
+Dafür geben Sie folgenden Befehl in das Terminal ein
+\begin{center}
+	sudo vim server.xml
+\end{center}
+In der geöffneten Datei finden Sie den Abschnitt:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{Grafiken/port8080}
+\caption{Server.xml vor Änderung}
+\label{fig:port8080}
+\end{figure}
+\ \\
+Ändern Sie den Port zu \textbf{8003}. Fügen Sie zusätzlich am Ende des Dokuments folgendes ein:
+\begin{center}
+	{\it :wq}
+\end{center}
+Nach Betätigen der Eingabetaste wird damit die geöffnete Datei gespeichert und geschlossen.\ \\
+\ \\
+Wechseln Sie nun wieder, wie bereits oben beschrieben, in den {\it $/$bin} - Ordner des Tomcat Servers.\\
+\ \\
+Hier beenden Sie nun den Server durch Eingabe des Befehls 
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Grafiken/Shutdown}
+\end{center}
+\ \\
+Sie starten den Server erneut mit dem Befehl
+\begin{center}
+	\includegraphics[width=0.8\linewidth]{Grafiken/Tomcat_starten_linux}
+\end{center}
+\ \\
+Öffnen Sie nun ihren Browser und geben folgende URL ein
+\begin{center}
+	{\it http://localhost:8003}
+\end{center}
+Sie sehen nun erneut die Startseite des Tomcat Servers\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{Grafiken/ServerStartPage}
+	\caption{Startseite des Tomcat Servers}
+	\label{fig:ServerStartPage12}
+\end{figure}
+\ \\
+Durch Betätigen des Buttons {\it Manager App} und Eingabe der vorhin\ref{fig:server-user+} festgelegten Zugangsdaten
+\begin{center}
+	{\it Benutzername:} tomcat \\
+	{\it Passwort:} tomcat 
+\end{center} werden Sie auf die Verwaltungsseite des Servers weitergeleitet, wo Sie u.a. Web - Applikationen deployen können({\it vgl. Kapitel 4}).
 
 \chapter{Vorbereitung von ofCourse}
 Öffnen Sie die Datei \textbf{ofCourse.war} mit der Software {\it 7Zip}.\\
