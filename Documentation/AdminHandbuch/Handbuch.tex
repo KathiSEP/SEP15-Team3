@@ -53,9 +53,9 @@
 			
 			Betreuer: Andreas Stahlbauer \\
         	\hspace{1,5cm}\\
-        	Version: 1.0 \\
+        	Version: 1.1 \\
         	\hspace{1,5cm}\\
-        	Datum: 26.06.2015\\[28pt]
+        	Datum: 10.7.2015\\[28pt]
         	Team 3 \\
 
 			\ \\
@@ -164,8 +164,8 @@ Die aktuelle Version des {\it Java Development Kit 8} finden Sie unter
 \begin{center}
 	\url{http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}
 \end{center}
-Laden Sie sich hier das JDK für Ihr System herunter.\\
-Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in den Sie das heruntergeladene JDK gespeichert haben.\\
+Laden Sie sich hier das JDK für ihr System herunter.\\
+Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in dem Sie das heruntergeladene JDK gespeichert haben.\\
 \ \\
 Entpacken Sie das heruntergeladene JDK mit dem Befehl
 \begin{center}
@@ -180,7 +180,7 @@ Wechseln Sie nun in den Ordner {\it usr$/$lib} und erzeugen Sie dort einen {\it 
 \includegraphics[width=0.6\linewidth]{Grafiken/Linux_create_java}
 \end{center}
 Verschieben Sie nun den extrahierten JDK - Ordner in das eben erstellte java - Verzeichnis.\\
-Wechseln Sie dafür in den Ordner in dem das JDK liegt und verschieben Sie den Ordner mittels dem Befehl
+Wechseln Sie dafür in den Ordner in dem das JDK liegt und verschieben Sie den Ordner mittels des Befehls
 \begin{center}
 	sudo mv \{{\it JDK - Ordner}\} $/$usr$/$lib$/$java
 \end{center}
@@ -195,7 +195,7 @@ Führen Sie nun folgende Befehle nacheinander im Terminal aus. Ersetzen Sie dabe
 \end{center}
 \newpage
 \ \\
-Nun müssen Sie noch den \textbf{JAVA\_HOME} Pfad in ihrer {\it ~/.bashrc} - Datei.\\
+Nun müssen Sie noch den \textbf{JAVA\_HOME} Pfad in ihrer {\it ~/.bashrc} - Datei setzen.\\
 Öffnen Sie diese und fügen Sie am Ende folgendes ein(mit angepasster JDK - Versionsnummer):
 \begin{center}
 \includegraphics[width=0.7\linewidth]{Grafiken/JAVAHome}
@@ -207,13 +207,13 @@ Laden Sie sich unter
 	\url{http://tomcat.apache.org/download-80.cgi}
 \end{center}
 unter dem Abschnitt {\it Binary Distributions} die aktuellste Version des Tomcat - Servers im .zip - Format herunter.\\
-Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in den Sie den heruntergeladenen Tomcat -Server gespeichert haben.\\
+Öffnen Sie ein Terminal in ihrem Linux - System und wechseln Sie in den Ordner, in den Sie dem heruntergeladenen Tomcat -Server gespeichert haben.\\
 \ \\
-Entpacken Sie das heruntergeladenen Tomcat mit dem Befehl
+Entpacken Sie den heruntergeladenen Tomcat mit dem Befehl
 \begin{center}
-	unuzip  {\it \{Apache Tomcat - Datei mit der Endung .zip\} }
+	unzip  {\it \{Apache Tomcat - Datei mit der Endung .zip\} }
 \end{center}
-In dem Ordner befindet sich nun die entpackte Tomcat - Datei.\\
+In dem Ordner befindet sich nun der entpackte Tomcat - Ordner.\\
 \ \\
 Wechseln Sie nun in den Ordner {\it $/$usr} und erzeugen Sie dort einen {\it apache} - Ordner mit dem Befehl
 \begin{center}
@@ -235,7 +235,7 @@ Geben Sie nun folgenden Befehl ein({\it Versionsnummer an heruntergeladenen Serv
 \end{center}
 \newpage
 \ \\
-Es öffnet sich nun eine Datei. Fügen Sie in diese Datei die im folgenden abgebildeten Zeilen ({\it Versionsnummer an heruntergeladenen Server anpassen}).
+Es öffnet sich nun eine Datei. Fügen Sie in diese Datei die im folgenden abgebildeten Zeilen ein ({\it Versionsnummer an heruntergeladenen Server anpassen}).
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\linewidth]{Grafiken/Catalina_Home}
@@ -267,7 +267,7 @@ Da Sie nun die entsprechenden Berechtigungen besitzen, können Sie den Server mi
 \begin{center}
 	{\it http://localhost:8080}
 \end{center}
-Sie sehen nun die Startseite des Tomcat Servers\begin{figure}
+Sie sehen nun die Startseite des Tomcat Servers.\begin{figure}
 \centering
 \includegraphics[width=0.8\linewidth]{Grafiken/ServerStartPage}
 \caption{Startseite des Tomcat Servers}
@@ -276,9 +276,9 @@ Sie sehen nun die Startseite des Tomcat Servers\begin{figure}
 \ \\
 \newpage
 \ \\
-Bevor Sie nun  auf die Managementseite des Tomcat Servers gelangen können, auf der Sie wie im folgenden Kapitel Web - Applikationen deployen können, müssen Sie einen Benutzer autorisieren indem Sie einen Benutzernamen und ein Passwort festlegen.\ \\
+Bevor Sie nun  auf die Managementseite des Tomcat Servers gelangen können, auf der Sie wie in {\it Kapitel 4 beschrieben}, Web - Applikationen deployen können, müssen Sie einen Benutzer autorisieren indem Sie einen Benutzernamen und ein Passwort festlegen.\ \\
 \ \\
-Wechseln Sie dafür wieder aus dem {\it $/$ bin} - Ordner des Tomcat Servers zurück in den Hauptordner des Servers.\\
+Wechseln Sie dafür wieder aus dem {\it$/$ bin} - Ordner des Tomcat Servers zurück in den Hauptordner des Servers.\\
 Geben Sie dann folgenden Befehl ein:
 \begin{center}
 \includegraphics[width=0.7\linewidth]{Grafiken/conf-ordner}
@@ -335,7 +335,9 @@ Sie starten den Server erneut mit dem Befehl
 \begin{center}
 	{\it http://localhost:8003}
 \end{center}
-Sie sehen nun erneut die Startseite des Tomcat Servers\begin{figure}
+\ \\
+Sie sehen nun erneut die Startseite des Tomcat Servers.
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\linewidth]{Grafiken/ServerStartPage}
 	\caption{Startseite des Tomcat Servers}
