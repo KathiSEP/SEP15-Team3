@@ -393,7 +393,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    FacesMessageCreator.createFacesMessage(
 			    null,
 			    sessionUser.getLabel(
-				    "Eine oder mehrere Kurseinheiten konnten nicht erstellt werden, da sie nicht im Zeitraum des Kurses liegen. Die restlichen Einheiten wurden erfolgreich erstellt."));
+				    "courseUnitManagement.createMesssage.NotAll"));
 		}
 		return URL_COURSE_DETAIL;
 
@@ -424,6 +424,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
      * @author Tobias Fuchs
      */
     public String saveCourseUnit() {
+	boolean allInRange = true;
 	CourseUnit tempUnit = null;
 	List<String> recipients = new ArrayList<String>();
 
@@ -506,6 +507,9 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 					    + tempUnit.getCourseUnitID()
 					    + " was not edited because it's no "
 					    + "more in range of the corresponding course.");
+			    if(allInRange){
+				allInRange = false;
+			    }
 			}
 		    }
 
@@ -534,9 +538,21 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 	                	transaction,
 	                	courseUnit.getCourseUnitID());  
 	            }
-		    }		    
+		   }		    
 		}
 		transaction.commit();
+		
+		if(allInRange){
+		    FacesMessageCreator.createFacesMessage(
+			    null,
+			    sessionUser.getLabel(
+				    "courseUnitManagement.editMesssage.All"));
+		} else{
+		    FacesMessageCreator.createFacesMessage(
+			    null,
+			    sessionUser.getLabel(
+				    "courseUnitManagement.editMesssage.NotAll"));
+		}
 		return URL_COURSE_DETAIL;
 		
 	    } catch (InvalidDBTransferException e) {
@@ -671,7 +687,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		}
 	    }
 	    transaction.commit();
-
+	    FacesMessageCreator.createFacesMessage(
+		    null,
+		    sessionUser.getLabel(
+			    "courseUnitManagement.deleMesssage.All"));
 	} catch (InvalidDBTransferException e) {
 	    transaction.rollback();
 	    LogHandler.getInstance().error(
