@@ -67,6 +67,11 @@ public class SchedulerBean {
     private List<Week> weekDays;
     
     /**
+     * Stores each week day's calendar value
+     */
+    private List<String> days;
+    
+    /**
      * This ManagedProperty represents the actual session of a user. It stores
      * the id, the userRole, the userStatus of the user and the selected
      * language.
@@ -217,6 +222,10 @@ public class SchedulerBean {
     	Week week = new Week();
     	Date date = new Date(currentMonday.getTime());
     	
+    	days = new ArrayList<String>();
+    	String calDay = String.valueOf(currentMonday).substring(8);
+		days.add(calDay);
+    	
     	for (WeekDay day : WeekDay.getWeekDays()) {
     		for (CourseUnit unit : weekRow) {
     			if (unit.getStartime().getDay() == date.getDay()) {
@@ -229,7 +238,13 @@ public class SchedulerBean {
     		cal.setTime(date);
     		cal.add(Calendar.DATE, +1);
     		date = new Date(cal.getTime().getTime());
+    		
+    		if (days.size() < 7) {
+    			calDay = String.valueOf(date).substring(8);
+    			days.add(calDay);
+    		}
     	}
+    	
     	return week;
     }
     
@@ -394,7 +409,7 @@ public class SchedulerBean {
 		}
     	
     }
-
+    
     /**
      * Returns the ManagedProperty <code>SessionUser</code>.
      * 
@@ -466,6 +481,24 @@ public class SchedulerBean {
 	 */
 	public void setWeekDays(List<Week> weekDays) {
 		this.weekDays = weekDays;
+	}
+
+	/**
+	 * 
+	 * @return the list of the week's calendar days
+	 */
+	public List<String> getDays() {
+		return days;
+	}
+
+	/**
+	 * Sets the list of the week's calendar days
+	 * 
+	 * @param days
+	 *           the week's calendar days
+	 */
+	public void setDays(List<String> days) {
+		this.days = days;
 	}
 
 }
