@@ -58,7 +58,7 @@ public class UserProfileBean {
 	 * user's data
 	 */
 	private final String URL_ADMIN_MANAGEMENT = "/facelets/user/" +
-			"systemAdministrator/adminManagement.xhtml?faces-redirect=true";
+			"systemAdministrator/adminManagement.xhtml";
 	
     /**
      * Stores the transaction that is used for database interaction.
@@ -289,22 +289,31 @@ public class UserProfileBean {
      * @return the subsequent URL
      */
     public String deleteUser() {
-    	String goToPage = URL_PROFILE;
     	transaction.start();
     	
     	try {
     		UserDAO.delete(transaction, userID, true);
     		transaction.commit();
     		
-    		goToPage = URL_ADMIN_MANAGEMENT;
+    		FacesMessageCreator
+            .createFacesMessage(
+                    null,
+                    sessionUser.getLabel(
+                            "profile.message.deleteUser"));
+    		return URL_ADMIN_MANAGEMENT;
     	} catch (InvalidDBTransferException e) {
+    		FacesMessageCreator
+            .createFacesMessage(
+                    null,
+                    sessionUser.getLabel(
+                            "profile.message.error"));
     		LogHandler
             .getInstance()
             .error("SQL Exception occoured during executing "
                     + "deleteUser()");
     		transaction.rollback();
     	}
-    	return goToPage;
+    	return URL_PROFILE;
     }
 
     /**

@@ -256,7 +256,7 @@ public class User implements Serializable {
      *          new email to set
      */
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.toLowerCase();
     }
 
     /**

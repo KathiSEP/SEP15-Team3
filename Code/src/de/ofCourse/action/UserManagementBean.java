@@ -155,6 +155,11 @@ public class UserManagementBean {
 	        	return URL_ADMIN_MANAGEMENT;
 	        }
         } catch (InvalidDBTransferException e) {
+        	FacesMessageCreator
+            .createFacesMessage(
+                    null,
+                    sessionUser.getLabel(
+                            "profile.message.error"));
         	LogHandler
             .getInstance()
             .error("SQL Exception occoured during executing "
