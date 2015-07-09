@@ -250,7 +250,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Sets the value of the attribute <code>email</code>.
+     * Sets the value of the attribute <code>email</code> to a lower case.
      * 
      * @param email
      *          new email to set
