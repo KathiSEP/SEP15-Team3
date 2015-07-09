@@ -119,6 +119,9 @@ public class CourseDetailBean implements Pagination, Serializable {
             "/facelets/open/courses/courseDetail.xhtml?faces-redirect=true"
             + "&courseID=";
     
+    /**
+     * Represents the admin management page
+     */
     private final static String URL_ADMIN_MANAGEMENT =
             "/facelets/user/systemAdministrator/adminManagement.xhtml";
     

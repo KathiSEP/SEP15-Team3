@@ -118,7 +118,7 @@ public class CourseManagementBean {
                         null,
                         sessionUser.getLabel(
                            "courseManagementBean.facesMessage.CourseMistake"));
-
+                this.transaction.rollback();
                 return URL_CREATE_COURSE;
                 
             } else {
