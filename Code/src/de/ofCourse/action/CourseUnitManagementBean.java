@@ -882,6 +882,7 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 
 	Date tempDateBegin = new Date(date.getTime());
 	Date tempDateEnd = new Date(date.getTime());
+	Date today = new Date();
 	tempDateBegin.setHours(start.getHours());
 	tempDateBegin.setMinutes(start.getMinutes());
 	tempDateEnd.setHours(end.getHours());
@@ -893,6 +894,10 @@ public class CourseUnitManagementBean implements Pagination, Serializable {
 		    sessionUser.getLabel("courseUnitManagementBean.FacesMessage.problem.date"));
 	    return false;
 
+	} else if(today.getTime()>tempDateBegin.getTime()){
+	    FacesMessageCreator.createFacesMessage(null,
+		    sessionUser.getLabel("courseUniManagement.message.inThePast"));
+	    return false;    
 	} else {
 
 	    transaction.start();
